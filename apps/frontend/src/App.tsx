@@ -1,38 +1,10 @@
 import { useState } from 'react'
-import { apiClient } from './hooks/api-client'
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { InferRequestType, InferResponseType } from 'hono'
+import { useGetExampleQuery } from './hooks/api/useGetExampleQuery'
+import { usePostExampleMutation } from './hooks/api/usePostExampleMutation'
 function App() {
   const [count, setCount] = useState(0)
-  const queryClient = useQueryClient()
-  const exampleGetQuery = useQuery({
-    queryKey: ['example-get'],
-    queryFn: async () => {
-      const res = await apiClient.example.$get({})
-      return await res.json()
-    },
-  })
-
-  const $post = apiClient.example.$post
-
-  const examplePostMutation = useMutation<
-    InferResponseType<typeof $post>,
-    Error,
-    InferRequestType<typeof $post>['json']
-  >({
-    mutationFn: async (inputData: { body: string }) => {
-      const res = await $post({
-        json: inputData,
-      })
-      return await res.json()
-    },
-    onSuccess: async () => {
-      queryClient.invalidateQueries({ queryKey: ['example-get'] })
-    },
-    onError: (error) => {
-      console.log(error)
-    },
-  })
+  const exampleGetQuery = useGetExampleQuery()
+  const examplePostMutation = usePostExampleMutation()
 
   return (
     <>
