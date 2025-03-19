@@ -4,11 +4,15 @@ import { cors } from 'hono/cors'
 
 const app = new Hono()
 
-const routes = app.use('*', cors()).route('/example', exampleRouter)
+const allowedOrigins = process.env.CORS_ALLOWLISTED_ORIGINS?.split(',') || []
+
+const routes = app.use('*', cors({
+  origin: allowedOrigins
+})).route('/example', exampleRouter)
 
 export type AppType = typeof routes
 
 export default {
-  port: 3333,
+  port: process.env.PORT || 3001,
   fetch: app.fetch,
 } 

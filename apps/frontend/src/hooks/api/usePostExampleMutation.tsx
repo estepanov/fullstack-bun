@@ -1,9 +1,7 @@
 import { apiClient } from "@/lib/api-client"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { InferRequestType, InferResponseType } from 'hono'
-import { EXAMPLE_GET_QUERY_KEY } from "./useGetExampleQuery"
-
-export const EXAMPLE_POST_QUERY_KEY = 'example-post'
+import { EXAMPLE_GET_QUERY_KEY } from "./query-key"
 
 const $post = apiClient.example.$post
 

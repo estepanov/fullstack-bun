@@ -1,22 +1,22 @@
-import { useState } from 'react'
+import { Button } from '@/components/ui/button'
 import { useGetExampleQuery } from './hooks/api/useGetExampleQuery'
 import { usePostExampleMutation } from './hooks/api/usePostExampleMutation'
+import { ModeToggle } from './components/ui/theme-toggle'
+import { RefreshCwIcon } from 'lucide-react'
+
 function App() {
-  const [count, setCount] = useState(0)
   const exampleGetQuery = useGetExampleQuery()
   const examplePostMutation = usePostExampleMutation()
 
   return (
     <>
       <div className="p-4 space-y-3">
-        <button className='p-4 border' onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <button onClick={() => {
+
+        <Button variant="default" onClick={() => {
           examplePostMutation.mutate({ body: `hello ${(new Date()).toLocaleTimeString()}` })
         }}>
-          two
-        </button>
+          add messages
+        </Button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
         </p>
@@ -28,11 +28,18 @@ function App() {
             <li key={item.id}>{item.body}</li>
           ))}
         </ul>}
-        <button onClick={() => {
-          exampleGetQuery.refetch()
-        }}>
-          refresh
-        </button>
+
+      </div>
+      <div className='flex flex-row space-x-3 p-4'>
+        <Button 
+          variant="outline"
+          disabled={exampleGetQuery.isFetching || exampleGetQuery.isLoading}
+          onClick={() => {
+            exampleGetQuery.refetch()
+          }}>
+          <RefreshCwIcon className={(exampleGetQuery.isFetching || exampleGetQuery.isLoading) ? 'animate-spin' : ''} /> refresh
+        </Button>
+        <ModeToggle />
       </div>
     </>
   )

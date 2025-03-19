@@ -1,7 +1,7 @@
 import { apiClient } from "@/lib/api-client"
 import { useQuery } from "@tanstack/react-query"
+import { EXAMPLE_GET_QUERY_KEY } from "./query-key"
 
-export const EXAMPLE_GET_QUERY_KEY = 'example-get'
 
 export const useGetExampleQuery= () => {
     return useQuery({
