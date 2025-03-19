@@ -1,0 +1,28 @@
+{
+  "name": "fullstack-bun",
+  "author": {
+    "name":"Evans Stepanov",
+    "url": "https://evansstepanov.com"
+  },
+  "homepage": "https://github.com/estepanov/fullstack-bun#readme",
+  "bugs": {
+    "url": "https://github.com/estepanov/fullstack-bun/issues"
+  },
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "apps/*"
+  ],
+  "devDependencies": {
+    "@types/bun": "latest",
+    "concurrently": "^9.0.1"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "dev": "concurrently --names frontend,api 'bun --filter=frontend dev' 'bun --filter=api dev'",
+    "start": "bun --filter=api start",
+    "build": "bun --filter=frontend build"
+  }
+}
