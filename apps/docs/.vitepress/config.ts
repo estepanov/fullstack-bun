@@ -44,5 +44,9 @@ export default defineConfig({
       message: `Released under the MIT License.`,
       copyright: 'Copyright © 2025 <a href="https://evansstepanov.com">Evans Stepanov</a>'
     }
-  }
+  },
+  ignoreDeadLinks: [
+    // ignore all localhost links
+    /^https?:\/\/localhost/
+  ]
 })
