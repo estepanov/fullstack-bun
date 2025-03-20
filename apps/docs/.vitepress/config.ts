@@ -2,6 +2,7 @@ import { defineConfig } from 'vitepress'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
+  head: [['link', { rel: 'icon', href: '/favicon.png' }]],
   lastUpdated: true,
   title: "Fullstack-Bun Docs",
   description: "The documentation site for estepanov/fullstack-bun boilerplate. API powered by Hono. With static React + Vite frontend. Shadcn and TailwindCSS 4 for styling.",
