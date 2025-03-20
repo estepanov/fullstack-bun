@@ -1,6 +1,6 @@
 import pino from 'pino'
 
-export const logger = pino({
+export const appLogger = pino({
     formatters: {
         level: (label) => {
             return {
@@ -13,3 +13,5 @@ export const logger = pino({
 
     
 })
+
+export type AppLogger = typeof appLogger
