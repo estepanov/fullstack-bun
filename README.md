@@ -6,7 +6,7 @@
 - TailwindCSS 4
 - Shadcn
 
-## Getting Started
+## Get Started
 
 from the root directory `bun install`
 
