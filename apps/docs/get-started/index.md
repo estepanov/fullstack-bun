@@ -51,7 +51,7 @@ VITE_API_BASE_URL="http://localhost:3001"
 NODE_ENV="development"
 ```
 
-To learn more about specific variables visit the [environment variables reference page](/reference/environment-variables).
+To learn more about specific variables visit the [environment variables reference page](/reference/environment-variables.md).
 
 5. Start the app
 
