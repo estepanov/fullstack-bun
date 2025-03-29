@@ -1,0 +1,15 @@
+# This file defines ownership of code in the repository.
+# Each line is a file pattern followed by one or more owners.
+# The last matching pattern takes the most precedence.
+
+# Default owners for everything in the repo
+*               @estepanov
+
+# Frontend ownership
+/apps/web/**    @estepanov
+
+# Backend ownership
+/apps/api/**    @estepanov
+
+# Documentation
+*.md            @estepanov
