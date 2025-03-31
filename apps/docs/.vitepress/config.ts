@@ -30,6 +30,7 @@ export default defineConfig({
           { text: 'Overview', link: '/reference/index.html' },
           { text: 'Dependencies', link: '/reference/dependencies.html' },
           { text: 'Environment Variables', link: '/reference/environment-variables.html' },
+          { text: 'Forms', link: '/reference/forms.html' },
           // { text: 'Runtime API Examples', link: '/api-examples' }
         ]
       }]
