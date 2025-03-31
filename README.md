@@ -23,5 +23,3 @@ Do not install at the root level.
 
 To run the frontend and backend apps, `bun run dev` from the root level.
 
-
-

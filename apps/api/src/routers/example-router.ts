@@ -6,7 +6,7 @@ import { LoggerMiddlewareEnv } from "../middlewares/logger";
 
 export const exampleSchema = z.object({
   id: z.string(),
-  body: z.string().min(5).max(40),
+  message: z.string().min(5).max(40),
   postedAt: z.string()
 })
 export type Example = z.infer<typeof exampleSchema>
@@ -15,8 +15,8 @@ export const newExampleSchema = exampleSchema.omit({ id: true, postedAt: true })
 export type NewExample = z.infer<typeof newExampleSchema>
 
 const DB: Example[] = [
-  { id: uuidv4(), body: 'hello', postedAt: new Date().toISOString() },
-  { id: uuidv4(), body: 'world', postedAt: new Date().toISOString() },
+  { id: uuidv4(), message: 'hello friend', postedAt: new Date().toISOString() },
+  { id: uuidv4(), message: 'hello world', postedAt: new Date().toISOString() },
 ]
 
 const exampleRouter = new Hono<LoggerMiddlewareEnv>()
@@ -29,7 +29,7 @@ const exampleRouter = new Hono<LoggerMiddlewareEnv>()
   .post('/', zValidator('json', newExampleSchema), async (c) => {
     const body = await c.req.json<NewExample>()
     c.var.logger.info(body, 'Incoming body')
-    DB.push({ id: uuidv4(), body: body.body, postedAt: new Date().toISOString() })
+    DB.push({ id: uuidv4(), message: body.message, postedAt: new Date().toISOString() })
     return c.json({ success: true })
   })
 
