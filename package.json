@@ -1,7 +1,7 @@
 {
   "name": "fullstack-bun",
   "author": {
-    "name":"Evans Stepanov",
+    "name": "Evans Stepanov",
     "url": "https://evansstepanov.com"
   },
   "homepage": "https://github.com/estepanov/fullstack-bun#readme",
@@ -10,10 +10,9 @@
   },
   "private": true,
   "type": "module",
-  "workspaces": [
-    "apps/*"
-  ],
+  "workspaces": ["apps/*"],
   "devDependencies": {
+    "@biomejs/biome": "1.9.4",
     "@types/bun": "latest",
     "concurrently": "^9.0.1"
   },
@@ -23,6 +22,9 @@
   "scripts": {
     "dev": "concurrently --names frontend,api 'bun --filter=frontend dev' 'bun --filter=api dev'",
     "start": "bun --filter=api start",
-    "build": "bun --filter=frontend build"
-  }
+    "build": "bun --filter=frontend build",
+    "format": "bun run --filter=* format",
+    "lint": "bun run --filter=* lint"
+  },
+  "trustedDependencies": ["@biomejs/biome"]
 }
