@@ -31,7 +31,8 @@ features:
     details: Logging setup out of the box
   - title: Tracability
     details: Every request/session has a UUID attached to the header/logger.
-
+  - title: Biome
+    details: Biome for linting and formatting. Easy to use, quick to run, and it "just works".
 
 ---
 
