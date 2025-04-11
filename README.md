@@ -16,9 +16,8 @@ PLEASE SEE https://fullstackbun.dev/get-started/
 A highly abbreviated version of the instructions is below:
 
  - from the root directory `bun install`
-  - You may need `bun pm trust --all` to get it started
  - Run `bun run setup` to:
-  - copy the environment files from `.env.example` to `.env` in both the API and frontend directories
+    - copy the environment files from `.env.example` to `.env` in both the API and frontend directories
  - then `bun run dev`
 
 ### Commands
