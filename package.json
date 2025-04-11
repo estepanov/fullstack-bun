@@ -24,7 +24,8 @@
     "start": "bun --filter=api start",
     "build": "bun --filter=frontend build",
     "format": "bun run --filter=* format",
-    "lint": "bun run --filter=* lint"
+    "lint": "bun run --filter=* lint",
+    "setup": "bun scripts/initial-setup.ts"
   },
-  "trustedDependencies": ["@biomejs/biome"]
+  "trustedDependencies": ["@biomejs/biome", "esbuild"]
 }

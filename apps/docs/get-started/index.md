@@ -33,7 +33,13 @@ cd fullstack-bun
 bun install
 ```
 
-4. Create `.env` files
+4. Run setup command
+
+```sh
+bun run setup
+```
+
+The setup commmand currently just copies `.env.example` to `.env` in the front and backend projects. 
 
 Add the following to `apps/api/.env`:
 
