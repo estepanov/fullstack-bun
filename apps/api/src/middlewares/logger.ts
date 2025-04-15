@@ -12,7 +12,8 @@ export const loggerMiddleware = () =>
   createMiddleware<LoggerMiddlewareEnv>(async (c, next) => {
     const requestId = c.req.header("x-request-id");
     const sessionId = c.req.header("x-session-id");
-    if (!requestId || !sessionId) {
+    const isOptionsReq = c.req.method === "OPTIONS";
+    if (!isOptionsReq && (!requestId || !sessionId)) {
       throw new HTTPException(400, { message: "Missing required headers" });
     }
     const requestLogger = appLogger.child({

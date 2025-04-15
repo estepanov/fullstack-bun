@@ -1,5 +1,7 @@
 {
+  "exclude": ["node_modules", "../frontend"],
   "compilerOptions": {
+    "skipLibCheck": true,
     "strict": true,
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",

@@ -27,7 +27,7 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src"],
+  "include": ["src", "react-router.config.ts"],
   "references": [
     {
       "path": "../../apps/api/tsconfig.json"

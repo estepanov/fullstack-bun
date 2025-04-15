@@ -12,6 +12,7 @@ You can find all heavily used dependencies we rely on here, along with the major
 | ------------------------------------------------------------- | ------------- |
 | [React](https://react.dev)                                    | 19            |
 | [Vite](https://vite.dev)                                      | 6             |
+| [React Router](https://reactrouter.com)                       | 7             |
 | [Zod](https://zod.dev)                                        | 3             |
 | [TanStack Forms](https://tanstack.com/form/latest)            | 1             |
 | [TanStack Query](https://tanstack.com/query/latest)           | 5             |

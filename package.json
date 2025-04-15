@@ -22,7 +22,7 @@
   "scripts": {
     "dev": "concurrently --names frontend,api 'bun --filter=frontend dev' 'bun --filter=api dev'",
     "start": "bun --filter=api start",
-    "build": "bun --filter=frontend build",
+    "build": "bun --filter=frontend run build",
     "format": "bun run --filter=* format",
     "lint": "bun run --filter=* lint",
     "setup": "bun scripts/initial-setup.ts"

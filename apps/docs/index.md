@@ -17,6 +17,8 @@ hero:
 features:
   - title: React 19 + Vite
     details: The latest React version powered by Vite
+  - title: React Router 7
+    details: Type safe routing with framework mode ready to-go
   - title: TanStack Form
     details: Type safe form handling with TanStack Form
   - title: TailwindCSS 4

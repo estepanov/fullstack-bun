@@ -7,7 +7,9 @@
       "path": "../../apps/api/tsconfig.json"
     }
   ],
+  "exclude": ["node_modules", "../api"],
   "compilerOptions": {
+    "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

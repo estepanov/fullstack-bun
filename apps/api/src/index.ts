@@ -1,21 +1,25 @@
-import { Hono } from 'hono'
-import { exampleRouter } from './routers/example-router'
-import { cors } from 'hono/cors'
-import { loggerMiddleware } from './middlewares/logger'
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { loggerMiddleware } from "./middlewares/logger";
+import { exampleRouter } from "./routers/example-router";
 
-const app = new Hono()
+const app = new Hono();
 
-const allowedOrigins = process.env.CORS_ALLOWLISTED_ORIGINS?.split(',') || []
+const allowedOrigins = process.env.CORS_ALLOWLISTED_ORIGINS?.split(",") || [];
 
 const routes = app
   .use(loggerMiddleware())
-  .use('*', cors({
-    origin: allowedOrigins
-  })).route('/example', exampleRouter)
+  .use(
+    "*",
+    cors({
+      origin: allowedOrigins,
+    }),
+  )
+  .route("/example", exampleRouter);
 
-export type AppType = typeof routes
+export type AppType = typeof routes;
 
 export default {
   port: process.env.PORT || 3001,
   fetch: app.fetch,
-} 
+};

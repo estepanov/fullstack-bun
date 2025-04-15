@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "bun run --hot src/index.ts",
     "start": "bun src/index.ts",
+    "build": "tsc --declaration --emitDeclarationOnly",
     "format": "bun run biome format --write ./src",
     "lint": "bun run biome lint ./src"
   },
