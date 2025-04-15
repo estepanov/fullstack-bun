@@ -1,9 +1,23 @@
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
+import type { AnyFieldApi } from "@tanstack/react-form";
 import type { ComponentProps } from "react";
 import { newExampleSchema } from "../../../api/src/routers/example-router";
 import { usePostExampleMutation } from "../hooks/api/usePostExampleMutation";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
+
+const FieldInfo = ({ field }: { field: AnyFieldApi }) => {
+  return (
+    <>
+      {field.state.meta.isBlurred && field.state.meta.errors.length ? (
+        <div id={`${field.name}-error`} role="alert">
+          <em>{field.state.meta.errors.map((err) => err?.message).join(", ")}</em>
+        </div>
+      ) : null}
+      {field.state.meta.isValidating ? "Validating..." : null}
+    </>
+  );
+};
 
 const { fieldContext, formContext } = createFormHookContexts();
 
@@ -46,6 +60,7 @@ export const MessageForm = () => {
           const showError = hasError && field.state.meta.isBlurred;
           return (
             <div className="flex flex-col space-y-1 w-full">
+              <label htmlFor={field.name}>Message</label>
               <Input
                 id={field.name}
                 name={field.name}
@@ -55,20 +70,11 @@ export const MessageForm = () => {
                 onChange={(e) => field.handleChange(e.target.value)}
                 onBlur={field.handleBlur}
               />
-              {showError ? (
-                <ul id={`${field.name}-error`} role="alert">
-                  {field.state.meta.errors.map((err) => (
-                    <li key={err?.message}>{err?.message}</li>
-                  ))}
-                </ul>
-              ) : null}
+              <FieldInfo field={field} />
             </div>
           );
         }}
       </form.Field>
-      <form.AppForm>
-        <form.SubmitButton />
-      </form.AppForm>
     </form>
   );
 };
