@@ -1,0 +1,17 @@
+{
+  "name": "shared",
+  "type": "module",
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "scripts": {
+    "dev": "bun build ./index.ts ./interfaces/example.ts --outdir ./dist --splitting --packages external --watch",
+    "build": "bun build ./index.ts ./interfaces/example.ts --outdir ./dist --splitting --packages external --minify"
+  },
+  "dependencies": {
+    "zod": "^3.24.2"
+  }
+}

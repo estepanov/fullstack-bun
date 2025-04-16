@@ -1,7 +1,7 @@
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import type { ComponentProps } from "react";
-import { newExampleSchema } from "../../../api/src/routers/example-router";
+import { newExampleSchema } from "shared/interfaces/example";
 import { usePostExampleMutation } from "../hooks/api/usePostExampleMutation";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";

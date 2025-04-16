@@ -1,9 +1,9 @@
 {
   "name": "api",
   "scripts": {
-    "dev": "bun run --hot src/index.ts",
+    "dev": "concurrently --names types,api 'bun run build:types -w' 'bun run --hot src/index.ts'",
     "start": "bun src/index.ts",
-    "build": "tsc --declaration --emitDeclarationOnly",
+    "build:types": "tsc -p tsconfig.build.json",
     "format": "bun run biome format --write ./src",
     "lint": "bun run biome lint ./src"
   },
@@ -11,12 +11,14 @@
     "@hono/zod-validator": "^0.4.3",
     "hono": "^4.7.4",
     "pino": "^9.6.0",
+    "shared": "workspace:*",
     "uuid": "^11.1.0",
     "zod": "^3.24.2"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/bun": "latest",
+    "concurrently": "^9.1.2",
     "pino-pretty": "^13.0.0"
   }
 }

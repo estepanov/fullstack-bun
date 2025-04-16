@@ -10,7 +10,7 @@
   },
   "private": true,
   "type": "module",
-  "workspaces": ["apps/*"],
+  "workspaces": ["apps/*", "packages/*"],
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/bun": "latest",
@@ -22,7 +22,7 @@
   "scripts": {
     "dev": "concurrently --names frontend,api 'bun --filter=frontend dev' 'bun --filter=api dev'",
     "start": "bun --filter=api start",
-    "build": "bun --filter=frontend run build",
+    "build": "bun --filter=api run build:types && bun --filter=frontend run build",
     "format": "bun run --filter=* format",
     "lint": "bun run --filter=* lint",
     "setup": "bun scripts/initial-setup.ts"
