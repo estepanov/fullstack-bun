@@ -1,8 +1,28 @@
 import { Container } from "@/components/ui/container";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import { RowsIcon } from "lucide-react";
-import { Link, NavLink, Link as RouterLink } from "react-router";
+import { Link as RouterLink, NavLink as RouterNavLink } from "react-router";
 
+const NavLink = ({
+  to,
+  children,
+  ...props
+}: { to: string; children: React.ReactNode } & React.ComponentProps<
+  typeof RouterNavLink
+>) => {
+  return (
+    <RouterNavLink
+      to={to}
+      className={({ isActive, isPending }) =>
+        cn([isPending ? "text-muted-foreground" : "", isActive ? "underline" : ""])
+      }
+      {...props}
+    >
+      {children}
+    </RouterNavLink>
+  );
+};
 const MobileNavigation = () => {
   return (
     <Popover>
@@ -43,7 +63,6 @@ export const Header = () => {
             <div className="hidden md:block">
               <NavLink to="/login">Sign in</NavLink>
             </div>
-            <Link to="/more">More</Link>
             <div className="-mr-1 md:hidden">
               <MobileNavigation />
             </div>
