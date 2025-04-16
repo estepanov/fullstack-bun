@@ -24,7 +24,7 @@ export const loggerMiddleware = () =>
     });
     c.set("logger", requestLogger);
     await next();
-    requestLogger.info({
+    requestLogger.debug({
       response: c.res.status,
     });
   });
