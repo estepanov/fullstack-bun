@@ -48,7 +48,7 @@ export const MessageForm = () => {
 
   return (
     <form
-      className="flex flex-row space-x-3 p-4"
+      className="flex flex-row space-x-3"
       onSubmit={(e) => {
         e.preventDefault();
         form.handleSubmit();
