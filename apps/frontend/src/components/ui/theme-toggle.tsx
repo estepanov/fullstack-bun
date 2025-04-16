@@ -1,4 +1,4 @@
-import { Moon, Sun } from "lucide-react";
+import { CheckIcon, Moon, Sun } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -9,9 +9,30 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useTheme } from "@/providers/theme";
 
-export function ModeToggle() {
-  const { setTheme } = useTheme();
+enum Themes {
+  Light = "light",
+  Dark = "dark",
+  System = "system",
+}
 
+const THEME_OPTIONS = [
+  {
+    label: "Light",
+    value: Themes.Light,
+  },
+  {
+    label: "Dark",
+    value: Themes.Dark,
+  },
+  {
+    label: "System",
+    value: Themes.System,
+  },
+];
+
+export function ModeToggle() {
+  const { setTheme, theme } = useTheme();
+  console.log("theme", theme);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -22,9 +43,19 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme("light")}>Light</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("dark")}>Dark</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme("system")}>System</DropdownMenuItem>
+        {THEME_OPTIONS.map((themeOption) => {
+          return (
+            <DropdownMenuItem
+              key={themeOption.value}
+              onClick={() => setTheme(themeOption.value)}
+            >
+              <div className="flex justify-between w-full items-center">
+                {themeOption.label}
+                {themeOption.value === theme && <CheckIcon className="w-4 h-4" />}
+              </div>
+            </DropdownMenuItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );
