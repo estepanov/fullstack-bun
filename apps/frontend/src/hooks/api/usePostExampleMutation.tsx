@@ -23,7 +23,7 @@ export const usePostExampleMutation = () => {
       queryClient.invalidateQueries({ queryKey: [EXAMPLE_GET_QUERY_KEY] });
     },
     onError: (error) => {
-      console.log(error);
+      console.error(error);
     },
   });
 };

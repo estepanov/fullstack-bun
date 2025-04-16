@@ -1,7 +1,7 @@
-import { type RouteConfig, route } from "@react-router/dev/routes";
+import { type RouteConfig, index, route } from "@react-router/dev/routes";
 
 const config: RouteConfig = [
-  route("/", "./pages/landing.tsx"),
+  index("./pages/landing.tsx"),
   route("/more", "./pages/more.tsx"),
   route("*?", "catchall.tsx"),
 ];

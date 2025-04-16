@@ -1,7 +1,6 @@
 import { MessageForm } from "@/components/message-form";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { ModeToggle } from "@/components/ui/theme-toggle";
 import { useGetExampleQuery } from "@/hooks/api/useGetExampleQuery";
 import { RefreshCwIcon } from "lucide-react";
 
@@ -28,7 +27,6 @@ const LandingPage = () => {
           />{" "}
           refresh
         </Button>
-        <ModeToggle />
       </div>
       <div className="space-y-3">
         <p>
