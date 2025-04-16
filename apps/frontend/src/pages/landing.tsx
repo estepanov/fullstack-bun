@@ -1,5 +1,6 @@
 import { MessageForm } from "@/components/message-form";
 import { Button } from "@/components/ui/button";
+import { Link } from "@/components/ui/link";
 import { ModeToggle } from "@/components/ui/theme-toggle";
 import { useGetExampleQuery } from "@/hooks/api/useGetExampleQuery";
 import { RefreshCwIcon } from "lucide-react";
@@ -36,6 +37,7 @@ const LandingPage = () => {
           <span className="text-muted bg-muted-foreground inline-block p-1 rounded font-mono">
             Have fun out there!
           </span>
+          <Link to="/more">See a new page</Link>
         </p>
         {exampleGetQuery?.data ? (
           <ul>

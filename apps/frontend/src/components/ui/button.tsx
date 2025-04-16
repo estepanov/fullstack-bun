@@ -1,8 +1,8 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
-import { ButtonVariants, buttonVariants } from "./button.variants"
+import { cn } from "@/lib/utils";
+import { Slot } from "@radix-ui/react-slot";
+import type { VariantProps } from "class-variance-authority";
+import type * as React from "react";
+import { type ButtonVariants, buttonVariants } from "./button.variants";
 
 export const Button = ({
   className,
@@ -12,9 +12,9 @@ export const Button = ({
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<ButtonVariants> & {
-    asChild?: boolean
+    asChild?: boolean;
   }) => {
-  const Comp = asChild ? Slot : "button"
+  const Comp = asChild ? Slot : "button";
 
   return (
     <Comp
@@ -22,5 +22,5 @@ export const Button = ({
       className={cn(buttonVariants({ variant, size, className }))}
       {...props}
     />
-  )
-}
+  );
+};
