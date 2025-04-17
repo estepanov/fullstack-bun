@@ -17,7 +17,7 @@ const exampleRouter = new Hono<LoggerMiddlewareEnv>()
   .get("/", (c) =>
     c.json({
       list: DB.sort(
-        (a, b) => new Date(b.postedAt).getTime() - new Date(a.postedAt).getTime(),
+        (a, b) => new Date(a.postedAt).getTime() - new Date(b.postedAt).getTime(),
       ),
     }),
   )
@@ -26,7 +26,7 @@ const exampleRouter = new Hono<LoggerMiddlewareEnv>()
     const id = c.req.param("id");
     return c.json({ id, name: `Example ${id}` });
   })
-  .post("/", zValidator("json", newExampleSchema), async (c) => {
+  .post("/", zValidator("json", newExampleSchema({})), async (c) => {
     const body = await c.req.json<NewExample>();
     c.var.logger.info(body, "Incoming body");
     DB.push({ id: uuidv4(), message: body.message, postedAt: new Date().toISOString() });

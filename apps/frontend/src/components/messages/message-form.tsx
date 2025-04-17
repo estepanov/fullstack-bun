@@ -1,10 +1,10 @@
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { usePostExampleMutation } from "@/hooks/api/usePostExampleMutation";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import type { ComponentProps } from "react";
 import { newExampleSchema } from "shared/interfaces/example";
-import { usePostExampleMutation } from "../hooks/api/usePostExampleMutation";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 
 const FieldInfo = ({ field }: { field: AnyFieldApi }) => {
   return (
@@ -38,7 +38,10 @@ export const MessageForm = () => {
       message: "",
     },
     validators: {
-      onChange: newExampleSchema,
+      onChange: newExampleSchema({
+        messageMinLengthError: "Message must be at least 5 characters long",
+        messageMaxLengthError: "Message must be less than 40 characters long",
+      }),
     },
     onSubmit: ({ value }) => {
       examplePostMutation.mutate({ message: value.message });
@@ -48,7 +51,7 @@ export const MessageForm = () => {
 
   return (
     <form
-      className="flex flex-row space-x-3"
+      className="flex flex-row space-x-2"
       onSubmit={(e) => {
         e.preventDefault();
         form.handleSubmit();
@@ -60,10 +63,10 @@ export const MessageForm = () => {
           const showError = hasError && field.state.meta.isBlurred;
           return (
             <div className="flex flex-col space-y-1 w-full">
-              <label htmlFor={field.name}>Message</label>
-              <Input
+              <Textarea
                 id={field.name}
                 name={field.name}
+                aria-label="Message"
                 aria-invalid={showError}
                 aria-describedby={`${field.name}-error`}
                 value={field.state.value}
@@ -75,6 +78,7 @@ export const MessageForm = () => {
           );
         }}
       </form.Field>
+      <form.SubmitButton />
     </form>
   );
 };
