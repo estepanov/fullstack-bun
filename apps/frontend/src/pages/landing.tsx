@@ -3,12 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
 import { useGetExampleQuery } from "@/hooks/api/useGetExampleQuery";
 import { RefreshCwIcon } from "lucide-react";
-
+import { useTranslation } from "react-i18next";
 const LandingPage = () => {
   const exampleGetQuery = useGetExampleQuery();
+  const { t } = useTranslation("landing_page");
 
   return (
     <Container className="space-y-2 mt-4">
+      <h1 className="text-2xl font-bold">{t("title")}</h1>
+      <p className="text-muted-foreground">{t("description")}</p>
       <MessageForm />
       <div className="flex flex-row space-x-3">
         <Button
