@@ -4,7 +4,7 @@ import { Link } from "react-router";
 
 export const Footer = () => {
   return (
-    <footer className="py-4 bg-accent">
+    <footer className="py-4">
       <Container className="flex justify-between">
         <ModeToggle />
         <Link to="/more">Second Page</Link>

@@ -48,7 +48,7 @@ const MobileNavigation = () => {
 
 export const Header = () => {
   return (
-    <header className="py-4 bg-accent">
+    <header className="py-4 bg-accent/70">
       <Container>
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">
