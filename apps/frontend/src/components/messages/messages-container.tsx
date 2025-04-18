@@ -7,8 +7,8 @@ export const MessagesContainer = () => {
     <MessageScrollProvider>
       <Card className="p-2">
         <MessageList />
-        <MessageForm />
       </Card>
+      <MessageForm />
     </MessageScrollProvider>
   );
 };

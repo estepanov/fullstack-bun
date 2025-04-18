@@ -4,6 +4,7 @@ import { usePostExampleMutation } from "@/hooks/api/usePostExampleMutation";
 import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import type { ComponentProps } from "react";
+import { useTranslation } from "react-i18next";
 import { newExampleSchema } from "shared/interfaces/example";
 
 const FieldInfo = ({ field }: { field: AnyFieldApi }) => {
@@ -14,7 +15,6 @@ const FieldInfo = ({ field }: { field: AnyFieldApi }) => {
           <em>{field.state.meta.errors.map((err) => err?.message).join(", ")}</em>
         </div>
       ) : null}
-      {field.state.meta.isValidating ? "Validating..." : null}
     </>
   );
 };
@@ -24,13 +24,17 @@ const { fieldContext, formContext } = createFormHookContexts();
 const { useAppForm } = createFormHook({
   fieldComponents: {},
   formComponents: {
-    SubmitButton: (props: ComponentProps<"button">) => <Button {...props}>Submit</Button>,
+    SubmitButton: (props: ComponentProps<"button">) => {
+      const { t } = useTranslation("messages");
+      return <Button {...props}>{t("form.submit_button")}</Button>;
+    },
   },
   fieldContext,
   formContext,
 });
 
 export const MessageForm = () => {
+  const { t } = useTranslation("messages");
   const examplePostMutation = usePostExampleMutation();
 
   const form = useAppForm({
@@ -39,8 +43,8 @@ export const MessageForm = () => {
     },
     validators: {
       onChange: newExampleSchema({
-        messageMinLengthError: "Message must be at least 5 characters long",
-        messageMaxLengthError: "Message must be less than 40 characters long",
+        messageMinLengthError: t("form.errors.messageMinLengthError"),
+        messageMaxLengthError: t("form.errors.messageMaxLengthError"),
       }),
     },
     onSubmit: ({ value }) => {
@@ -66,7 +70,7 @@ export const MessageForm = () => {
               <Textarea
                 id={field.name}
                 name={field.name}
-                aria-label="Message"
+                aria-label={t("form.message_field_label")}
                 aria-invalid={showError}
                 aria-describedby={`${field.name}-error`}
                 value={field.state.value}

@@ -7,17 +7,14 @@ import { useTranslation } from "react-i18next";
 const LandingPage = () => {
   const exampleGetQuery = useGetExampleQuery();
   const { t } = useTranslation("landing_page");
+  const { t: tMessages } = useTranslation("messages");
 
   return (
     <Container className="space-y-2 mt-4">
       <h1 className="text-2xl font-bold">{t("title")}</h1>
       <p className="text-muted-foreground">{t("description")}</p>
-      <p>
-        Edit <code>src/App.tsx</code> and save to test HMR and&nbsp;
-        <span className="text-muted bg-muted-foreground inline-block p-1 rounded font-mono">
-          Have fun out there!
-        </span>
-      </p>
+      {/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
+      <p dangerouslySetInnerHTML={{ __html: t("get_started") }} />
       <MessagesContainer />
       <div className="flex flex-row space-x-3">
         <Button
@@ -26,6 +23,7 @@ const LandingPage = () => {
           onClick={() => {
             exampleGetQuery.refetch();
           }}
+          className="flex flex-row items-center gap-x-2"
         >
           <RefreshCwIcon
             className={
@@ -33,8 +31,8 @@ const LandingPage = () => {
                 ? "animate-spin"
                 : ""
             }
-          />{" "}
-          refresh
+          />
+          {tMessages("actions.refresh_button")}
         </Button>
       </div>
     </Container>

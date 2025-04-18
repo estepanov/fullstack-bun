@@ -1,0 +1,9 @@
+{
+  "options": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "label": "Toggle Theme",
+  "current_mode": "Current Mode"
+}
