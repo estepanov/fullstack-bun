@@ -18,6 +18,9 @@ You can find all heavily used dependencies we rely on here, along with the major
 | [TanStack Query](https://tanstack.com/query/latest)           | 5             |
 | [Tailwindcss](https://tailwindcss.com)                        | 4             |
 | [Pino](https://getpino.io)                                    | 9             |
+| [i18next](https://www.i18next.com)                            | 25            |
+| [react-i18next](https://react.i18next.com)                    | 15            |
+| [biomejs](https://biomejs.dev)                                | 1             |
 
 
 ## API
@@ -28,4 +31,5 @@ You can find all heavily used dependencies we rely on here, along with the major
 | [Zod](https://zod.dev)                                        | 3             |
 | [Pino](https://getpino.io)                                    | 9             |
 | [UUID](https://github.com/uuidjs/uuid)                        | 11            |
+| [biomejs](https://biomejs.dev)                                | 1             |
 

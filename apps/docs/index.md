@@ -21,6 +21,8 @@ features:
     details: Type safe routing with framework mode ready to-go
   - title: TanStack Form
     details: Type safe form handling with TanStack Form
+  - title: Internationalization
+    details: Powered by i18next and react-i18next. Just add translations and you are ready to go.
   - title: TailwindCSS 4
     details: The latest Tailwind release
   - title: Shadcn
@@ -48,4 +50,30 @@ The project will lean on Bun as much as possible through out the development pro
 Currently a static frontend and a Hono API are included.
 
 Some DB work is coming but not yet implemented.
+
+## Roadmap
+
+- Unit tests
+- E2E playwright tests
+- Attach postgres db 
+- Attach redis cache
+- Frontend Auth 
+  - Attaching auth headers
+  - Auth hook
+    - get auth state
+    - get token/user info
+  - Protected routes
+  - Auth actions
+    - sign in
+    - sign up
+    - etc...
+- Backend Auth
+  - Middleware for protected routes
+  - Attach user id to request logger
+  - oauth support
+  - email otp support
+  - sms otp support ? who knows ?
+- Email sending API
+- Github actions
+  - Automated PR tests check
 

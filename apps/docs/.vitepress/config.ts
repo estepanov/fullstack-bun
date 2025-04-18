@@ -39,6 +39,10 @@ export default defineConfig({
               text: "Environment Variables",
               link: "/reference/environment-variables.html",
             },
+            {
+              text: "Internationalization",
+              link: "/reference/internationalization.html",
+            },
             { text: "Forms", link: "/reference/forms.html" },
             {
               text: "Routing",
@@ -47,7 +51,6 @@ export default defineConfig({
                 { text: "API Routing", link: "/reference/api-routing.html" },
               ],
             },
-            // { text: 'Runtime API Examples', link: '/api-examples' }
           ],
         },
       ],
