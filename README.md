@@ -22,7 +22,9 @@ A highly abbreviated version of the instructions is below:
 
 ### Commands
 
-To install a package, `cd` into the package directory and run `bun install`. _Do not install packages at the root level, with few exceptions. _
+To install a package, `cd` into the package directory and run `bun install`. 
+
+_Do not install packages at the root level, with few exceptions._
 
 To run the frontend and backend apps, `bun run dev` from the root level.
 

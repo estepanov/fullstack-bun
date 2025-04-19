@@ -1,0 +1,13 @@
+{
+  "form": {
+    "errors": {
+      "messageMinLengthError": "Die Nachricht muss mindestens 5 Zeichen lang sein",
+      "messageMaxLengthError": "Die Nachricht darf maximal 40 Zeichen lang sein"
+    },
+    "message_field_label": "Nachricht",
+    "submit_button": "Absenden"
+  },
+  "actions": {
+    "refresh_button": "Aktualisieren"
+  }
+}

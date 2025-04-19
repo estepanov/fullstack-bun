@@ -1,0 +1,9 @@
+{
+  "options": {
+    "light": "Hell",
+    "dark": "Dunkel",
+    "system": "System"
+  },
+  "label": "Design wechseln",
+  "current_mode": "Aktueller Modus"
+}

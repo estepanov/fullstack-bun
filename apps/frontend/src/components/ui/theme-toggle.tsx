@@ -46,15 +46,15 @@ export const ModeToggle = () => {
           <span className="sr-only">{t("label")}</span>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="start">
         {THEME_OPTIONS.map((themeOption) => {
           return (
             <DropdownMenuItem
               key={themeOption.value}
-              onClick={() => setTheme(themeOption.value)}
               className="cursor-pointer"
+              onClick={() => setTheme(themeOption.value)}
             >
-              <div className="flex justify-between w-full items-center">
+              <div className="flex justify-between items-center w-full">
                 {t(themeOption.translationKey)}
                 {themeOption.value === theme && (
                   <CheckIcon aria-label={t("current_mode")} className="w-4 h-4" />

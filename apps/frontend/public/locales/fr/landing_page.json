@@ -1,0 +1,5 @@
+{
+  "title": "Démo de Chat",
+  "description": "Ceci est un modèle pour une application Fullstack Bun avec React, TypeScript et Tailwind CSS.",
+  "get_started": "Modifiez <code>src/App.tsx</code> et enregistrez pour tester le HMR"
+}
