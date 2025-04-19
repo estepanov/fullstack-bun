@@ -76,6 +76,7 @@ export const MessageForm = () => {
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 onBlur={field.handleBlur}
+                className="rounded-xl"
               />
               <FieldInfo field={field} />
             </div>
