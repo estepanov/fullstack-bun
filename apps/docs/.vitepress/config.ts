@@ -51,6 +51,12 @@ export default defineConfig({
                 { text: "API Routing", link: "/reference/api-routing.html" },
               ],
             },
+            {
+              text: "Testing",
+              items: [
+                { text: "Frontend Testing", link: "/reference/frontend-testing.html" },
+              ],
+            },
           ],
         },
       ],

@@ -21,6 +21,16 @@ apps/frontend/public/locales/
 └── ...
 ```
 
+### LLM Prompt 
+
+Here is a promt you can use to create translation from a single input:
+
+```
+For the attached english files, can you add translations for german, spanish, and french. Please provide a subfke zip file each languages file in its own directory like (de, es, fr)
+```
+
+You can unzip the file and extract the new translations to `apps/frontend/public/locales`
+
 ## Usage in Components
 
 ### Basic Usage

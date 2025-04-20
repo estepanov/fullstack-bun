@@ -10,7 +10,8 @@ import { newExampleSchema } from "shared/interfaces/example";
 const FieldInfo = ({ field }: { field: AnyFieldApi }) => {
   return (
     <>
-      {field.state.meta.isBlurred && field.state.meta.errors.length ? (
+      {(field.state.meta.isBlurred || !field.form.store.state.isFormValid) &&
+      field.state.meta.errors.length ? (
         <div id={`${field.name}-error`} role="alert">
           <em>{field.state.meta.errors.map((err) => err?.message).join(", ")}</em>
         </div>

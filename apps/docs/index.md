@@ -25,6 +25,8 @@ features:
     details: Powered by i18next and react-i18next. Just add translations and you are ready to go.
   - title: TailwindCSS 4
     details: The latest Tailwind release
+  - title: React Testing Library
+    details: The RTL you love run via Bun's test runner
   - title: Shadcn
     details: Bring the components you love via the CLI
   - title: Hono API + Hono client setup
@@ -33,7 +35,7 @@ features:
     details: Use the same schema for API and frontend validation.
   - title: Logging
     details: Logging setup out of the box
-  - title: Tracability
+  - title: Traceability
     details: Every request/session has a UUID attached to the header/logger.
   - title: Biome
     details: Biome for linting and formatting. Easy to use, quick to run, and it "just works".
