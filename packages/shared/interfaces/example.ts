@@ -12,6 +12,7 @@ export const exampleSchema = ({
     message: z.string().min(5, messageMinLengthError).max(40, messageMaxLengthError),
     postedAt: z.string(),
   });
+
 export type Example = z.infer<ReturnType<typeof exampleSchema>>;
 
 export const newExampleSchema = ({
@@ -25,4 +26,5 @@ export const newExampleSchema = ({
     id: true,
     postedAt: true,
   });
+
 export type NewExample = z.infer<ReturnType<typeof newExampleSchema>>;

@@ -25,8 +25,8 @@ features:
     details: Powered by i18next and react-i18next. Just add translations and you are ready to go.
   - title: TailwindCSS 4
     details: The latest Tailwind release
-  - title: React Testing Library
-    details: The RTL you love run via Bun's test runner
+  - title: React Testing Library & MSW
+    details: The React Testing Library you love run via Bun's test runner. Oh and we have MSW for mocking APIs/intercepting requests.
   - title: Shadcn
     details: Bring the components you love via the CLI
   - title: Hono API + Hono client setup

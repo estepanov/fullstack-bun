@@ -1,11 +1,11 @@
 import { MessagesContainer } from "@/components/messages/messages-container";
 import { Button } from "@/components/ui/button";
 import { Container } from "@/components/ui/container";
-import { useGetExampleQuery } from "@/hooks/api/useGetExampleQuery";
+import { useGetExamplesQuery } from "@/hooks/api/useGetExamplesQuery";
 import { RefreshCwIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 const LandingPage = () => {
-  const exampleGetQuery = useGetExampleQuery();
+  const exampleGetQuery = useGetExamplesQuery();
   const { t } = useTranslation(["landing_page", "messages"]);
 
   return (

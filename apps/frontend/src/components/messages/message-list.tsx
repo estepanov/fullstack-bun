@@ -1,9 +1,9 @@
-import { useGetExampleQuery } from "@/hooks/api/useGetExampleQuery";
+import { useGetExamplesQuery } from "@/hooks/api/useGetExamplesQuery";
 import { useEffect } from "react";
 import { useMesageScrollContext } from "./message-context";
 
 export const MessageList = () => {
-  const exampleGetQuery = useGetExampleQuery();
+  const exampleGetQuery = useGetExamplesQuery();
   const { scrollContainerRef, scrollAnchorRef, scrollToBottom } =
     useMesageScrollContext();
 

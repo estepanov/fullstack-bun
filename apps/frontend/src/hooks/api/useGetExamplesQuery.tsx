@@ -7,7 +7,7 @@ interface ExampleResponse {
   list: Example[];
 }
 
-export const useGetExampleQuery = () => {
+export const useGetExamplesQuery = () => {
   return useQuery<ExampleResponse>({
     queryKey: [EXAMPLE_GET_QUERY_KEY],
     queryFn: async () => {
