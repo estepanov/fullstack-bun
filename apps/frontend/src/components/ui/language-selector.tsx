@@ -17,7 +17,7 @@ interface Language {
   flag: string;
 }
 
-const languages: Language[] = [
+const LANGUAGES: Language[] = [
   { code: "en", name: "English", flag: "🇺🇸" },
   { code: "de", name: "Deutsch", flag: "🇩🇪" },
   { code: "fr", name: "Français", flag: "🇫🇷" },
@@ -26,7 +26,9 @@ const languages: Language[] = [
 
 export function LanguageSelector() {
   const { i18n } = useTranslation();
-  const [currentLanguage, setCurrentLanguage] = useState<Language>(languages[0]);
+  const [currentLanguage, setCurrentLanguage] = useState<Language>(
+    LANGUAGES.find((language) => language.code === i18n.resolvedLanguage) || LANGUAGES[0],
+  );
 
   const changeLanguage = (language: Language) => {
     i18n.changeLanguage(language.code);
@@ -47,7 +49,7 @@ export function LanguageSelector() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start">
-        {languages.map((language) => {
+        {LANGUAGES.map((language) => {
           const isActive = currentLanguage.code === language.code;
           return (
             <DropdownMenuItem
