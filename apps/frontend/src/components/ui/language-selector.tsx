@@ -1,5 +1,6 @@
 "use client";
 
+import { LANGUAGES, type Language } from "@/app.config";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,19 +11,6 @@ import {
 import { Check, ChevronDown, Globe } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-
-interface Language {
-  code: string;
-  name: string;
-  flag: string;
-}
-
-const LANGUAGES: Language[] = [
-  { code: "en", name: "English", flag: "🇺🇸" },
-  { code: "de", name: "Deutsch", flag: "🇩🇪" },
-  { code: "fr", name: "Français", flag: "🇫🇷" },
-  { code: "es", name: "Español", flag: "🇪🇸" },
-];
 
 export function LanguageSelector() {
   const { i18n } = useTranslation();

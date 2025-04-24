@@ -6,14 +6,14 @@ import { RefreshCwIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 const LandingPage = () => {
   const exampleGetQuery = useGetExamplesQuery();
-  const { t } = useTranslation(["landing_page", "messages"]);
-
+  const { t: tLanding } = useTranslation("landing_page");
+  const { t: tMessages } = useTranslation("messages");
   return (
     <Container className="space-y-2 mt-4">
-      <h1 className="text-2xl font-bold">{t("landing_page:title")}</h1>
-      <p className="text-muted-foreground">{t("landing_page:description")}</p>
+      <h1 className="text-2xl font-bold">{tLanding("title")}</h1>
+      <p className="text-muted-foreground">{tLanding("description")}</p>
       {/* biome-ignore lint/security/noDangerouslySetInnerHtml: <explanation> */}
-      <p dangerouslySetInnerHTML={{ __html: t("landing_page:get_started") }} />
+      <p dangerouslySetInnerHTML={{ __html: tLanding("get_started") }} />
       <MessagesContainer />
       <div className="flex flex-row space-x-3">
         <Button
@@ -31,7 +31,7 @@ const LandingPage = () => {
                 : ""
             }
           />
-          {t("messages:actions.refresh_button")}
+          {tMessages("actions.refresh_button")}
         </Button>
       </div>
     </Container>

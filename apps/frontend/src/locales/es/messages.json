@@ -1,0 +1,13 @@
+{
+  "form": {
+    "errors": {
+      "messageMinLengthError": "El mensaje debe tener al menos 5 caracteres",
+      "messageMaxLengthError": "El mensaje debe tener menos de 40 caracteres"
+    },
+    "message_field_label": "Mensaje",
+    "submit_button": "Enviar"
+  },
+  "actions": {
+    "refresh_button": "Actualizar"
+  }
+}

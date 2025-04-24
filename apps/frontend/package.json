@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "bun run cp -r src/locales public/ && vite",
     "build": "tsc -b && vite build",
     "format": "bun run biome format --write ./src",
     "lint": "bun run biome lint ./src",
@@ -56,6 +56,7 @@
     "globals": "^15.15.0",
     "postcss": "^8.5.3",
     "typescript": "~5.7.2",
-    "vite": "^6.2.0"
+    "vite": "^6.2.0",
+    "vite-plugin-i18next-loader": "^3.1.2"
   }
 }

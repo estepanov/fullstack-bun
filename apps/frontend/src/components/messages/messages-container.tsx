@@ -5,7 +5,7 @@ import { MessageList } from "./message-list";
 export const MessagesContainer = () => {
   return (
     <MessageScrollProvider>
-      <Card className="p-2">
+      <Card className="p-2 shadow-none">
         <MessageList />
       </Card>
       <MessageForm />

@@ -1,0 +1,9 @@
+{
+  "app_name": "Fullstack Bun",
+  "app_name_home_link": "Accueil",
+  "mobile_nav_icon_label": "Basculer la navigation",
+  "nav_links": {
+    "second_page": "Deuxième page",
+    "sign_in": "Se connecter"
+  }
+}
