@@ -20,6 +20,16 @@ const initialState: ThemeProviderState = {
 
 const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
 
+// Check if we're in a browser environment
+const isBrowser = typeof window !== "undefined";
+
+// Type guard for browser environment
+function isBrowserEnv(): asserts this is Window & typeof globalThis {
+  if (!isBrowser) {
+    throw new Error("This code can only run in a browser environment");
+  }
+}
+
 export function ThemeProvider({
   children,
   defaultTheme = "system",
@@ -28,14 +38,15 @@ export function ThemeProvider({
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(
     () =>
-      (typeof window !== "undefined"
-        ? (localStorage.getItem(storageKey) as Theme)
-        : defaultTheme) || defaultTheme,
+      (isBrowser ? (localStorage.getItem(storageKey) as Theme) : defaultTheme) ||
+      defaultTheme,
   );
 
   useEffect(() => {
-    const root = window.document.documentElement;
+    if (!isBrowser) return;
 
+    isBrowserEnv();
+    const root = window.document.documentElement;
     root.classList.remove("light", "dark");
 
     if (theme === "system") {
@@ -53,7 +64,9 @@ export function ThemeProvider({
   const value = {
     theme,
     setTheme: (theme: Theme) => {
-      localStorage.setItem(storageKey, theme);
+      if (isBrowser) {
+        localStorage.setItem(storageKey, theme);
+      }
       setTheme(theme);
     },
   };

@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bun run cp -r src/locales public/ && vite",
-    "build": "tsc -b && vite build",
+    "dev": "bun run cp -r locales public/ && react-router dev",
+    "build": "tsc -b && react-router build",
     "format": "bun run biome format --write ./src",
     "lint": "bun run biome lint ./src",
     "preview": "vite preview",

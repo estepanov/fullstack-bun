@@ -1,5 +1,3 @@
-"use client";
-
 import { LANGUAGES, type Language } from "@/app.config";
 import { Button } from "@/components/ui/button";
 import {
