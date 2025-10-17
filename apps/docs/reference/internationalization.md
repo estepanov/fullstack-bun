@@ -4,16 +4,25 @@ layout: doc
 
 # Internationalization
 
-The frontend has [i18next](https://i18next.com) setup via [react-i18next](https://react.i18next.com). With translations asynchronously loaded.
+The frontend has [i18next](https://i18next.com) setup via [react-i18next](https://react.i18next.com) with translations asynchronously loaded.
+
+## Setup Information
+
+This project assumes `en` as the default language and bundles the `en` resources by default. 
+This simplifies initial setup while still serving other languages via HTTP requests.
+When adding a new namespace file, make sure to add it in `apps/frontend/src/i18n.ts`.
+
+Translations are copied from the `locales` folder to the public folder for development and at build time. 
+While this is not an ideal setup, it simplifies the initial configuration.
 
 ## Translation Files
 
-You can add or edit translations in `apps/frontend/public/locales/en`. The project follows a namespace-based approach for organizing translations.
+You can add or edit translations in `apps/frontend/locales/en`. The project follows a namespace-based approach for organizing translations.
 
 ### Structure
 
 ```
-apps/frontend/public/locales/
+apps/frontend/locales/
 ├── en/
 │   ├── common.json
 │   ├── forms.json
@@ -23,13 +32,13 @@ apps/frontend/public/locales/
 
 ### LLM Prompt 
 
-Here is a promt you can use to create translation from a single input:
+Here is a prompt you can use to create translations from a single input:
 
 ```
-For the attached english files, can you add translations for german, spanish, and french. Please provide a subfke zip file each languages file in its own directory like (de, es, fr)
+For the attached English files, can you add translations for German, Spanish, and French? Please provide a single zip file with each language's files in its own directory (de, es, fr).
 ```
 
-You can unzip the file and extract the new translations to `apps/frontend/public/locales`
+You can unzip the file and extract the new translations to `apps/frontend/public/locales`.
 
 ## Usage in Components
 
@@ -45,7 +54,7 @@ function MyComponent() {
 }
 ```
 
-### With Namespaces
+### With Multiple Namespaces
 
 ```tsx
 import { useTranslation } from 'react-i18next';
@@ -62,6 +71,26 @@ function MyComponent() {
 }
 ```
 
+### Advanced Features
+
+#### Interpolation
+
+```tsx
+// In your translation file: "welcome": "Hello, {{name}}!"
+const { t } = useTranslation('common');
+return <p>{t('welcome', { name: 'John' })}</p>;
+```
+
+#### Pluralization
+
+```tsx
+// In your translation file: 
+// "items": "{{count}} item",
+// "items_plural": "{{count}} items"
+const { t } = useTranslation('common');
+return <p>{t('items', { count: 5 })}</p>;
+```
+
 ## Adding New Languages
 
 1. Create a new directory in `apps/frontend/public/locales/` with the language code (e.g., `fr` for French)
@@ -75,3 +104,12 @@ function MyComponent() {
 - Group related translations in the same namespace
 - Use interpolation for dynamic values: `t('hello', { name: 'John' })`
 - Consider using pluralization for countable items: `t('items', { count: 5 })`
+- Keep translation keys flat when possible to avoid deep nesting
+- Use comments in your translation files to provide context for translators
+- Consider using a translation management system for larger projects
+
+## Troubleshooting
+
+- If translations aren't loading, check that the namespace is correctly registered in `i18n.ts` and try restarting server.
+- Verify that the translation files are correctly copied to the public folder
+- Use the debug mode (enabled in development) to see detailed i18next logs
