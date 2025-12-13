@@ -32,12 +32,12 @@ This project uses a modern, scalable i18n architecture that:
 
 ## Translation Files
 
-You can add or edit translations in `apps/frontend/public/locales/en`. The project follows a namespace-based approach for organizing translations.
+You can add or edit translations in `apps/frontend/locales/en`. The project follows a namespace-based approach for organizing translations.
 
 ### Structure
 
 ```
-apps/frontend/public/locales/
+apps/frontend/locales/
 ├── en/
 │   ├── common.json
 │   ├── forms.json
@@ -47,10 +47,10 @@ apps/frontend/public/locales/
 
 ### LLM Prompt 
 
-Here is a promt you can use to create translation from a single input:
+Here is a prompt you can use to create translations from a single input:
 
 ```
-For the attached english files, can you add translations for german, spanish, and french. Please provide a subfke zip file each languages file in its own directory like (de, es, fr)
+For the attached English files, can you add translations for German, Spanish, and French? Please provide a single zip file with each language's files in its own directory (de, es, fr).
 ```
 
 You can unzip the file and extract the new translations to `apps/frontend/locales`.
@@ -69,7 +69,7 @@ function MyComponent() {
 }
 ```
 
-### With Namespaces
+### With Multiple Namespaces
 
 ```tsx
 import { useTranslation } from 'react-i18next';
