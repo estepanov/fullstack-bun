@@ -15,7 +15,7 @@ export const MessageList = () => {
 
   return (
     <div className="space-y-3">
-      {exampleGetQuery?.data ? (
+      {exampleGetQuery?.data && exampleGetQuery.data.list?.length ? (
         <ul className="space-y-2 max-h-[200px] overflow-y-auto" ref={scrollContainerRef}>
           {exampleGetQuery.data.list.map((item) => (
             <li className="py-1 px-1.5" key={item.id}>

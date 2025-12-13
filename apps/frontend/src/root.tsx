@@ -1,6 +1,6 @@
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
-import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router";
+import { Links, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { APP_NAME } from "./app.config";
 import { RootAppProvider } from "./providers/RootAppProvider";
 
@@ -15,7 +15,6 @@ export const Layout = ({
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>{APP_NAME}</title>
-        <Meta />
         <Links />
       </head>
       <body className="flex flex-col min-h-dvh">

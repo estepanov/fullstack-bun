@@ -21,5 +21,6 @@ export type AppType = typeof routes;
 
 export default {
   port: process.env.PORT || 3001,
+  hostname: "0.0.0.0",
   fetch: app.fetch,
 };

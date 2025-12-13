@@ -26,7 +26,15 @@
     "build": "bun --filter=api run build:types && bun --filter=frontend run build",
     "format": "bun run --filter=* format",
     "lint": "bun run --filter=* lint",
-    "setup": "bun scripts/initial-setup.ts"
+    "setup": "bun scripts/initial-setup.ts",
+    "docker:dev": "docker-compose up",
+    "docker:dev:build": "docker-compose up --build",
+    "docker:dev:down": "docker-compose down",
+    "docker:dev:clean": "docker-compose down -v",
+    "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
+    "docker:prod:build": "docker-compose -f docker-compose.prod.yml up -d --build",
+    "docker:prod:down": "docker-compose -f docker-compose.prod.yml down",
+    "docker:prod:clean": "docker-compose -f docker-compose.prod.yml down -v"
   },
-  "trustedDependencies": ["@biomejs/biome", "esbuild"]
+  "trustedDependencies": ["@biomejs/biome", "esbuild", "msw"]
 }

@@ -12,7 +12,12 @@ export const useGetExamplesQuery = () => {
     queryKey: [EXAMPLE_GET_QUERY_KEY],
     queryFn: async () => {
       const res = await apiClient.example.$get({});
-      return await res.json();
+      const json = await res.json();
+      if (Array.isArray(json?.list)) {
+        return { list: json.list as Example[] };
+      }
+      return { list: [] };
     },
+    initialData: { list: [] },
   });
 };

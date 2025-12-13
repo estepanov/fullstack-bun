@@ -14,11 +14,18 @@ const DB: Example[] = [
 ];
 
 const exampleRouter = new Hono<LoggerMiddlewareEnv>()
+  // Return the example list at the base route so `/example` responds with `{ list: [...] }`
   .get("/", (c) =>
     c.json({
       list: DB.sort(
         (a, b) => new Date(a.postedAt).getTime() - new Date(b.postedAt).getTime(),
       ),
+    }),
+  )
+  // Optional: expose env info at `/example/env` for debugging
+  .get("/env", (c) =>
+    c.json({
+      message: process.env.CORS_ALLOWLISTED_ORIGINS,
     }),
   )
   .get("/special", (c) => c.json({ id: 1, name: "Special Example" }))

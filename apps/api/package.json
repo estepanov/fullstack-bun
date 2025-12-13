@@ -1,7 +1,7 @@
 {
   "name": "api",
   "scripts": {
-    "dev": "concurrently --names types,server 'bun run build:types -w' 'bun run --hot src/index.ts'",
+    "dev": "bun run src/index.ts",
     "start": "bun src/index.ts",
     "build:types": "tsc -p tsconfig.build.json",
     "format": "bun run biome format --write ./src",
