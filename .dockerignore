@@ -1,10 +1,10 @@
 node_modules
-bun.lockb
 .git
 .idea
 .vscode
 .env
 *.lock
+!bun.lockb
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
@@ -30,6 +30,7 @@ coverage
 .github
 .devcontainer
 /apps/frontend/dist
+/apps/frontend/build
 /apps/frontend/.next
 /apps/frontend/out
 /apps/frontend/.vite
@@ -38,3 +39,8 @@ coverage
 /packages/*/dist
 /packages/*/.turbo
 .DS_Store
+Dockerfile
+docker-compose*.yml
+.dockerignore
+*.md
+!README.md

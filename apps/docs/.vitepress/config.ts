@@ -20,6 +20,7 @@ export default defineConfig({
     nav: [
       { text: "Get Started", link: "/get-started" },
       { text: "Reference", link: "/reference" },
+      { text: "Docker", link: "/docker" },
     ],
 
     sidebar: {
@@ -57,6 +58,7 @@ export default defineConfig({
                 { text: "Frontend Testing", link: "/reference/frontend-testing.html" },
               ],
             },
+            { text: "Docker", link: "/docker.html" },
           ],
         },
       ],

@@ -3,7 +3,7 @@ services:
     image: postgres:15-alpine
     container_name: myapp-postgres
     ports:
-      - "${POSTGRES_PORT:-5432}:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
     volumes:
       - db-data:/var/lib/postgresql/data
     environment:
@@ -20,7 +20,10 @@ services:
     image: redis:7-alpine
     container_name: myapp-redis
     ports:
-      - "${REDIS_PORT:-6379}:6379"
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redispassword}
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-redispassword}
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -28,6 +31,79 @@ services:
       retries: 5
     # Redis can use an in-memory data store; no persistent volume needed for dev.
     # (For production, you might mount a volume for redis if persistence is needed)
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: dev
+    container_name: myapp-api
+    ports:
+      - "${API_PORT:-3001}:3001"
+    environment:
+      - PORT=3001
+      - NODE_ENV=development
+      - CORS_ALLOWLISTED_ORIGINS=http://localhost:5173,http://localhost:3000
+      - POSTGRES_USER=${POSTGRES_USER:-postgres}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_DB=${POSTGRES_DB:-mydatabase}
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD:-redispassword}
+    volumes:
+      - ./package.json:/app/package.json:ro
+      - ./apps/api/src:/app/apps/api/src
+      - ./apps/api/tsconfig.json:/app/apps/api/tsconfig.json:ro
+      - ./apps/api/tsconfig.build.json:/app/apps/api/tsconfig.build.json:ro
+      - ./packages:/app/packages
+      # Prevent overwriting node_modules
+      - /app/node_modules
+      - /app/apps/api/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "bun -e 'fetch(\"http://localhost:3001/example\").then(() => process.exit(0)).catch(() => process.exit(1))'"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: apps/frontend/Dockerfile
+      target: dev
+    container_name: myapp-frontend
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+      - "${FRONTEND_HMR_PORT:-5174}:5174"
+    environment:
+      - VITE_API_URL=http://localhost:3001
+      - NODE_ENV=development
+    volumes:
+      - ./package.json:/app/package.json:ro
+      - ./apps/frontend/src:/app/apps/frontend/src
+      - ./apps/frontend/public:/app/apps/frontend/public
+      - ./apps/frontend/locales:/app/apps/frontend/locales
+      - ./apps/frontend/vite.config.ts:/app/apps/frontend/vite.config.ts:ro
+      - ./apps/frontend/react-router.config.ts:/app/apps/frontend/react-router.config.ts:ro
+      - ./apps/frontend/tsconfig.json:/app/apps/frontend/tsconfig.json:ro
+      - ./apps/frontend/tsconfig.app.json:/app/apps/frontend/tsconfig.app.json:ro
+      - ./apps/frontend/tsconfig.node.json:/app/apps/frontend/tsconfig.node.json:ro
+      - ./packages:/app/packages
+      # Prevent overwriting node_modules
+      - /app/node_modules
+      - /app/apps/frontend/node_modules
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
 
 volumes:
   db-data:

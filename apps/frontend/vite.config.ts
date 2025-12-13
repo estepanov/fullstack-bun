@@ -11,12 +11,12 @@ export default defineConfig(({ command }) => {
       plugins: [tsconfigPaths(), reactRouter(), tailwindcss()],
       server: {
         host: "0.0.0.0",
-        port: 3000,
+        port: 5173,
         strictPort: false,
         hmr: {
           host: "0.0.0.0",
-          port: 3002,
-          clientPort: 3002,
+          port: 5174,
+          clientPort: 5174,
         },
         watch: {
           usePolling: true,

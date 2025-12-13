@@ -39,6 +39,8 @@ features:
     details: Every request/session has a UUID attached to the header/logger.
   - title: Biome
     details: Biome for linting and formatting. Easy to use, quick to run, and it "just works".
+  - title: Docker Support
+    details: Full containerization for development and production with Docker Compose. Hot reload, health checks, and multi-stage builds included.
 
 ---
 
