@@ -37,10 +37,6 @@ In local development `development` and for all static builds it should be `produ
 
 The `.env` for `/apps/frontend`
 
-### `DEV_PORT`
-
-The dev server port for your react app when runnin `dev` command. Defaults to `3000`.
-
 ### `VITE_API_BASE_URL`
 
 This is the base URL for your API. For example when running locally this could be `http://localhost:3001`

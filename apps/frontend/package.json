@@ -4,7 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "bun run cp -r locales public/ && react-router dev",
+    "dev": "vite",
+    "dev:router": "react-router dev",
     "build": "tsc -b && react-router build",
     "format": "bun run biome format --write ./src",
     "lint": "bun run biome lint ./src",
@@ -40,6 +41,7 @@
     "tailwind-merge": "^3.1.0",
     "tailwindcss": "^4.0.14",
     "uuid": "^11.1.0",
+    "vite-tsconfig-paths": "^5.1.4",
     "zod": "^3.24.2"
   },
   "devDependencies": {

@@ -52,7 +52,6 @@ NODE_ENV="development"
 Add the following to `apps/frontend/.env`:
 
 ```txt
-DEV_PORT="3000"
 VITE_API_BASE_URL="http://localhost:3001"
 NODE_ENV="development"
 ```

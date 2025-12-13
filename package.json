@@ -28,5 +28,5 @@
     "lint": "bun run --filter=* lint",
     "setup": "bun scripts/initial-setup.ts"
   },
-  "trustedDependencies": ["@biomejs/biome", "esbuild"]
+  "trustedDependencies": ["@biomejs/biome", "esbuild", "msw"]
 }
