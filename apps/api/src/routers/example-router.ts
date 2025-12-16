@@ -6,6 +6,7 @@ import {
   newExampleSchema,
 } from "shared/interfaces/example";
 import { v4 as uuidv4 } from "uuid";
+import { env } from "../env";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
 
 const DB: Example[] = [
@@ -25,7 +26,7 @@ const exampleRouter = new Hono<LoggerMiddlewareEnv>()
   // Optional: expose env info at `/example/env` for debugging
   .get("/env", (c) =>
     c.json({
-      message: process.env.CORS_ALLOWLISTED_ORIGINS,
+      corsAllowlistedOrigins: env.CORS_ALLOWLISTED_ORIGINS,
     }),
   )
   .get("/special", (c) => c.json({ id: 1, name: "Special Example" }))

@@ -1,12 +1,12 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import { env } from "../env";
 
 // Get database URL from environment
-const connectionString = process.env.DATABASE_URL || "";
+const connectionString = env.DATABASE_URL;
 
-// Only create connection if DATABASE_URL is set
-// This allows schema generation to work without a database connection
-const queryClient = connectionString ? postgres(connectionString) : ({} as never);
+// Create connection with validated DATABASE_URL
+const queryClient = postgres(connectionString);
 
 // Create Drizzle instance
 export const db = drizzle(queryClient);

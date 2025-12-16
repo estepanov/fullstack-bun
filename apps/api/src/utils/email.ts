@@ -1,20 +1,22 @@
 import * as nodemailer from "nodemailer";
+import { env } from "../env";
 
 // Create reusable transporter
 const createTransporter = () => {
-  const smtpHost = process.env.SMTP_HOST;
-  const smtpPort = process.env.SMTP_PORT;
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPassword = process.env.SMTP_PASSWORD;
+  const smtpHost = env.SMTP_HOST;
+  const smtpPort = env.SMTP_PORT;
+  const smtpUser = env.SMTP_USER;
+  const smtpPassword = env.SMTP_PASSWORD;
+  const smtpFrom = env.SMTP_FROM;
 
-  if (!smtpHost || !smtpPort || !smtpUser || !smtpPassword) {
+  if (!smtpHost || !smtpPort || !smtpUser || !smtpPassword || !smtpFrom) {
     console.warn("SMTP configuration is incomplete. Email verification will not work.");
     return null;
   }
 
   return nodemailer.createTransport({
     host: smtpHost,
-    port: Number.parseInt(smtpPort, 10),
+    port: smtpPort,
     secure: false, // Use TLS
     auth: {
       user: smtpUser,
@@ -41,7 +43,7 @@ export async function sendVerificationEmail(
     return;
   }
 
-  const smtpFrom = process.env.SMTP_FROM || "noreply@yourapp.com";
+  const smtpFrom = env.SMTP_FROM;
 
   try {
     await transporter.sendMail({
@@ -78,7 +80,7 @@ export async function sendVerificationEmail(
   } catch (error) {
     console.error("Failed to send verification email:", error);
     // In development, log the URL as fallback
-    if (process.env.NODE_ENV === "development") {
+    if (env.NODE_ENV === "development") {
       console.log(`\n📧 Email Verification URL for ${email}:\n${verificationUrl}\n`);
     }
     throw error;

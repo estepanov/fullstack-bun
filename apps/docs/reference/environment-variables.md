@@ -5,6 +5,7 @@ layout: doc
 # Environment Variables
 
 This page details every enivornment variable across the stack.
+When adding a new API variable, define it in `apps/api/src/env.ts` (with validation), update the appropriate `.env.example`, and document it here.
 
 ## API
 
@@ -13,6 +14,7 @@ The `.env` for `/apps/api`
 ### `CORS_ALLOWLISTED_ORIGINS`
 
 This is a comma seperated list of domains allowed to make CORS requests.
+Values are cleaned (trimmed and stripped of quotes) and returned as an array for the API, so keep them comma-separated.
 For example, the following allow lists only `http://localhost:3000`:
 
 ```txt
@@ -108,7 +110,7 @@ SMTP_PASSWORD="your-app-password"
 **Required for email verification.** Email address to send from.
 
 ```txt
-SMTP_FROM="noreply@yourapp.com"
+SMTP_FROM="Fullstack Bun <noreply@example.com>"
 ```
 
 ### `GITHUB_CLIENT_ID`
