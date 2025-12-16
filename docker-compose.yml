@@ -38,29 +38,23 @@ services:
       dockerfile: apps/api/Dockerfile
       target: dev
     container_name: myapp-api
+    env_file:
+      - .env
+      - apps/api/.env
     ports:
       - "${API_PORT:-3001}:3001"
     environment:
+      # Docker-specific overrides (these must be set here for container networking)
       - PORT=3001
-      - NODE_ENV=development
-      - CORS_ALLOWLISTED_ORIGINS=http://localhost:5173,http://localhost:3000
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
-      - POSTGRES_DB=${POSTGRES_DB:-mydatabase}
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD:-redispassword}
     volumes:
       - ./package.json:/app/package.json:ro
       - ./apps/api/src:/app/apps/api/src
       - ./apps/api/tsconfig.json:/app/apps/api/tsconfig.json:ro
       - ./apps/api/tsconfig.build.json:/app/apps/api/tsconfig.build.json:ro
       - ./packages:/app/packages
-      # Prevent overwriting node_modules
-      - /app/node_modules
-      - /app/apps/api/node_modules
+      # Use named volumes to persist node_modules from build
+      - api_node_modules:/app/node_modules
+      - api_app_node_modules:/app/apps/api/node_modules
     depends_on:
       postgres:
         condition: service_healthy
@@ -80,11 +74,14 @@ services:
       dockerfile: apps/frontend/Dockerfile
       target: dev
     container_name: myapp-frontend
+    env_file:
+      - .env
+      - apps/frontend/.env
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
       - "${FRONTEND_HMR_PORT:-5174}:5174"
     environment:
-      - VITE_API_URL=http://localhost:3001
+      - VITE_API_BASE_URL=http://localhost:3001
       - NODE_ENV=development
     volumes:
       - ./package.json:/app/package.json:ro
@@ -97,9 +94,8 @@ services:
       - ./apps/frontend/tsconfig.app.json:/app/apps/frontend/tsconfig.app.json:ro
       - ./apps/frontend/tsconfig.node.json:/app/apps/frontend/tsconfig.node.json:ro
       - ./packages:/app/packages
-      # Prevent overwriting node_modules
-      - /app/node_modules
-      - /app/apps/frontend/node_modules
+      # Note: node_modules are installed in the container, not mounted as volumes
+      # This prevents issues with missing dependencies when volumes override the installed packages
     depends_on:
       api:
         condition: service_healthy
@@ -107,3 +103,5 @@ services:
 
 volumes:
   db-data:
+  api_node_modules:
+  api_app_node_modules:

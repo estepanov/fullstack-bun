@@ -5,6 +5,7 @@
     "strict": true,
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
+    "esModuleInterop": true,
     "composite": true
   }
 }

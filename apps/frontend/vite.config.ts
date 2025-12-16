@@ -36,6 +36,9 @@ export default defineConfig(({ command }) => {
       optimizeDeps: {
         include: ["react", "react-dom"],
       },
+      resolve: {
+        conditions: ["browser", "import"],
+      },
     };
   }
 
@@ -48,6 +51,9 @@ export default defineConfig(({ command }) => {
         localesDir: "locales",
       }),
     ],
+    resolve: {
+      conditions: ["browser", "import"],
+    },
     build: {
       minify: true,
       cssMinify: true,
