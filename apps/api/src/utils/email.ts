@@ -1,5 +1,5 @@
 import * as nodemailer from "nodemailer";
-import { env } from "../env";
+import { env, isDevelopmentEnv } from "../env";
 
 // Create reusable transporter
 const createTransporter = () => {
@@ -80,7 +80,7 @@ export async function sendVerificationEmail(
   } catch (error) {
     console.error("Failed to send verification email:", error);
     // In development, log the URL as fallback
-    if (env.NODE_ENV === "development") {
+    if (isDevelopmentEnv()) {
       console.log(`\n📧 Email Verification URL for ${email}:\n${verificationUrl}\n`);
     }
     throw error;

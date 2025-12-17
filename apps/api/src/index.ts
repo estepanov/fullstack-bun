@@ -1,22 +1,25 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { env } from "./env";
+import { env, isDevelopmentEnv } from "./env";
 import { auth } from "./lib/auth";
 import { loggerMiddleware, requestLoggerMiddleware } from "./middlewares/logger";
 import { exampleRouter } from "./routers/example-router";
 
 const app = new Hono();
 
-const routes = app
-  .use(loggerMiddleware())
-  .use(
-    "*",
-    cors({
-      origin: env.CORS_ALLOWLISTED_ORIGINS,
-      credentials: true,
-    }),
-  )
-  .route("/example", exampleRouter)
+const baseApp = app.use(loggerMiddleware()).use(
+  "*",
+  cors({
+    origin: env.CORS_ALLOWLISTED_ORIGINS,
+    credentials: true,
+  }),
+);
+
+const appWithRoutes = isDevelopmentEnv()
+  ? baseApp.route("example", exampleRouter)
+  : baseApp;
+
+const routes = appWithRoutes
   .on(["POST", "GET", "OPTIONS"], "/auth/*", async (c) => {
     const response = await auth.handler(c.req.raw);
     const { method, path } = c.req;
