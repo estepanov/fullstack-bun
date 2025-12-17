@@ -44,7 +44,7 @@ The setup commmand currently just copies `.env.example` to `.env` in the front a
 Add the following to `apps/api/.env`:
 
 ```txt
-CORS_ALLOWLISTED_ORIGINS="http://localhost:3000"
+CORS_ALLOWLISTED_ORIGINS="http://localhost:5173"
 PORT="3001"
 NODE_ENV="development"
 ```
@@ -81,7 +81,25 @@ cd ../..
 
 The `generate` command creates migration files based on your schema, and `migrate` applies them to your database. For more information about the database setup, visit the [database reference page](/reference/database.md).
 
-7. Start the app
+7. Configure authentication (optional)
+
+For email verification to work, you'll need to configure SMTP settings in `apps/api/.env`. If you skip this step, verification URLs will be logged to the console during development.
+
+See the [authentication reference](/reference/authentication.html#email-verification) for SMTP setup details.
+
+To generate a secure auth secret:
+
+```sh
+openssl rand -base64 32
+```
+
+Add it to `apps/api/.env`:
+
+```txt
+BETTER_AUTH_SECRET="your-generated-secret-here"
+```
+
+8. Start the app
 
 To launch BOTH the frontend and backend you can run the dev command in the root of the project
 
@@ -89,4 +107,9 @@ To launch BOTH the frontend and backend you can run the dev command in the root 
 bun run dev
 ```
 
-8. Tada! Open [http://localhost:3000](http://localhost:3000) to see the app!
+9. Tada! Open [http://localhost:5173](http://localhost:5173) to see the app!
+
+You can now:
+- Register a new account at `/auth/register`
+- Login at `/auth/login`
+- Access the protected dashboard at `/dashboard` (requires authentication)
