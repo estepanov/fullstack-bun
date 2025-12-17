@@ -44,6 +44,9 @@ The setup commmand currently just copies `.env.example` to `.env` in the front a
 Add the following to `apps/api/.env`:
 
 ```txt
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/mydatabase"
+BETTER_AUTH_SECRET="your-generated-secret-here"
+FE_BASE_URL="http://localhost:5173"
 CORS_ALLOWLISTED_ORIGINS="http://localhost:5173"
 PORT="3001"
 NODE_ENV="development"
@@ -56,17 +59,24 @@ VITE_API_BASE_URL="http://localhost:3001"
 NODE_ENV="development"
 ```
 
+**Important:** Generate a secure `BETTER_AUTH_SECRET` using:
+```sh
+openssl rand -base64 32
+```
+
 To learn more about specific variables visit the [environment variables reference page](/reference/environment-variables.md).
 
 5. Start the database
 
-The project uses PostgreSQL, which runs via Docker Compose. Start the database service:
+The project uses PostgreSQL and Redis, which run via Docker Compose. Start just the database services:
 
 ```sh
-bun run docker:dev
+docker-compose up postgres redis -d
 ```
 
-This will start both PostgreSQL and Redis in Docker containers.
+The `-d` flag runs them in detached mode (background). This will start PostgreSQL on port 5432 and Redis on port 6379.
+
+**Note:** If you prefer to run everything (frontend, backend, and databases) in Docker, see the [Docker guide](/docker.html) instead.
 
 6. Run database migrations
 
@@ -81,23 +91,11 @@ cd ../..
 
 The `generate` command creates migration files based on your schema, and `migrate` applies them to your database. For more information about the database setup, visit the [database reference page](/reference/database.md).
 
-7. Configure authentication (optional)
+7. Configure email verification (optional)
 
-For email verification to work, you'll need to configure SMTP settings in `apps/api/.env`. If you skip this step, verification URLs will be logged to the console during development.
+For email verification to work, you'll need to configure SMTP settings in `apps/api/.env`. If you skip this step, verification URLs will be logged to the console during development, which is fine for testing.
 
 See the [authentication reference](/reference/authentication.html#email-verification) for SMTP setup details.
-
-To generate a secure auth secret:
-
-```sh
-openssl rand -base64 32
-```
-
-Add it to `apps/api/.env`:
-
-```txt
-BETTER_AUTH_SECRET="your-generated-secret-here"
-```
 
 8. Start the app
 
@@ -107,9 +105,13 @@ To launch BOTH the frontend and backend you can run the dev command in the root 
 bun run dev
 ```
 
-9. Tada! Open [http://localhost:5173](http://localhost:5173) to see the app!
+9. Tada! The app should now be running!
+
+Once both services start successfully:
+- **Frontend**: [http://localhost:5173](http://localhost:5173)
+- **API**: [http://localhost:3001](http://localhost:3001)
 
 You can now:
-- Register a new account at `/auth/register`
-- Login at `/auth/login`
-- Access the protected dashboard at `/dashboard` (requires authentication)
+- Register a new account at [http://localhost:5173/auth/register](http://localhost:5173/auth/register)
+- Login at [http://localhost:5173/auth/login](http://localhost:5173/auth/login)
+- Access the protected dashboard at [http://localhost:5173/dashboard](http://localhost:5173/dashboard) (requires authentication)
