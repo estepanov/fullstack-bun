@@ -58,7 +58,30 @@ NODE_ENV="development"
 
 To learn more about specific variables visit the [environment variables reference page](/reference/environment-variables.md).
 
-5. Start the app
+5. Start the database
+
+The project uses PostgreSQL, which runs via Docker Compose. Start the database service:
+
+```sh
+bun run docker:dev
+```
+
+This will start both PostgreSQL and Redis in Docker containers.
+
+6. Run database migrations
+
+After starting the database, you need to generate and apply the database migrations:
+
+```sh
+cd apps/api
+bunx drizzle-kit generate
+bunx drizzle-kit migrate
+cd ../..
+```
+
+The `generate` command creates migration files based on your schema, and `migrate` applies them to your database. For more information about the database setup, visit the [database reference page](/reference/database.md).
+
+7. Start the app
 
 To launch BOTH the frontend and backend you can run the dev command in the root of the project
 
@@ -66,4 +89,4 @@ To launch BOTH the frontend and backend you can run the dev command in the root 
 bun run dev
 ```
 
-6. Tada! Open [http://localhost:3000](http://localhost:3000) to see the app!
+8. Tada! Open [http://localhost:3000](http://localhost:3000) to see the app!

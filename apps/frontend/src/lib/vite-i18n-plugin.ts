@@ -17,7 +17,7 @@ export function i18nPlugin(options: I18nPluginOptions = {}): Plugin {
     name: "vite-i18n-dev-server",
     configureServer(server) {
       // Use a more specific middleware registration with explicit path matching
-      server.middlewares.use(publicPath, (req, res, next) => {
+      server.middlewares.use(publicPath, (req, res, _next) => {
         // Handle CORS for i18n requests
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Methods", "GET, OPTIONS");

@@ -1,12 +1,13 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import { StrictMode } from "react";
+import { hydrateRoot } from "react-dom/client";
 import { HydratedRouter } from "react-router/dom";
 import "./index.css";
+// Import i18n to initialize it (side effect), Suspense handles loading states
 import "./i18n";
 
-ReactDOM.hydrateRoot(
+hydrateRoot(
   document,
-  <React.StrictMode>
+  <StrictMode>
     <HydratedRouter />
-  </React.StrictMode>,
+  </StrictMode>,
 );

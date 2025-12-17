@@ -13,12 +13,12 @@ export const loggerMiddleware = () =>
     const requestId = c.req.header("x-request-id");
     const sessionId = c.req.header("x-session-id");
     const isOptionsReq = c.req.method === "OPTIONS";
+
+    // OPTIONS requests (CORS preflight) don't need these headers
     if (!isOptionsReq && (!requestId || !sessionId)) {
       throw new HTTPException(400, { message: "Missing required headers" });
     }
     const requestLogger = appLogger.child({
-      path: c.req.path,
-      method: c.req.method,
       requestId,
       sessionId,
     });
@@ -27,4 +27,12 @@ export const loggerMiddleware = () =>
     requestLogger.debug({
       response: c.res.status,
     });
+  });
+
+export const requestLoggerMiddleware = () =>
+  createMiddleware<LoggerMiddlewareEnv>(async (c, next) => {
+    const { method, path } = c.req;
+    const { status } = c.res;
+    c.get("logger").info(`${status} - ${method} - ${path}`);
+    return next();
   });

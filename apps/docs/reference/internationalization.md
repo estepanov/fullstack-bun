@@ -26,7 +26,6 @@ This project uses a modern, scalable i18n architecture that:
 
 ### Production
 - Translations bundled as static assets during build
-- Optional CDN support via `VITE_I18N_CDN_URL` environment variable
 - Optimized caching headers and lazy loading
 - Preloading of critical namespaces for better UX
 
@@ -39,10 +38,20 @@ You can add or edit translations in `apps/frontend/locales/en`. The project foll
 ```
 apps/frontend/locales/
 ├── en/
-│   ├── common.json
-│   ├── forms.json
-│   └── pages.json
-└── ...
+│   ├── auth.json             # Authentication pages (login, register, etc.)
+│   ├── common.json           # Common/shared translations
+│   ├── header.json           # Header component
+│   ├── footer.json           # Footer component
+│   ├── landing_page.json     # Landing page
+│   ├── messages.json         # Message form and actions
+│   ├── second_page.json      # Second page
+│   └── color_mode_toggle.json # Theme toggle
+├── de/                       # German translations
+│   └── ...
+├── es/                       # Spanish translations
+│   └── ...
+└── fr/                       # French translations
+    └── ...
 ```
 
 ### LLM Prompt 
@@ -55,6 +64,19 @@ For the attached English files, can you add translations for German, Spanish, an
 
 You can unzip the file and extract the new translations to `apps/frontend/locales`.
 
+## Available Namespaces
+
+The project currently includes the following translation namespaces:
+
+- **`auth`** - Authentication pages (login, register, verify email, dashboard)
+- **`common`** - Common/shared translations
+- **`header`** - Header component translations
+- **`footer`** - Footer component translations
+- **`landing_page`** - Landing page content
+- **`messages`** - Message form and actions
+- **`second_page`** - Second page content
+- **`color_mode_toggle`** - Theme toggle component
+
 ## Usage in Components
 
 ### Basic Usage
@@ -64,8 +86,26 @@ import { useTranslation } from 'react-i18next';
 
 function MyComponent() {
   const { t } = useTranslation('common');
-  
+
   return <h1>{t('welcome')}</h1>;
+}
+```
+
+### Authentication Pages Example
+
+```tsx
+import { useTranslation } from 'react-i18next';
+
+function LoginPage() {
+  const { t } = useTranslation('auth');
+
+  return (
+    <div>
+      <h1>{t('login.title')}</h1>
+      <p>{t('login.subtitle')}</p>
+      <button>{t('login.submit_button')}</button>
+    </div>
+  );
 }
 ```
 
@@ -106,28 +146,6 @@ const { t } = useTranslation('common');
 return <p>{t('items', { count: 5 })}</p>;
 ```
 
-## CDN Configuration
-
-For production deployments, you can serve translations from a CDN for better performance and global distribution.
-
-### Setup
-
-1. Add your CDN URL to the environment variables:
-   ```bash
-   VITE_I18N_CDN_URL="https://cdn.example.com"
-   ```
-
-2. Deploy your translation files to the CDN at the path: `{CDN_URL}/locales/{language}/{namespace}.json`
-
-3. The application will automatically use the CDN URL in production when configured
-
-### Benefits
-
-- **Global Distribution**: Translations served from edge locations
-- **Reduced Server Load**: Static assets offloaded from main application server
-- **Better Caching**: CDN-level caching with configurable TTL
-- **Scalability**: Independent scaling of translation delivery
-
 ## Adding New Languages
 
 1. Create a new directory in `apps/frontend/locales/` with the language code (e.g., `fr` for French)
@@ -137,15 +155,60 @@ For production deployments, you can serve translations from a CDN for better per
 
 Note: New languages are automatically detected and served - no build configuration needed.
 
+## Namespace Organization Best Practices
+
+### When to Create a New Namespace
+
+Create a new namespace when:
+- You have a distinct feature or page with many translations (e.g., `auth` for all authentication pages)
+- Translations are logically grouped and used together (e.g., `header` for header-specific content)
+- The namespace will be loaded on-demand for better performance
+
+### Namespace Naming Conventions
+
+- Use lowercase with underscores for multi-word namespaces: `landing_page`, `color_mode_toggle`
+- Name namespaces after the feature/component they serve: `auth`, `header`, `footer`
+- Keep namespace names concise but descriptive
+
+### Example: Auth Namespace Structure
+
+The `auth.json` namespace demonstrates good organization:
+
+```json
+{
+  "login": {
+    "title": "Sign In",
+    "subtitle": "Welcome back!",
+    "email_label": "Email",
+    "submit_button": "Sign In"
+  },
+  "register": {
+    "title": "Create Account",
+    "email_label": "Email",
+    "submit_button": "Create Account"
+  },
+  "common": {
+    "loading": "Loading..."
+  }
+}
+```
+
+**Benefits:**
+- Related translations grouped by page/feature
+- Shared translations in `common` section
+- Clear, hierarchical structure
+- Easy to maintain and translate
+
 ## Best Practices
 
 - Use translation keys that are descriptive and follow a consistent naming convention
-- Group related translations in the same namespace
+- Group related translations in the same namespace (e.g., all auth pages in `auth.json`)
 - Use interpolation for dynamic values: `t('hello', { name: 'John' })`
 - Consider using pluralization for countable items: `t('items', { count: 5 })`
-- Keep translation keys flat when possible to avoid deep nesting
+- Keep translation keys flat when possible to avoid deep nesting (max 2-3 levels)
 - Use comments in your translation files to provide context for translators
-- Consider using a translation management system for larger projects
+- Organize by feature/component rather than by type (e.g., `auth.json` not `buttons.json`)
+- Share common translations within a namespace using a `common` section
 
 ## Troubleshooting
 
@@ -157,7 +220,6 @@ Note: New languages are automatically detected and served - no build configurati
 
 ### Production Issues
 
-- **CDN translations failing**: Verify `VITE_I18N_CDN_URL` is set correctly and files are deployed to CDN
 - **Slow loading**: Check network tab - translations should be cached after first load
 - **Missing translations**: Ensure build process includes all language files via the `copyTranslationsPlugin`
 
@@ -165,7 +227,11 @@ Note: New languages are automatically detected and served - no build configurati
 
 - **Enable debug mode**: Set `NODE_ENV=development` to see detailed i18next logs
 - **Check browser network**: Look for failed HTTP requests to translation endpoints
-- **Namespace registration**: Ensure new namespaces are added to the `ns` array in `i18n.ts`
+- **Namespace auto-discovery**: Namespaces are automatically discovered - no manual registration needed
+- **Missing translations**: If translations appear as keys (e.g., "auth.login.title"), check that:
+  1. The namespace file exists in `locales/{lang}/{namespace}.json`
+  2. The translation key path is correct
+  3. The namespace is being loaded via `useTranslation('{namespace}')`
 
 ### Performance Optimization
 

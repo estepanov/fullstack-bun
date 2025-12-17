@@ -4,11 +4,7 @@ import { Links, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { APP_NAME } from "./app.config";
 import { RootAppProvider } from "./providers/RootAppProvider";
 
-export const Layout = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
+export default function Root() {
   return (
     <html lang="en" className="min-h-dvh">
       <head>
@@ -20,7 +16,9 @@ export const Layout = ({
       <body className="flex flex-col min-h-dvh">
         <RootAppProvider>
           <Header />
-          <main className="flex-1">{children}</main>
+          <main className="flex-1">
+            <Outlet />
+          </main>
           <Footer />
         </RootAppProvider>
         <ScrollRestoration />
@@ -28,8 +26,4 @@ export const Layout = ({
       </body>
     </html>
   );
-};
-
-export default function Root() {
-  return <Outlet />;
 }

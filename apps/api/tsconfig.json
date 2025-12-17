@@ -5,6 +5,9 @@
     "strict": true,
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "composite": true
+    "esModuleInterop": true,
+    "composite": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler"
   }
 }

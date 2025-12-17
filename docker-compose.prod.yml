@@ -40,20 +40,17 @@ services:
       dockerfile: apps/api/Dockerfile
       target: production
     container_name: myapp-api-prod
+    env_file:
+      - .env
+      - apps/api/.env
     ports:
       - "${API_PORT:-3001}:3001"
     environment:
+      # Docker-specific overrides (container networking)
       - PORT=3001
       - NODE_ENV=production
-      - CORS_ALLOWLISTED_ORIGINS=${CORS_ALLOWLISTED_ORIGINS}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_HOST=postgres
-      - POSTGRES_PORT=5432
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - DATABASE_URL=${DATABASE_URL_INTERNAL:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@${POSTGRES_HOST:-postgres}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-mydatabase}}
+      # Note: All other env vars (SMTP_*, GITHUB_*, credentials, etc.) loaded from env_file
     depends_on:
       postgres:
         condition: service_healthy
@@ -73,8 +70,11 @@ services:
       dockerfile: apps/frontend/Dockerfile
       target: production
     container_name: myapp-frontend-prod
+    env_file:
+      - .env
+      - apps/frontend/.env
     ports:
-      - "${FRONTEND_PORT:-3000}:3000"
+      - "${FRONTEND_PORT:-5173}:5173"
     environment:
       - NODE_ENV=production
       - VITE_API_URL=${VITE_API_URL:-http://localhost:3001}

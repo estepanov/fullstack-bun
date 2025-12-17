@@ -1,4 +1,5 @@
 import pino from "pino";
+import { isDevelopmentEnv } from "../env";
 
 export const loggerFactory = ({
   prettyLogs,
@@ -26,7 +27,7 @@ export const loggerFactory = ({
   });
 
 export const appLogger = loggerFactory({
-  prettyLogs: process.env.NODE_ENV === "development",
+  prettyLogs: isDevelopmentEnv(),
 });
 
 export type AppLogger = typeof appLogger;
