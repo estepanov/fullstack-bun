@@ -86,6 +86,6 @@ COPY --from=build --chown=bunapp:bunapp /app/apps/frontend/build ./build
 # Drop privileges for runtime
 USER bunapp
 # Expose production port
-EXPOSE 3000
+EXPOSE 5173
 # Serve the built app
 CMD ["bun", "run", "--bun", "build/server/index.js"]

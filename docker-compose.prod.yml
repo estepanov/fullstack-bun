@@ -49,6 +49,7 @@ services:
       # Docker-specific overrides (container networking)
       - PORT=3001
       - NODE_ENV=production
+      - DATABASE_URL=${DATABASE_URL_INTERNAL:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@${POSTGRES_HOST:-postgres}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-mydatabase}}
       # Note: All other env vars (SMTP_*, GITHUB_*, credentials, etc.) loaded from env_file
     depends_on:
       postgres:
@@ -73,7 +74,7 @@ services:
       - .env
       - apps/frontend/.env
     ports:
-      - "${FRONTEND_PORT:-3000}:3000"
+      - "${FRONTEND_PORT:-5173}:5173"
     environment:
       - NODE_ENV=production
       - VITE_API_URL=${VITE_API_URL:-http://localhost:3001}

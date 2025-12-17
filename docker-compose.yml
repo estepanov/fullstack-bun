@@ -46,6 +46,7 @@ services:
     environment:
       # Docker-specific overrides (these must be set here for container networking)
       - PORT=3001
+      - DATABASE_URL=${DATABASE_URL_INTERNAL:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@${POSTGRES_HOST:-postgres}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-mydatabase}}
     volumes:
       - ./package.json:/app/package.json:ro
       - ./apps/api/src:/app/apps/api/src

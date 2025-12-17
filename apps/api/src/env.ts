@@ -4,9 +4,7 @@ import { z } from "zod";
 export const env = createEnv({
   server: {
     // Server Configuration
-    NODE_ENV: z
-      .enum(["development", "production", "test"])
-      .default("development"),
+    NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
     PORT: z.coerce.number().default(3001),
     CORS_ALLOWLISTED_ORIGINS: z
       .string()
@@ -19,11 +17,11 @@ export const env = createEnv({
       ),
 
     // Database
-    DATABASE_URL: z.string().url(),
+    DATABASE_URL: z.string().min(4),
 
     // Better Auth
     BETTER_AUTH_SECRET: z.string().min(32),
-    FE_BASE_URL: z.string().url(),
+    FE_BASE_URL: z.string().min(4),
 
     // Email (SMTP) - Optional
     SMTP_HOST: z.string().optional(),
