@@ -46,9 +46,11 @@ COPY --chown=bunapp:bunapp apps/frontend/bunfig.toml ./apps/frontend/
 COPY --chown=bunapp:bunapp apps/frontend ./apps/frontend
 # Install dependencies (this ensures they're available even if volumes override node_modules)
 RUN bun install
+# Clear Vite cache to ensure fresh dependency pre-bundling
+RUN rm -rf /app/apps/frontend/node_modules/.vite /app/node_modules/.vite
 # Expose Vite dev server port
 EXPOSE 5173
-CMD ["bun", "--filter=frontend", "dev", "--host", "0.0.0.0"]
+CMD ["bun", "--filter=frontend", "dev"]
 
 # Build stage
 FROM base AS build

@@ -9,7 +9,16 @@ export default defineConfig(({ command }) => {
   if (command === "serve") {
     return {
       plugins: [tsconfigPaths(), reactRouter(), tailwindcss()],
+      appType: "custom",
       server: {
+        warmup: {
+          clientFiles: [
+            "src/root.tsx",
+            "src/routes.ts",
+            "src/pages/**/*.tsx",
+            "src/entry.client.tsx",
+          ],
+        },
         host: "0.0.0.0",
         port: 5173,
         strictPort: false,
@@ -35,9 +44,17 @@ export default defineConfig(({ command }) => {
       },
       optimizeDeps: {
         include: ["react", "react-dom"],
+        esbuildOptions: {
+          mainFields: ["module", "main"],
+          conditions: ["import", "module"],
+        },
+      },
+      ssr: {
+        noExternal: ["react-router"],
       },
       resolve: {
         conditions: ["browser", "import"],
+        dedupe: ["react", "react-dom", "react-router"],
       },
     };
   }
@@ -53,6 +70,7 @@ export default defineConfig(({ command }) => {
     ],
     resolve: {
       conditions: ["browser", "import"],
+      dedupe: ["react", "react-dom", "react-router"],
     },
     build: {
       minify: true,

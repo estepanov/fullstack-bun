@@ -7,7 +7,7 @@ import { LANGUAGES } from "./app.config";
 const i18nInstance = i18n;
 
 // Environment-based configuration
-const isDevelopment = import.meta.env.DEV;
+const isDevelopment: boolean = Boolean(import.meta.env.DEV);
 
 // Load translations from imports - this ensures they're bundled and available immediately
 // This prevents hydration mismatches by making translations available synchronously
@@ -23,7 +23,6 @@ const initPromise = i18nInstance
   .use(initReactI18next)
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
-    initAsync: true,
     supportedLngs: LANGUAGES.map((lang) => lang.code),
     defaultNS: "common",
     ns: [

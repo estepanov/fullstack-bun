@@ -4,8 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "dev:router": "react-router dev",
+    "dev": "react-router dev --force",
     "build": "tsc -b && react-router build",
     "format": "bun run biome format --write ./src",
     "lint": "bun run biome lint ./src",
