@@ -114,7 +114,7 @@ docker-compose -f docker-compose.prod.yml down
 
 This will:
 - Build optimized production images
-- Run frontend on http://localhost:3000
+- Run frontend on http://localhost:5173
 - Run API on http://localhost:3001
 - Keep PostgreSQL and Redis isolated on the internal Docker network (access via `docker-compose exec`)
 
@@ -142,7 +142,7 @@ REDIS_PASSWORD=your_secure_redis_password_here
 
 # Application Ports
 API_PORT=3001
-FRONTEND_PORT=3000
+FRONTEND_PORT=5173
 
 # Production Configuration
 CORS_ALLOWLISTED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com

@@ -15,16 +15,16 @@ The `.env` for `/apps/api`
 
 This is a comma seperated list of domains allowed to make CORS requests.
 Values are cleaned (trimmed and stripped of quotes) and returned as an array for the API, so keep them comma-separated.
-For example, the following allow lists only `http://localhost:3000`:
+For example, the following allow lists only `http://localhost:5173`:
 
 ```txt
-CORS_ALLOWLISTED_ORIGINS="http://localhost:3000"
+CORS_ALLOWLISTED_ORIGINS="http://localhost:5173"
 ```
 
 However, you can also add multiple hosts like:
 
 ```txt
-CORS_ALLOWLISTED_ORIGINS="http://localhost:3000,http://localhost:4000"
+CORS_ALLOWLISTED_ORIGINS="http://localhost:5173,http://localhost:4000"
 ```
 
 ### `PORT`
