@@ -146,7 +146,7 @@ FRONTEND_PORT=3000
 
 # Production Configuration
 CORS_ALLOWLISTED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
-VITE_API_URL=https://api.yourdomain.com
+VITE_API_BASE_URL=https://api.yourdomain.com
 ```
 
 **Important**: Always use strong passwords and secure values in production!

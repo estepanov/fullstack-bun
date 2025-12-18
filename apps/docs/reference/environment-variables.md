@@ -7,6 +7,56 @@ layout: doc
 This page details every enivornment variable across the stack.
 When adding a new API variable, define it in `apps/api/src/env.ts` (with validation), update the appropriate `.env.example`, and document it here.
 
+## Docker Compose (root) (optional)
+
+The repo root `.env` is used by Docker Compose (`docker-compose.yml` and `docker-compose.prod.yml`). 
+Start by copying:
+
+```sh
+cp .env.example .env
+```
+
+### `POSTGRES_USER`
+
+PostgreSQL username (Docker Compose).
+
+### `POSTGRES_PASSWORD`
+
+PostgreSQL password (Docker Compose). Use a strong value in production.
+
+### `POSTGRES_DB`
+
+PostgreSQL database name (Docker Compose).
+
+### `POSTGRES_PORT`
+
+Host port mapping for PostgreSQL (defaults to `5432`).
+
+### `REDIS_PORT`
+
+Host port mapping for Redis (defaults to `6379`).
+
+### `REDIS_PASSWORD`
+
+Redis password (required by the provided Compose config). Use a strong value in production.
+
+### `API_PORT`
+
+Host port mapping for the API container (defaults to `3001`).
+
+### `FRONTEND_PORT`
+
+Host port mapping for the frontend container (defaults to `5173` in this repo).
+
+### `FRONTEND_HMR_PORT`
+
+Host port mapping for the Vite HMR websocket (development Compose only).
+
+### `DATABASE_URL_INTERNAL`
+
+**Optional.** _(only in root `.env`)_ You probably do not need this. Override the database URL used *inside* the API container. If unset, the Compose
+files build a URL from `POSTGRES_*` variables and use the service hostname `postgres`. 
+
 ## API
 
 The `.env` for `/apps/api`
@@ -145,11 +195,7 @@ VITE_API_BASE_URL="http://localhost:3001"
 
 In local development `development` and for all static builds it should be `production`
 
-## Docker Environment Variables
+## Notes on Docker vs Local
 
-When using Docker (via `docker-compose.yml` or `docker-compose.prod.yml`), additional environment variables are available at the root level. See the [Docker documentation](/docker.html#environment-variables) for details on:
-
-- Database configuration (PostgreSQL)
-- Cache configuration (Redis)
-- Port mappings
-- Production-specific settings
+- Docker Compose loads env from the repo root `.env` plus `apps/api/.env` and `apps/frontend/.env`.
+- For local (non-Docker) development, only the app-specific `.env` files matter.

@@ -15,23 +15,18 @@ This project uses **PostgreSQL** with **Drizzle ORM** for database management.
 
 ## Quick Start
 
-### 1. Install Dependencies
-
-Dependencies are already installed if you've set up the project. Otherwise:
-
-```bash
-cd apps/api
-bun add drizzle-orm postgres
-bun add -d drizzle-kit
-```
-
-### 2. Set Up Database
+### 1. Set Up Database
 
 **Local Development (Docker):**
 
 ```bash
-# Start PostgreSQL via Docker Compose
+# (Optional) copy Docker Compose env vars
+cp .env.example .env
+
+# Start PostgreSQL (and Redis if you're using the provided Compose stack)
 docker-compose up postgres -d
+# or:
+docker-compose up postgres redis -d
 
 # Check database is running
 docker ps
@@ -45,7 +40,7 @@ Install PostgreSQL 15 and create a database:
 CREATE DATABASE mydatabase;
 ```
 
-### 3. Configure Environment
+### 2. Configure Environment
 
 Create `apps/api/.env` (copy from `.env.example`):
 
@@ -60,15 +55,21 @@ For Docker, the host is `postgres`. For local PostgreSQL, use `localhost`.
 ### Generate Migrations
 
 ```bash
-bunx drizzle-kit generate:pg
+bunx drizzle-kit generate
 ```
 
 Generates SQL migration files based on schema changes.
 
+### Apply Migrations
+
+```bash
+bunx drizzle-kit migrate
+```
+
 ### Push Schema
 
 ```bash
-bunx drizzle-kit push:pg
+bunx drizzle-kit push
 ```
 
 Pushes schema changes directly to the database without migrations (good for development).
@@ -166,7 +167,7 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/mydatabase"
 4. **Push Schema**:
    ```bash
    cd apps/api
-   bunx drizzle-kit push:pg
+   bunx drizzle-kit push
    ```
 
 ### Security Considerations

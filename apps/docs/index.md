@@ -41,6 +41,10 @@ features:
     details: Biome for linting and formatting. Easy to use, quick to run, and it "just works".
   - title: Docker Support
     details: Full containerization for development and production with Docker Compose. Hot reload, health checks, and multi-stage builds included.
+  - title: PostgreSQL + Drizzle
+    details: First-class database setup with PostgreSQL 15 and Drizzle ORM, ready for migrations and local dev.
+  - title: Redis
+    details: Redis is provisioned alongside Postgres via Docker Compose for caching/session-style workloads.
 
 ---
 
@@ -53,14 +57,10 @@ The project will lean on Bun as much as possible through out the development pro
 
 Currently a static frontend and a Hono API are included.
 
-Some DB work is coming but not yet implemented.
-
 ## Roadmap
 
 - Unit tests
 - E2E playwright tests
-- Attach postgres db 
-- Attach redis cache
 - Frontend Auth 
   - Attaching auth headers
   - Auth hook
@@ -80,4 +80,3 @@ Some DB work is coming but not yet implemented.
 - Email sending API
 - Github actions
   - Automated PR tests check
-

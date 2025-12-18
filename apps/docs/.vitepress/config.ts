@@ -36,6 +36,8 @@ export default defineConfig({
           items: [
             { text: "Overview", link: "/reference/index.html" },
             { text: "Dependencies", link: "/reference/dependencies.html" },
+            { text: "Database", link: "/reference/database.html" },
+            { text: "Redis", link: "/reference/redis.html" },
             {
               text: "Environment Variables",
               link: "/reference/environment-variables.html",
