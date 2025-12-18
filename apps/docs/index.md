@@ -33,8 +33,16 @@ features:
     details: Fullstack type safe hono client and react-query setup
   - title: Zod validation
     details: Use the same schema for API and frontend validation.
+  - title: PostgreSQL + Drizzle ORM
+    details: Type-safe database access with Drizzle ORM and PostgreSQL 15. Migrations, schema management, and Drizzle Studio included.
+  - title: better-auth Authentication
+    details: Complete authentication system with email/password, email verification, session management, and optional OAuth support (GitHub, Google).
+  - title: Email Verification
+    details: Built-in email verification flow using Nodemailer with SMTP support. Development mode logs verification URLs to console.
+  - title: Protected Routes
+    details: Frontend and backend route protection. ProtectedRoute component for React and authMiddleware for Hono API.
   - title: Logging
-    details: Logging setup out of the box
+    details: Logging setup out of the box with Pino
   - title: Traceability
     details: Every request/session has a UUID attached to the header/logger.
   - title: Biome
@@ -52,31 +60,34 @@ features:
 
 # About
 
-This is all about creating a simple boilerplate to hit the ground running.
-The project will lean on Bun as much as possible through out the development processto keep the project light and easy to maintain.
+This is a production-ready fullstack boilerplate designed to help you hit the ground running with modern web development.
 
-Currently a static frontend and a Hono API are included.
+The project leverages **Bun** as much as possible throughout the development process to keep things fast, light, and easy to maintain.
+
+## What's Included
+
+- **Frontend:** React 19 with Vite, React Router 7, TailwindCSS 4, and Shadcn UI components
+- **Backend:** Hono API with type-safe client integration and React Query
+- **Database:** PostgreSQL 15 with Drizzle ORM for type-safe database access
+- **Authentication:** Complete auth system using better-auth with email verification and session management
+- **Internationalization:** Multi-language support with i18next (English, German, Spanish, French)
+- **Testing:** Bun test runner with React Testing Library and MSW for API mocking
+- **Docker:** Full containerization for development and production environments
+- **Developer Experience:** Biome for linting/formatting, Pino for logging, UUID-based request tracing
 
 ## Roadmap
 
-- Unit tests
-- E2E playwright tests
-- Frontend Auth 
-  - Attaching auth headers
-  - Auth hook
-    - get auth state
-    - get token/user info
-  - Protected routes
-  - Auth actions
-    - sign in
-    - sign up
-    - etc...
-- Backend Auth
-  - Middleware for protected routes
-  - Attach user id to request logger
-  - oauth support
-  - email otp support
-  - sms otp support ? who knows ?
-- Email sending API
-- Github actions
-  - Automated PR tests check
+Future enhancements we're considering:
+
+- **E2E Testing:** Playwright test suite for end-to-end testing
+- **Advanced Auth Features:**
+  - Email OTP support (passwordless login)
+  - SMS OTP support for two-factor authentication
+  - Additional OAuth providers (Google, Discord, etc.)
+- **CI/CD Pipeline:**
+  - GitHub Actions for automated testing on PRs
+  - Automated deployments
+- **Performance Monitoring:** Integration with performance monitoring tools
+- **Rate Limiting:** API rate limiting middleware
+- **File Uploads:** S3-compatible file upload handling
+
