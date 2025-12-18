@@ -10,6 +10,12 @@ export const apiClient = hc<AppType>(import.meta.env.VITE_API_BASE_URL, {
       "x-request-id": crypto.randomUUID(),
     };
   },
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => {
+    return fetch(input, {
+      ...init,
+      credentials: 'include',
+    });
+  },
 });
 
 export type APIClient = typeof apiClient;

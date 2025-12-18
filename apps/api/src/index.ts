@@ -1,23 +1,37 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { HTTPException } from "hono/http-exception";
 import { env, isDevelopmentEnv } from "./env";
 import { auth } from "./lib/auth";
 import { loggerMiddleware, requestLoggerMiddleware } from "./middlewares/logger";
+import { adminRouter } from "./routers/admin-router";
 import { exampleRouter } from "./routers/example-router";
 
 const app = new Hono();
 
-const baseApp = app.use(loggerMiddleware()).use(
-  "*",
-  cors({
-    origin: env.CORS_ALLOWLISTED_ORIGINS,
-    credentials: true,
-  }),
-);
+const baseApp = app
+  .use(loggerMiddleware())
+  .use(
+    "*",
+    cors({
+      origin: env.CORS_ALLOWLISTED_ORIGINS,
+      credentials: true,
+    }),
+  )
+  .onError((error, c) => {
+    const logger = c.get("logger") || console;
+    const debugObj = { error, url: c.req.url, userAgent: c.req.header("User-Agent") };
+    if (error instanceof HTTPException) {
+      logger.error("------ HTTPException ------\n", debugObj, "------------");
+      return error.getResponse();
+    }
+    logger.error("------ UNCAUGHT ERROR ------\n", debugObj, "------------");
+    return c.newResponse(null, { status: 500 });
+  });
 
 const appWithRoutes = isDevelopmentEnv()
-  ? baseApp.route("example", exampleRouter)
-  : baseApp;
+  ? baseApp.route("example", exampleRouter).route("admin", adminRouter)
+  : baseApp.route("admin", adminRouter);
 
 const routes = appWithRoutes
   .on(["POST", "GET", "OPTIONS"], "/auth/*", async (c) => {

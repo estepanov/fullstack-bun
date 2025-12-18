@@ -4,6 +4,10 @@
     "dev": "bun run --watch src/index.ts ",
     "start": "bun src/index.ts",
     "build:types": "tsc -p tsconfig.build.json",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
     "format": "bun run biome format --write ./src",
     "lint": "bun run biome lint ./src"
   },

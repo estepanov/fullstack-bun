@@ -10,7 +10,13 @@ const RootAppProviderBase = ({ children }: { children: ReactNode }) => {
     <I18nextProvider i18n={i18n}>
       <QueryClientProvider>
         <ThemeProvider defaultTheme="dark" storageKey="pref-ui-theme">
-          <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+          <Suspense
+            fallback={
+              <div className="flex items-center justify-center min-h-screen">
+                Loading...
+              </div>
+            }
+          >
             {children}
           </Suspense>
         </ThemeProvider>

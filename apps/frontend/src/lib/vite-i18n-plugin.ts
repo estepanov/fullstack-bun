@@ -8,10 +8,7 @@ export interface I18nPluginOptions {
 }
 
 export function i18nPlugin(options: I18nPluginOptions = {}): Plugin {
-  const {
-    localesDir = "locales",
-    publicPath = "/locales",
-  } = options;
+  const { localesDir = "locales", publicPath = "/locales" } = options;
 
   return {
     name: "vite-i18n-dev-server",
@@ -46,7 +43,7 @@ export function i18nPlugin(options: I18nPluginOptions = {}): Plugin {
           // req.url at this point should be the path after /locales
           // Expected format: /{language}/{namespace}.json
           const urlParts = req.url.split("/").filter(Boolean);
-          
+
           if (urlParts.length !== 2) {
             res.statusCode = 404;
             res.end("Not Found");
@@ -54,7 +51,7 @@ export function i18nPlugin(options: I18nPluginOptions = {}): Plugin {
           }
 
           const [language, namespaceWithExt] = urlParts;
-          
+
           if (!namespaceWithExt.endsWith(".json")) {
             res.statusCode = 404;
             res.end("Not Found");
@@ -76,12 +73,11 @@ export function i18nPlugin(options: I18nPluginOptions = {}): Plugin {
 
           // Read and serve the translation file
           const content = readFileSync(filePath, "utf-8");
-          
+
           res.setHeader("Content-Type", "application/json; charset=utf-8");
           res.setHeader("Cache-Control", "no-cache");
           res.statusCode = 200;
           res.end(content);
-
         } catch (error) {
           console.error("Error serving translation file:", error);
           res.statusCode = 500;
@@ -93,9 +89,7 @@ export function i18nPlugin(options: I18nPluginOptions = {}): Plugin {
 }
 
 export function copyTranslationsPlugin(options: I18nPluginOptions = {}): Plugin {
-  const {
-    localesDir = "locales",
-  } = options;
+  const { localesDir = "locales" } = options;
 
   return {
     name: "copy-translations",
@@ -116,7 +110,7 @@ export function copyTranslationsPlugin(options: I18nPluginOptions = {}): Plugin 
         for (const file of files) {
           const filePath = join(langDir, file);
           const content = readFileSync(filePath, "utf-8");
-          
+
           this.emitFile({
             type: "asset",
             fileName: `locales/${lang}/${file}`,

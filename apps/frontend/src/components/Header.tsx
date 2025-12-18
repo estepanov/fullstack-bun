@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/container";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { signOut, useSession } from "@/lib/auth-client";
+import { isAdminSession } from "@/lib/user-role";
 import { cn } from "@/lib/utils";
 import { RowsIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -28,6 +29,7 @@ const NavLink = ({
 const MobileNavigation = () => {
   const { t } = useTranslation("header");
   const { data: session } = useSession();
+  const isAdmin = isAdminSession(session);
 
   return (
     <Popover>
@@ -41,18 +43,19 @@ const MobileNavigation = () => {
         align="end"
         side="left"
         sideOffset={260}
-        className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white p-4 text-lg tracking-tight text-slate-900 shadow-xl ring-1 ring-slate-900/5 data-closed:scale-95 data-closed:opacity-0 data-enter:duration-150 data-enter:ease-out data-leave:duration-100 data-leave:ease-in"
+        className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white dark:bg-gray-800 p-4 text-lg tracking-tight text-slate-900 dark:text-gray-100 shadow-xl dark:shadow-gray-900/50 ring-1 ring-slate-900/5 dark:ring-gray-700/50 data-closed:scale-95 data-closed:opacity-0 data-enter:duration-150 data-enter:ease-out data-leave:duration-100 data-leave:ease-in"
       >
         <NavLink to="/more">{t("nav_links.second_page")}</NavLink>
         {session && <NavLink to="/dashboard">Dashboard</NavLink>}
-        <hr className="m-2 border-slate-300/40" />
+        {isAdmin && <NavLink to="/admin/users">Admin</NavLink>}
+        <hr className="m-2 border-slate-300/40 dark:border-gray-600/40" />
         {session ? (
           <div className="flex flex-col gap-2">
-            <span className="text-sm text-gray-600">{session.user.email}</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">{session.user.email}</span>
             <button
               type="button"
               onClick={() => signOut()}
-              className="text-left text-red-600 hover:text-red-500"
+              className="text-left text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300"
             >
               Sign Out
             </button>
@@ -68,6 +71,7 @@ const MobileNavigation = () => {
 export const Header = () => {
   const { t } = useTranslation("header");
   const { data: session } = useSession();
+  const isAdmin = isAdminSession(session);
 
   return (
     <header className="py-4 bg-accent/70">
@@ -84,17 +88,18 @@ export const Header = () => {
             <div className="hidden md:flex md:gap-x-6">
               <NavLink to="/more">{t("nav_links.second_page")}</NavLink>
               {session && <NavLink to="/dashboard">Dashboard</NavLink>}
+              {isAdmin && <NavLink to="/admin/users">Admin</NavLink>}
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div className="hidden md:flex md:items-center md:gap-x-4">
               {session ? (
                 <>
-                  <span className="text-sm text-gray-600">{session.user.email}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">{session.user.email}</span>
                   <button
                     type="button"
                     onClick={() => signOut()}
-                    className="text-sm text-red-600 hover:text-red-500"
+                    className="text-sm text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300"
                   >
                     Sign Out
                   </button>

@@ -1,13 +1,16 @@
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { auth } from "../lib/auth";
-import type { Session, User } from "better-auth/types";
+
+type AuthSession = NonNullable<Awaited<ReturnType<typeof auth.api.getSession>>>;
+type AuthedUser = AuthSession["user"];
+type AuthedSession = AuthSession["session"];
 
 export type AuthMiddlewareEnv = {
-	Variables: {
-		user: User;
-		session: Session;
-	};
+  Variables: {
+    user: AuthedUser;
+    session: AuthedSession;
+  };
 };
 
 /**
@@ -24,19 +27,18 @@ export type AuthMiddlewareEnv = {
  * ```
  */
 export const authMiddleware = () =>
-	createMiddleware<AuthMiddlewareEnv>(async (c, next) => {
-		// Get session from request
-		const session = await auth.api.getSession({
-			headers: c.req.raw.headers,
-		});
+  createMiddleware<AuthMiddlewareEnv>(async (c, next) => {
+    // Get session from request
+    const session = await auth.api.getSession({
+      headers: c.req.raw.headers,
+    });
 
-		if (!session) {
-			throw new HTTPException(401, { message: "Unauthorized" });
-		}
+    if (!session) {
+      throw new HTTPException(401, { message: "Unauthorized", cause: "NO SESSION" });
+    }
+    // Set user and session in context for type-safe access
+    c.set("user", session.user);
+    c.set("session", session.session);
 
-		// Set user and session in context for type-safe access
-		c.set("user", session.user);
-		c.set("session", session.session);
-
-		await next();
-	});
+    await next();
+  });
