@@ -2,6 +2,18 @@ import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { type AppLogger, appLogger } from "../utils/logger";
 
+export const requestLogFormat = ({
+  status,
+  method,
+  url,
+}: {
+  status: number;
+  method: string;
+  url: string;
+}) => {
+  return `${status} - ${method} - ${url}`;
+};
+
 export type LoggerMiddlewareEnv = {
   Variables: {
     logger: AppLogger;
@@ -24,15 +36,11 @@ export const loggerMiddleware = () =>
     });
     c.set("logger", requestLogger);
     await next();
-    requestLogger.debug({
-      response: c.res.status,
-    });
-  });
-
-export const requestLoggerMiddleware = () =>
-  createMiddleware<LoggerMiddlewareEnv>(async (c, next) => {
-    const { method, path } = c.req;
-    const { status } = c.res;
-    c.get("logger").info(`${status} - ${method} - ${path}`);
-    return next();
+    c.get("logger").info(
+      requestLogFormat({
+        status: c.res.status,
+        method: c.req.method,
+        url: c.req.url,
+      }),
+    );
   });

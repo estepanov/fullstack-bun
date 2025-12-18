@@ -1,9 +1,11 @@
+import { sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
+import { db } from "./db/client";
 import { env, isDevelopmentEnv } from "./env";
 import { auth } from "./lib/auth";
-import { loggerMiddleware, requestLoggerMiddleware } from "./middlewares/logger";
+import { loggerMiddleware, requestLogFormat } from "./middlewares/logger";
 import { adminRouter } from "./routers/admin-router";
 import { exampleRouter } from "./routers/example-router";
 
@@ -34,14 +36,39 @@ const appWithRoutes = isDevelopmentEnv()
   : baseApp.route("admin", adminRouter);
 
 const routes = appWithRoutes
+  .get("/health", async (c) => {
+    try {
+      // Check database connection
+      await db.execute(sql`SELECT 1`);
+      return c.json({
+        status: "ok",
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      const logger = c.get("logger") || console;
+      logger.error("Health check failed:", error);
+      return c.json(
+        {
+          status: "error",
+          timestamp: new Date().toISOString(),
+        },
+        503,
+      );
+    }
+  })
   .on(["POST", "GET", "OPTIONS"], "/auth/*", async (c) => {
     const response = await auth.handler(c.req.raw);
-    const { method, path } = c.req;
+    const { method, url } = c.req;
     const { status } = response;
-    c.get("logger").info(`${status} - ${method} - ${path}`);
+    c.get("logger").info(
+      requestLogFormat({
+        status,
+        method,
+        url,
+      }),
+    );
     return response;
-  })
-  .use(requestLoggerMiddleware());
+  });
 
 export type AppType = typeof routes;
 
