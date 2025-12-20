@@ -14,6 +14,17 @@
     "verify_email_prompt": "Bitte verifizieren Sie Ihre E-Mail, um Nachrichten zu senden"
   },
   "actions": {
-    "refresh_button": "Aktualisieren"
+    "refresh_button": "Aktualisieren",
+    "menu_label": "Nachrichtenaktionen",
+    "delete": "Nachricht löschen"
+  },
+  "confirm": {
+    "title": "Nachricht löschen?",
+    "description": "Dies entfernt die Nachricht dauerhaft aus dem Chat.",
+    "cancel": "Abbrechen",
+    "confirm": "Löschen"
+  },
+  "errors": {
+    "delete_failed": "Nachricht konnte nicht gelöscht werden. Bitte erneut versuchen."
   }
 }

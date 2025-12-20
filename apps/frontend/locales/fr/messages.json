@@ -14,6 +14,17 @@
     "verify_email_prompt": "Veuillez vérifier votre e-mail pour envoyer des messages"
   },
   "actions": {
-    "refresh_button": "Rafraîchir"
+    "refresh_button": "Rafraîchir",
+    "menu_label": "Actions du message",
+    "delete": "Supprimer le message"
+  },
+  "confirm": {
+    "title": "Supprimer le message ?",
+    "description": "Cela supprimera définitivement le message du chat.",
+    "cancel": "Annuler",
+    "confirm": "Supprimer"
+  },
+  "errors": {
+    "delete_failed": "Impossible de supprimer le message. Réessayez."
   }
 }

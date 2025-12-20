@@ -14,6 +14,17 @@
     "verify_email_prompt": "Please verify your email to send messages"
   },
   "actions": {
-    "refresh_button": "Refresh"
+    "refresh_button": "Refresh",
+    "menu_label": "Message actions",
+    "delete": "Delete message"
+  },
+  "confirm": {
+    "title": "Delete message?",
+    "description": "This will permanently remove the message from the chat.",
+    "cancel": "Cancel",
+    "confirm": "Delete"
+  },
+  "errors": {
+    "delete_failed": "Failed to delete message. Try again."
   }
 }

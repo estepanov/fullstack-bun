@@ -1,4 +1,4 @@
-import type { AppType } from "api/dist/src";
+import type { AppType } from "api/src";
 import { hc } from "hono/client";
 import { SessionStore } from "./session-utils";
 

@@ -1,31 +1,64 @@
 import { describe, expect, test } from "bun:test";
-import { getExamples } from "@test/factory/get-example";
-import { server } from "@test/msw";
 import { render, screen } from "@test/rtl";
+import userEvent from "@testing-library/user-event";
+import { CHAT_CONFIG } from "shared";
+import type { ChatMessage } from "shared/interfaces/chat";
 import { MessageList } from "./message-list";
 
+const createMessage = (overrides: Partial<ChatMessage> = {}): ChatMessage => ({
+  id: "message-1",
+  userId: "user-1",
+  userName: "Alex",
+  userAvatar: null,
+  message: "Hello world",
+  timestamp: 1_720_000_000_000,
+  createdAt: new Date("2024-06-01T10:00:00.000Z").toISOString(),
+  ...overrides,
+});
+
 describe("MessageList", () => {
-  test("renders returned messages", async () => {
-    const ITEM_ONE = {
-      id: "1",
-      message: "hi!!2!!!3!4!5!6!",
-      postedAt: new Date().toISOString(),
-    };
-    const ITEM_TWO = {
-      id: "2",
-      message: `ilovethis${new Date().toISOString()}`,
-      postedAt: new Date().toISOString(),
-    };
-    server.use(
-      getExamples({
-        list: [ITEM_ONE, ITEM_TWO],
-      }),
+  test("renders returned messages", () => {
+    const message = createMessage();
+    render(
+      <MessageList messages={[message]} currentUserId="user-2" isAdmin={false} />,
     );
-    render(<MessageList />);
-    await screen.findByText(ITEM_ONE.message);
-    screen.getByText(ITEM_TWO.message);
-    expect(
-      screen.getAllByText(new Date(ITEM_TWO.postedAt).toLocaleTimeString()),
-    ).toHaveLength(2);
+    expect(screen.getByText(message.message)).toBeInTheDocument();
+    expect(screen.getByText(message.userName)).toBeInTheDocument();
+  });
+
+  test("shows delete actions for admins", async () => {
+    const user = userEvent.setup();
+    const message = createMessage();
+    render(
+      <MessageList messages={[message]} currentUserId="user-2" isAdmin />,
+    );
+    const menuButton = await screen.findByLabelText("Message actions");
+    await user.click(menuButton);
+    expect(await screen.findByText("Delete message")).toBeInTheDocument();
+  });
+
+  test("renders emoji-only messages at larger size", () => {
+    const emojiMessage = createMessage({
+      message: "😀😀😀",
+    });
+    render(
+      <MessageList messages={[emojiMessage]} currentUserId="user-2" isAdmin={false} />,
+    );
+    expect(screen.getByText(emojiMessage.message)).toHaveClass("text-2xl");
+  });
+
+  test("renders non-emoji or over-limit messages at normal size", () => {
+    const overLimit = createMessage({
+      message: "😀".repeat(CHAT_CONFIG.EMOJI_ONLY_MAX + 1),
+    });
+    const mixed = createMessage({
+      id: "message-2",
+      message: "hi 😀",
+    });
+    render(
+      <MessageList messages={[overLimit, mixed]} currentUserId="user-2" isAdmin={false} />,
+    );
+    expect(screen.getByText(overLimit.message)).toHaveClass("text-sm");
+    expect(screen.getByText(mixed.message)).toHaveClass("text-sm");
   });
 });

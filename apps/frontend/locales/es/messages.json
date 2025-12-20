@@ -14,6 +14,17 @@
     "verify_email_prompt": "Por favor verifica tu correo electrónico para enviar mensajes"
   },
   "actions": {
-    "refresh_button": "Actualizar"
+    "refresh_button": "Actualizar",
+    "menu_label": "Acciones del mensaje",
+    "delete": "Eliminar mensaje"
+  },
+  "confirm": {
+    "title": "¿Eliminar mensaje?",
+    "description": "Esto eliminará permanentemente el mensaje del chat.",
+    "cancel": "Cancelar",
+    "confirm": "Eliminar"
+  },
+  "errors": {
+    "delete_failed": "No se pudo eliminar el mensaje. Inténtalo de nuevo."
   }
 }
