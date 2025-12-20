@@ -1,13 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import type { FESession } from "@/lib/auth-client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { ChatWSMessageType, MESSAGE_CONFIG, getSendMessageSchema } from "shared";
 
 interface MessageFormProps {
-  sendMessage: (message: string) => void;
+  sendMessage: (message: string) => boolean;
   isAuthenticated: boolean;
   session: FESession | null | undefined;
   isAdmin?: boolean;
@@ -16,6 +16,7 @@ interface MessageFormProps {
     remainingMs: number;
     limit: number;
     windowMs: number;
+    restoreMessage?: string;
   } | null;
 }
 
@@ -35,6 +36,12 @@ export const MessageForm = ({
     ? Math.ceil(throttle.windowMs / 1000)
     : 0;
   const isThrottled = Boolean(throttle);
+
+  useEffect(() => {
+    if (throttle?.restoreMessage && message.trim() === "") {
+      setMessage(throttle.restoreMessage);
+    }
+  }, [message, throttle?.restoreMessage]);
 
   // Show login prompt if not authenticated
   if (!isAuthenticated) {
@@ -102,9 +109,11 @@ export const MessageForm = ({
     }
 
     // Send message
-    sendMessage(message);
-    setMessage("");
-    setError("");
+    const didSend = sendMessage(message);
+    if (didSend) {
+      setMessage("");
+      setError("");
+    }
   };
 
   const isDisabled =

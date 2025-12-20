@@ -195,7 +195,7 @@ export const MessageList = ({
               }`}
             >
               <span
-                className={`absolute -top-1.5 h-3 w-6 ${
+                className={`absolute -top-1.5 h-3 w-8 ${
                   isOwn ? "right-3 bg-primary" : "left-3 bg-card"
                 }`}
                 style={{ clipPath: "polygon(50% 0, 0 100%, 100% 100%)" }}

@@ -8,7 +8,7 @@ import { getChatThrottleRule } from "shared/config/chat";
 
 interface UseChatWebSocketReturn {
 	messages: ChatMessage[];
-	sendMessage: (message: string) => void;
+	sendMessage: (message: string) => boolean;
 	connectionStatus: "connecting" | "connected" | "disconnected" | "error";
 	error: string | null;
 	isAuthenticated: boolean;
@@ -17,6 +17,7 @@ interface UseChatWebSocketReturn {
 				remainingMs: number;
 				limit: number;
 				windowMs: number;
+				restoreMessage?: string;
 		  }
 		| null;
 }
@@ -41,12 +42,16 @@ export const useChatWebSocket = ({
 	const [throttleRemainingMs, setThrottleRemainingMs] = useState<number | null>(
 		null,
 	);
+	const [throttleRestoreMessage, setThrottleRestoreMessage] = useState<
+		string | null
+	>(null);
 
 	const wsRef = useRef<WebSocket | null>(null);
 	const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const reconnectAttemptsRef = useRef(0);
 	const hasAttemptedRef = useRef(false);
 	const isBannedRef = useRef(false);
+	const lastSentMessageRef = useRef<string | null>(null);
 	const recentMessageTimestampsRef = useRef<number[]>([]);
 	const MAX_RECONNECT_ATTEMPTS = 5;
 	const throttleRule = getChatThrottleRule(roomId);
@@ -135,6 +140,7 @@ export const useChatWebSocket = ({
 								limit: data.limit,
 								windowMs: data.windowMs,
 							});
+							setThrottleRestoreMessage(lastSentMessageRef.current);
 							setThrottleUntil(Date.now() + retryAfterMs);
 							break;
 						}
@@ -216,6 +222,7 @@ export const useChatWebSocket = ({
 			if (remaining <= 0) {
 				setThrottleRemainingMs(null);
 				setThrottleUntil(null);
+				setThrottleRestoreMessage(null);
 				return;
 			}
 			setThrottleRemainingMs(remaining);
@@ -231,6 +238,7 @@ export const useChatWebSocket = ({
 		setThrottleUntil(null);
 		setThrottleMeta(null);
 		setThrottleRemainingMs(null);
+		setThrottleRestoreMessage(null);
 		hasAttemptedRef.current = false;
 	}, [roomId]);
 
@@ -250,40 +258,42 @@ export const useChatWebSocket = ({
 
 	const sendMessage = useCallback(
 		(message: string) => {
-		if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
-			setError("Not connected");
-			return;
-		}
+			if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+				setError("Not connected");
+				return false;
+			}
 
-		if (throttleRemainingMs !== null) {
-			return;
-		}
+			if (throttleRemainingMs !== null) {
+				return false;
+			}
 
-		const now = Date.now();
-		const windowStart = now - throttleWindowMs;
-		recentMessageTimestampsRef.current = recentMessageTimestampsRef.current.filter(
-			(timestamp) => timestamp > windowStart,
-		);
+			const now = Date.now();
+			const windowStart = now - throttleWindowMs;
+			recentMessageTimestampsRef.current = recentMessageTimestampsRef.current.filter(
+				(timestamp) => timestamp > windowStart,
+			);
 
-		if (recentMessageTimestampsRef.current.length >= throttleRule.maxMessages) {
-			const oldest = recentMessageTimestampsRef.current[0];
-			const retryAfterMs = Math.max(oldest + throttleWindowMs - now, 0);
-			setThrottleMeta({
-				limit: throttleRule.maxMessages,
-				windowMs: throttleWindowMs,
-			});
-			setThrottleUntil(now + retryAfterMs);
-			return;
-		}
+			if (recentMessageTimestampsRef.current.length >= throttleRule.maxMessages) {
+				const oldest = recentMessageTimestampsRef.current[0];
+				const retryAfterMs = Math.max(oldest + throttleWindowMs - now, 0);
+				setThrottleMeta({
+					limit: throttleRule.maxMessages,
+					windowMs: throttleWindowMs,
+				});
+				setThrottleUntil(now + retryAfterMs);
+				return false;
+			}
 
-		recentMessageTimestampsRef.current.push(now);
+			recentMessageTimestampsRef.current.push(now);
+			lastSentMessageRef.current = message;
 
-		const payload = {
-			type: ChatWSMessageType.SEND_MESSAGE,
-			message: message.trim(),
-		};
+			const payload = {
+				type: ChatWSMessageType.SEND_MESSAGE,
+				message: message.trim(),
+			};
 
-		wsRef.current.send(JSON.stringify(payload));
+			wsRef.current.send(JSON.stringify(payload));
+			return true;
 		},
 		[throttleRemainingMs, throttleRule.maxMessages, throttleWindowMs],
 	);
@@ -310,6 +320,7 @@ export const useChatWebSocket = ({
 						remainingMs: throttleRemainingMs,
 						limit: throttleMeta.limit,
 						windowMs: throttleMeta.windowMs,
+						restoreMessage: throttleRestoreMessage ?? undefined,
 					}
 				: null,
 	};

@@ -12,7 +12,7 @@ import { MessageForm } from "./message-form";
 describe("MessageForm", () => {
   const session = { user: { emailVerified: true } } as FESession;
   const baseProps = {
-    sendMessage: () => {},
+    sendMessage: () => true,
     isAuthenticated: true,
     session,
     connectionStatus: "connected" as const,
@@ -73,6 +73,7 @@ describe("MessageForm", () => {
         {...baseProps}
         sendMessage={(message) => {
           sentMessage = message;
+          return true;
         }}
       />,
     );
@@ -101,5 +102,21 @@ describe("MessageForm", () => {
     const submitButton = await screen.findByRole("button", { name: "Send" });
     expect(submitButton).toBeDisabled();
     await screen.findByText("You're sending messages too fast. Try again in 5s.");
+  });
+
+  test("restores the last message when throttled", async () => {
+    render(
+      <MessageForm
+        {...baseProps}
+        throttle={{
+          remainingMs: 3000,
+          limit: 4,
+          windowMs: 15000,
+          restoreMessage: "Keep this message",
+        }}
+      />,
+    );
+    const textbox = await screen.findByRole("textbox");
+    await waitFor(() => expect(textbox).toHaveValue("Keep this message"));
   });
 });
