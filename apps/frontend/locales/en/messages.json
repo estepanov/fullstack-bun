@@ -2,6 +2,17 @@
   "list": {
     "empty": "No messages yet. Be the first to say hello!"
   },
+  "states": {
+    "loading": {
+      "title": "Warming up the room",
+      "subtitle": "Connecting your chat feed with a smooth breeze."
+    },
+    "empty": {
+      "title": "No messages yet",
+      "subtitle": "Be the spark. Drop the first note and start the conversation.",
+      "cta": "Say hello"
+    }
+  },
   "form": {
     "placeholder": "Type a message... (Press Enter to send)",
     "send_button": "Send",

@@ -2,6 +2,17 @@
   "list": {
     "empty": "Aún no hay mensajes. ¡Sé el primero en saludar!"
   },
+  "states": {
+    "loading": {
+      "title": "Calentando el ambiente",
+      "subtitle": "Conectando tu chat con un toque suave."
+    },
+    "empty": {
+      "title": "Aún no hay mensajes",
+      "subtitle": "Sé la chispa. Deja la primera nota e inicia la conversación.",
+      "cta": "Decir hola"
+    }
+  },
   "form": {
     "placeholder": "Escribe un mensaje... (Presiona Enter para enviar)",
     "send_button": "Enviar",

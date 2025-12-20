@@ -188,14 +188,25 @@ export const MessageList = ({
             </div>
             <div
               data-message-bubble
-              className={`relative mt-1 min-w-14 rounded-2xl border px-3 py-2 text-sm leading-relaxed shadow-sm ${
+              className={`relative mt-[5px] min-w-14 rounded-2xl border px-3 py-2 text-sm leading-relaxed shadow-sm ${
                 isOwn
                   ? "border-primary/30 bg-primary text-primary-foreground text-right"
                   : "border-border/60 bg-card text-foreground text-left"
               }`}
             >
               <span
-                className={`absolute -top-1.5 h-3 w-8 ${
+                className={`absolute -top-[7px] h-2 w-[18px] ${
+                  isOwn ? "right-3 bg-primary/30" : "left-3 bg-border/60"
+                }`}
+                style={{
+                  clipPath: "polygon(50% 0, 0 100%, 100% 100%)",
+                  transform: "translateY(-1px) scale(1.08)",
+                  transformOrigin: "top center",
+                }}
+                aria-hidden="true"
+              />
+              <span
+                className={`absolute -top-[7px] h-2 w-[18px] ${
                   isOwn ? "right-3 bg-primary" : "left-3 bg-card"
                 }`}
                 style={{ clipPath: "polygon(50% 0, 0 100%, 100% 100%)" }}

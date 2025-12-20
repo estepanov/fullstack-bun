@@ -2,6 +2,17 @@
   "list": {
     "empty": "Noch keine Nachrichten. Sei der Erste, der Hallo sagt!"
   },
+  "states": {
+    "loading": {
+      "title": "Wir bringen den Raum auf Temperatur",
+      "subtitle": "Dein Chat-Feed verbindet sich ganz entspannt."
+    },
+    "empty": {
+      "title": "Noch keine Nachrichten",
+      "subtitle": "Sei der Funke. Schreib die erste Nachricht und starte das Gesprach.",
+      "cta": "Sag Hallo"
+    }
+  },
   "form": {
     "placeholder": "Nachricht eingeben... (Enter zum Senden)",
     "send_button": "Senden",

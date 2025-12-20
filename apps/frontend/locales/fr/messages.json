@@ -2,6 +2,17 @@
   "list": {
     "empty": "Aucun message pour le moment. Soyez le premier à dire bonjour !"
   },
+  "states": {
+    "loading": {
+      "title": "On met l'ambiance en route",
+      "subtitle": "Connexion du fil de discussion en douceur."
+    },
+    "empty": {
+      "title": "Aucun message pour le moment",
+      "subtitle": "Soyez l'etincelle. Laissez le premier mot et lancez la conversation.",
+      "cta": "Dire bonjour"
+    }
+  },
   "form": {
     "placeholder": "Tapez un message... (Appuyez sur Entrée pour envoyer)",
     "send_button": "Envoyer",
