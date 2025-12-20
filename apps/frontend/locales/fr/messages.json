@@ -9,7 +9,9 @@
     "errors": {
       "empty": "Le message ne peut pas être vide",
       "max_length": "Le message ne peut pas dépasser {{max}} caractères",
-      "single_line": "Le message doit tenir sur une seule ligne"
+      "single_line": "Le message doit tenir sur une seule ligne",
+      "no_html": "Le message ne peut pas contenir de balises HTML",
+      "invalid": "Le message est invalide"
     },
     "login_prompt": "Veuillez <loginLink>vous connecter</loginLink> pour envoyer des messages",
     "verify_email_prompt": "Veuillez vérifier votre e-mail pour envoyer des messages"

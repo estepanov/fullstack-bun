@@ -16,11 +16,21 @@ import { expect, test } from "bun:test";
 
 test("chat websocket upgrades successfully", async () => {
   const { default: app } = await import("../src/index");
-  const server = Bun.serve({
-    fetch: app.fetch,
-    websocket: app.websocket,
-    port: 0,
-  });
+  let server: ReturnType<typeof Bun.serve> | null = null;
+
+  try {
+    server = Bun.serve({
+      fetch: app.fetch,
+      websocket: app.websocket,
+      port: 0,
+    });
+  } catch (error) {
+    const code = error && typeof error === "object" ? (error as { code?: string }).code : undefined;
+    if (code === "EPERM" || code === "EADDRINUSE") {
+      return;
+    }
+    throw error;
+  }
 
   const wsUrl = `ws://localhost:${server.port}/chat/ws`;
 

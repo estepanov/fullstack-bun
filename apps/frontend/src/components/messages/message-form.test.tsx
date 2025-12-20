@@ -4,6 +4,7 @@ import { postExample } from "@test/factory/post-example";
 import { server } from "@test/msw";
 import { render, screen } from "@test/rtl";
 import { waitFor } from "@testing-library/dom";
+import { fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MESSAGE_CONFIG } from "shared";
 import { MessageForm } from "./message-form";
@@ -17,36 +18,41 @@ describe("MessageForm", () => {
     connectionStatus: "connected" as const,
   };
 
-  test("Includes a textarea", () => {
+  test("Includes a textarea", async () => {
     render(<MessageForm {...baseProps} />);
-    const textarea = screen.getByRole("textbox");
+    const textarea = await screen.findByRole("textbox");
     expect(textarea).toBeInTheDocument();
   });
 
-  test("Includes a submit button", () => {
+  test("Includes a submit button", async () => {
     render(<MessageForm {...baseProps} />);
-    const submitButton = screen.getByRole("button", { name: "Send" });
+    const submitButton = await screen.findByRole("button", { name: "Send" });
     expect(submitButton).toBeInTheDocument();
   });
 
   test("shows error on form submission when the message is empty", async () => {
     const user = userEvent.setup();
     render(<MessageForm {...baseProps} />);
-    const submitButton = screen.getByRole("button", { name: "Send" });
-    await waitFor(() => expect(submitButton).toBeEnabled());
-    await user.click(submitButton);
+    const textbox = await screen.findByRole("textbox");
+    await user.click(textbox);
+    await user.keyboard("{Enter}");
     await screen.findByText("Message cannot be empty");
   });
 
   test("shows error on form submission when the message is too long", async () => {
     const user = userEvent.setup();
     render(<MessageForm {...baseProps} />);
-    await user.type(
-      screen.getByRole("textbox"),
-      "a".repeat(MESSAGE_CONFIG.MAX_LENGTH + 1),
-    );
-    const submitButton = screen.getByRole("button", { name: "Send" });
-    await user.click(submitButton);
+    const textbox = await screen.findByRole("textbox");
+    const longMessage = "a".repeat(MESSAGE_CONFIG.MAX_LENGTH + 1);
+    fireEvent.change(textbox, {
+      target: { value: longMessage },
+    });
+    await waitFor(() => expect(textbox).toHaveValue(longMessage));
+    const form = textbox.closest("form");
+    if (!form) {
+      throw new Error("Expected textarea to be inside a form.");
+    }
+    fireEvent.submit(form);
     await screen.findByText(
       `Message cannot exceed ${MESSAGE_CONFIG.MAX_LENGTH} characters`,
     );
@@ -69,19 +75,18 @@ describe("MessageForm", () => {
         }}
       />,
     );
-    const textbox = screen.getByRole("textbox");
+    const textbox = await screen.findByRole("textbox");
     await user.type(textbox, NEW_MESSAGE.message);
     expect(textbox).toHaveValue(NEW_MESSAGE.message);
-    await user.click(screen.getByRole("button", { name: "Send" }));
+    await user.click(await screen.findByRole("button", { name: "Send" }));
     expect(sentMessage).toBe(NEW_MESSAGE.message as never);
     expect(textbox).toHaveValue("");
   });
 
   test("normalizes multi-line input for non-admins", async () => {
-    const user = userEvent.setup();
     render(<MessageForm {...baseProps} isAdmin={false} />);
-    const textbox = screen.getByRole("textbox");
-    await user.paste(textbox, "hello\nworld");
-    expect(textbox).toHaveValue("hello world");
+    const textbox = await screen.findByRole("textbox");
+    fireEvent.change(textbox, { target: { value: "hello\nworld" } });
+    await waitFor(() => expect(textbox).toHaveValue("hello world"));
   });
 });

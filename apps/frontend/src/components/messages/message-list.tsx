@@ -17,6 +17,7 @@ import { useDeleteChatMessageMutation } from "@/hooks/api/useDeleteChatMessageMu
 import { isEmojiOnlyMessage } from "@/lib/emoji";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { MoreVertical, Trash2 } from "lucide-react";
+import type { CSSProperties, Key } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { CHAT_CONFIG } from "shared";
@@ -26,12 +27,14 @@ interface MessageListProps {
   messages: ChatMessage[];
   currentUserId?: string;
   isAdmin?: boolean;
+  disableVirtualization?: boolean;
 }
 
 export const MessageList = ({
   messages,
   currentUserId,
   isAdmin = false,
+  disableVirtualization = false,
 }: MessageListProps) => {
   const { t } = useTranslation("messages");
   const parentRef = useRef<HTMLDivElement>(null);
@@ -72,6 +75,7 @@ export const MessageList = ({
   }, []);
 
   // Auto-scroll to bottom on new messages if already at bottom
+  // biome-ignore lint/correctness/useExhaustiveDependencies: ref
   useEffect(() => {
     if (wasAtBottom.current && parentRef.current) {
       parentRef.current.scrollTop = parentRef.current.scrollHeight;
@@ -86,6 +90,111 @@ export const MessageList = ({
     );
   }
 
+  const renderMessage = (
+    message: ChatMessage,
+    index: number,
+    {
+      key,
+      style,
+      ref,
+    }: {
+      key: Key;
+      style?: CSSProperties;
+      ref?: (node: HTMLDivElement | null) => void;
+    },
+  ) => {
+    const isOwn = message.userId === currentUserId;
+    const isEmojiOnly = isEmojiOnlyMessage(message.message, CHAT_CONFIG.EMOJI_ONLY_MAX);
+
+    return (
+      <div key={key} data-index={index} ref={ref} style={style} className="px-1 py-2">
+        <div className={`flex items-end gap-2 ${isOwn ? "flex-row-reverse" : ""}`}>
+          {/* Avatar */}
+          <div className="flex-shrink-0">
+            {message.userAvatar ? (
+              <img
+                src={message.userAvatar}
+                alt={message.userName}
+                className="h-9 w-9 rounded-full ring-1 ring-border/60"
+              />
+            ) : (
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground ring-1 ring-border/60">
+                {message.userName.charAt(0).toUpperCase()}
+              </div>
+            )}
+          </div>
+
+          {/* Message content */}
+          <div className={`flex min-w-0 flex-col ${isOwn ? "items-end" : ""}`}>
+            <div className={`flex items-start gap-2 ${isOwn ? "justify-end" : ""}`}>
+              {isAdmin && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 self-center"
+                      aria-label={t("actions.menu_label")}
+                    >
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align={isOwn ? "end" : "start"}>
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onSelect={() => {
+                        setDeleteError(null);
+                        setSelectedMessage(message);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                      {t("actions.delete")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
+              <div className={`flex flex-col ${isOwn ? "items-end" : ""}`}>
+                <span className="text-sm font-semibold text-foreground/90">
+                  {message.userName}
+                </span>
+                <span className="text-[0.7rem] font-mono text-muted-foreground/80">
+                  {new Date(message.createdAt).toLocaleString(undefined, {
+                    dateStyle: "medium",
+                    timeStyle: "short",
+                  })}
+                </span>
+              </div>
+            </div>
+            <div
+              data-message-bubble
+              className={`relative mt-1 max-w-[75%] min-w-[3.5rem] rounded-2xl border px-3 py-2 text-sm leading-relaxed shadow-sm ${
+                isOwn
+                  ? "border-primary/30 bg-primary text-primary-foreground text-right"
+                  : "border-border/60 bg-card text-foreground text-left"
+              }`}
+            >
+              <span
+                className={`absolute -top-[6px] h-3 w-6 ${
+                  isOwn ? "right-3 bg-primary" : "left-3 bg-card"
+                }`}
+                style={{ clipPath: "polygon(50% 0, 0 100%, 100% 100%)" }}
+                aria-hidden="true"
+              />
+              <span
+                className={`block whitespace-pre-wrap break-all ${
+                  isEmojiOnly ? "text-3xl leading-none" : ""
+                }`}
+              >
+                {message.message}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       {deleteError && (
@@ -97,129 +206,43 @@ export const MessageList = ({
         ref={parentRef}
         className="h-[300px] overflow-y-auto rounded-lg border bg-muted/30 p-3 shadow-sm dark:bg-muted/20"
       >
-        <div
-          style={{
-            height: `${virtualizer.getTotalSize()}px`,
-            width: "100%",
-            position: "relative",
-          }}
-        >
-          {virtualizer.getVirtualItems().map((virtualItem) => {
-            const message = messages[virtualItem.index];
-            const isOwn = message.userId === currentUserId;
-            const isEmojiOnly = isEmojiOnlyMessage(
-              message.message,
-              CHAT_CONFIG.EMOJI_ONLY_MAX,
-            );
+        {disableVirtualization ? (
+          <div className="flex flex-col">
+            {messages.map((message, index) =>
+              renderMessage(message, index, {
+                key: message.id ?? index,
+              }),
+            )}
+          </div>
+        ) : (
+          <div
+            style={{
+              height: `${virtualizer.getTotalSize()}px`,
+              width: "100%",
+              position: "relative",
+            }}
+          >
+            {virtualizer.getVirtualItems().map((virtualItem) => {
+              const message = messages[virtualItem.index];
 
-            return (
-              <div
-                key={virtualItem.key}
-                data-index={virtualItem.index}
-                ref={(node) => {
+              return renderMessage(message, virtualItem.index, {
+                key: virtualItem.key,
+                ref: (node) => {
                   if (!node) return;
                   node.dataset.index = String(virtualItem.index);
                   virtualizer.measureElement(node);
-                }}
-                style={{
+                },
+                style: {
                   position: "absolute",
                   top: 0,
                   left: 0,
                   width: "100%",
                   transform: `translateY(${virtualItem.start}px)`,
-                }}
-                className="px-1 py-2"
-              >
-                <div
-                  className={`flex items-end gap-2 ${isOwn ? "flex-row-reverse" : ""}`}
-                >
-                  {/* Avatar */}
-                  <div className="flex-shrink-0">
-                    {message.userAvatar ? (
-                      <img
-                        src={message.userAvatar}
-                        alt={message.userName}
-                        className="h-9 w-9 rounded-full ring-1 ring-border/60"
-                      />
-                    ) : (
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground ring-1 ring-border/60">
-                        {message.userName.charAt(0).toUpperCase()}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Message content */}
-                  <div className={`flex min-w-0 flex-col ${isOwn ? "items-end" : ""}`}>
-                    <div
-                      className={`flex items-start gap-2 ${isOwn ? "justify-end" : ""}`}
-                    >
-                      {isAdmin && (
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon"
-                              className="h-6 w-6 self-center"
-                              aria-label={t("actions.menu_label")}
-                            >
-                              <MoreVertical className="h-4 w-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align={isOwn ? "end" : "start"}>
-                            <DropdownMenuItem
-                              variant="destructive"
-                              onSelect={() => {
-                                setDeleteError(null);
-                                setSelectedMessage(message);
-                              }}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              {t("actions.delete")}
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      )}
-                      <div className={`flex flex-col ${isOwn ? "items-end" : ""}`}>
-                        <span className="text-sm font-semibold text-foreground/90">
-                          {message.userName}
-                        </span>
-                        <span className="text-[0.7rem] font-mono text-muted-foreground/80">
-                          {new Date(message.createdAt).toLocaleString(undefined, {
-                            dateStyle: "medium",
-                            timeStyle: "short",
-                          })}
-                        </span>
-                      </div>
-                    </div>
-                    <div
-                      className={`relative mt-1 max-w-[75%] min-w-[3.5rem] rounded-2xl border px-3 py-2 text-sm leading-relaxed shadow-sm ${
-                        isOwn
-                          ? "border-primary/30 bg-primary text-primary-foreground text-right"
-                          : "border-border/60 bg-card text-foreground text-left"
-                      }`}
-                    >
-                      <span
-                        className={`absolute -top-[6px] h-3 w-6 ${
-                          isOwn ? "right-3 bg-primary" : "left-3 bg-card"
-                        }`}
-                        style={{ clipPath: "polygon(50% 0, 0 100%, 100% 100%)" }}
-                        aria-hidden="true"
-                      />
-                      <span
-                        className={`block whitespace-pre-wrap break-all ${
-                          isEmojiOnly ? "text-3xl leading-none" : ""
-                        }`}
-                      >
-                        {message.message}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
+                },
+              });
+            })}
+          </div>
+        )}
       </div>
       <Dialog
         open={!!selectedMessage}

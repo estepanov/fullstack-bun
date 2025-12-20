@@ -4,7 +4,7 @@ import type { FESession } from "@/lib/auth-client";
 import { useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
-import { MESSAGE_CONFIG } from "shared";
+import { ChatWSMessageType, MESSAGE_CONFIG, getSendMessageSchema } from "shared";
 
 interface MessageFormProps {
   sendMessage: (message: string) => void;
@@ -57,18 +57,32 @@ export const MessageForm = ({
     e.preventDefault();
 
     // Validate message
-    if (!message.trim()) {
-      setError(t("form.errors.empty"));
-      return;
-    }
+    const validation = getSendMessageSchema({
+      allowNewlines: isAdmin,
+    }).safeParse({
+      type: ChatWSMessageType.SEND_MESSAGE,
+      message,
+    });
 
-    if (!isAdmin && /[\r\n]/.test(message)) {
-      setError(t("form.errors.single_line"));
-      return;
-    }
-
-    if (message.length > MESSAGE_CONFIG.MAX_LENGTH) {
-      setError(t("form.errors.max_length", { max: MESSAGE_CONFIG.MAX_LENGTH }));
+    if (!validation.success) {
+      const issues = validation.error.issues;
+      if (issues.some((issue) => issue.message === "Message must be a single line")) {
+        setError(t("form.errors.single_line"));
+        return;
+      }
+      if (issues.some((issue) => issue.code === "too_small")) {
+        setError(t("form.errors.empty"));
+        return;
+      }
+      if (issues.some((issue) => issue.code === "too_big")) {
+        setError(t("form.errors.max_length", { max: MESSAGE_CONFIG.MAX_LENGTH }));
+        return;
+      }
+      if (issues.some((issue) => issue.message === "Message cannot contain HTML tags")) {
+        setError(t("form.errors.no_html"));
+        return;
+      }
+      setError(t("form.errors.invalid"));
       return;
     }
 

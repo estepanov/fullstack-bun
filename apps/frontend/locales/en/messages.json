@@ -9,7 +9,9 @@
     "errors": {
       "empty": "Message cannot be empty",
       "max_length": "Message cannot exceed {{max}} characters",
-      "single_line": "Message must be a single line"
+      "single_line": "Message must be a single line",
+      "no_html": "Message cannot contain HTML tags",
+      "invalid": "Message is invalid"
     },
     "login_prompt": "Please <loginLink>log in</loginLink> to send messages",
     "verify_email_prompt": "Please verify your email to send messages"

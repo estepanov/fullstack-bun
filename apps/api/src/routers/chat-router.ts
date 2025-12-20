@@ -2,17 +2,14 @@ import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { upgradeWebSocket } from "hono/bun";
 import type { WSContext } from "hono/ws";
-import {
-  ChatWSMessageType,
-  type SendMessagePayload,
-  sendMessageSchema,
-} from "shared/interfaces/chat";
-import { isAdmin, type UserRole } from "shared/auth/user-role";
+import { type UserRole, isAdmin } from "shared/auth/user-role";
+import { ChatWSMessageType, getSendMessageSchema } from "shared/interfaces/chat";
 import { db } from "../db/client";
 import { user as userTable } from "../db/schema";
 import { auth } from "../lib/auth";
 import { chatManager } from "../lib/chat-manager";
 import { chatService } from "../lib/chat-service";
+import { decodeWsMessage } from "../lib/ws-message";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
 import { requireAdmin } from "../middlewares/require-admin";
@@ -89,19 +86,26 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
           const logger = c.get("logger");
 
           try {
-            const rawMessage =
-              typeof evt.data === "string"
-                ? evt.data
-                : new TextDecoder().decode(evt.data);
+            const rawMessage = await decodeWsMessage(evt.data);
             // Parse incoming message
             const data = JSON.parse(rawMessage);
-            const parsed = sendMessageSchema.safeParse(data);
+            const parsed = getSendMessageSchema({
+              allowNewlines: isAdminUser,
+            }).safeParse(data);
 
             if (!parsed.success) {
+              const issueMessages = new Set(
+                parsed.error.issues.map((issue) => issue.message),
+              );
+              const errorMessage = issueMessages.has("Message must be a single line")
+                ? "Messages must be a single line"
+                : issueMessages.has("Message cannot contain HTML tags")
+                  ? "Message cannot contain HTML tags"
+                  : "Invalid message format";
               ws.send(
                 JSON.stringify({
                   type: ChatWSMessageType.ERROR,
-                  error: "Invalid message format",
+                  error: errorMessage,
                   trace: trace(),
                 }),
               );
@@ -126,17 +130,6 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
                 JSON.stringify({
                   type: ChatWSMessageType.ERROR,
                   error: "Please verify your email before sending messages",
-                  trace: trace(),
-                }),
-              );
-              return;
-            }
-
-            if (!isAdminUser && /[\r\n]/.test(parsed.data.message)) {
-              ws.send(
-                JSON.stringify({
-                  type: ChatWSMessageType.ERROR,
-                  error: "Messages must be a single line",
                   trace: trace(),
                 }),
               );

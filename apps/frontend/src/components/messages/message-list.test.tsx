@@ -19,7 +19,14 @@ const createMessage = (overrides: Partial<ChatMessage> = {}): ChatMessage => ({
 describe("MessageList", () => {
   test("renders returned messages", () => {
     const message = createMessage();
-    render(<MessageList messages={[message]} currentUserId="user-2" isAdmin={false} />);
+    render(
+      <MessageList
+        messages={[message]}
+        currentUserId="user-2"
+        isAdmin={false}
+        disableVirtualization
+      />,
+    );
     expect(screen.getByText(message.message)).toBeInTheDocument();
     expect(screen.getByText(message.userName)).toBeInTheDocument();
   });
@@ -27,7 +34,14 @@ describe("MessageList", () => {
   test("shows delete actions for admins", async () => {
     const user = userEvent.setup();
     const message = createMessage();
-    render(<MessageList messages={[message]} currentUserId="user-2" isAdmin />);
+    render(
+      <MessageList
+        messages={[message]}
+        currentUserId="user-2"
+        isAdmin
+        disableVirtualization
+      />,
+    );
     const menuButton = await screen.findByLabelText("Message actions");
     await user.click(menuButton);
     expect(await screen.findByText("Delete message")).toBeInTheDocument();
@@ -38,7 +52,12 @@ describe("MessageList", () => {
       message: "😀😀😀",
     });
     render(
-      <MessageList messages={[emojiMessage]} currentUserId="user-2" isAdmin={false} />,
+      <MessageList
+        messages={[emojiMessage]}
+        currentUserId="user-2"
+        isAdmin={false}
+        disableVirtualization
+      />,
     );
     expect(screen.getByText(emojiMessage.message)).toHaveClass("text-3xl");
   });
@@ -56,9 +75,14 @@ describe("MessageList", () => {
         messages={[overLimit, mixed]}
         currentUserId="user-2"
         isAdmin={false}
+        disableVirtualization
       />,
     );
-    expect(screen.getByText(overLimit.message)).toHaveClass("text-sm");
-    expect(screen.getByText(mixed.message)).toHaveClass("text-sm");
+    const overLimitBubble = screen
+      .getByText(overLimit.message)
+      .closest("[data-message-bubble]");
+    const mixedBubble = screen.getByText(mixed.message).closest("[data-message-bubble]");
+    expect(overLimitBubble).toHaveClass("text-sm");
+    expect(mixedBubble).toHaveClass("text-sm");
   });
 });

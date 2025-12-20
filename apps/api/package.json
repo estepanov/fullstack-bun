@@ -9,7 +9,8 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "format": "bun run biome format --write ./src",
-    "lint": "bun run biome lint ./src"
+    "lint": "bun run biome lint ./src",
+    "test": "bun test"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.3",

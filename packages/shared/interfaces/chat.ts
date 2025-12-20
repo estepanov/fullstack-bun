@@ -15,7 +15,7 @@ export enum ChatWSMessageType {
 }
 
 const htmlTagRegex = /<\s*\/?\s*[a-z][^>]*>/i;
-const messageSchema = z
+const baseMessageSchema = z
   .string()
   .trim()
   .min(MESSAGE_CONFIG.MIN_LENGTH)
@@ -24,13 +24,19 @@ const messageSchema = z
     message: "Message cannot contain HTML tags",
   });
 
+export const getMessageSchema = (options?: { allowNewlines?: boolean }) =>
+  baseMessageSchema.refine(
+    (message) => (options?.allowNewlines ? true : !/[\r\n]/.test(message)),
+    { message: "Message must be a single line" },
+  );
+
 // Chat message schema
 export const chatMessageSchema = z.object({
   id: z.string(),
   userId: z.string(),
   userName: z.string(),
   userAvatar: z.string().nullable(),
-  message: messageSchema,
+  message: baseMessageSchema,
   timestamp: z.number(),
   createdAt: z.string(),
 });
@@ -38,10 +44,13 @@ export const chatMessageSchema = z.object({
 export type ChatMessage = z.infer<typeof chatMessageSchema>;
 
 // Client -> Server: Send message
-export const sendMessageSchema = z.object({
-  type: z.literal(ChatWSMessageType.SEND_MESSAGE),
-  message: messageSchema,
-});
+export const getSendMessageSchema = (options?: { allowNewlines?: boolean }) =>
+  z.object({
+    type: z.literal(ChatWSMessageType.SEND_MESSAGE),
+    message: getMessageSchema(options),
+  });
+
+export const sendMessageSchema = getSendMessageSchema();
 
 export type SendMessagePayload = z.infer<typeof sendMessageSchema>;
 
