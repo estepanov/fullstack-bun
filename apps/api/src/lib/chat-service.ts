@@ -6,6 +6,31 @@ const CHAT_KEY = "chat:global:messages";
 const MAX_MESSAGES = 100;
 
 export class ChatService {
+	private async findMessageEntry(messageId: string): Promise<{
+		message: ChatMessage;
+		raw: string;
+	} | null> {
+		const messages = await redis.zrange(CHAT_KEY, 0, -1);
+
+		for (const msgStr of messages) {
+			try {
+				const msg = JSON.parse(msgStr) as ChatMessage;
+				if (msg.id === messageId) {
+					return { message: msg, raw: msgStr };
+				}
+			} catch (error) {
+				console.error("Failed to parse message:", error);
+			}
+		}
+
+		return null;
+	}
+
+	async getMessageById(messageId: string): Promise<ChatMessage | null> {
+		const entry = await this.findMessageEntry(messageId);
+		return entry?.message ?? null;
+	}
+
 	/**
 	 * Add a new message to Redis and return it
 	 */
@@ -65,31 +90,55 @@ export class ChatService {
 	}
 
 	/**
-	 * Delete a specific message by ID (admin only)
+	 * Delete a specific message by ID
 	 */
-	async deleteMessage(messageId: string): Promise<boolean> {
+	async deleteMessage(messageId: string): Promise<ChatMessage | null> {
 		try {
-			// Get all messages
-			const messages = await redis.zrange(CHAT_KEY, 0, -1);
-
-			// Find the message with the matching ID
-			for (const msgStr of messages) {
-				try {
-					const msg = JSON.parse(msgStr) as ChatMessage;
-					if (msg.id === messageId) {
-						// Remove this specific message
-						const removed = await redis.zrem(CHAT_KEY, msgStr);
-						return removed > 0;
-					}
-				} catch (error) {
-					console.error("Failed to parse message during deletion:", error);
-				}
+			const entry = await this.findMessageEntry(messageId);
+			if (!entry) {
+				return null;
 			}
 
-			return false;
+			const removed = await redis.zrem(CHAT_KEY, entry.raw);
+			return removed > 0 ? entry.message : null;
 		} catch (error) {
 			console.error("Failed to delete message:", error);
-			return false;
+			return null;
+		}
+	}
+
+	/**
+	 * Update a specific message by ID
+	 */
+	async updateMessage(
+		messageId: string,
+		newMessage: string,
+	): Promise<ChatMessage | null> {
+		try {
+			const entry = await this.findMessageEntry(messageId);
+			if (!entry) {
+				return null;
+			}
+
+			const score = Number.isFinite(entry.message.timestamp)
+				? entry.message.timestamp
+				: Date.now();
+			const updated: ChatMessage = {
+				...entry.message,
+				message: newMessage.trim(),
+				editedAt: new Date().toISOString(),
+			};
+
+			const removed = await redis.zrem(CHAT_KEY, entry.raw);
+			if (!removed) {
+				return null;
+			}
+
+			await redis.zadd(CHAT_KEY, score, JSON.stringify(updated));
+			return updated;
+		} catch (error) {
+			console.error("Failed to update message:", error);
+			return null;
 		}
 	}
 

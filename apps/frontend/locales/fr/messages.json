@@ -1,6 +1,7 @@
 {
   "list": {
-    "empty": "Aucun message pour le moment. Soyez le premier à dire bonjour !"
+    "empty": "Aucun message pour le moment. Soyez le premier à dire bonjour !",
+    "edited": "Modifié"
   },
   "states": {
     "loading": {
@@ -32,8 +33,17 @@
   "actions": {
     "refresh_button": "Rafraîchir",
     "menu_label": "Actions du message",
+    "edit": "Modifier le message",
     "delete": "Supprimer le message",
     "ban_user": "Bannir l'utilisateur"
+  },
+  "edit": {
+    "title": "Modifier le message",
+    "description": "Mettez à jour le message pour tout le monde dans le chat.",
+    "save": "Enregistrer les modifications",
+    "saving": "Enregistrement...",
+    "cancel": "Annuler",
+    "character_count": "{{count}}/{{max}} caractères"
   },
   "confirm": {
     "title": "Supprimer le message ?",
@@ -61,6 +71,7 @@
   },
   "errors": {
     "delete_failed": "Impossible de supprimer le message. Réessayez.",
+    "update_failed": "Impossible de modifier le message. Réessayez.",
     "ban_failed": "Impossible de bannir l'utilisateur. Réessayez."
   }
 }

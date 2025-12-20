@@ -14,16 +14,18 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
 import { useDeleteChatMessageMutation } from "@/hooks/api/useDeleteChatMessageMutation";
+import { useUpdateChatMessageMutation } from "@/hooks/api/useUpdateChatMessageMutation";
 import { isEmojiOnlyMessage } from "@/lib/emoji";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Ban, MoreVertical, Trash2 } from "lucide-react";
+import { Ban, MoreVertical, PencilLine, Trash2 } from "lucide-react";
 import type { CSSProperties, Key } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CHAT_CONFIG } from "shared";
-import type { ChatMessage } from "shared/interfaces/chat";
+import { CHAT_CONFIG, MESSAGE_CONFIG, getMessageSchema } from "shared";
+import type { ChatMessage } from "shared";
 
 interface MessageListProps {
   messages: ChatMessage[];
@@ -43,12 +45,16 @@ export const MessageList = ({
   const wasAtBottom = useRef(true);
   const [selectedMessage, setSelectedMessage] = useState<ChatMessage | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [editingMessage, setEditingMessage] = useState<ChatMessage | null>(null);
+  const [editValue, setEditValue] = useState("");
+  const [editError, setEditError] = useState<string | null>(null);
   const [banDialogOpen, setBanDialogOpen] = useState(false);
   const [userToBan, setUserToBan] = useState<{ id: string; name: string } | null>(null);
   const [banReason, setBanReason] = useState("");
   const [deleteMessages, setDeleteMessages] = useState(false);
   const [banError, setBanError] = useState<string | null>(null);
   const deleteMessage = useDeleteChatMessageMutation();
+  const updateMessage = useUpdateChatMessageMutation();
   const banUser = useBanUserMutation();
 
   const virtualizer = useVirtualizer({
@@ -103,6 +109,8 @@ export const MessageList = ({
     },
   ) => {
     const isOwn = message.userId === currentUserId;
+    const canManage = isAdmin || isOwn;
+    const canBan = isAdmin && !isOwn;
     const isEmojiOnly = isEmojiOnlyMessage(message.message, CHAT_CONFIG.EMOJI_ONLY_MAX);
 
     return (
@@ -128,7 +136,7 @@ export const MessageList = ({
             <div
               className={`inline-flex gap-2 ${isOwn ? "flex-row justify-end" : "flex-row-reverse items-start"}`}
             >
-              {isAdmin && (
+              {canManage && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button
@@ -143,6 +151,18 @@ export const MessageList = ({
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align={isOwn ? "end" : "start"}>
                     <DropdownMenuItem
+                      onSelect={() => {
+                        setEditError(null);
+                        setEditValue(message.message);
+                        setTimeout(() => {
+                          setEditingMessage(message);
+                        }, 100);
+                      }}
+                    >
+                      <PencilLine className="h-4 w-4" />
+                      {t("actions.edit")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
                       variant="destructive"
                       onSelect={() => {
                         setDeleteError(null);
@@ -155,7 +175,7 @@ export const MessageList = ({
                       <Trash2 className="h-4 w-4" />
                       {t("actions.delete")}
                     </DropdownMenuItem>
-                    {!isOwn && (
+                    {canBan && (
                       <DropdownMenuItem
                         variant="destructive"
                         onSelect={() => {
@@ -178,12 +198,19 @@ export const MessageList = ({
                 <span className="text-sm font-semibold text-foreground/90">
                   {message.userName}
                 </span>
-                <span className="text-[0.7rem] font-mono text-muted-foreground/80">
-                  {new Date(message.createdAt).toLocaleString(undefined, {
-                    dateStyle: "medium",
-                    timeStyle: "short",
-                  })}
-                </span>
+                <div className="flex items-center gap-2 text-[0.7rem] font-mono text-muted-foreground/80">
+                  <span>
+                    {new Date(message.createdAt).toLocaleString(undefined, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
+                  </span>
+                  {message.editedAt && (
+                    <span className="rounded-full bg-muted px-2 py-0.5 text-[0.6rem] uppercase tracking-wide text-muted-foreground/70">
+                      {t("list.edited")}
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <div
@@ -317,6 +344,117 @@ export const MessageList = ({
               disabled={deleteMessage.isPending}
             >
               {t("confirm.confirm")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog
+        open={!!editingMessage}
+        onOpenChange={(open) => {
+          if (!open) {
+            setEditingMessage(null);
+            setEditValue("");
+            setEditError(null);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("edit.title")}</DialogTitle>
+            <DialogDescription>{t("edit.description")}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <Textarea
+              value={editValue}
+              onChange={(e) => {
+                const nextValue = isAdmin
+                  ? e.target.value
+                  : e.target.value.replace(/[\r\n]+/g, " ");
+                setEditValue(nextValue);
+                if (editError) setEditError(null);
+              }}
+              rows={isAdmin ? MESSAGE_CONFIG.DEFAULT_ROWS : 2}
+              maxLength={MESSAGE_CONFIG.MAX_LENGTH}
+            />
+            <div className="text-xs text-muted-foreground text-right">
+              {t("edit.character_count", {
+                count: editValue.length,
+                max: MESSAGE_CONFIG.MAX_LENGTH,
+              })}
+            </div>
+            {editError && (
+              <div className="rounded-md border border-destructive/20 bg-destructive/10 p-2 text-sm text-destructive">
+                {editError}
+              </div>
+            )}
+          </div>
+          <DialogFooter className="mt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setEditingMessage(null);
+                setEditValue("");
+                setEditError(null);
+              }}
+            >
+              {t("edit.cancel")}
+            </Button>
+            <Button
+              type="button"
+              onClick={async () => {
+                if (!editingMessage) return;
+                setEditError(null);
+
+                const validation = getMessageSchema({
+                  allowNewlines: isAdmin,
+                }).safeParse(editValue);
+
+                if (!validation.success) {
+                  const issues = validation.error.issues;
+                  if (
+                    issues.some((issue) => issue.message === "Message must be a single line")
+                  ) {
+                    setEditError(t("form.errors.single_line"));
+                    return;
+                  }
+                  if (issues.some((issue) => issue.code === "too_small")) {
+                    setEditError(t("form.errors.empty"));
+                    return;
+                  }
+                  if (issues.some((issue) => issue.code === "too_big")) {
+                    setEditError(
+                      t("form.errors.max_length", { max: MESSAGE_CONFIG.MAX_LENGTH }),
+                    );
+                    return;
+                  }
+                  if (
+                    issues.some(
+                      (issue) => issue.message === "Message cannot contain HTML tags",
+                    )
+                  ) {
+                    setEditError(t("form.errors.no_html"));
+                    return;
+                  }
+                  setEditError(t("form.errors.invalid"));
+                  return;
+                }
+
+                try {
+                  await updateMessage.mutateAsync({
+                    id: editingMessage.id,
+                    message: editValue,
+                  });
+                  setEditingMessage(null);
+                  setEditValue("");
+                } catch {
+                  setEditError(t("errors.update_failed"));
+                }
+              }}
+              disabled={updateMessage.isPending || !editValue.trim()}
+            >
+              {updateMessage.isPending ? t("edit.saving") : t("edit.save")}
             </Button>
           </DialogFooter>
         </DialogContent>

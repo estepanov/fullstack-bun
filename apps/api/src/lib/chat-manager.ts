@@ -72,6 +72,29 @@ class ChatManager {
 		console.log(`Broadcast deletion: sent=${sent}, failed=${failed}`);
 	}
 
+	broadcastUpdate(message: ChatMessage) {
+		const payload = {
+			type: ChatWSMessageType.MESSAGE_UPDATED,
+			data: message,
+		};
+
+		const messageStr = JSON.stringify(payload);
+		let sent = 0;
+		let failed = 0;
+
+		for (const client of this.clients) {
+			try {
+				client.ws.send(messageStr);
+				sent++;
+			} catch (error) {
+				console.error("Failed to send update to client:", error);
+				failed++;
+			}
+		}
+
+		console.log(`Broadcast update: sent=${sent}, failed=${failed}`);
+	}
+
 	disconnectUser(userId: string) {
 		let disconnected = 0;
 

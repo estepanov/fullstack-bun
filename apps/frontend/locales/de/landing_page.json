@@ -1,5 +1,5 @@
 {
   "title": "Chat-Demo",
   "description": "Dies ist ein Boilerplate für eine Fullstack-Bun-Anwendung mit React, TypeScript und Tailwind CSS.",
-  "get_started": "Bearbeite <code>src/App.tsx</code> und speichere, um HMR zu testen"
+  "get_started": "Bearbeite <code>apps/frontend/src/pages/landing.tsx</code> und speichere, um HMR zu testen"
 }

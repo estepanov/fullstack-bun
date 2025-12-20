@@ -1,6 +1,7 @@
 {
   "list": {
-    "empty": "No messages yet. Be the first to say hello!"
+    "empty": "No messages yet. Be the first to say hello!",
+    "edited": "Edited"
   },
   "states": {
     "loading": {
@@ -32,8 +33,17 @@
   "actions": {
     "refresh_button": "Refresh",
     "menu_label": "Message actions",
+    "edit": "Edit message",
     "delete": "Delete message",
     "ban_user": "Ban user"
+  },
+  "edit": {
+    "title": "Edit message",
+    "description": "Update the message for everyone in the chat.",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "character_count": "{{count}}/{{max}} characters"
   },
   "confirm": {
     "title": "Delete message?",
@@ -61,6 +71,7 @@
   },
   "errors": {
     "delete_failed": "Failed to delete message. Try again.",
+    "update_failed": "Failed to update message. Try again.",
     "ban_failed": "Failed to ban user. Try again."
   }
 }

@@ -1,9 +1,15 @@
+import { zValidator } from "@hono/zod-validator";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { upgradeWebSocket } from "hono/bun";
 import type { WSContext } from "hono/ws";
 import { type UserRole, isAdmin } from "shared/auth/user-role";
-import { ChatWSMessageType, getSendMessageSchema } from "shared/interfaces/chat";
+import {
+  ChatWSMessageType,
+  getMessageSchema,
+  getSendMessageSchema,
+  getUpdateMessageSchema,
+} from "shared/interfaces/chat";
 import { db } from "../db/client";
 import { user as userTable } from "../db/schema";
 import { auth } from "../lib/auth";
@@ -13,7 +19,6 @@ import { checkChatThrottle } from "../lib/chat-throttle";
 import { decodeWsMessage } from "../lib/ws-message";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
-import { requireAdmin } from "../middlewares/require-admin";
 
 /**
  * Check if a user has an active ban
@@ -300,25 +305,90 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
     }
   })
 
-  // Admin endpoint to delete a message
-  .delete("/messages/:id", authMiddleware(), requireAdmin(), async (c) => {
+  // Update a message (owner or admin)
+  .patch(
+    "/messages/:id",
+    authMiddleware(),
+    zValidator("json", getUpdateMessageSchema()),
+    async (c) => {
+      const messageId = c.req.param("id");
+      const logger = c.get("logger");
+      const role = c.var.user.role as UserRole | undefined;
+      const isAdminUser = role ? isAdmin(role) : false;
+
+      try {
+        const { message } = c.req.valid("json");
+
+        // Additional validation for non-admin users (no newlines)
+        if (!isAdminUser && /[\r\n]/.test(message)) {
+          return c.json({ success: false, error: "Messages must be a single line" }, 400);
+        }
+
+        const messageEntry = await chatService.getMessageById(messageId);
+
+        if (!messageEntry) {
+          return c.json({ success: false, error: "Message not found" }, 404);
+        }
+
+        if (!isAdminUser && messageEntry.userId !== c.var.user.id) {
+          return c.json({ success: false, error: "Forbidden" }, 403);
+        }
+
+        const updated = await chatService.updateMessage(messageId, message);
+
+        if (!updated) {
+          return c.json({ success: false, error: "Failed to update message" }, 500);
+        }
+
+        chatManager.broadcastUpdate(updated);
+        logger.info(`Message updated: messageId=${messageId}`);
+        return c.json({ success: true, message: updated });
+      } catch (error) {
+        logger.error(
+          { err: error, messageId, userId: c.var.user.id },
+          "Failed to update message",
+        );
+        return c.json({ success: false, error: "Failed to update message" }, 500);
+      }
+    },
+  )
+
+  // Delete a message (owner or admin)
+  .delete("/messages/:id", authMiddleware(), async (c) => {
     const messageId = c.req.param("id");
     const logger = c.get("logger");
+    const role = c.var.user.role as UserRole | undefined;
+    const isAdminUser = role ? isAdmin(role) : false;
 
     try {
+      const messageEntry = await chatService.getMessageById(messageId);
+
+      if (!messageEntry) {
+        return c.json({ success: false, error: "Message not found" }, 404);
+      }
+
+      if (!isAdminUser && messageEntry.userId !== c.var.user.id) {
+        return c.json({ success: false, error: "Forbidden" }, 403);
+      }
+
       const deleted = await chatService.deleteMessage(messageId);
 
       if (deleted) {
         // Broadcast deletion to all connected clients
         chatManager.broadcastDeletion(messageId);
 
-        logger.info(`Message deleted by admin: messageId=${messageId}`);
+        logger.info(
+          `${isAdminUser ? "Admin" : "User"} deleted message: messageId=${messageId}`,
+        );
         return c.json({ success: true, messageId });
       }
 
       return c.json({ success: false, error: "Message not found" }, 404);
     } catch (error) {
-      logger.error("Failed to delete message:", error);
+      logger.error(
+        { err: error, messageId, userId: c.var.user.id },
+        "Failed to delete message",
+      );
       return c.json({ success: false, error: "Failed to delete message" }, 500);
     }
   });

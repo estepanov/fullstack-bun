@@ -1,6 +1,7 @@
 {
   "list": {
-    "empty": "Aún no hay mensajes. ¡Sé el primero en saludar!"
+    "empty": "Aún no hay mensajes. ¡Sé el primero en saludar!",
+    "edited": "Editado"
   },
   "states": {
     "loading": {
@@ -32,8 +33,17 @@
   "actions": {
     "refresh_button": "Actualizar",
     "menu_label": "Acciones del mensaje",
+    "edit": "Editar mensaje",
     "delete": "Eliminar mensaje",
     "ban_user": "Banear usuario"
+  },
+  "edit": {
+    "title": "Editar mensaje",
+    "description": "Actualiza el mensaje para todos en el chat.",
+    "save": "Guardar cambios",
+    "saving": "Guardando...",
+    "cancel": "Cancelar",
+    "character_count": "{{count}}/{{max}} caracteres"
   },
   "confirm": {
     "title": "¿Eliminar mensaje?",
@@ -61,6 +71,7 @@
   },
   "errors": {
     "delete_failed": "No se pudo eliminar el mensaje. Inténtalo de nuevo.",
+    "update_failed": "No se pudo actualizar el mensaje. Inténtalo de nuevo.",
     "ban_failed": "No se pudo banear al usuario. Inténtalo de nuevo."
   }
 }

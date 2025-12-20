@@ -115,6 +115,12 @@ export const useChatWebSocket = ({
 							);
 							break;
 
+						case ChatWSMessageType.MESSAGE_UPDATED:
+							setMessages((prev) =>
+								prev.map((msg) => (msg.id === data.data.id ? data.data : msg)),
+							);
+							break;
+
 						case ChatWSMessageType.BULK_DELETE:
 							setMessages((prev) =>
 								prev.filter((msg) => msg.userId !== data.userId),

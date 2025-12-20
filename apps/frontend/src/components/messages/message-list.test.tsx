@@ -31,7 +31,7 @@ describe("MessageList", () => {
     expect(screen.getByText(message.userName)).toBeInTheDocument();
   });
 
-  test("shows delete actions for admins", async () => {
+  test("shows edit and delete actions for admins", async () => {
     const user = userEvent.setup();
     const message = createMessage();
     render(
@@ -44,6 +44,24 @@ describe("MessageList", () => {
     );
     const menuButton = await screen.findByLabelText("Message actions");
     await user.click(menuButton);
+    expect(await screen.findByText("Edit message")).toBeInTheDocument();
+    expect(await screen.findByText("Delete message")).toBeInTheDocument();
+  });
+
+  test("shows edit and delete actions for message owner", async () => {
+    const user = userEvent.setup();
+    const message = createMessage({ userId: "user-1" });
+    render(
+      <MessageList
+        messages={[message]}
+        currentUserId="user-1"
+        isAdmin={false}
+        disableVirtualization
+      />,
+    );
+    const menuButton = await screen.findByLabelText("Message actions");
+    await user.click(menuButton);
+    expect(await screen.findByText("Edit message")).toBeInTheDocument();
     expect(await screen.findByText("Delete message")).toBeInTheDocument();
   });
 

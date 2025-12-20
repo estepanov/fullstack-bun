@@ -10,6 +10,7 @@ export enum ChatWSMessageType {
   NEW_MESSAGE = "new_message",
   MESSAGE_HISTORY = "message_history",
   MESSAGE_DELETED = "message_deleted",
+  MESSAGE_UPDATED = "message_updated",
   BULK_DELETE = "bulk_delete",
   THROTTLED = "throttled",
   ERROR = "error",
@@ -41,6 +42,7 @@ export const chatMessageSchema = z.object({
   message: baseMessageSchema,
   timestamp: z.number(),
   createdAt: z.string(),
+  editedAt: z.string().optional(),
 });
 
 export type ChatMessage = z.infer<typeof chatMessageSchema>;
@@ -55,6 +57,16 @@ export const getSendMessageSchema = (options?: { allowNewlines?: boolean }) =>
 export const sendMessageSchema = getSendMessageSchema();
 
 export type SendMessagePayload = z.infer<typeof sendMessageSchema>;
+
+// REST API: Update message
+export const getUpdateMessageSchema = (options?: { allowNewlines?: boolean }) =>
+  z.object({
+    message: getMessageSchema(options),
+  });
+
+export const updateMessageSchema = getUpdateMessageSchema();
+
+export type UpdateMessagePayload = z.infer<typeof updateMessageSchema>;
 
 const wsTraceSchema = z.object({
   requestId: z.string(),
@@ -87,6 +99,15 @@ export const messageDeletedSchema = z.object({
 });
 
 export type MessageDeletedPayload = z.infer<typeof messageDeletedSchema>;
+
+// Server -> Client: Message updated
+export const messageUpdatedSchema = z.object({
+  type: z.literal(ChatWSMessageType.MESSAGE_UPDATED),
+  data: chatMessageSchema,
+  trace: wsTraceSchema.optional(),
+});
+
+export type MessageUpdatedPayload = z.infer<typeof messageUpdatedSchema>;
 
 // Server -> Client: Bulk delete (delete all messages from a user)
 export const bulkDeleteSchema = z.object({
@@ -134,6 +155,7 @@ export type ChatWSMessage =
   | NewMessagePayload
   | MessageHistoryPayload
   | MessageDeletedPayload
+  | MessageUpdatedPayload
   | BulkDeletePayload
   | ThrottledMessagePayload
   | ErrorMessagePayload

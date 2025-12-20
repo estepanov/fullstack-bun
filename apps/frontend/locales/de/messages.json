@@ -1,6 +1,7 @@
 {
   "list": {
-    "empty": "Noch keine Nachrichten. Sei der Erste, der Hallo sagt!"
+    "empty": "Noch keine Nachrichten. Sei der Erste, der Hallo sagt!",
+    "edited": "Bearbeitet"
   },
   "states": {
     "loading": {
@@ -32,8 +33,17 @@
   "actions": {
     "refresh_button": "Aktualisieren",
     "menu_label": "Nachrichtenaktionen",
+    "edit": "Nachricht bearbeiten",
     "delete": "Nachricht löschen",
     "ban_user": "Benutzer sperren"
+  },
+  "edit": {
+    "title": "Nachricht bearbeiten",
+    "description": "Aktualisiere die Nachricht für alle im Chat.",
+    "save": "Änderungen speichern",
+    "saving": "Speichern...",
+    "cancel": "Abbrechen",
+    "character_count": "{{count}}/{{max}} Zeichen"
   },
   "confirm": {
     "title": "Nachricht löschen?",
@@ -61,6 +71,7 @@
   },
   "errors": {
     "delete_failed": "Nachricht konnte nicht gelöscht werden. Bitte erneut versuchen.",
+    "update_failed": "Nachricht konnte nicht aktualisiert werden. Bitte erneut versuchen.",
     "ban_failed": "Benutzer konnte nicht gesperrt werden. Bitte erneut versuchen."
   }
 }
