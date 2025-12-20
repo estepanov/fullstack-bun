@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { MESSAGE_CONFIG } from "../config/chat";
 
 // WebSocket message types
 export enum ChatWSMessageType {
@@ -17,8 +18,8 @@ const htmlTagRegex = /<\s*\/?\s*[a-z][^>]*>/i;
 const messageSchema = z
   .string()
   .trim()
-  .min(1)
-  .max(500)
+  .min(MESSAGE_CONFIG.MIN_LENGTH)
+  .max(MESSAGE_CONFIG.MAX_LENGTH)
   .refine((message) => !htmlTagRegex.test(message), {
     message: "Message cannot contain HTML tags",
   });

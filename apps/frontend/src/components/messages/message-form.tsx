@@ -1,15 +1,16 @@
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { MESSAGE_CONFIG } from "@/config/messages";
 import type { FESession } from "@/lib/auth-client";
 import { useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { MESSAGE_CONFIG } from "shared";
 
 interface MessageFormProps {
   sendMessage: (message: string) => void;
   isAuthenticated: boolean;
   session: FESession | null | undefined;
+  isAdmin?: boolean;
   connectionStatus: "connecting" | "connected" | "disconnected" | "error";
 }
 
@@ -17,6 +18,7 @@ export const MessageForm = ({
   sendMessage,
   isAuthenticated,
   session,
+  isAdmin = false,
   connectionStatus,
 }: MessageFormProps) => {
   const { t } = useTranslation("messages");
@@ -60,6 +62,11 @@ export const MessageForm = ({
       return;
     }
 
+    if (!isAdmin && /[\r\n]/.test(message)) {
+      setError(t("form.errors.single_line"));
+      return;
+    }
+
     if (message.length > MESSAGE_CONFIG.MAX_LENGTH) {
       setError(t("form.errors.max_length", { max: MESSAGE_CONFIG.MAX_LENGTH }));
       return;
@@ -81,17 +88,26 @@ export const MessageForm = ({
       <div className="flex gap-2">
         <Textarea
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={(e) => {
+            const nextValue = isAdmin
+              ? e.target.value
+              : e.target.value.replace(/[\r\n]+/g, " ");
+            setMessage(nextValue);
+            if (error) setError("");
+          }}
           onKeyDown={(e) => {
             // Submit on Enter (without Shift)
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
               handleSubmit(e);
             }
+            if (!isAdmin && e.key === "Enter" && e.shiftKey) {
+              e.preventDefault();
+            }
           }}
           placeholder={t("form.placeholder")}
           className="rounded-xl resize-none"
-          rows={MESSAGE_CONFIG.DEFAULT_ROWS}
+          rows={isAdmin ? MESSAGE_CONFIG.DEFAULT_ROWS : 1}
           maxLength={MESSAGE_CONFIG.MAX_LENGTH}
           disabled={connectionStatus !== "connected"}
         />

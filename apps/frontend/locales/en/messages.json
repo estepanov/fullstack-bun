@@ -8,7 +8,8 @@
     "character_count": "{{count}}/{{max}} characters",
     "errors": {
       "empty": "Message cannot be empty",
-      "max_length": "Message cannot exceed {{max}} characters"
+      "max_length": "Message cannot exceed {{max}} characters",
+      "single_line": "Message must be a single line"
     },
     "login_prompt": "Please <loginLink>log in</loginLink> to send messages",
     "verify_email_prompt": "Please verify your email to send messages"

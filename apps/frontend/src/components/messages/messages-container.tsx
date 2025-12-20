@@ -48,6 +48,7 @@ export const MessagesContainer = () => {
         sendMessage={sendMessage}
         isAuthenticated={isAuthenticated}
         session={data}
+        isAdmin={isAdmin}
         connectionStatus={connectionStatus}
       />
     </MessageScrollProvider>

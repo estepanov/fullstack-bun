@@ -8,7 +8,8 @@
     "character_count": "{{count}}/{{max}} Zeichen",
     "errors": {
       "empty": "Nachricht darf nicht leer sein",
-      "max_length": "Nachricht darf {{max}} Zeichen nicht überschreiten"
+      "max_length": "Nachricht darf {{max}} Zeichen nicht überschreiten",
+      "single_line": "Nachricht muss einzeilig sein"
     },
     "login_prompt": "Bitte <loginLink>melden Sie sich an</loginLink>, um Nachrichten zu senden",
     "verify_email_prompt": "Bitte verifizieren Sie Ihre E-Mail, um Nachrichten zu senden"

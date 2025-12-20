@@ -52,7 +52,7 @@ export const MessageList = ({
   const virtualizer = useVirtualizer({
     count: messages.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 96,
+    estimateSize: () => 120,
     overscan: 5,
   });
 
@@ -89,11 +89,14 @@ export const MessageList = ({
   return (
     <>
       {deleteError && (
-        <div className="mb-2 rounded-md bg-red-50 p-2 text-sm text-red-800">
+        <div className="mb-2 rounded-md border border-destructive/20 bg-destructive/10 p-2 text-sm text-destructive">
           {deleteError}
         </div>
       )}
-      <div ref={parentRef} className="h-[300px] overflow-y-auto">
+      <div
+        ref={parentRef}
+        className="h-[300px] overflow-y-auto rounded-lg border bg-muted/30 p-3 shadow-sm dark:bg-muted/20"
+      >
         <div
           style={{
             height: `${virtualizer.getTotalSize()}px`,
@@ -112,6 +115,12 @@ export const MessageList = ({
             return (
               <div
                 key={virtualItem.key}
+                data-index={virtualItem.index}
+                ref={(node) => {
+                  if (!node) return;
+                  node.dataset.index = String(virtualItem.index);
+                  virtualizer.measureElement(node);
+                }}
                 style={{
                   position: "absolute",
                   top: 0,
@@ -119,26 +128,28 @@ export const MessageList = ({
                   width: "100%",
                   transform: `translateY(${virtualItem.start}px)`,
                 }}
-                className="px-2 py-3"
+                className="px-1 py-2"
               >
-                <div className={`flex gap-2 ${isOwn ? "flex-row-reverse" : ""}`}>
+                <div
+                  className={`flex items-end gap-2 ${isOwn ? "flex-row-reverse" : ""}`}
+                >
                   {/* Avatar */}
                   <div className="flex-shrink-0">
                     {message.userAvatar ? (
                       <img
                         src={message.userAvatar}
                         alt={message.userName}
-                        className="h-8 w-8 rounded-full"
+                        className="h-9 w-9 rounded-full ring-1 ring-border/60"
                       />
                     ) : (
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-300 text-sm font-semibold text-white">
+                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-muted text-sm font-semibold text-muted-foreground ring-1 ring-border/60">
                         {message.userName.charAt(0).toUpperCase()}
                       </div>
                     )}
                   </div>
 
                   {/* Message content */}
-                  <div className={`flex flex-col ${isOwn ? "items-end" : ""}`}>
+                  <div className={`flex min-w-0 flex-col ${isOwn ? "items-end" : ""}`}>
                     <div
                       className={`flex items-start gap-2 ${isOwn ? "justify-end" : ""}`}
                     >
@@ -170,8 +181,10 @@ export const MessageList = ({
                         </DropdownMenu>
                       )}
                       <div className={`flex flex-col ${isOwn ? "items-end" : ""}`}>
-                        <span className="text-sm font-semibold">{message.userName}</span>
-                        <span className="text-[0.7rem] font-mono text-muted-foreground">
+                        <span className="text-sm font-semibold text-foreground/90">
+                          {message.userName}
+                        </span>
+                        <span className="text-[0.7rem] font-mono text-muted-foreground/80">
                           {new Date(message.createdAt).toLocaleString(undefined, {
                             dateStyle: "medium",
                             timeStyle: "short",
@@ -180,21 +193,23 @@ export const MessageList = ({
                       </div>
                     </div>
                     <div
-                      className={`min-w-[10rem] relative mt-2 rounded-lg px-3 py-2 ${
+                      className={`relative mt-1 max-w-[75%] min-w-[3.5rem] rounded-2xl border px-3 py-2 text-sm leading-relaxed shadow-sm ${
                         isOwn
-                          ? "bg-blue-500 text-white text-right"
-                          : "bg-gray-100 text-gray-900 text-left"
+                          ? "border-primary/30 bg-primary text-primary-foreground text-right"
+                          : "border-border/60 bg-card text-foreground text-left"
                       }`}
                     >
                       <span
                         className={`absolute -top-[6px] h-3 w-6 ${
-                          isOwn ? "right-3 bg-blue-500" : "left-3 bg-gray-100"
+                          isOwn ? "right-3 bg-primary" : "left-3 bg-card"
                         }`}
                         style={{ clipPath: "polygon(50% 0, 0 100%, 100% 100%)" }}
                         aria-hidden="true"
                       />
                       <span
-                        className={`${isEmojiOnly ? "text-2xl leading-none" : "text-sm"}`}
+                        className={`block whitespace-pre-wrap break-all ${
+                          isEmojiOnly ? "text-3xl leading-none" : ""
+                        }`}
                       >
                         {message.message}
                       </span>
@@ -220,7 +235,7 @@ export const MessageList = ({
             <DialogDescription>{t("confirm.description")}</DialogDescription>
           </DialogHeader>
           {selectedMessage && (
-            <div className="mt-3 rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
+            <div className="mt-3 max-h-40 overflow-auto break-all rounded-md bg-muted px-3 py-2 text-sm text-muted-foreground">
               {selectedMessage.message}
             </div>
           )}

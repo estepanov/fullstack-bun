@@ -7,6 +7,7 @@ import {
   type SendMessagePayload,
   sendMessageSchema,
 } from "shared/interfaces/chat";
+import { isAdmin, type UserRole } from "shared/auth/user-role";
 import { db } from "../db/client";
 import { user as userTable } from "../db/schema";
 import { auth } from "../lib/auth";
@@ -29,6 +30,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
       let userName: string | null = null;
       let userAvatar: string | null = null;
       let isVerified = false;
+      let isAdminUser = false;
 
       return {
         async onOpen(evt, ws: WSContext) {
@@ -45,6 +47,8 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
               userName = session.user.name;
               userAvatar = session.user.image ?? null;
               isVerified = session.user.emailVerified;
+              const role = session.user.role as UserRole | undefined;
+              isAdminUser = role ? isAdmin(role) : false;
 
               logger.info(`WebSocket opened: userId=${userId}, verified=${isVerified}`);
             } else {
@@ -122,6 +126,17 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
                 JSON.stringify({
                   type: ChatWSMessageType.ERROR,
                   error: "Please verify your email before sending messages",
+                  trace: trace(),
+                }),
+              );
+              return;
+            }
+
+            if (!isAdminUser && /[\r\n]/.test(parsed.data.message)) {
+              ws.send(
+                JSON.stringify({
+                  type: ChatWSMessageType.ERROR,
+                  error: "Messages must be a single line",
                   trace: trace(),
                 }),
               );
