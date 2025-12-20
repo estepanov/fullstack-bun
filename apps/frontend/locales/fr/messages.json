@@ -1,11 +1,17 @@
 {
+  "list": {
+    "empty": "Aucun message pour le moment. Soyez le premier à dire bonjour !"
+  },
   "form": {
+    "placeholder": "Tapez un message... (Appuyez sur Entrée pour envoyer)",
+    "send_button": "Envoyer",
+    "character_count": "{{count}}/{{max}} caractères",
     "errors": {
-      "messageMinLengthError": "Le message doit contenir au moins 5 caractères",
-      "messageMaxLengthError": "Le message doit contenir moins de 40 caractères"
+      "empty": "Le message ne peut pas être vide",
+      "max_length": "Le message ne peut pas dépasser {{max}} caractères"
     },
-    "message_field_label": "Message",
-    "submit_button": "Envoyer"
+    "login_prompt": "Veuillez <loginLink>vous connecter</loginLink> pour envoyer des messages",
+    "verify_email_prompt": "Veuillez vérifier votre e-mail pour envoyer des messages"
   },
   "actions": {
     "refresh_button": "Rafraîchir"

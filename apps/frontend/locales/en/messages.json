@@ -1,11 +1,17 @@
 {
+  "list": {
+    "empty": "No messages yet. Be the first to say hello!"
+  },
   "form": {
+    "placeholder": "Type a message... (Press Enter to send)",
+    "send_button": "Send",
+    "character_count": "{{count}}/{{max}} characters",
     "errors": {
-      "messageMinLengthError": "Message must be at least 5 characters long",
-      "messageMaxLengthError": "Message must be less than 40 characters long"
+      "empty": "Message cannot be empty",
+      "max_length": "Message cannot exceed {{max}} characters"
     },
-    "message_field_label": "Message",
-    "submit_button": "Submit"
+    "login_prompt": "Please <loginLink>log in</loginLink> to send messages",
+    "verify_email_prompt": "Please verify your email to send messages"
   },
   "actions": {
     "refresh_button": "Refresh"

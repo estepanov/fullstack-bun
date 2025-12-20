@@ -17,6 +17,7 @@
     "better-auth": "^1.4.7",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.7.4",
+    "ioredis": "^5.8.2",
     "nodemailer": "^7.0.11",
     "pino": "^9.6.0",
     "postgres": "^3.4.7",
@@ -27,6 +28,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/bun": "latest",
+    "@types/ioredis": "^5.0.0",
     "@types/nodemailer": "^7.0.4",
     "concurrently": "^9.1.2",
     "drizzle-kit": "^0.31.8",

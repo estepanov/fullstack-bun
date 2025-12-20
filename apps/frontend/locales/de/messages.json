@@ -1,11 +1,17 @@
 {
+  "list": {
+    "empty": "Noch keine Nachrichten. Sei der Erste, der Hallo sagt!"
+  },
   "form": {
+    "placeholder": "Nachricht eingeben... (Enter zum Senden)",
+    "send_button": "Senden",
+    "character_count": "{{count}}/{{max}} Zeichen",
     "errors": {
-      "messageMinLengthError": "Die Nachricht muss mindestens 5 Zeichen lang sein",
-      "messageMaxLengthError": "Die Nachricht darf maximal 40 Zeichen lang sein"
+      "empty": "Nachricht darf nicht leer sein",
+      "max_length": "Nachricht darf {{max}} Zeichen nicht überschreiten"
     },
-    "message_field_label": "Nachricht",
-    "submit_button": "Absenden"
+    "login_prompt": "Bitte <loginLink>melden Sie sich an</loginLink>, um Nachrichten zu senden",
+    "verify_email_prompt": "Bitte verifizieren Sie Ihre E-Mail, um Nachrichten zu senden"
   },
   "actions": {
     "refresh_button": "Aktualisieren"

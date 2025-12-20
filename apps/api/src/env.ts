@@ -19,6 +19,9 @@ export const env = createEnv({
     // Database
     DATABASE_URL: z.string().min(4),
 
+    // Redis
+    REDIS_URL: z.string().min(4),
+
     // Better Auth
     BETTER_AUTH_SECRET: z.string().min(32),
     FE_BASE_URL: z.string().min(4),

@@ -16,3 +16,5 @@ export const authClient = createAuthClient({
 // Export hooks for easy use throughout the app
 export const { useSession, signIn, signUp, signOut, resetPassword, verifyEmail } =
   authClient;
+
+export type FESession = NonNullable<ReturnType<typeof useSession>["data"]>;
