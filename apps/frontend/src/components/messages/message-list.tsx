@@ -83,7 +83,7 @@ export const MessageList = ({
 
   if (messages.length === 0) {
     return (
-      <div className="flex h-[300px] items-center justify-center text-muted-foreground">
+      <div className="flex h-75 items-center justify-center text-muted-foreground">
         <p>{t("list.empty")}</p>
       </div>
     );
@@ -109,7 +109,7 @@ export const MessageList = ({
       <div key={key} data-index={index} ref={ref} style={style} className="px-1 py-2">
         <div className={`flex items-end gap-2 ${isOwn ? "flex-row-reverse" : ""}`}>
           {/* Avatar */}
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             {message.userAvatar ? (
               <img
                 src={message.userAvatar}
@@ -125,7 +125,9 @@ export const MessageList = ({
 
           {/* Message content */}
           <div className={`flex min-w-0 flex-col ${isOwn ? "items-end" : ""}`}>
-            <div className={`flex items-start gap-2 ${isOwn ? "justify-end" : ""}`}>
+            <div
+              className={`inline-flex gap-2 ${isOwn ? "flex-row justify-end" : "flex-row-reverse items-start"}`}
+            >
               {isAdmin && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -186,14 +188,14 @@ export const MessageList = ({
             </div>
             <div
               data-message-bubble
-              className={`relative mt-1 min-w-[3.5rem] rounded-2xl border px-3 py-2 text-sm leading-relaxed shadow-sm ${
+              className={`relative mt-1 min-w-14 rounded-2xl border px-3 py-2 text-sm leading-relaxed shadow-sm ${
                 isOwn
                   ? "border-primary/30 bg-primary text-primary-foreground text-right"
                   : "border-border/60 bg-card text-foreground text-left"
               }`}
             >
               <span
-                className={`absolute -top-[6px] h-3 w-6 ${
+                className={`absolute -top-1.5 h-3 w-6 ${
                   isOwn ? "right-3 bg-primary" : "left-3 bg-card"
                 }`}
                 style={{ clipPath: "polygon(50% 0, 0 100%, 100% 100%)" }}
@@ -222,7 +224,7 @@ export const MessageList = ({
       )}
       <div
         ref={parentRef}
-        className="h-[300px] overflow-y-auto rounded-lg border bg-muted/30 p-3 shadow-sm dark:bg-muted/20"
+        className="h-75 overflow-y-auto rounded-lg border bg-muted/30 p-3 shadow-sm dark:bg-muted/20"
       >
         {disableVirtualization ? (
           <div className="flex flex-col">
