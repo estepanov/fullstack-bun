@@ -19,7 +19,8 @@
   "actions": {
     "refresh_button": "Refresh",
     "menu_label": "Message actions",
-    "delete": "Delete message"
+    "delete": "Delete message",
+    "ban_user": "Ban user"
   },
   "confirm": {
     "title": "Delete message?",
@@ -27,7 +28,26 @@
     "cancel": "Cancel",
     "confirm": "Delete"
   },
+  "ban": {
+    "dialog_title": "Ban User",
+    "dialog_description": "Are you sure you want to ban this user? They will no longer be able to access the platform.",
+    "reason_label": "Reason (optional)",
+    "reason_placeholder": "e.g., Spam posting",
+    "delete_messages_label": "Delete all user messages",
+    "confirm_button": "Ban User",
+    "confirming_button": "Banning...",
+    "cancel_button": "Cancel",
+    "success": "User has been banned",
+    "error": "Failed to ban user"
+  },
+  "banned": {
+    "title": "Account Banned",
+    "message": "Sorry, your account has been banned from this platform.",
+    "reason": "Reason: {{reason}}",
+    "contact": "Please contact support if you believe this is an error."
+  },
   "errors": {
-    "delete_failed": "Failed to delete message. Try again."
+    "delete_failed": "Failed to delete message. Try again.",
+    "ban_failed": "Failed to ban user. Try again."
   }
 }

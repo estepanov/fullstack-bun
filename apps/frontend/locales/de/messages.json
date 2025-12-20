@@ -19,7 +19,8 @@
   "actions": {
     "refresh_button": "Aktualisieren",
     "menu_label": "Nachrichtenaktionen",
-    "delete": "Nachricht löschen"
+    "delete": "Nachricht löschen",
+    "ban_user": "Benutzer sperren"
   },
   "confirm": {
     "title": "Nachricht löschen?",
@@ -27,7 +28,26 @@
     "cancel": "Abbrechen",
     "confirm": "Löschen"
   },
+  "ban": {
+    "dialog_title": "Benutzer Sperren",
+    "dialog_description": "Sind Sie sicher, dass Sie diesen Benutzer sperren möchten? Er kann nicht mehr auf die Plattform zugreifen.",
+    "reason_label": "Grund (optional)",
+    "reason_placeholder": "z.B., Spam",
+    "delete_messages_label": "Alle Nachrichten des Benutzers löschen",
+    "confirm_button": "Benutzer Sperren",
+    "confirming_button": "Sperren...",
+    "cancel_button": "Abbrechen",
+    "success": "Benutzer wurde gesperrt",
+    "error": "Benutzer konnte nicht gesperrt werden"
+  },
+  "banned": {
+    "title": "Konto Gesperrt",
+    "message": "Entschuldigung, Ihr Konto wurde von dieser Plattform gesperrt.",
+    "reason": "Grund: {{reason}}",
+    "contact": "Bitte kontaktieren Sie den Support, wenn Sie glauben, dass dies ein Fehler ist."
+  },
   "errors": {
-    "delete_failed": "Nachricht konnte nicht gelöscht werden. Bitte erneut versuchen."
+    "delete_failed": "Nachricht konnte nicht gelöscht werden. Bitte erneut versuchen.",
+    "ban_failed": "Benutzer konnte nicht gesperrt werden. Bitte erneut versuchen."
   }
 }

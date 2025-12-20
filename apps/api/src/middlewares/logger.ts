@@ -11,7 +11,7 @@ export const requestLogFormat = ({
   method: string;
   url: string;
 }) => {
-  return `${status} - ${method} - ${url}`;
+  return `${method} ${status} - ${url}`;
 };
 
 export type LoggerMiddlewareEnv = {
@@ -27,10 +27,8 @@ export const loggerMiddleware = () =>
     const requestId = c.req.header("x-request-id");
     const sessionId = c.req.header("x-session-id");
     const isOptionsReq = c.req.method === "OPTIONS";
-    const isWebSocketUpgrade =
-      c.req.header("upgrade")?.toLowerCase() === "websocket";
-    const fallbackId = () =>
-      `ws-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const isWebSocketUpgrade = c.req.header("upgrade")?.toLowerCase() === "websocket";
+    const fallbackId = () => `ws-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
     // OPTIONS requests (CORS preflight) and WS upgrades won't include these headers.
     if (!isOptionsReq && !isWebSocketUpgrade && (!requestId || !sessionId)) {

@@ -23,11 +23,14 @@ class ChatManager {
 		);
 	}
 
-	broadcast(message: ChatMessage) {
-		const payload = {
-			type: ChatWSMessageType.NEW_MESSAGE,
-			data: message,
-		};
+	broadcast(message: ChatMessage | { type: string; userId: string; deletedCount: number }) {
+		const payload =
+			"id" in message
+				? {
+						type: ChatWSMessageType.NEW_MESSAGE,
+						data: message,
+					}
+				: message;
 
 		const messageStr = JSON.stringify(payload);
 		let sent = 0;
@@ -67,6 +70,24 @@ class ChatManager {
 		}
 
 		console.log(`Broadcast deletion: sent=${sent}, failed=${failed}`);
+	}
+
+	disconnectUser(userId: string) {
+		let disconnected = 0;
+
+		for (const client of this.clients) {
+			if (client.userId === userId) {
+				try {
+					client.ws.close(1008, "User has been banned");
+					this.clients.delete(client);
+					disconnected++;
+				} catch (error) {
+					console.error("Failed to disconnect client:", error);
+				}
+			}
+		}
+
+		console.log(`Disconnected ${disconnected} connections for user ${userId}`);
 	}
 
 	getClientCount(): number {

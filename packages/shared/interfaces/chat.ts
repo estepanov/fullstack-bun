@@ -10,6 +10,7 @@ export enum ChatWSMessageType {
   NEW_MESSAGE = "new_message",
   MESSAGE_HISTORY = "message_history",
   MESSAGE_DELETED = "message_deleted",
+  BULK_DELETE = "bulk_delete",
   ERROR = "error",
   CONNECTED = "connected",
 }
@@ -86,6 +87,16 @@ export const messageDeletedSchema = z.object({
 
 export type MessageDeletedPayload = z.infer<typeof messageDeletedSchema>;
 
+// Server -> Client: Bulk delete (delete all messages from a user)
+export const bulkDeleteSchema = z.object({
+  type: z.literal(ChatWSMessageType.BULK_DELETE),
+  userId: z.string(),
+  deletedCount: z.number(),
+  trace: wsTraceSchema.optional(),
+});
+
+export type BulkDeletePayload = z.infer<typeof bulkDeleteSchema>;
+
 // Server -> Client: Error
 export const errorMessageSchema = z.object({
   type: z.literal(ChatWSMessageType.ERROR),
@@ -110,5 +121,6 @@ export type ChatWSMessage =
   | NewMessagePayload
   | MessageHistoryPayload
   | MessageDeletedPayload
+  | BulkDeletePayload
   | ErrorMessagePayload
   | ConnectedMessagePayload;

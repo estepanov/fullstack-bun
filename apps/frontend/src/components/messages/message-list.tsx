@@ -13,10 +13,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
 import { useDeleteChatMessageMutation } from "@/hooks/api/useDeleteChatMessageMutation";
 import { isEmojiOnlyMessage } from "@/lib/emoji";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { MoreVertical, Trash2 } from "lucide-react";
+import { Ban, MoreVertical, Trash2 } from "lucide-react";
 import type { CSSProperties, Key } from "react";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -41,16 +43,13 @@ export const MessageList = ({
   const wasAtBottom = useRef(true);
   const [selectedMessage, setSelectedMessage] = useState<ChatMessage | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [banDialogOpen, setBanDialogOpen] = useState(false);
+  const [userToBan, setUserToBan] = useState<{ id: string; name: string } | null>(null);
+  const [banReason, setBanReason] = useState("");
+  const [deleteMessages, setDeleteMessages] = useState(false);
+  const [banError, setBanError] = useState<string | null>(null);
   const deleteMessage = useDeleteChatMessageMutation();
-
-  useEffect(() => {
-    if (!selectedMessage) {
-      document.body.style.pointerEvents = "";
-    }
-    return () => {
-      document.body.style.pointerEvents = "";
-    };
-  }, [selectedMessage]);
+  const banUser = useBanUserMutation();
 
   const virtualizer = useVirtualizer({
     count: messages.length,
@@ -145,12 +144,31 @@ export const MessageList = ({
                       variant="destructive"
                       onSelect={() => {
                         setDeleteError(null);
-                        setSelectedMessage(message);
+                        // Use setTimeout to ensure dropdown closes before dialog opens
+                        setTimeout(() => {
+                          setSelectedMessage(message);
+                        }, 100);
                       }}
                     >
                       <Trash2 className="h-4 w-4" />
                       {t("actions.delete")}
                     </DropdownMenuItem>
+                    {!isOwn && (
+                      <DropdownMenuItem
+                        variant="destructive"
+                        onSelect={() => {
+                          setBanError(null);
+                          setUserToBan({ id: message.userId, name: message.userName });
+                          // Use setTimeout to ensure dropdown closes before dialog opens
+                          setTimeout(() => {
+                            setBanDialogOpen(true);
+                          }, 100);
+                        }}
+                      >
+                        <Ban className="h-4 w-4" />
+                        {t("actions.ban_user")}
+                      </DropdownMenuItem>
+                    )}
                   </DropdownMenuContent>
                 </DropdownMenu>
               )}
@@ -168,7 +186,7 @@ export const MessageList = ({
             </div>
             <div
               data-message-bubble
-              className={`relative mt-1 max-w-[75%] min-w-[3.5rem] rounded-2xl border px-3 py-2 text-sm leading-relaxed shadow-sm ${
+              className={`relative mt-1 min-w-[3.5rem] rounded-2xl border px-3 py-2 text-sm leading-relaxed shadow-sm ${
                 isOwn
                   ? "border-primary/30 bg-primary text-primary-foreground text-right"
                   : "border-border/60 bg-card text-foreground text-left"
@@ -286,6 +304,105 @@ export const MessageList = ({
               disabled={deleteMessage.isPending}
             >
               {t("confirm.confirm")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Ban User Dialog */}
+      <Dialog
+        open={banDialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setBanDialogOpen(false);
+            setUserToBan(null);
+            setBanReason("");
+            setDeleteMessages(false);
+          }
+        }}
+      >
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t("ban.dialog_title")}</DialogTitle>
+            <DialogDescription>{t("ban.dialog_description")}</DialogDescription>
+          </DialogHeader>
+          {userToBan && (
+            <div className="space-y-4">
+              <div className="rounded-md bg-muted px-3 py-2">
+                <p className="text-sm font-medium">{userToBan.name}</p>
+              </div>
+              <div>
+                <label htmlFor="ban-reason" className="block text-sm font-medium mb-1">
+                  {t("ban.reason_label")}
+                </label>
+                <Input
+                  id="ban-reason"
+                  type="text"
+                  value={banReason}
+                  onChange={(e) => setBanReason(e.target.value)}
+                  placeholder={t("ban.reason_placeholder")}
+                />
+              </div>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="delete-messages"
+                  checked={deleteMessages}
+                  onChange={(e) => setDeleteMessages(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
+                />
+                <label
+                  htmlFor="delete-messages"
+                  className="text-sm font-medium cursor-pointer"
+                >
+                  {t("ban.delete_messages_label")}
+                </label>
+              </div>
+              {banError && (
+                <div className="rounded-md border border-destructive/20 bg-destructive/10 p-2 text-sm text-destructive">
+                  {banError}
+                </div>
+              )}
+            </div>
+          )}
+          <DialogFooter className="mt-4">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => {
+                setBanDialogOpen(false);
+                setUserToBan(null);
+                setBanReason("");
+                setDeleteMessages(false);
+              }}
+            >
+              {t("ban.cancel_button")}
+            </Button>
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={async () => {
+                if (!userToBan) return;
+                setBanError(null);
+                try {
+                  await banUser.mutateAsync({
+                    id: userToBan.id,
+                    data: {
+                      reason: banReason || undefined,
+                      deleteMessages,
+                    },
+                  });
+                  setBanDialogOpen(false);
+                  setUserToBan(null);
+                  setBanReason("");
+                  setDeleteMessages(false);
+                } catch {
+                  setBanError(t("errors.ban_failed"));
+                }
+              }}
+              disabled={banUser.isPending}
+            >
+              {banUser.isPending ? t("ban.confirming_button") : t("ban.confirm_button")}
             </Button>
           </DialogFooter>
         </DialogContent>

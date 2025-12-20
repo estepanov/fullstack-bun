@@ -19,7 +19,8 @@
   "actions": {
     "refresh_button": "Actualizar",
     "menu_label": "Acciones del mensaje",
-    "delete": "Eliminar mensaje"
+    "delete": "Eliminar mensaje",
+    "ban_user": "Banear usuario"
   },
   "confirm": {
     "title": "¿Eliminar mensaje?",
@@ -27,7 +28,26 @@
     "cancel": "Cancelar",
     "confirm": "Eliminar"
   },
+  "ban": {
+    "dialog_title": "Banear Usuario",
+    "dialog_description": "¿Estás seguro de que quieres banear a este usuario? Ya no podrán acceder a la plataforma.",
+    "reason_label": "Razón (opcional)",
+    "reason_placeholder": "ej., Spam",
+    "delete_messages_label": "Eliminar todos los mensajes del usuario",
+    "confirm_button": "Banear Usuario",
+    "confirming_button": "Baneando...",
+    "cancel_button": "Cancelar",
+    "success": "Usuario ha sido baneado",
+    "error": "No se pudo banear al usuario"
+  },
+  "banned": {
+    "title": "Cuenta Baneada",
+    "message": "Lo sentimos, tu cuenta ha sido baneada de esta plataforma.",
+    "reason": "Razón: {{reason}}",
+    "contact": "Por favor contacta al soporte si crees que esto es un error."
+  },
   "errors": {
-    "delete_failed": "No se pudo eliminar el mensaje. Inténtalo de nuevo."
+    "delete_failed": "No se pudo eliminar el mensaje. Inténtalo de nuevo.",
+    "ban_failed": "No se pudo banear al usuario. Inténtalo de nuevo."
   }
 }

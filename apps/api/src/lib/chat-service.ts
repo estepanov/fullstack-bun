@@ -94,6 +94,37 @@ export class ChatService {
 	}
 
 	/**
+	 * Delete all messages from a specific user (admin only)
+	 */
+	async deleteMessagesByUserId(userId: string): Promise<number> {
+		try {
+			// Get all messages
+			const messages = await redis.zrange(CHAT_KEY, 0, -1);
+			let deletedCount = 0;
+
+			// Find and delete all messages from this user
+			for (const msgStr of messages) {
+				try {
+					const msg = JSON.parse(msgStr) as ChatMessage;
+					if (msg.userId === userId) {
+						const removed = await redis.zrem(CHAT_KEY, msgStr);
+						if (removed > 0) {
+							deletedCount++;
+						}
+					}
+				} catch (error) {
+					console.error("Failed to parse message during bulk deletion:", error);
+				}
+			}
+
+			return deletedCount;
+		} catch (error) {
+			console.error("Failed to delete messages by user ID:", error);
+			return 0;
+		}
+	}
+
+	/**
 	 * Clear all messages (admin utility)
 	 */
 	async clearMessages(): Promise<void> {

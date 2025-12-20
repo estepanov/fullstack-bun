@@ -19,7 +19,8 @@
   "actions": {
     "refresh_button": "Rafraîchir",
     "menu_label": "Actions du message",
-    "delete": "Supprimer le message"
+    "delete": "Supprimer le message",
+    "ban_user": "Bannir l'utilisateur"
   },
   "confirm": {
     "title": "Supprimer le message ?",
@@ -27,7 +28,26 @@
     "cancel": "Annuler",
     "confirm": "Supprimer"
   },
+  "ban": {
+    "dialog_title": "Bannir l'Utilisateur",
+    "dialog_description": "Êtes-vous sûr de vouloir bannir cet utilisateur ? Il ne pourra plus accéder à la plateforme.",
+    "reason_label": "Raison (facultatif)",
+    "reason_placeholder": "ex., Spam",
+    "delete_messages_label": "Supprimer tous les messages de l'utilisateur",
+    "confirm_button": "Bannir l'Utilisateur",
+    "confirming_button": "Bannissement...",
+    "cancel_button": "Annuler",
+    "success": "L'utilisateur a été banni",
+    "error": "Impossible de bannir l'utilisateur"
+  },
+  "banned": {
+    "title": "Compte Banni",
+    "message": "Désolé, votre compte a été banni de cette plateforme.",
+    "reason": "Raison : {{reason}}",
+    "contact": "Veuillez contacter le support si vous pensez qu'il s'agit d'une erreur."
+  },
   "errors": {
-    "delete_failed": "Impossible de supprimer le message. Réessayez."
+    "delete_failed": "Impossible de supprimer le message. Réessayez.",
+    "ban_failed": "Impossible de bannir l'utilisateur. Réessayez."
   }
 }

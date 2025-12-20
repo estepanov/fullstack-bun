@@ -14,6 +14,23 @@ import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
 import { requireAdmin } from "../middlewares/require-admin";
 
+/**
+ * Check if a user has an active ban
+ */
+async function checkUserBan(
+  userId: string,
+): Promise<{ banned: boolean; reason: string | null }> {
+  const activeBan = await db.query.ban.findFirst({
+    where: (ban, { eq, and, isNull }) =>
+      and(eq(ban.userId, userId), isNull(ban.unbannedAt)),
+  });
+
+  return {
+    banned: !!activeBan,
+    reason: activeBan?.reason || null,
+  };
+}
+
 export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
   // WebSocket endpoint
   .get(
@@ -40,13 +57,53 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
             });
 
             if (session) {
-              userId = session.user.id;
-              userName = session.user.name;
-              userAvatar = session.user.image ?? null;
-              isVerified = session.user.emailVerified;
-              const role = session.user.role as UserRole | undefined;
-              isAdminUser = role ? isAdmin(role) : false;
+              // Fetch full user data
+              const userData = await db
+                .select({
+                  id: userTable.id,
+                  name: userTable.name,
+                  image: userTable.image,
+                  emailVerified: userTable.emailVerified,
+                  role: userTable.role,
+                })
+                .from(userTable)
+                .where(eq(userTable.id, session.user.id))
+                .limit(1)
+                .then((rows) => rows[0]);
 
+              if (!userData) {
+                ws.close(1011, "User not found");
+                logger.error(`User not found: userId=${session.user.id}`);
+                return;
+              }
+
+              // Check if user is banned
+              const banStatus = await checkUserBan(userData.id);
+              if (banStatus.banned) {
+                const banMessage = banStatus.reason
+                  ? `Your account has been banned. Reason: ${banStatus.reason}`
+                  : "Your account has been banned";
+
+                ws.send(
+                  JSON.stringify({
+                    type: ChatWSMessageType.ERROR,
+                    error: banMessage,
+                    trace: trace(),
+                  }),
+                );
+                ws.close(1008, "User is banned");
+                logger.info(
+                  `Banned user attempted WebSocket connection: userId=${userData.id}`,
+                );
+                return;
+              }
+
+              userId = userData.id;
+              userName = userData.name;
+              userAvatar = userData.image ?? null;
+              isVerified = userData.emailVerified;
+              const role = userData.role as UserRole | undefined;
+              isAdminUser = role ? isAdmin(role) : false;
               logger.info(`WebSocket opened: userId=${userId}, verified=${isVerified}`);
             } else {
               logger.info("WebSocket opened: unauthenticated user");
@@ -155,6 +212,24 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
                   trace: trace(),
                 }),
               );
+              return;
+            }
+
+            // Check if user was banned since connection opened
+            const banStatus = await checkUserBan(userId);
+            if (banStatus.banned) {
+              const banMessage = banStatus.reason
+                ? `Your account has been banned. Reason: ${banStatus.reason}`
+                : "Your account has been banned";
+
+              ws.send(
+                JSON.stringify({
+                  type: ChatWSMessageType.ERROR,
+                  error: banMessage,
+                  trace: trace(),
+                }),
+              );
+              ws.close(1008, "User is banned");
               return;
             }
 

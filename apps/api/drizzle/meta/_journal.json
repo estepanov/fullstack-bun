@@ -15,6 +15,13 @@
       "when": 1766029227236,
       "tag": "0001_broad_reaper",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1766214155080,
+      "tag": "0002_gray_havok",
+      "breakpoints": true
     }
   ]
 }

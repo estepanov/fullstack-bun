@@ -28,10 +28,16 @@ export const useChatWebSocket = (): UseChatWebSocketReturn => {
 	const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const reconnectAttemptsRef = useRef(0);
 	const hasAttemptedRef = useRef(false);
+	const isBannedRef = useRef(false);
 	const MAX_RECONNECT_ATTEMPTS = 5;
 
 	const connect = useCallback(() => {
 		if (wsRef.current?.readyState === WebSocket.OPEN) {
+			return;
+		}
+
+		// Don't reconnect if user is banned
+		if (isBannedRef.current) {
 			return;
 		}
 
@@ -79,11 +85,37 @@ export const useChatWebSocket = (): UseChatWebSocketReturn => {
 							);
 							break;
 
+						case ChatWSMessageType.BULK_DELETE:
+							setMessages((prev) =>
+								prev.filter((msg) => msg.userId !== data.userId),
+							);
+							break;
+
 						case ChatWSMessageType.ERROR:
 							setError(data.error);
-							// Clear error after 5 seconds
-							setTimeout(() => setError(null), 5000);
+							// Check if error is due to ban
+							if (data.error?.toLowerCase().includes("banned")) {
+								isBannedRef.current = true;
+								setConnectionStatus("error");
+								// Don't clear ban error - it stays visible
+							} else {
+								// Clear other errors after 5 seconds
+								setTimeout(() => setError(null), 5000);
+							}
 							break;
+
+						case ChatWSMessageType.SEND_MESSAGE:
+							// Client-to-server message type, should not be received
+							console.warn("Received unexpected SEND_MESSAGE from server");
+							break;
+
+						default: {
+							// Exhaustive check: if we add a new message type and don't handle it,
+							// TypeScript will error here because data.type won't be assignable to never
+							const _exhaustiveCheck: never = data;
+							console.warn("Unhandled message type:", _exhaustiveCheck);
+							break;
+						}
 					}
 				} catch (err) {
 					console.error("Failed to parse WebSocket message:", err);
@@ -99,6 +131,17 @@ export const useChatWebSocket = (): UseChatWebSocketReturn => {
 				console.log("WebSocket closed:", event.code, event.reason);
 				setConnectionStatus("disconnected");
 				wsRef.current = null;
+
+				// Check if user was banned (code 1008 with "banned" reason)
+				if (
+					event.code === 1008 ||
+					event.reason.toLowerCase().includes("banned")
+				) {
+					isBannedRef.current = true;
+					setConnectionStatus("error");
+					setError("Your account has been banned");
+					return; // Don't attempt reconnection
+				}
 
 				// Auto-reconnect with exponential backoff
 				if (reconnectAttemptsRef.current < MAX_RECONNECT_ATTEMPTS) {

@@ -27,18 +27,26 @@ const baseApp = app
     const logger = c.get("logger") || console;
     const debugObj = {
       error,
-      errorMessage: error instanceof Error ? error.message : String(error),
-      errorName: error instanceof Error ? error.name : undefined,
-      errorStack: error instanceof Error ? error.stack : undefined,
-      errorCause: error instanceof Error ? error.cause : undefined,
+      errorMessage:
+        // biome-ignore lint/suspicious/noExplicitAny: test
+        (error as unknown as any)?.message ? error.message : String(error),
+      errorName:
+        // biome-ignore lint/suspicious/noExplicitAny: test
+        (error as unknown as any)?.name ? error.name : undefined,
+      errorStack:
+        // biome-ignore lint/suspicious/noExplicitAny: test
+        (error as unknown as any)?.stack ? error.stack : undefined,
+      errorCause:
+        // biome-ignore lint/suspicious/noExplicitAny: test
+        (error as unknown as any)?.cause ? error.cause : undefined,
       url: c.req.url,
       userAgent: c.req.header("User-Agent"),
     };
     if (error instanceof HTTPException) {
-      logger.error("------ HTTPException ------\n", debugObj, "------------");
+      logger.error(`------ HTTPException ------\n${debugObj} \n------------`);
       return error.getResponse();
     }
-    logger.error("------ UNCAUGHT ERROR ------\n", debugObj, "------------");
+    logger.error(`------ UNCAUGHT ERROR ------\n${debugObj} \n------------`);
     return c.newResponse(null, { status: 500 });
   });
 
