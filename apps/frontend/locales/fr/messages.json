@@ -1,13 +1,77 @@
 {
-  "form": {
-    "errors": {
-      "messageMinLengthError": "Le message doit contenir au moins 5 caractères",
-      "messageMaxLengthError": "Le message doit contenir moins de 40 caractères"
+  "list": {
+    "empty": "Aucun message pour le moment. Soyez le premier à dire bonjour !",
+    "edited": "Modifié"
+  },
+  "states": {
+    "loading": {
+      "title": "On met l'ambiance en route",
+      "subtitle": "Connexion du fil de discussion en douceur."
     },
-    "message_field_label": "Message",
-    "submit_button": "Envoyer"
+    "empty": {
+      "title": "Aucun message pour le moment",
+      "subtitle": "Soyez l'etincelle. Laissez le premier mot et lancez la conversation.",
+      "cta": "Dire bonjour"
+    }
+  },
+  "form": {
+    "placeholder": "Tapez un message... (Appuyez sur Entrée pour envoyer)",
+    "send_button": "Envoyer",
+    "character_count": "{{count}}/{{max}} caractères",
+    "throttle_notice": "Vous envoyez des messages trop vite. Réessayez dans {{seconds}}s.",
+    "throttle_hint": "La limite est de {{limit}} messages par {{windowSeconds}}s.",
+    "errors": {
+      "empty": "Le message ne peut pas être vide",
+      "max_length": "Le message ne peut pas dépasser {{max}} caractères",
+      "single_line": "Le message doit tenir sur une seule ligne",
+      "no_html": "Le message ne peut pas contenir de balises HTML",
+      "invalid": "Le message est invalide"
+    },
+    "login_prompt": "Veuillez <loginLink>vous connecter</loginLink> pour envoyer des messages",
+    "verify_email_prompt": "Veuillez vérifier votre e-mail pour envoyer des messages"
   },
   "actions": {
-    "refresh_button": "Rafraîchir"
+    "refresh_button": "Rafraîchir",
+    "menu_label": "Actions du message",
+    "edit": "Modifier le message",
+    "delete": "Supprimer le message",
+    "ban_user": "Bannir l'utilisateur"
+  },
+  "edit": {
+    "title": "Modifier le message",
+    "description": "Mettez à jour le message pour tout le monde dans le chat.",
+    "save": "Enregistrer les modifications",
+    "saving": "Enregistrement...",
+    "cancel": "Annuler",
+    "character_count": "{{count}}/{{max}} caractères"
+  },
+  "confirm": {
+    "title": "Supprimer le message ?",
+    "description": "Cela supprimera définitivement le message du chat.",
+    "cancel": "Annuler",
+    "confirm": "Supprimer"
+  },
+  "ban": {
+    "dialog_title": "Bannir l'Utilisateur",
+    "dialog_description": "Êtes-vous sûr de vouloir bannir cet utilisateur ? Il ne pourra plus accéder à la plateforme.",
+    "reason_label": "Raison (facultatif)",
+    "reason_placeholder": "ex., Spam",
+    "delete_messages_label": "Supprimer tous les messages de l'utilisateur",
+    "confirm_button": "Bannir l'Utilisateur",
+    "confirming_button": "Bannissement...",
+    "cancel_button": "Annuler",
+    "success": "L'utilisateur a été banni",
+    "error": "Impossible de bannir l'utilisateur"
+  },
+  "banned": {
+    "title": "Compte Banni",
+    "message": "Désolé, votre compte a été banni de cette plateforme.",
+    "reason": "Raison : {{reason}}",
+    "contact": "Veuillez contacter le support si vous pensez qu'il s'agit d'une erreur."
+  },
+  "errors": {
+    "delete_failed": "Impossible de supprimer le message. Réessayez.",
+    "update_failed": "Impossible de modifier le message. Réessayez.",
+    "ban_failed": "Impossible de bannir l'utilisateur. Réessayez."
   }
 }

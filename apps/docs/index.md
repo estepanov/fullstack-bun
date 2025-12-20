@@ -49,6 +49,10 @@ features:
     details: Biome for linting and formatting. Easy to use, quick to run, and it "just works".
   - title: Docker Support
     details: Full containerization for development and production with Docker Compose. Hot reload, health checks, and multi-stage builds included.
+  - title: PostgreSQL + Drizzle
+    details: First-class database setup with PostgreSQL 15 and Drizzle ORM, ready for migrations and local dev.
+  - title: Redis
+    details: Redis is provisioned alongside Postgres via Docker Compose for caching/session-style workloads.
 
 ---
 

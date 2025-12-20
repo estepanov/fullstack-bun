@@ -8,6 +8,20 @@
       "when": 1765853137823,
       "tag": "0000_fantastic_strong_guy",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1766029227236,
+      "tag": "0001_broad_reaper",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1766214155080,
+      "tag": "0002_gray_havok",
+      "breakpoints": true
     }
   ]
 }

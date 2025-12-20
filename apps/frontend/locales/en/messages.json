@@ -1,13 +1,77 @@
 {
-  "form": {
-    "errors": {
-      "messageMinLengthError": "Message must be at least 5 characters long",
-      "messageMaxLengthError": "Message must be less than 40 characters long"
+  "list": {
+    "empty": "No messages yet. Be the first to say hello!",
+    "edited": "Edited"
+  },
+  "states": {
+    "loading": {
+      "title": "Warming up the room",
+      "subtitle": "Connecting your chat feed with a smooth breeze."
     },
-    "message_field_label": "Message",
-    "submit_button": "Submit"
+    "empty": {
+      "title": "No messages yet",
+      "subtitle": "Be the spark. Drop the first note and start the conversation.",
+      "cta": "Say hello"
+    }
+  },
+  "form": {
+    "placeholder": "Type a message... (Press Enter to send)",
+    "send_button": "Send",
+    "character_count": "{{count}}/{{max}} characters",
+    "throttle_notice": "You're sending messages too fast. Try again in {{seconds}}s.",
+    "throttle_hint": "Limit is {{limit}} messages per {{windowSeconds}}s.",
+    "errors": {
+      "empty": "Message cannot be empty",
+      "max_length": "Message cannot exceed {{max}} characters",
+      "single_line": "Message must be a single line",
+      "no_html": "Message cannot contain HTML tags",
+      "invalid": "Message is invalid"
+    },
+    "login_prompt": "Please <loginLink>log in</loginLink> to send messages",
+    "verify_email_prompt": "Please verify your email to send messages"
   },
   "actions": {
-    "refresh_button": "Refresh"
+    "refresh_button": "Refresh",
+    "menu_label": "Message actions",
+    "edit": "Edit message",
+    "delete": "Delete message",
+    "ban_user": "Ban user"
+  },
+  "edit": {
+    "title": "Edit message",
+    "description": "Update the message for everyone in the chat.",
+    "save": "Save changes",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "character_count": "{{count}}/{{max}} characters"
+  },
+  "confirm": {
+    "title": "Delete message?",
+    "description": "This will permanently remove the message from the chat.",
+    "cancel": "Cancel",
+    "confirm": "Delete"
+  },
+  "ban": {
+    "dialog_title": "Ban User",
+    "dialog_description": "Are you sure you want to ban this user? They will no longer be able to access the platform.",
+    "reason_label": "Reason (optional)",
+    "reason_placeholder": "e.g., Spam posting",
+    "delete_messages_label": "Delete all user messages",
+    "confirm_button": "Ban User",
+    "confirming_button": "Banning...",
+    "cancel_button": "Cancel",
+    "success": "User has been banned",
+    "error": "Failed to ban user"
+  },
+  "banned": {
+    "title": "Account Banned",
+    "message": "Sorry, your account has been banned from this platform.",
+    "reason": "Reason: {{reason}}",
+    "contact": "Please contact support if you believe this is an error."
+  },
+  "errors": {
+    "delete_failed": "Failed to delete message. Try again.",
+    "update_failed": "Failed to update message. Try again.",
+    "ban_failed": "Failed to ban user. Try again."
   }
 }

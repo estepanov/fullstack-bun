@@ -51,32 +51,32 @@ export default function VerifyEmailPage() {
         {status === "verifying" && (
           <>
             <div className="text-6xl">⏳</div>
-            <h1 className="text-3xl font-bold">{t("verify_email.verifying_title")}</h1>
-            <p className="text-gray-600">{t("verify_email.verifying_message")}</p>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t("verify_email.verifying_title")}</h1>
+            <p className="text-gray-600 dark:text-gray-400">{t("verify_email.verifying_message")}</p>
           </>
         )}
 
         {status === "success" && (
           <>
             <div className="text-6xl">✅</div>
-            <h1 className="text-3xl font-bold text-green-600">
+            <h1 className="text-3xl font-bold text-green-600 dark:text-green-400">
               {t("verify_email.success_title")}
             </h1>
-            <p className="text-gray-600">{t("verify_email.success_message")}</p>
+            <p className="text-gray-600 dark:text-gray-400">{t("verify_email.success_message")}</p>
           </>
         )}
 
         {status === "error" && (
           <>
             <div className="text-6xl">❌</div>
-            <h1 className="text-3xl font-bold text-red-600">
+            <h1 className="text-3xl font-bold text-red-600 dark:text-red-400">
               {t("verify_email.error_title")}
             </h1>
-            <p className="text-gray-600">{errorMessage}</p>
+            <p className="text-gray-600 dark:text-gray-400">{errorMessage}</p>
             <button
               type="button"
               onClick={() => navigate("/auth/login")}
-              className="mt-4 rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+              className="mt-4 rounded-md bg-blue-600 dark:bg-blue-500 px-4 py-2 text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
             >
               {t("verify_email.go_to_login")}
             </button>

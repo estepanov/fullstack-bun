@@ -10,6 +10,7 @@ You will need to have the following installed your machine:
 
 - Git
 - [Bun](https://bun.sh)
+- Docker (recommended) **or** a PostgreSQL + Redis instance you can connect to
 
 ## Start the projects
 
@@ -66,9 +67,20 @@ openssl rand -base64 32
 
 To learn more about specific variables visit the [environment variables reference page](/reference/environment-variables.md).
 
-5. Start the database
+5. Start infrastructure (Postgres + Redis)
 
-The project uses PostgreSQL and Redis, which run via Docker Compose. Start just the database services:
+The project requires PostgreSQL and Redis. The recommended local approach is to run both via
+Docker Compose:
+
+```sh
+cp .env.example .env
+docker-compose up postgres redis -d
+```
+
+This starts PostgreSQL and Redis containers and exposes them on `localhost` using the ports from
+the repo root `.env` (or the defaults in `docker-compose.yml`).
+
+If you prefer to run *everything* in containers (frontend + API + Postgres + Redis), run:
 
 ```sh
 docker-compose up postgres redis -d
@@ -80,16 +92,17 @@ The `-d` flag runs them in detached mode (background). This will start PostgreSQ
 
 6. Run database migrations
 
-After starting the database, you need to generate and apply the database migrations:
+After starting PostgreSQL, apply the existing migrations:
 
 ```sh
 cd apps/api
-bunx drizzle-kit generate
 bunx drizzle-kit migrate
 cd ../..
 ```
 
-The `generate` command creates migration files based on your schema, and `migrate` applies them to your database. For more information about the database setup, visit the [database reference page](/reference/database.md).
+If you make schema changes later, you can generate new migrations with `bunx drizzle-kit generate`.
+For more information about the database setup, visit the [database reference page](/reference/database.md)
+and the [Redis reference page](/reference/redis.md).
 
 7. Configure email verification (optional)
 

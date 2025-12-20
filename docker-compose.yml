@@ -47,6 +47,7 @@ services:
       # Docker-specific overrides (these must be set here for container networking)
       - PORT=3001
       - DATABASE_URL=${DATABASE_URL_INTERNAL:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@${POSTGRES_HOST:-postgres}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-mydatabase}}
+      - REDIS_URL=redis://:${REDIS_PASSWORD:-redispassword}@redis:6379
     volumes:
       - ./package.json:/app/package.json:ro
       - ./apps/api/src:/app/apps/api/src
@@ -63,7 +64,7 @@ services:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "bun -e 'fetch(\"http://localhost:3001/example\").then(() => process.exit(0)).catch(() => process.exit(1))'"]
+      test: ["CMD-SHELL", "bun -e 'fetch(\"http://localhost:3001/health\", { headers: { \"User-Agent\": \"Docker-Healthcheck/1.0\", \"x-request-id\": \"39127dde-b557-4d6c-8711-e4fe6035014f\", \"x-session-id\": \"e141f344-e89d-4e3e-aeb1-b849a3f10871\" } }).then(() => process.exit(0)).catch(() => process.exit(1))'"]
       interval: 30s
       timeout: 10s
       retries: 3

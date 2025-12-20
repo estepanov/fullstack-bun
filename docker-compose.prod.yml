@@ -58,7 +58,7 @@ services:
         condition: service_healthy
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "bun -e 'fetch(\"http://localhost:3001/example\").then(() => process.exit(0)).catch(() => process.exit(1))'"]
+      test: ["CMD-SHELL", "bun -e 'fetch(\"http://localhost:3001/health\", { headers: { \"User-Agent\": \"Docker-Healthcheck/1.0\", \"x-request-id\": \"39127dde-b557-4d6c-8711-e4fe6035014f\", \"x-session-id\": \"e141f344-e89d-4e3e-aeb1-b849a3f10871\" } }).then(() => process.exit(0)).catch(() => process.exit(1))'"]
       interval: 30s
       timeout: 10s
       retries: 3

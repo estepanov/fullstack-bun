@@ -1,13 +1,77 @@
 {
-  "form": {
-    "errors": {
-      "messageMinLengthError": "Die Nachricht muss mindestens 5 Zeichen lang sein",
-      "messageMaxLengthError": "Die Nachricht darf maximal 40 Zeichen lang sein"
+  "list": {
+    "empty": "Noch keine Nachrichten. Sei der Erste, der Hallo sagt!",
+    "edited": "Bearbeitet"
+  },
+  "states": {
+    "loading": {
+      "title": "Wir bringen den Raum auf Temperatur",
+      "subtitle": "Dein Chat-Feed verbindet sich ganz entspannt."
     },
-    "message_field_label": "Nachricht",
-    "submit_button": "Absenden"
+    "empty": {
+      "title": "Noch keine Nachrichten",
+      "subtitle": "Sei der Funke. Schreib die erste Nachricht und starte das Gesprach.",
+      "cta": "Sag Hallo"
+    }
+  },
+  "form": {
+    "placeholder": "Nachricht eingeben... (Enter zum Senden)",
+    "send_button": "Senden",
+    "character_count": "{{count}}/{{max}} Zeichen",
+    "throttle_notice": "Du sendest Nachrichten zu schnell. Versuche es in {{seconds}}s erneut.",
+    "throttle_hint": "Limit liegt bei {{limit}} Nachrichten pro {{windowSeconds}}s.",
+    "errors": {
+      "empty": "Nachricht darf nicht leer sein",
+      "max_length": "Nachricht darf {{max}} Zeichen nicht überschreiten",
+      "single_line": "Nachricht muss einzeilig sein",
+      "no_html": "Nachricht darf keine HTML-Tags enthalten",
+      "invalid": "Nachricht ist ungültig"
+    },
+    "login_prompt": "Bitte <loginLink>melden Sie sich an</loginLink>, um Nachrichten zu senden",
+    "verify_email_prompt": "Bitte verifizieren Sie Ihre E-Mail, um Nachrichten zu senden"
   },
   "actions": {
-    "refresh_button": "Aktualisieren"
+    "refresh_button": "Aktualisieren",
+    "menu_label": "Nachrichtenaktionen",
+    "edit": "Nachricht bearbeiten",
+    "delete": "Nachricht löschen",
+    "ban_user": "Benutzer sperren"
+  },
+  "edit": {
+    "title": "Nachricht bearbeiten",
+    "description": "Aktualisiere die Nachricht für alle im Chat.",
+    "save": "Änderungen speichern",
+    "saving": "Speichern...",
+    "cancel": "Abbrechen",
+    "character_count": "{{count}}/{{max}} Zeichen"
+  },
+  "confirm": {
+    "title": "Nachricht löschen?",
+    "description": "Dies entfernt die Nachricht dauerhaft aus dem Chat.",
+    "cancel": "Abbrechen",
+    "confirm": "Löschen"
+  },
+  "ban": {
+    "dialog_title": "Benutzer Sperren",
+    "dialog_description": "Sind Sie sicher, dass Sie diesen Benutzer sperren möchten? Er kann nicht mehr auf die Plattform zugreifen.",
+    "reason_label": "Grund (optional)",
+    "reason_placeholder": "z.B., Spam",
+    "delete_messages_label": "Alle Nachrichten des Benutzers löschen",
+    "confirm_button": "Benutzer Sperren",
+    "confirming_button": "Sperren...",
+    "cancel_button": "Abbrechen",
+    "success": "Benutzer wurde gesperrt",
+    "error": "Benutzer konnte nicht gesperrt werden"
+  },
+  "banned": {
+    "title": "Konto Gesperrt",
+    "message": "Entschuldigung, Ihr Konto wurde von dieser Plattform gesperrt.",
+    "reason": "Grund: {{reason}}",
+    "contact": "Bitte kontaktieren Sie den Support, wenn Sie glauben, dass dies ein Fehler ist."
+  },
+  "errors": {
+    "delete_failed": "Nachricht konnte nicht gelöscht werden. Bitte erneut versuchen.",
+    "update_failed": "Nachricht konnte nicht aktualisiert werden. Bitte erneut versuchen.",
+    "ban_failed": "Benutzer konnte nicht gesperrt werden. Bitte erneut versuchen."
   }
 }

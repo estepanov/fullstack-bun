@@ -43,10 +43,15 @@ const TestComponent = () => {
 
 describe("ThemeProvider", () => {
   beforeEach(() => {
-    Object.defineProperty(window, "localStorage", { value: localStorageMock });
+    Object.defineProperty(window, "localStorage", {
+      value: localStorageMock,
+      configurable: true,
+    });
     Object.defineProperty(window, "matchMedia", {
       value: () => matchMediaMock(false),
+      configurable: true,
     });
+    document.documentElement.className = "";
     localStorageMock.clear();
   });
 

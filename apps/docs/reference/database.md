@@ -15,23 +15,18 @@ This project uses **PostgreSQL** with **Drizzle ORM** for database management.
 
 ## Quick Start
 
-### 1. Install Dependencies
-
-Dependencies are already installed if you've set up the project. Otherwise:
-
-```bash
-cd apps/api
-bun add drizzle-orm postgres
-bun add -d drizzle-kit
-```
-
-### 2. Set Up Database
+### 1. Set Up Database
 
 **Local Development (Docker):**
 
 ```bash
-# Start PostgreSQL via Docker Compose
+# (Optional) copy Docker Compose env vars
+cp .env.example .env
+
+# Start PostgreSQL (and Redis if you're using the provided Compose stack)
 docker-compose up postgres -d
+# or:
+docker-compose up postgres redis -d
 
 # Check database is running
 docker ps
@@ -45,7 +40,7 @@ Install PostgreSQL 15 and create a database:
 CREATE DATABASE mydatabase;
 ```
 
-### 3. Configure Environment
+### 2. Configure Environment
 
 Create `apps/api/.env` (copy from `.env.example`):
 
@@ -57,29 +52,142 @@ For Docker, the host is `postgres`. For local PostgreSQL, use `localhost`.
 
 ## Drizzle Kit Commands
 
+The API package includes convenient scripts for database management. Run these from the `apps/api` directory or use the `--filter=api` flag from the root.
+
 ### Generate Migrations
 
+**From apps/api:**
 ```bash
-bunx drizzle-kit generate:pg
+bun run db:generate
 ```
 
-Generates SQL migration files based on schema changes.
+**From root:**
+```bash
+bun --filter=api run db:generate
+```
+
+**Direct command:**
+```bash
+bunx drizzle-kit generate
+```
+
+Generates SQL migration files based on schema changes in `apps/api/drizzle/`.
+
+### Apply Migrations
+
+**From apps/api:**
+```bash
+bun run db:migrate
+```
+
+**From root:**
+```bash
+bun --filter=api run db:migrate
+```
+
+**Direct command:**
+```bash
+bunx drizzle-kit migrate
+```
+
+Applies pending migrations to the database.
 
 ### Push Schema
 
+**From apps/api:**
 ```bash
-bunx drizzle-kit push:pg
+bun run db:push
+```
+
+**From root:**
+```bash
+bun --filter=api run db:push
+```
+
+**Direct command:**
+```bash
+bunx drizzle-kit push
 ```
 
 Pushes schema changes directly to the database without migrations (good for development).
 
 ### View Database
 
+**From apps/api:**
+```bash
+bun run db:studio
+```
+
+**From root:**
+```bash
+bun --filter=api run db:studio
+```
+
+**Direct command:**
 ```bash
 bunx drizzle-kit studio
 ```
 
 Opens Drizzle Studio - a database GUI at `http://localhost:4983`.
+
+## Migration Workflow
+
+When you make changes to your database schema in `apps/api/src/db/schema.ts`, follow this workflow:
+
+### 1. Update Schema
+
+Edit your schema file:
+
+```typescript
+// apps/api/src/db/schema.ts
+export const user = pgTable("user", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  role: userRoleEnum("role").notNull().default("USER"), // New field
+  // ... other fields
+});
+```
+
+### 2. Generate Migration
+
+```bash
+cd apps/api
+bun run db:generate
+```
+
+This creates a new SQL migration file in `apps/api/drizzle/` with a timestamp and descriptive name.
+
+### 3. Review Migration
+
+Check the generated SQL file to ensure it matches your intended changes:
+
+```bash
+cat drizzle/0001_*.sql
+```
+
+### 4. Apply Migration
+
+**Development:**
+```bash
+bun run db:migrate
+```
+
+**Production:**
+```bash
+bun run db:migrate
+```
+
+Or use `db:push` for quick prototyping (skips migration files):
+```bash
+bun run db:push
+```
+
+### 5. Commit Migration
+
+```bash
+git add drizzle/
+git commit -m "feat: add user role to schema"
+```
 
 ## Configuration
 
@@ -166,7 +274,7 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/mydatabase"
 4. **Push Schema**:
    ```bash
    cd apps/api
-   bunx drizzle-kit push:pg
+   bunx drizzle-kit push
    ```
 
 ### Security Considerations

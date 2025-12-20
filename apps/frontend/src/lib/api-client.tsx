@@ -1,4 +1,4 @@
-import type { AppType } from "api/dist/src";
+import type { AppType } from "api/src";
 import { hc } from "hono/client";
 import { SessionStore } from "./session-utils";
 
@@ -9,6 +9,12 @@ export const apiClient = hc<AppType>(import.meta.env.VITE_API_BASE_URL, {
       "x-session-id": sessionStore.getSessionId(),
       "x-request-id": crypto.randomUUID(),
     };
+  },
+  fetch: (input: RequestInfo | URL, init?: RequestInit) => {
+    return fetch(input, {
+      ...init,
+      credentials: 'include',
+    });
   },
 });
 

@@ -4,8 +4,13 @@
     "dev": "bun run --watch src/index.ts ",
     "start": "bun src/index.ts",
     "build:types": "tsc -p tsconfig.build.json",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
     "format": "bun run biome format --write ./src",
-    "lint": "bun run biome lint ./src"
+    "lint": "bun run biome lint ./src",
+    "test": "bun test"
   },
   "dependencies": {
     "@hono/zod-validator": "^0.4.3",
@@ -13,6 +18,7 @@
     "better-auth": "^1.4.7",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.7.4",
+    "ioredis": "^5.8.2",
     "nodemailer": "^7.0.11",
     "pino": "^9.6.0",
     "postgres": "^3.4.7",
@@ -23,6 +29,7 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/bun": "latest",
+    "@types/ioredis": "^5.0.0",
     "@types/nodemailer": "^7.0.4",
     "concurrently": "^9.1.2",
     "drizzle-kit": "^0.31.8",
