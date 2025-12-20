@@ -7,7 +7,7 @@ import { MessageForm } from "./message-form";
 import { MessageList } from "./message-list";
 
 export const MessagesContainer = () => {
-  const { messages, sendMessage, connectionStatus, error, isAuthenticated } =
+  const { messages, sendMessage, connectionStatus, error, isAuthenticated, throttle } =
     useChatWebSocket();
   const { data } = useSession();
   const isAdmin = isAdminSession(data);
@@ -50,6 +50,7 @@ export const MessagesContainer = () => {
         session={data}
         isAdmin={isAdmin}
         connectionStatus={connectionStatus}
+        throttle={throttle}
       />
     </MessageScrollProvider>
   );

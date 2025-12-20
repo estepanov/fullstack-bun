@@ -6,6 +6,8 @@
     "placeholder": "Tapez un message... (Appuyez sur Entrée pour envoyer)",
     "send_button": "Envoyer",
     "character_count": "{{count}}/{{max}} caractères",
+    "throttle_notice": "Vous envoyez des messages trop vite. Réessayez dans {{seconds}}s.",
+    "throttle_hint": "La limite est de {{limit}} messages par {{windowSeconds}}s.",
     "errors": {
       "empty": "Le message ne peut pas être vide",
       "max_length": "Le message ne peut pas dépasser {{max}} caractères",

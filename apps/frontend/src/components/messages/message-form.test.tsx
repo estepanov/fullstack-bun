@@ -16,6 +16,7 @@ describe("MessageForm", () => {
     isAuthenticated: true,
     session,
     connectionStatus: "connected" as const,
+    throttle: null,
   };
 
   test("Includes a textarea", async () => {
@@ -88,5 +89,17 @@ describe("MessageForm", () => {
     const textbox = await screen.findByRole("textbox");
     fireEvent.change(textbox, { target: { value: "hello\nworld" } });
     await waitFor(() => expect(textbox).toHaveValue("hello world"));
+  });
+
+  test("disables sending and shows throttle notice when throttled", async () => {
+    render(
+      <MessageForm
+        {...baseProps}
+        throttle={{ remainingMs: 4500, limit: 5, windowMs: 10000 }}
+      />,
+    );
+    const submitButton = await screen.findByRole("button", { name: "Send" });
+    expect(submitButton).toBeDisabled();
+    await screen.findByText("You're sending messages too fast. Try again in 5s.");
   });
 });

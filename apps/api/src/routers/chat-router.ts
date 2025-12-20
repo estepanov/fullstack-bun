@@ -9,6 +9,7 @@ import { user as userTable } from "../db/schema";
 import { auth } from "../lib/auth";
 import { chatManager } from "../lib/chat-manager";
 import { chatService } from "../lib/chat-service";
+import { checkChatThrottle } from "../lib/chat-throttle";
 import { decodeWsMessage } from "../lib/ws-message";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
@@ -40,6 +41,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
         requestId: c.get("requestId"),
         sessionId: c.get("sessionId"),
       });
+      const roomId = c.req.query("room") ?? "global";
       let userId: string | null = null;
       let userName: string | null = null;
       let userAvatar: string | null = null;
@@ -230,6 +232,21 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
                 }),
               );
               ws.close(1008, "User is banned");
+              return;
+            }
+
+            const throttle = await checkChatThrottle({ userId, roomId });
+            if (!throttle.allowed) {
+              ws.send(
+                JSON.stringify({
+                  type: ChatWSMessageType.THROTTLED,
+                  retryAfterMs: throttle.retryAfterMs,
+                  limit: throttle.limit,
+                  windowMs: throttle.windowMs,
+                  roomId,
+                  trace: trace(),
+                }),
+              );
               return;
             }
 

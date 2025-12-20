@@ -12,6 +12,11 @@ interface MessageFormProps {
   session: FESession | null | undefined;
   isAdmin?: boolean;
   connectionStatus: "connecting" | "connected" | "disconnected" | "error";
+  throttle: {
+    remainingMs: number;
+    limit: number;
+    windowMs: number;
+  } | null;
 }
 
 export const MessageForm = ({
@@ -20,10 +25,16 @@ export const MessageForm = ({
   session,
   isAdmin = false,
   connectionStatus,
+  throttle,
 }: MessageFormProps) => {
   const { t } = useTranslation("messages");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const throttleSeconds = throttle ? Math.ceil(throttle.remainingMs / 1000) : 0;
+  const throttleWindowSeconds = throttle
+    ? Math.ceil(throttle.windowMs / 1000)
+    : 0;
+  const isThrottled = Boolean(throttle);
 
   // Show login prompt if not authenticated
   if (!isAuthenticated) {
@@ -55,6 +66,10 @@ export const MessageForm = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (isThrottled) {
+      return;
+    }
 
     // Validate message
     const validation = getSendMessageSchema({
@@ -92,12 +107,24 @@ export const MessageForm = ({
     setError("");
   };
 
-  const isDisabled = connectionStatus !== "connected" || !message.trim();
+  const isDisabled =
+    connectionStatus !== "connected" || !message.trim() || isThrottled;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
       {error && (
         <div className="rounded-md bg-red-50 p-2 text-sm text-red-800">{error}</div>
+      )}
+      {isThrottled && (
+        <div className="rounded-md bg-amber-50 p-2 text-sm text-amber-900">
+          {t("form.throttle_notice", { seconds: throttleSeconds })}
+          <span className="ml-1 text-amber-800">
+            {t("form.throttle_hint", {
+              limit: throttle?.limit ?? 0,
+              windowSeconds: throttleWindowSeconds,
+            })}
+          </span>
+        </div>
       )}
       <div className="flex gap-2">
         <Textarea

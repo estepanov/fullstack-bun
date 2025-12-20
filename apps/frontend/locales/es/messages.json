@@ -6,6 +6,8 @@
     "placeholder": "Escribe un mensaje... (Presiona Enter para enviar)",
     "send_button": "Enviar",
     "character_count": "{{count}}/{{max}} caracteres",
+    "throttle_notice": "Estás enviando mensajes demasiado rápido. Inténtalo de nuevo en {{seconds}}s.",
+    "throttle_hint": "El límite es {{limit}} mensajes por {{windowSeconds}}s.",
     "errors": {
       "empty": "El mensaje no puede estar vacío",
       "max_length": "El mensaje no puede exceder {{max}} caracteres",

@@ -4,6 +4,7 @@ import {
 	type ChatMessage,
 	type ChatWSMessage,
 } from "shared/interfaces/chat";
+import { getChatThrottleRule } from "shared/config/chat";
 
 interface UseChatWebSocketReturn {
 	messages: ChatMessage[];
@@ -11,25 +12,45 @@ interface UseChatWebSocketReturn {
 	connectionStatus: "connecting" | "connected" | "disconnected" | "error";
 	error: string | null;
 	isAuthenticated: boolean;
+	throttle:
+		| {
+				remainingMs: number;
+				limit: number;
+				windowMs: number;
+		  }
+		| null;
 }
 
 const WS_URL = `${import.meta.env.VITE_API_BASE_URL.replace(/^http/, "ws")}/chat/ws`;
 const MAX_MESSAGES = 100;
 
-export const useChatWebSocket = (): UseChatWebSocketReturn => {
+export const useChatWebSocket = ({
+	roomId = "global",
+}: { roomId?: string } = {}): UseChatWebSocketReturn => {
 	const [messages, setMessages] = useState<ChatMessage[]>([]);
 	const [connectionStatus, setConnectionStatus] = useState<
 		"connecting" | "connected" | "disconnected" | "error"
 	>("connecting");
 	const [error, setError] = useState<string | null>(null);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [throttleUntil, setThrottleUntil] = useState<number | null>(null);
+	const [throttleMeta, setThrottleMeta] = useState<{
+		limit: number;
+		windowMs: number;
+	} | null>(null);
+	const [throttleRemainingMs, setThrottleRemainingMs] = useState<number | null>(
+		null,
+	);
 
 	const wsRef = useRef<WebSocket | null>(null);
 	const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 	const reconnectAttemptsRef = useRef(0);
 	const hasAttemptedRef = useRef(false);
 	const isBannedRef = useRef(false);
+	const recentMessageTimestampsRef = useRef<number[]>([]);
 	const MAX_RECONNECT_ATTEMPTS = 5;
+	const throttleRule = getChatThrottleRule(roomId);
+	const throttleWindowMs = throttleRule.perSeconds * 1000;
 
 	const connect = useCallback(() => {
 		if (wsRef.current?.readyState === WebSocket.OPEN) {
@@ -46,7 +67,11 @@ export const useChatWebSocket = (): UseChatWebSocketReturn => {
 		setError(null);
 
 		try {
-			const ws = new WebSocket(WS_URL);
+			const wsUrl =
+				roomId === "global"
+					? WS_URL
+					: `${WS_URL}?room=${encodeURIComponent(roomId)}`;
+			const ws = new WebSocket(wsUrl);
 			wsRef.current = ws;
 
 			ws.onopen = () => {
@@ -103,6 +128,16 @@ export const useChatWebSocket = (): UseChatWebSocketReturn => {
 								setTimeout(() => setError(null), 5000);
 							}
 							break;
+
+						case ChatWSMessageType.THROTTLED: {
+							const retryAfterMs = Math.max(0, data.retryAfterMs);
+							setThrottleMeta({
+								limit: data.limit,
+								windowMs: data.windowMs,
+							});
+							setThrottleUntil(Date.now() + retryAfterMs);
+							break;
+						}
 
 						case ChatWSMessageType.SEND_MESSAGE:
 							// Client-to-server message type, should not be received
@@ -168,7 +203,36 @@ export const useChatWebSocket = (): UseChatWebSocketReturn => {
 			setConnectionStatus("error");
 			setError("Failed to create connection");
 		}
-	}, []);
+	}, [roomId]);
+
+	useEffect(() => {
+		if (!throttleUntil) {
+			setThrottleRemainingMs(null);
+			return;
+		}
+
+		const updateRemaining = () => {
+			const remaining = throttleUntil - Date.now();
+			if (remaining <= 0) {
+				setThrottleRemainingMs(null);
+				setThrottleUntil(null);
+				return;
+			}
+			setThrottleRemainingMs(remaining);
+		};
+
+		updateRemaining();
+		const intervalId = setInterval(updateRemaining, 250);
+		return () => clearInterval(intervalId);
+	}, [throttleUntil]);
+
+	useEffect(() => {
+		recentMessageTimestampsRef.current = [];
+		setThrottleUntil(null);
+		setThrottleMeta(null);
+		setThrottleRemainingMs(null);
+		hasAttemptedRef.current = false;
+	}, [roomId]);
 
 	const disconnect = useCallback(() => {
 		if (reconnectTimeoutRef.current) {
@@ -184,11 +248,35 @@ export const useChatWebSocket = (): UseChatWebSocketReturn => {
 		setConnectionStatus("disconnected");
 	}, []);
 
-	const sendMessage = useCallback((message: string) => {
+	const sendMessage = useCallback(
+		(message: string) => {
 		if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
 			setError("Not connected");
 			return;
 		}
+
+		if (throttleRemainingMs !== null) {
+			return;
+		}
+
+		const now = Date.now();
+		const windowStart = now - throttleWindowMs;
+		recentMessageTimestampsRef.current = recentMessageTimestampsRef.current.filter(
+			(timestamp) => timestamp > windowStart,
+		);
+
+		if (recentMessageTimestampsRef.current.length >= throttleRule.maxMessages) {
+			const oldest = recentMessageTimestampsRef.current[0];
+			const retryAfterMs = Math.max(oldest + throttleWindowMs - now, 0);
+			setThrottleMeta({
+				limit: throttleRule.maxMessages,
+				windowMs: throttleWindowMs,
+			});
+			setThrottleUntil(now + retryAfterMs);
+			return;
+		}
+
+		recentMessageTimestampsRef.current.push(now);
 
 		const payload = {
 			type: ChatWSMessageType.SEND_MESSAGE,
@@ -196,7 +284,9 @@ export const useChatWebSocket = (): UseChatWebSocketReturn => {
 		};
 
 		wsRef.current.send(JSON.stringify(payload));
-	}, []);
+		},
+		[throttleRemainingMs, throttleRule.maxMessages, throttleWindowMs],
+	);
 
 	// Connect on mount, disconnect on unmount
 	useEffect(() => {
@@ -214,5 +304,13 @@ export const useChatWebSocket = (): UseChatWebSocketReturn => {
 		connectionStatus,
 		error,
 		isAuthenticated,
+		throttle:
+			throttleRemainingMs !== null && throttleMeta
+				? {
+						remainingMs: throttleRemainingMs,
+						limit: throttleMeta.limit,
+						windowMs: throttleMeta.windowMs,
+					}
+				: null,
 	};
 };

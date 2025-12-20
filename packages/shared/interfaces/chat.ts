@@ -11,6 +11,7 @@ export enum ChatWSMessageType {
   MESSAGE_HISTORY = "message_history",
   MESSAGE_DELETED = "message_deleted",
   BULK_DELETE = "bulk_delete",
+  THROTTLED = "throttled",
   ERROR = "error",
   CONNECTED = "connected",
 }
@@ -106,6 +107,18 @@ export const errorMessageSchema = z.object({
 
 export type ErrorMessagePayload = z.infer<typeof errorMessageSchema>;
 
+// Server -> Client: Throttled
+export const throttledMessageSchema = z.object({
+  type: z.literal(ChatWSMessageType.THROTTLED),
+  retryAfterMs: z.number().int().nonnegative(),
+  limit: z.number().int().positive(),
+  windowMs: z.number().int().positive(),
+  roomId: z.string().optional(),
+  trace: wsTraceSchema.optional(),
+});
+
+export type ThrottledMessagePayload = z.infer<typeof throttledMessageSchema>;
+
 // Server -> Client: Connected
 export const connectedMessageSchema = z.object({
   type: z.literal(ChatWSMessageType.CONNECTED),
@@ -122,5 +135,6 @@ export type ChatWSMessage =
   | MessageHistoryPayload
   | MessageDeletedPayload
   | BulkDeletePayload
+  | ThrottledMessagePayload
   | ErrorMessagePayload
   | ConnectedMessagePayload;

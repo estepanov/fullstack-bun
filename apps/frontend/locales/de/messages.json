@@ -6,6 +6,8 @@
     "placeholder": "Nachricht eingeben... (Enter zum Senden)",
     "send_button": "Senden",
     "character_count": "{{count}}/{{max}} Zeichen",
+    "throttle_notice": "Du sendest Nachrichten zu schnell. Versuche es in {{seconds}}s erneut.",
+    "throttle_hint": "Limit liegt bei {{limit}} Nachrichten pro {{windowSeconds}}s.",
     "errors": {
       "empty": "Nachricht darf nicht leer sein",
       "max_length": "Nachricht darf {{max}} Zeichen nicht überschreiten",
