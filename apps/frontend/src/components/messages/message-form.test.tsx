@@ -41,7 +41,6 @@ describe("MessageForm", () => {
   });
 
   test("shows error on form submission when the message is too long", async () => {
-    const user = userEvent.setup();
     render(<MessageForm {...baseProps} />);
     const textbox = await screen.findByRole("textbox");
     const longMessage = "a".repeat(MESSAGE_CONFIG.MAX_LENGTH + 1);

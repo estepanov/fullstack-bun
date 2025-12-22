@@ -2,10 +2,7 @@
   "files": [],
   "references": [
     { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" },
-    {
-      "path": "../../apps/api/tsconfig.json"
-    }
+    { "path": "./tsconfig.node.json" }
   ],
   "exclude": ["node_modules", "../api"],
   "compilerOptions": {

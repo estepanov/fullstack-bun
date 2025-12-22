@@ -2,8 +2,8 @@ import type { ReactNode } from "react";
 import { Suspense } from "react";
 import { I18nextProvider } from "react-i18next";
 import i18n from "../i18n";
-import { QueryClientProvider } from "./query-client";
-import { ThemeProvider } from "./theme";
+import { QueryClientProvider } from "frontend-common/providers";
+import { ThemeProvider } from "frontend-common/providers/theme";
 
 const RootAppProviderBase = ({ children }: { children: ReactNode }) => {
   return (

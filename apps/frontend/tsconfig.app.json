@@ -35,10 +35,5 @@
     "types/matchers.d.ts",
     "happydom.ts",
     "testing-library.ts"
-  ],
-  "references": [
-    {
-      "path": "../../apps/api/tsconfig.json"
-    }
   ]
 }

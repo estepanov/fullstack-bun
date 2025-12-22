@@ -74,7 +74,7 @@ CORS_ALLOWLISTED_ORIGINS="http://localhost:5173"
 However, you can also add multiple hosts like:
 
 ```txt
-CORS_ALLOWLISTED_ORIGINS="http://localhost:5173,http://localhost:4000"
+CORS_ALLOWLISTED_ORIGINS="http://localhost:5173,http://localhost:5175"
 ```
 
 ### `PORT`
@@ -115,10 +115,10 @@ Keep this value secure and never commit it to version control.
 
 ```txt
 # Local development
-FE_BASE_URL="http://localhost:3001"
+FE_BASE_URL="http://localhost:5173"
 
 # Production
-FE_BASE_URL="https://api.yourdomain.com"
+FE_BASE_URL="https://app.yourdomain.com"
 ```
 
 ### `SMTP_HOST`

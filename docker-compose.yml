@@ -40,12 +40,12 @@ services:
     container_name: myapp-api
     env_file:
       - .env
-      - apps/api/.env
     ports:
       - "${API_PORT:-3001}:3001"
     environment:
       # Docker-specific overrides (these must be set here for container networking)
       - PORT=3001
+      - FE_BASE_URL=http://localhost:5173
       - DATABASE_URL=${DATABASE_URL_INTERNAL:-postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@${POSTGRES_HOST:-postgres}:${POSTGRES_PORT:-5432}/${POSTGRES_DB:-mydatabase}}
       - REDIS_URL=redis://:${REDIS_PASSWORD:-redispassword}@redis:6379
     volumes:
@@ -78,12 +78,12 @@ services:
     container_name: myapp-frontend
     env_file:
       - .env
-      - apps/frontend/.env
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
       - "${FRONTEND_HMR_PORT:-5174}:5174"
     environment:
       - VITE_API_BASE_URL=http://localhost:3001
+      - VITE_ADMIN_URL=http://localhost:5175
       - NODE_ENV=development
     volumes:
       - ./package.json:/app/package.json:ro
@@ -95,6 +95,39 @@ services:
       - ./apps/frontend/tsconfig.json:/app/apps/frontend/tsconfig.json:ro
       - ./apps/frontend/tsconfig.app.json:/app/apps/frontend/tsconfig.app.json:ro
       - ./apps/frontend/tsconfig.node.json:/app/apps/frontend/tsconfig.node.json:ro
+      - ./packages:/app/packages
+      # Note: node_modules are installed in the container, not mounted as volumes
+      # This prevents issues with missing dependencies when volumes override the installed packages
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+      target: dev
+    container_name: myapp-admin
+    env_file:
+      - .env
+    ports:
+      - "${ADMIN_PORT:-5175}:5175"
+      - "${ADMIN_HMR_PORT:-5176}:5176"
+    environment:
+      - VITE_API_BASE_URL=http://localhost:3001
+      - VITE_FRONTEND_URL=http://localhost:5173
+      - NODE_ENV=development
+    volumes:
+      - ./package.json:/app/package.json:ro
+      - ./apps/admin/src:/app/apps/admin/src
+      - ./apps/admin/public:/app/apps/admin/public
+      - ./apps/admin/locales:/app/apps/admin/locales
+      - ./apps/admin/vite.config.ts:/app/apps/admin/vite.config.ts:ro
+      - ./apps/admin/react-router.config.ts:/app/apps/admin/react-router.config.ts:ro
+      - ./apps/admin/tsconfig.json:/app/apps/admin/tsconfig.json:ro
+      - ./apps/admin/tsconfig.app.json:/app/apps/admin/tsconfig.app.json:ro
+      - ./apps/admin/tsconfig.node.json:/app/apps/admin/tsconfig.node.json:ro
       - ./packages:/app/packages
       # Note: node_modules are installed in the container, not mounted as volumes
       # This prevents issues with missing dependencies when volumes override the installed packages

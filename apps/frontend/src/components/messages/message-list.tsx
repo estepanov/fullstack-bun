@@ -1,4 +1,8 @@
-import { Button } from "@/components/ui/button";
+import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
+import { useDeleteChatMessageMutation } from "@/hooks/api/useDeleteChatMessageMutation";
+import { useUpdateChatMessageMutation } from "@/hooks/api/useUpdateChatMessageMutation";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { Button } from "frontend-common/components/ui";
 import {
   Dialog,
   DialogContent,
@@ -6,20 +10,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from "frontend-common/components/ui";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
-import { useDeleteChatMessageMutation } from "@/hooks/api/useDeleteChatMessageMutation";
-import { useUpdateChatMessageMutation } from "@/hooks/api/useUpdateChatMessageMutation";
-import { isEmojiOnlyMessage } from "@/lib/emoji";
-import { useVirtualizer } from "@tanstack/react-virtual";
+} from "frontend-common/components/ui";
+import { Input } from "frontend-common/components/ui";
+import { Textarea } from "frontend-common/components/ui";
+import { isEmojiOnlyMessage } from "frontend-common/lib";
 import { Ban, MoreVertical, PencilLine, Trash2 } from "lucide-react";
 import type { CSSProperties, Key } from "react";
 import { useEffect, useRef, useState } from "react";
@@ -262,7 +262,7 @@ export const MessageList = ({
       )}
       <div
         ref={parentRef}
-        className="h-75 overflow-y-auto rounded-lg border bg-muted/30 p-3 shadow-sm dark:bg-muted/20"
+        className="h-75 overflow-y-auto rounded-lg bg-muted/20 p-3 shadow-sm dark:bg-muted/20"
       >
         {disableVirtualization ? (
           <div className="flex flex-col">
@@ -414,7 +414,9 @@ export const MessageList = ({
                 if (!validation.success) {
                   const issues = validation.error.issues;
                   if (
-                    issues.some((issue) => issue.message === "Message must be a single line")
+                    issues.some(
+                      (issue) => issue.message === "Message must be a single line",
+                    )
                   ) {
                     setEditError(t("form.errors.single_line"));
                     return;

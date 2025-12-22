@@ -1,0 +1,27 @@
+# Build output
+build
+dist
+
+# TypeScript build artifacts
+*.tsbuildinfo
+
+# Environment files
+.env
+.env.local
+.env.production.local
+.env.development.local
+
+# Logs
+logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea
+.vscode
+*.swp
+*.swo
+*~

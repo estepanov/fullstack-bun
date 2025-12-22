@@ -1,6 +1,6 @@
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { signOut, useSession } from "@/lib/auth-client";
-import { getSessionUserRole } from "@/lib/user-role";
+import { getSessionUserRole } from "frontend-common/auth";
 import { useTranslation } from "react-i18next";
 
 function DashboardContent() {

@@ -20,10 +20,10 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "dev": "concurrently --names frontend,api 'bun --filter=frontend dev' 'bun --filter=api dev'",
+    "dev": "concurrently --names frontend,admin,api 'bun --filter=frontend dev' 'bun --filter=admin dev' 'bun --filter=api dev'",
     "start": "bun --filter=api start",
     "test": "bun --filter=* run test",
-    "build": "bun --filter=api run build:types && bun --filter=frontend run build",
+    "build": "bun --filter=api run build:types && bun --filter=frontend run build && bun --filter=admin run build",
     "format": "bun run --filter=* format",
     "lint": "bun run --filter=* lint",
     "setup": "bun scripts/initial-setup.ts",

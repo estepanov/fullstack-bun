@@ -1,8 +1,8 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { db } from "../db/client";
-import { user as userTable } from "../db/schema";
+import { ban as banTable } from "../db/schema";
 import type { AuthMiddlewareEnv } from "./auth";
 
 /**
@@ -24,19 +24,17 @@ import type { AuthMiddlewareEnv } from "./auth";
 export const checkBannedMiddleware = () =>
   createMiddleware<AuthMiddlewareEnv>(async (c, next) => {
     const userId = c.var.user.id;
-    const [user] = await db
-      .select({ banned: userTable.banned, bannedReason: userTable.bannedReason })
-      .from(userTable)
-      .where(eq(userTable.id, userId))
+
+    // Check if user has an active ban (unbannedAt is null)
+    const [activeBan] = await db
+      .select({ reason: banTable.reason })
+      .from(banTable)
+      .where(and(eq(banTable.userId, userId), isNull(banTable.unbannedAt)))
       .limit(1);
 
-    if (!user) {
-      throw new HTTPException(401, { message: "Unauthorized", cause: "USER_NOT_FOUND" });
-    }
-
-    if (user.banned) {
-      const message = user.bannedReason
-        ? `Your account has been banned. Reason: ${user.bannedReason}`
+    if (activeBan) {
+      const message = activeBan.reason
+        ? `Your account has been banned. Reason: ${activeBan.reason}`
         : "Your account has been banned";
 
       throw new HTTPException(403, {

@@ -1,9 +1,5 @@
 import { useSession } from "@/lib/auth-client";
-import { isAdminSession } from "@/lib/user-role";
+import { createUseIsAdmin } from "frontend-common/hooks";
 
-export const useIsAdmin = () => {
-  const { data: session, isPending } = useSession();
-  const isAdmin = isAdminSession(session);
-
-  return { isAdmin, isPending, session };
-};
+// Create the useIsAdmin hook with the app's useSession
+export const useIsAdmin = createUseIsAdmin(useSession);

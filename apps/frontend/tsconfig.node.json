@@ -35,10 +35,5 @@
     "happydom.ts",
     "testing-library.ts",
     "test"
-  ],
-  "references": [
-    {
-      "path": "../../apps/api/tsconfig.json"
-    }
   ]
 }
