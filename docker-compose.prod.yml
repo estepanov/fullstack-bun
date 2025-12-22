@@ -40,9 +40,6 @@ services:
       dockerfile: apps/api/Dockerfile
       target: production
     container_name: myapp-api-prod
-    env_file:
-      - .env
-      - apps/api/.env
     ports:
       - "${API_PORT:-3001}:3001"
     environment:
@@ -70,9 +67,6 @@ services:
       dockerfile: apps/frontend/Dockerfile
       target: production
     container_name: myapp-frontend-prod
-    env_file:
-      - .env
-      - apps/frontend/.env
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
     environment:

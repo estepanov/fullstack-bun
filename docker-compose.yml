@@ -38,8 +38,6 @@ services:
       dockerfile: apps/api/Dockerfile
       target: dev
     container_name: myapp-api
-    env_file:
-      - .env
     ports:
       - "${API_PORT:-3001}:3001"
     environment:
@@ -76,8 +74,6 @@ services:
       dockerfile: apps/frontend/Dockerfile
       target: dev
     container_name: myapp-frontend
-    env_file:
-      - .env
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
       - "${FRONTEND_HMR_PORT:-5174}:5174"
@@ -109,8 +105,6 @@ services:
       dockerfile: apps/admin/Dockerfile
       target: dev
     container_name: myapp-admin
-    env_file:
-      - .env
     ports:
       - "${ADMIN_PORT:-5175}:5175"
       - "${ADMIN_HMR_PORT:-5176}:5176"
