@@ -15,7 +15,7 @@
     "settings": "Settings"
   },
   "users": {
-    "title": "Admin · Users",
+    "title": "Users",
     "description": "Manage user roles. Changes take effect immediately.",
     "loading": "Loading…",
     "load_error": "Failed to load users.",

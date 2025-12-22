@@ -15,7 +15,7 @@
     "settings": "Paramètres"
   },
   "users": {
-    "title": "Admin · Utilisateurs",
+    "title": "Utilisateurs",
     "description": "Gérez les rôles des utilisateurs. Les changements prennent effet immédiatement.",
     "loading": "Chargement...",
     "load_error": "Échec du chargement des utilisateurs.",
