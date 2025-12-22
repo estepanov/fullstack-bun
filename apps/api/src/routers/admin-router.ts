@@ -1,5 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq, isNull, sql } from "drizzle-orm";
 import { Hono } from "hono";
 import { v4 as uuidv4 } from "uuid";
 import { updateUserRoleSchema } from "shared/auth/user-role";
@@ -25,8 +25,11 @@ const adminRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
         role: user.role,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        banned: sql<boolean>`(${ban.id} is not null)`,
+        bannedAt: ban.createdAt,
       })
       .from(user)
+      .leftJoin(ban, and(eq(ban.userId, user.id), isNull(ban.unbannedAt)))
       .orderBy(asc(user.createdAt));
 
     return c.json({ users });
@@ -73,6 +76,11 @@ const adminRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
       if (!existingUser) {
         logger.warn(`User not found: ${targetUserId}`);
         return c.json({ message: "User not found" }, 404);
+      }
+
+      if (existingUser.role === "ADMIN") {
+        logger.warn(`Attempted to ban admin user: ${targetUserId}`);
+        return c.json({ message: "Cannot ban admin users" }, 400);
       }
 
       // Check if user is already banned (has an active ban)

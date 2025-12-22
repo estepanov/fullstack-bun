@@ -2,12 +2,14 @@ import { useAdminUsersQuery } from "@/hooks/api/useAdminUsersQuery";
 import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
 import { useUpdateUserRoleMutation } from "@/hooks/api/useUpdateUserRoleMutation";
+import { useSession } from "@/lib/auth-client";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { UserRole, userRoleSchema } from "shared/auth/user-role";
 
 export default function AdminUsersPage() {
+  const { data: session } = useSession();
   const { data, isPending, error } = useAdminUsersQuery();
   const updateRole = useUpdateUserRoleMutation();
   const banUser = useBanUserMutation();
@@ -70,6 +72,9 @@ export default function AdminUsersPage() {
     );
   }
 
+  const isBannedUser = (user: { banned?: boolean; bannedAt?: string | null }) =>
+    Boolean(user.banned || user.bannedAt);
+
   const users = data && "users" in data && Array.isArray(data.users) ? data.users : [];
 
   return (
@@ -118,8 +123,14 @@ export default function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                {users.map((u) => (
-                  <tr key={u.id}>
+                {users.map((u) => {
+                  const userIsBanned = isBannedUser(u);
+                  const userIsAdmin = u.role === UserRole.ADMIN;
+                  const userIsSelf = session?.user?.id === u.id;
+                  const banBlocked = userIsAdmin || userIsSelf;
+
+                  return (
+                    <tr key={u.id}>
                     <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
                       <div className="font-medium">{u.name}</div>
                       <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 md:hidden">
@@ -135,7 +146,7 @@ export default function AdminUsersPage() {
                             {t("users.table.verified_no")}
                           </span>
                         )}
-                        {"banned" in u && u.banned ? (
+                        {userIsBanned ? (
                           <span className="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900/30 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:text-red-300">
                             {t("users.table.status_banned")}
                           </span>
@@ -173,7 +184,7 @@ export default function AdminUsersPage() {
                         : t("users.table.verified_no")}
                     </td>
                     <td className="hidden lg:table-cell px-4 py-3 text-sm">
-                      {"banned" in u && u.banned ? (
+                      {userIsBanned ? (
                         <span className="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900/30 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:text-red-300">
                           {t("users.table.status_banned")}
                         </span>
@@ -184,7 +195,7 @@ export default function AdminUsersPage() {
                       )}
                     </td>
                     <td className="px-4 py-3 text-sm">
-                      {"banned" in u && u.banned ? (
+                      {userIsBanned ? (
                         <button
                           type="button"
                           onClick={() => handleUnban(u.id)}
@@ -193,7 +204,7 @@ export default function AdminUsersPage() {
                         >
                           {t("users.actions.unban")}
                         </button>
-                      ) : (
+                      ) : banBlocked ? null : (
                         <button
                           type="button"
                           onClick={() => handleBanClick(u.id)}
@@ -205,7 +216,8 @@ export default function AdminUsersPage() {
                       )}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
                 {users.length === 0 && (
                   <tr>
                     <td
