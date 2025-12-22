@@ -111,6 +111,16 @@ export default function LoginPage() {
           </button>
 
           <p className="text-center text-sm text-gray-600 dark:text-gray-400">
+            {t("login.magic_link_prompt")}{" "}
+            <Link
+              to="/auth/magic-link"
+              className="text-emerald-600 dark:text-emerald-400 hover:text-emerald-500 dark:hover:text-emerald-300"
+            >
+              {t("login.magic_link_link")}
+            </Link>
+          </p>
+
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400">
             {t("login.no_account")}{" "}
             <Link to="/auth/register" className="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
               {t("login.sign_up_link")}
