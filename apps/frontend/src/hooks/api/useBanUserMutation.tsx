@@ -2,7 +2,6 @@ import { apiClient } from "@/lib/api-client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { InferResponseType } from "hono";
 import type { BanUserInput } from "shared/auth/user-ban";
-import { ADMIN_USERS_GET_QUERY_KEY, ADMIN_BANS_GET_QUERY_KEY } from "./query-key";
 
 const $post = apiClient.admin.users[":id"].ban.$post;
 
@@ -22,8 +21,8 @@ export const useBanUserMutation = () => {
       return await res.json();
     },
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: [ADMIN_USERS_GET_QUERY_KEY] });
-      await queryClient.invalidateQueries({ queryKey: [ADMIN_BANS_GET_QUERY_KEY] });
+      // Invalidate any relevant queries after banning a user
+      await queryClient.invalidateQueries();
     },
   });
 };

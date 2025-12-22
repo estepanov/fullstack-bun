@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+import { Button } from "frontend-common/components/ui";
+import { Textarea } from "frontend-common/components/ui";
 import type { FESession } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";

@@ -1,7 +1,7 @@
-import { Card } from "@/components/ui/card";
+import { Card } from "frontend-common/components/ui";
 import { useChatWebSocket } from "@/hooks/api/useChatWebSocket";
 import { useSession } from "@/lib/auth-client";
-import { isAdminSession } from "@/lib/user-role";
+import { isAdminSession } from "frontend-common/auth";
 import { useTranslation } from "react-i18next";
 import { MessageScrollProvider } from "./message-context";
 import { MessageForm } from "./message-form";

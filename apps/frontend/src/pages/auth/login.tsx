@@ -1,5 +1,5 @@
-import { signIn } from "@/lib/auth-client";
-import { useState } from "react";
+import { signIn, useSession } from "@/lib/auth-client";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { Link } from "react-router";
@@ -9,8 +9,15 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { data: session, isPending } = useSession();
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
+
+  useEffect(() => {
+    if (!isPending && session) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isPending, session, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,6 +37,20 @@ export default function LoginPage() {
       },
     );
   };
+
+  if (isPending) {
+    return (
+      <div className="flex items-center justify-center px-4">
+        <div className="text-center">
+          <div className="text-lg">{t("common.loading")}</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (session) {
+    return null;
+  }
 
   return (
     <div className="flex items-center justify-center px-4">

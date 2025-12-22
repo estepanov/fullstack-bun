@@ -1,5 +1,5 @@
 import { MessagesContainer } from "@/components/messages/messages-container";
-import { Container } from "@/components/ui/container";
+import { Container } from "frontend-common/components/ui";
 import { useTranslation } from "react-i18next";
 
 const LandingPage = () => {

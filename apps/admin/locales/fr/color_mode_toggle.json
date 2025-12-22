@@ -1,0 +1,9 @@
+{
+  "options": {
+    "light": "Clair",
+    "dark": "Sombre",
+    "system": "Système"
+  },
+  "label": "Changer de thème",
+  "current_mode": "Mode actuel"
+}

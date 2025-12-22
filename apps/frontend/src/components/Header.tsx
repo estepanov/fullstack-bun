@@ -1,8 +1,8 @@
-import { Container } from "@/components/ui/container";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Container } from "frontend-common/components/ui";
+import { Popover, PopoverContent, PopoverTrigger } from "frontend-common/components/ui";
 import { signOut, useSession } from "@/lib/auth-client";
-import { isAdminSession } from "@/lib/user-role";
-import { cn } from "@/lib/utils";
+import { isAdminSession } from "frontend-common/auth";
+import { cn } from "frontend-common/lib";
 import { RowsIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink, NavLink as RouterNavLink } from "react-router";
@@ -47,7 +47,14 @@ const MobileNavigation = () => {
       >
         <NavLink to="/more">{t("nav_links.second_page")}</NavLink>
         {session && <NavLink to="/dashboard">Dashboard</NavLink>}
-        {isAdmin && <NavLink to="/admin/users">Admin</NavLink>}
+        {isAdmin && (
+          <a
+            href={import.meta.env.VITE_ADMIN_URL || "http://localhost:5175"}
+            className="hover:underline"
+          >
+            Admin
+          </a>
+        )}
         <hr className="m-2 border-slate-300/40 dark:border-gray-600/40" />
         {session ? (
           <div className="flex flex-col gap-2">
@@ -88,7 +95,14 @@ export const Header = () => {
             <div className="hidden md:flex md:gap-x-6">
               <NavLink to="/more">{t("nav_links.second_page")}</NavLink>
               {session && <NavLink to="/dashboard">Dashboard</NavLink>}
-              {isAdmin && <NavLink to="/admin/users">Admin</NavLink>}
+              {isAdmin && (
+                <a
+                  href={import.meta.env.VITE_ADMIN_URL || "http://localhost:5175"}
+                  className="hover:underline"
+                >
+                  Admin
+                </a>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-x-5 md:gap-x-8">

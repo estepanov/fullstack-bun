@@ -1,21 +1,6 @@
 import type { AppType } from "api/src";
-import { hc } from "hono/client";
-import { SessionStore } from "./session-utils";
+import { createApiClient } from "frontend-common/api";
 
-export const apiClient = hc<AppType>(import.meta.env.VITE_API_BASE_URL, {
-  headers() {
-    const sessionStore = new SessionStore();
-    return {
-      "x-session-id": sessionStore.getSessionId(),
-      "x-request-id": crypto.randomUUID(),
-    };
-  },
-  fetch: (input: RequestInfo | URL, init?: RequestInit) => {
-    return fetch(input, {
-      ...init,
-      credentials: 'include',
-    });
-  },
-});
+export const apiClient = createApiClient<AppType>(import.meta.env.VITE_API_BASE_URL);
 
 export type APIClient = typeof apiClient;

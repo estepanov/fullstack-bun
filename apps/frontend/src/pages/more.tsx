@@ -1,5 +1,5 @@
-import { Container } from "@/components/ui/container";
-import { Link } from "@/components/ui/link";
+import { Container } from "frontend-common/components/ui";
+import { Link } from "frontend-common/components/ui";
 import { useTranslation } from "react-i18next";
 const MorePage = () => {
   const { t } = useTranslation("second_page");

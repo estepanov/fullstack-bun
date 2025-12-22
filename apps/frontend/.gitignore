@@ -1,6 +1,9 @@
-build 
+build
 dist
 public/locales
+
+# TypeScript build artifacts
+*.tsbuildinfo
 
 # Logs
 logs

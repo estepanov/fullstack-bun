@@ -1,5 +1,12 @@
 dist
 
+# TypeScript build artifacts (prevent emission alongside source files)
+src/**/*.js
+src/**/*.d.ts
+*.tsbuildinfo
+drizzle.config.js
+drizzle.config.d.ts
+
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 
 # Logs

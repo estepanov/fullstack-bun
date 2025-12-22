@@ -1,11 +1,11 @@
 import { LANGUAGES, type Language } from "@/app.config";
-import { Button } from "@/components/ui/button";
+import { Button } from "frontend-common/components/ui";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "frontend-common/components/ui";
 import { Check, ChevronDown, Globe } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";

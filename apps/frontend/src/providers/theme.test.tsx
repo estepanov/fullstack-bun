@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { waitFor } from "@testing-library/dom";
 import { render, renderHook, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { ThemeProvider, useTheme } from "./theme";
+import { ThemeProvider, useTheme } from "frontend-common/providers/theme";
 
 const localStorageMock = (() => {
   let store: Record<string, string> = {};

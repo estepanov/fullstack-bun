@@ -1,0 +1,93 @@
+{
+  "loading": "Cargando...",
+  "access_denied": "Acceso denegado",
+  "admin_only": "Esta área está restringida solo a administradores.",
+  "portal": "Portal de administración",
+  "sign_out": "Cerrar sesión",
+  "dashboard": {
+    "title": "Panel de administración",
+    "welcome": "Bienvenido al portal de administración. Usa la barra lateral para navegar."
+  },
+  "navigation": {
+    "dashboard": "Panel",
+    "users": "Usuarios",
+    "banned_users": "Usuarios bloqueados",
+    "settings": "Ajustes"
+  },
+  "users": {
+    "title": "Admin · Usuarios",
+    "description": "Gestiona los roles de usuario. Los cambios se aplican de inmediato.",
+    "loading": "Cargando...",
+    "load_error": "No se pudieron cargar los usuarios.",
+    "update_role_error": "No se pudo actualizar el rol.",
+    "link": {
+      "view_banned": "Ver usuarios bloqueados"
+    },
+    "table": {
+      "user_header": "Usuario",
+      "email_header": "Correo",
+      "role_header": "Rol",
+      "verified_header": "Verificado",
+      "verified_yes": "Sí",
+      "verified_no": "No",
+      "no_users": "No se encontraron usuarios.",
+      "status_header": "Estado",
+      "actions_header": "Acciones",
+      "status_banned": "Bloqueado",
+      "status_active": "Activo"
+    },
+    "actions": {
+      "unban": "Desbloquear",
+      "ban_user": "Bloquear usuario"
+    },
+    "ban_dialog": {
+      "close_label": "Cerrar diálogo",
+      "icon_title": "Advertencia",
+      "title": "Bloquear usuario",
+      "description": "¿Seguro que quieres bloquear a este usuario? Ya no podrá acceder a la plataforma.",
+      "reason_label": "Motivo (opcional)",
+      "reason_placeholder": "p. ej., spam",
+      "delete_messages_label": "Eliminar todos los mensajes del usuario",
+      "confirm_button": "Bloquear usuario",
+      "confirming_button": "Bloqueando...",
+      "cancel_button": "Cancelar"
+    },
+    "ban_error": "No se pudo bloquear al usuario"
+  },
+  "bans": {
+    "title": "Usuarios bloqueados",
+    "description": "Gestiona y revisa todos los usuarios bloqueados de la plataforma",
+    "loading": "Cargando usuarios bloqueados...",
+    "load_error": "No se pudieron cargar los usuarios bloqueados",
+    "link": {
+      "view_all_users": "Ver todos los usuarios"
+    },
+    "empty": {
+      "icon_title": "Sin bloqueos",
+      "title": "No hay usuarios bloqueados",
+      "description": "Actualmente no hay usuarios bloqueados en el sistema."
+    },
+    "table": {
+      "user_header": "Usuario",
+      "email_header": "Correo",
+      "banned_date_header": "Fecha de bloqueo",
+      "banned_by_header": "Bloqueado por",
+      "reason_header": "Motivo",
+      "actions_header": "Acciones",
+      "not_available": "N/D",
+      "unknown": "Desconocido",
+      "no_reason": "Sin motivo"
+    },
+    "actions": {
+      "unban": "Desbloquear"
+    },
+    "pagination": {
+      "summary": "Mostrando página {{page}} de {{totalPages}} ({{total}} en total)",
+      "previous": "Anterior",
+      "next": "Siguiente"
+    },
+    "errors": {
+      "unban_failed": "No se pudo desbloquear al usuario"
+    }
+  }
+}

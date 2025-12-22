@@ -1,0 +1,93 @@
+{
+  "loading": "Wird geladen...",
+  "access_denied": "Zugriff verweigert",
+  "admin_only": "Dieser Bereich ist nur für Administratoren.",
+  "portal": "Admin-Portal",
+  "sign_out": "Abmelden",
+  "dashboard": {
+    "title": "Admin-Dashboard",
+    "welcome": "Willkommen im Admin-Portal. Nutzen Sie die Seitenleiste zur Navigation."
+  },
+  "navigation": {
+    "dashboard": "Dashboard",
+    "users": "Benutzer",
+    "banned_users": "Gesperrte Benutzer",
+    "settings": "Einstellungen"
+  },
+  "users": {
+    "title": "Admin · Benutzer",
+    "description": "Benutzerrollen verwalten. Änderungen werden sofort wirksam.",
+    "loading": "Wird geladen...",
+    "load_error": "Benutzer konnten nicht geladen werden.",
+    "update_role_error": "Rolle konnte nicht aktualisiert werden.",
+    "link": {
+      "view_banned": "Gesperrte Benutzer anzeigen"
+    },
+    "table": {
+      "user_header": "Benutzer",
+      "email_header": "E-Mail",
+      "role_header": "Rolle",
+      "verified_header": "Verifiziert",
+      "verified_yes": "Ja",
+      "verified_no": "Nein",
+      "no_users": "Keine Benutzer gefunden.",
+      "status_header": "Status",
+      "actions_header": "Aktionen",
+      "status_banned": "Gesperrt",
+      "status_active": "Aktiv"
+    },
+    "actions": {
+      "unban": "Entsperren",
+      "ban_user": "Benutzer sperren"
+    },
+    "ban_dialog": {
+      "close_label": "Dialog schließen",
+      "icon_title": "Warnung",
+      "title": "Benutzer sperren",
+      "description": "Möchten Sie diesen Benutzer wirklich sperren? Er kann dann nicht mehr auf die Plattform zugreifen.",
+      "reason_label": "Grund (optional)",
+      "reason_placeholder": "z. B. Spam",
+      "delete_messages_label": "Alle Nachrichten des Benutzers löschen",
+      "confirm_button": "Benutzer sperren",
+      "confirming_button": "Sperren...",
+      "cancel_button": "Abbrechen"
+    },
+    "ban_error": "Benutzer konnte nicht gesperrt werden"
+  },
+  "bans": {
+    "title": "Gesperrte Benutzer",
+    "description": "Verwalten und prüfen Sie alle gesperrten Benutzer der Plattform",
+    "loading": "Gesperrte Benutzer werden geladen...",
+    "load_error": "Gesperrte Benutzer konnten nicht geladen werden",
+    "link": {
+      "view_all_users": "Alle Benutzer anzeigen"
+    },
+    "empty": {
+      "icon_title": "Keine Sperren",
+      "title": "Keine gesperrten Benutzer",
+      "description": "Derzeit sind keine Benutzer gesperrt."
+    },
+    "table": {
+      "user_header": "Benutzer",
+      "email_header": "E-Mail",
+      "banned_date_header": "Sperrdatum",
+      "banned_by_header": "Gesperrt von",
+      "reason_header": "Grund",
+      "actions_header": "Aktionen",
+      "not_available": "k. A.",
+      "unknown": "Unbekannt",
+      "no_reason": "Kein Grund angegeben"
+    },
+    "actions": {
+      "unban": "Entsperren"
+    },
+    "pagination": {
+      "summary": "Seite {{page}} von {{totalPages}} ({{total}} insgesamt)",
+      "previous": "Zurück",
+      "next": "Weiter"
+    },
+    "errors": {
+      "unban_failed": "Benutzer konnte nicht entsperrt werden"
+    }
+  }
+}

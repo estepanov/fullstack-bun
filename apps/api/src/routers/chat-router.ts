@@ -6,7 +6,6 @@ import type { WSContext } from "hono/ws";
 import { type UserRole, isAdmin } from "shared/auth/user-role";
 import {
   ChatWSMessageType,
-  getMessageSchema,
   getSendMessageSchema,
   getUpdateMessageSchema,
 } from "shared/interfaces/chat";
@@ -49,12 +48,11 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
       const roomId = c.req.query("room") ?? "global";
       let userId: string | null = null;
       let userName: string | null = null;
-      let userAvatar: string | null = null;
       let isVerified = false;
       let isAdminUser = false;
 
       return {
-        async onOpen(evt, ws: WSContext) {
+        async onOpen(_evt, ws: WSContext) {
           const logger = c.get("logger");
 
           // Authenticate via session cookie in upgrade request
@@ -107,7 +105,6 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
 
               userId = userData.id;
               userName = userData.name;
-              userAvatar = userData.image ?? null;
               isVerified = userData.emailVerified;
               const role = userData.role as UserRole | undefined;
               isAdminUser = role ? isAdmin(role) : false;
@@ -279,13 +276,13 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
           }
         },
 
-        onClose(evt, ws: WSContext) {
+        onClose(_evt, ws: WSContext) {
           const logger = c.get("logger");
           logger.info(`WebSocket closed: userId=${userId}`);
           chatManager.removeClient({ ws, userId, userName });
         },
 
-        onError(evt, ws: WSContext) {
+        onError(evt, _ws: WSContext) {
           const logger = c.get("logger");
           logger.error("WebSocket error:", evt);
         },
