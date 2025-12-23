@@ -52,10 +52,10 @@ export default defineConfig(({ command }) => {
       // ssr: {
       //   noExternal: ["react-router"],
       // },
-      // resolve: {
-      //   conditions: ["browser", "import"],
-      //   dedupe: ["react", "react-dom", "react-router"],
-      // },
+      resolve: {
+        conditions: ["browser", "import"],
+        dedupe: ["react", "react-dom", "react-router"],
+      },
     };
   }
 
@@ -68,10 +68,10 @@ export default defineConfig(({ command }) => {
         localesDir: "locales",
       }),
     ],
-    // resolve: {
-    //   conditions: ["browser", "import"],
-    //   dedupe: ["react", "react-dom", "react-router"],
-    // },
+    resolve: {
+      conditions: ["browser", "import"],
+      dedupe: ["react", "react-dom", "react-router"],
+    },
     build: {
       minify: true,
       cssMinify: true,

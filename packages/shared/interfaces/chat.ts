@@ -5,6 +5,7 @@ import { MESSAGE_CONFIG } from "../config/chat";
 export enum ChatWSMessageType {
   // Client -> Server
   SEND_MESSAGE = "send_message",
+  PING = "ping",
 
   // Server -> Client
   NEW_MESSAGE = "new_message",
@@ -15,6 +16,7 @@ export enum ChatWSMessageType {
   THROTTLED = "throttled",
   ERROR = "error",
   CONNECTED = "connected",
+  PRESENCE = "presence",
 }
 
 const htmlTagRegex = /<\s*\/?\s*[a-z][^>]*>/i;
@@ -57,6 +59,13 @@ export const getSendMessageSchema = (options?: { allowNewlines?: boolean }) =>
 export const sendMessageSchema = getSendMessageSchema();
 
 export type SendMessagePayload = z.infer<typeof sendMessageSchema>;
+
+// Client -> Server: Ping
+export const pingMessageSchema = z.object({
+  type: z.literal(ChatWSMessageType.PING),
+});
+
+export type PingMessagePayload = z.infer<typeof pingMessageSchema>;
 
 // REST API: Update message
 export const getUpdateMessageSchema = (options?: { allowNewlines?: boolean }) =>
@@ -149,9 +158,23 @@ export const connectedMessageSchema = z.object({
 
 export type ConnectedMessagePayload = z.infer<typeof connectedMessageSchema>;
 
+// Server -> Client: Presence counts
+export const presenceMessageSchema = z.object({
+  type: z.literal(ChatWSMessageType.PRESENCE),
+  data: z.object({
+    guests: z.number().int().nonnegative(),
+    members: z.number().int().nonnegative(),
+    admins: z.number().int().nonnegative(),
+  }),
+  trace: wsTraceSchema.optional(),
+});
+
+export type PresenceMessagePayload = z.infer<typeof presenceMessageSchema>;
+
 // Union type for all WebSocket messages
 export type ChatWSMessage =
   | SendMessagePayload
+  | PingMessagePayload
   | NewMessagePayload
   | MessageHistoryPayload
   | MessageDeletedPayload
@@ -159,4 +182,5 @@ export type ChatWSMessage =
   | BulkDeletePayload
   | ThrottledMessagePayload
   | ErrorMessagePayload
-  | ConnectedMessagePayload;
+  | ConnectedMessagePayload
+  | PresenceMessagePayload;

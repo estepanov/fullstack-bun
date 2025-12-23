@@ -20,9 +20,9 @@ export const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
           <Menu className="h-5 w-5" />
         </button>
         {/* Breadcrumbs or page title can go here */}
-        <h2 className="text-lg font-semibold text-foreground">
+        <h1 className="text-lg font-semibold text-foreground lg:hidden">
           {t("portal", "Admin Portal")}
-        </h2>
+        </h1>
       </div>
     </header>
   );
