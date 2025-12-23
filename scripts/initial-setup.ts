@@ -5,7 +5,7 @@ import { execSync } from "node:child_process";
 // @ts-ignore
 import { join } from "node:path";
 
-const directories = ["apps/api", "apps/frontend"];
+const directories = ["apps/api", "apps/frontend", "apps/admin"];
 
 function copyEnvFile(directory: string) {
   try {

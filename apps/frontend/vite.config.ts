@@ -23,7 +23,7 @@ export default defineConfig(({ command }) => {
         port: 5173,
         strictPort: false,
         hmr: {
-          host: "0.0.0.0",
+          host: "localhost",
           port: 5174,
           clientPort: 5174,
         },
@@ -42,16 +42,16 @@ export default defineConfig(({ command }) => {
           ],
         },
       },
-      optimizeDeps: {
-        include: ["react", "react-dom"],
-        esbuildOptions: {
-          mainFields: ["module", "main"],
-          conditions: ["import", "module"],
-        },
-      },
-      ssr: {
-        noExternal: ["react-router"],
-      },
+      // optimizeDeps: {
+      //   include: ["react", "react-dom"],
+      //   esbuildOptions: {
+      //     mainFields: ["module", "main"],
+      //     conditions: ["import", "module"],
+      //   },
+      // },
+      // ssr: {
+      //   noExternal: ["react-router"],
+      // },
       resolve: {
         conditions: ["browser", "import"],
         dedupe: ["react", "react-dom", "react-router"],

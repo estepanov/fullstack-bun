@@ -12,10 +12,11 @@
     "dashboard": "Dashboard",
     "users": "Users",
     "banned_users": "Banned Users",
+    "frontend_app": "Back to App",
     "settings": "Settings"
   },
   "users": {
-    "title": "Admin · Users",
+    "title": "Users",
     "description": "Manage user roles. Changes take effect immediately.",
     "loading": "Loading…",
     "load_error": "Failed to load users.",

@@ -12,10 +12,11 @@
     "dashboard": "Panel",
     "users": "Usuarios",
     "banned_users": "Usuarios bloqueados",
+    "frontend_app": "Volver a la app",
     "settings": "Ajustes"
   },
   "users": {
-    "title": "Admin · Usuarios",
+    "title": "Usuarios",
     "description": "Gestiona los roles de usuario. Los cambios se aplican de inmediato.",
     "loading": "Cargando...",
     "load_error": "No se pudieron cargar los usuarios.",

@@ -6,12 +6,13 @@ import {
 } from "shared/interfaces/chat";
 import { getChatThrottleRule } from "shared/config/chat";
 
-interface UseChatWebSocketReturn {
+export interface UseChatWebSocketReturn {
 	messages: ChatMessage[];
 	sendMessage: (message: string) => boolean;
 	connectionStatus: "connecting" | "connected" | "disconnected" | "error";
 	error: string | null;
 	isAuthenticated: boolean;
+	onlineCounts: { guests: number; members: number; admins: number } | null;
 	throttle:
 		| {
 				remainingMs: number;
@@ -24,6 +25,23 @@ interface UseChatWebSocketReturn {
 
 const WS_URL = `${import.meta.env.VITE_API_BASE_URL.replace(/^http/, "ws")}/chat/ws`;
 const MAX_MESSAGES = 100;
+const GUEST_ID_KEY = "chat_guest_id";
+
+const getGuestId = (): string | null => {
+	if (typeof window === "undefined") {
+		return null;
+	}
+
+	const existing = window.localStorage.getItem(GUEST_ID_KEY);
+	if (existing) {
+		return existing;
+	}
+
+	const fallbackId = `guest-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+	const newId = window.crypto?.randomUUID?.() ?? fallbackId;
+	window.localStorage.setItem(GUEST_ID_KEY, newId);
+	return newId;
+};
 
 export const useChatWebSocket = ({
 	roomId = "global",
@@ -34,6 +52,11 @@ export const useChatWebSocket = ({
 	>("connecting");
 	const [error, setError] = useState<string | null>(null);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [onlineCounts, setOnlineCounts] = useState<{
+		guests: number;
+		members: number;
+		admins: number;
+	} | null>(null);
 	const [throttleUntil, setThrottleUntil] = useState<number | null>(null);
 	const [throttleMeta, setThrottleMeta] = useState<{
 		limit: number;
@@ -50,6 +73,8 @@ export const useChatWebSocket = ({
 	const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 	const reconnectAttemptsRef = useRef(0);
 	const hasAttemptedRef = useRef(false);
+	const isManualCloseRef = useRef(false);
+	const heartbeatIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 	const isBannedRef = useRef(false);
 	const lastSentMessageRef = useRef<string | null>(null);
 	const recentMessageTimestampsRef = useRef<number[]>([]);
@@ -68,21 +93,35 @@ export const useChatWebSocket = ({
 		}
 
 		hasAttemptedRef.current = true;
+		isManualCloseRef.current = false;
 		setConnectionStatus("connecting");
 		setError(null);
 
 		try {
-			const wsUrl =
-				roomId === "global"
-					? WS_URL
-					: `${WS_URL}?room=${encodeURIComponent(roomId)}`;
-			const ws = new WebSocket(wsUrl);
+			const wsUrl = new URL(WS_URL);
+			if (roomId !== "global") {
+				wsUrl.searchParams.set("room", roomId);
+			}
+			const guestId = getGuestId();
+			if (guestId) {
+				wsUrl.searchParams.set("guestId", guestId);
+			}
+			const ws = new WebSocket(wsUrl.toString());
 			wsRef.current = ws;
 
 			ws.onopen = () => {
 				console.log("WebSocket connected");
 				setConnectionStatus("connected");
 				reconnectAttemptsRef.current = 0;
+				if (heartbeatIntervalRef.current) {
+					clearInterval(heartbeatIntervalRef.current);
+				}
+				heartbeatIntervalRef.current = setInterval(() => {
+					if (ws.readyState !== WebSocket.OPEN) {
+						return;
+					}
+					ws.send(JSON.stringify({ type: ChatWSMessageType.PING }));
+				}, 15_000);
 			};
 
 			ws.onmessage = (event) => {
@@ -93,6 +132,9 @@ export const useChatWebSocket = ({
 						case ChatWSMessageType.CONNECTED:
 							setIsAuthenticated(!!data.userId);
 							break;
+						case ChatWSMessageType.PRESENCE:
+							setOnlineCounts(data.data);
+							break;
 
 						case ChatWSMessageType.MESSAGE_HISTORY:
 							setMessages(data.data);
@@ -100,6 +142,10 @@ export const useChatWebSocket = ({
 
 						case ChatWSMessageType.NEW_MESSAGE:
 							setMessages((prev) => {
+								// Check if message already exists to prevent duplicates
+								if (prev.some((msg) => msg.id === data.data.id)) {
+									return prev;
+								}
 								const newMessages = [...prev, data.data];
 								// Trim to last MAX_MESSAGES
 								if (newMessages.length > MAX_MESSAGES) {
@@ -178,6 +224,15 @@ export const useChatWebSocket = ({
 				console.log("WebSocket closed:", event.code, event.reason);
 				setConnectionStatus("disconnected");
 				wsRef.current = null;
+				setOnlineCounts(null);
+				if (heartbeatIntervalRef.current) {
+					clearInterval(heartbeatIntervalRef.current);
+					heartbeatIntervalRef.current = null;
+				}
+
+				if (isManualCloseRef.current) {
+					return;
+				}
 
 				// Check if user was banned (code 1008 with "banned" reason)
 				if (
@@ -246,6 +301,7 @@ export const useChatWebSocket = ({
 		setThrottleRemainingMs(null);
 		setThrottleRestoreMessage(null);
 		hasAttemptedRef.current = false;
+		setOnlineCounts(null);
 	}, [roomId]);
 
 	const disconnect = useCallback(() => {
@@ -255,11 +311,17 @@ export const useChatWebSocket = ({
 		}
 
 		if (wsRef.current) {
+			isManualCloseRef.current = true;
 			wsRef.current.close();
 			wsRef.current = null;
 		}
+		if (heartbeatIntervalRef.current) {
+			clearInterval(heartbeatIntervalRef.current);
+			heartbeatIntervalRef.current = null;
+		}
 
 		setConnectionStatus("disconnected");
+		setOnlineCounts(null);
 	}, []);
 
 	const sendMessage = useCallback(
@@ -320,6 +382,7 @@ export const useChatWebSocket = ({
 		connectionStatus,
 		error,
 		isAuthenticated,
+		onlineCounts,
 		throttle:
 			throttleRemainingMs !== null && throttleMeta
 				? {

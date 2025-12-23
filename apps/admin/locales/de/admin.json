@@ -12,10 +12,11 @@
     "dashboard": "Dashboard",
     "users": "Benutzer",
     "banned_users": "Gesperrte Benutzer",
+    "frontend_app": "Zurück zur App",
     "settings": "Einstellungen"
   },
   "users": {
-    "title": "Admin · Benutzer",
+    "title": "Benutzer",
     "description": "Benutzerrollen verwalten. Änderungen werden sofort wirksam.",
     "loading": "Wird geladen...",
     "load_error": "Benutzer konnten nicht geladen werden.",
