@@ -25,8 +25,11 @@ export const AdminLayout = () => {
           />
         </div>
       )}
-      <main className="flex-1 flex min-h-0 flex-col overflow-y-auto p-4 sm:p-6 bg-gray-50 dark:bg-gray-950">
-        <Outlet />
+      <main className="flex-1 flex min-h-0 flex-col overflow-y-auto bg-gray-50 dark:bg-gray-950">
+        <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
+        <div className="flex-1 p-4 sm:p-6">
+          <Outlet />
+        </div>
       </main>
     </div>
   );

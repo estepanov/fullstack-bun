@@ -12,6 +12,7 @@
     "dashboard": "Dashboard",
     "users": "Users",
     "banned_users": "Banned Users",
+    "frontend_app": "Back to App",
     "settings": "Settings"
   },
   "users": {

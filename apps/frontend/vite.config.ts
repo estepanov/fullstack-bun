@@ -42,20 +42,20 @@ export default defineConfig(({ command }) => {
           ],
         },
       },
-      optimizeDeps: {
-        include: ["react", "react-dom"],
-        esbuildOptions: {
-          mainFields: ["module", "main"],
-          conditions: ["import", "module"],
-        },
-      },
-      ssr: {
-        noExternal: ["react-router"],
-      },
-      resolve: {
-        conditions: ["browser", "import"],
-        dedupe: ["react", "react-dom", "react-router"],
-      },
+      // optimizeDeps: {
+      //   include: ["react", "react-dom"],
+      //   esbuildOptions: {
+      //     mainFields: ["module", "main"],
+      //     conditions: ["import", "module"],
+      //   },
+      // },
+      // ssr: {
+      //   noExternal: ["react-router"],
+      // },
+      // resolve: {
+      //   conditions: ["browser", "import"],
+      //   dedupe: ["react", "react-dom", "react-router"],
+      // },
     };
   }
 
@@ -68,10 +68,10 @@ export default defineConfig(({ command }) => {
         localesDir: "locales",
       }),
     ],
-    resolve: {
-      conditions: ["browser", "import"],
-      dedupe: ["react", "react-dom", "react-router"],
-    },
+    // resolve: {
+    //   conditions: ["browser", "import"],
+    //   dedupe: ["react", "react-dom", "react-router"],
+    // },
     build: {
       minify: true,
       cssMinify: true,

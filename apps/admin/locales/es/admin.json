@@ -12,6 +12,7 @@
     "dashboard": "Panel",
     "users": "Usuarios",
     "banned_users": "Usuarios bloqueados",
+    "frontend_app": "Volver a la app",
     "settings": "Ajustes"
   },
   "users": {

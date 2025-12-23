@@ -12,6 +12,7 @@
     "dashboard": "Tableau de bord",
     "users": "Utilisateurs",
     "banned_users": "Utilisateurs bannis",
+    "frontend_app": "Retour à l'application",
     "settings": "Paramètres"
   },
   "users": {

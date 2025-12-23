@@ -1,11 +1,18 @@
 import { APP_NAME } from "@/app.config";
 import { signOut, useSession } from "@/lib/auth-client";
 import { Button } from "frontend-common/components/ui";
-import { LanguageSelector } from "./LanguageSelector";
-import { ModeToggle } from "./theme-toggle";
-import { LayoutDashboard, LogOut, ShieldBan, Users, X } from "lucide-react";
+import {
+  ArrowLeftFromLine,
+  LayoutDashboard,
+  LogOut,
+  ShieldBan,
+  Users,
+  X,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router";
+import { LanguageSelector } from "./LanguageSelector";
+import { ModeToggle } from "./theme-toggle";
 
 const navItems = [
   { path: "/", icon: LayoutDashboard, labelKey: "navigation.dashboard" },
@@ -38,6 +45,7 @@ export const AdminSidebar = ({
 }: AdminSidebarProps) => {
   const { t } = useTranslation("admin");
   const { data: session } = useSession();
+  const frontendUrl = import.meta.env.VITE_FRONTEND_URL;
 
   return (
     <div
@@ -110,6 +118,16 @@ export const AdminSidebar = ({
             <ModeToggle />
           </div>
         </div>
+        <Button asChild variant="outline" size="sm" className="w-full">
+          <a
+            href={frontendUrl}
+            onClick={() => onNavigate?.()}
+            className="flex items-center gap-2"
+          >
+            <ArrowLeftFromLine className="h-4 w-4" />
+            {t("navigation.frontend_app", "Back to App")}
+          </a>
+        </Button>
         <Button
           variant="outline"
           size="sm"
