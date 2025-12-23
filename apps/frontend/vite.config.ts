@@ -23,7 +23,7 @@ export default defineConfig(({ command }) => {
         port: 5173,
         strictPort: false,
         hmr: {
-          host: "0.0.0.0",
+          host: "localhost",
           port: 5174,
           clientPort: 5174,
         },
