@@ -1,43 +1,57 @@
-import { verifyEmail } from "@/lib/auth-client";
-import { useEffect, useState } from "react";
+import { authClient } from "@/lib/auth-client";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 
-export default function VerifyEmailPage() {
+export default function MagicLinkVerifyPage() {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState<"verifying" | "success" | "error">("verifying");
   const [errorMessage, setErrorMessage] = useState("");
+  const hasVerified = useRef(false);
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
 
   useEffect(() => {
     const token = searchParams.get("token");
+    const errorParam = searchParams.get("error");
 
-    if (!token) {
+    if (errorParam) {
       setStatus("error");
-      setErrorMessage(t("verify_email.no_token_error"));
+      setErrorMessage(t("magic_link_verify.error_from_link", { error: errorParam }));
       return;
     }
 
-    // Verify email with token
+    if (!token) {
+      setStatus("error");
+      setErrorMessage(t("magic_link_verify.no_token_error"));
+      return;
+    }
+
+    if (hasVerified.current) {
+      return;
+    }
+
+    hasVerified.current = true;
+
     const verify = async () => {
       try {
-        await verifyEmail({
+        await authClient.magicLink.verify({
           query: {
             token,
           },
         });
 
+        authClient.$store.notify("$sessionSignal");
         setStatus("success");
 
-        // Redirect to login after 3 seconds
         setTimeout(() => {
-          navigate("/auth/login");
-        }, 3000);
+          navigate("/dashboard", { replace: true });
+        }, 1500);
       } catch (error) {
+        console.error(error);
         setStatus("error");
         setErrorMessage(
-          error instanceof Error ? error.message : "Email verification failed",
+          error instanceof Error ? error.message : t("magic_link_verify.error_message"),
         );
       }
     };
@@ -54,10 +68,10 @@ export default function VerifyEmailPage() {
               ⏳
             </div>
             <h1 className="mt-6 text-3xl font-semibold tracking-tight">
-              {t("verify_email.verifying_title")}
+              {t("magic_link_verify.verifying_title")}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              {t("verify_email.verifying_message")}
+              {t("magic_link_verify.verifying_message")}
             </p>
           </>
         )}
@@ -68,10 +82,10 @@ export default function VerifyEmailPage() {
               ✅
             </div>
             <h1 className="mt-6 text-3xl font-semibold tracking-tight text-emerald-700 dark:text-emerald-300">
-              {t("verify_email.success_title")}
+              {t("magic_link_verify.success_title")}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">
-              {t("verify_email.success_message")}
+              {t("magic_link_verify.success_message")}
             </p>
           </>
         )}
@@ -82,7 +96,7 @@ export default function VerifyEmailPage() {
               ❌
             </div>
             <h1 className="mt-6 text-3xl font-semibold tracking-tight text-destructive">
-              {t("verify_email.error_title")}
+              {t("magic_link_verify.error_title")}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
             <button
@@ -90,7 +104,7 @@ export default function VerifyEmailPage() {
               onClick={() => navigate("/auth/login")}
               className="mt-6 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40"
             >
-              {t("verify_email.go_to_login")}
+              {t("magic_link_verify.go_to_login")}
             </button>
           </>
         )}

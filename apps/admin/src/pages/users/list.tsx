@@ -50,9 +50,11 @@ export default function AdminUsersPage() {
 
   if (isPending) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow dark:shadow-gray-900/50">
-          {t("users.loading")}
+      <div className="app-surface">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-border/70 bg-card/90 p-6 text-sm text-muted-foreground shadow-sm shadow-black/5 backdrop-blur">
+            {t("users.loading")}
+          </div>
         </div>
       </div>
     );
@@ -60,9 +62,9 @@ export default function AdminUsersPage() {
 
   if (error) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow dark:shadow-gray-900/50">
-          <div className="text-sm text-red-700 dark:text-red-400">
+      <div className="app-surface">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive shadow-sm shadow-black/5 backdrop-blur">
             {t("users.load_error")}
           </div>
         </div>
@@ -76,51 +78,51 @@ export default function AdminUsersPage() {
   const users = data && "users" in data && Array.isArray(data.users) ? data.users : [];
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-950">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow dark:shadow-gray-900/50">
+    <div className="app-surface">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground">
                 {t("users.title")}
               </h1>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mt-2 text-sm text-muted-foreground">
                 {t("users.description")}
               </p>
             </div>
             <Link
               to="/users/banned"
-              className="w-full sm:w-auto text-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+              className="w-full rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 sm:w-auto"
             >
               {t("users.link.view_banned")}
             </Link>
           </div>
 
           <div className="mt-6 overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-              <thead className="bg-gray-50 dark:bg-gray-900">
+            <table className="min-w-full divide-y divide-border/70">
+              <thead className="bg-muted/70">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {t("users.table.user_header")}
                   </th>
-                  <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {t("users.table.email_header")}
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {t("users.table.role_header")}
                   </th>
-                  <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {t("users.table.verified_header")}
                   </th>
-                  <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {t("users.table.status_header")}
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {t("users.table.actions_header")}
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              <tbody className="divide-y divide-border/70 bg-card/80">
                 {users.map((u) => {
                   const userIsBanned = isBannedUser(u);
                   const userIsAdmin = u.role === UserRole.ADMIN;
@@ -129,97 +131,97 @@ export default function AdminUsersPage() {
 
                   return (
                     <tr key={u.id}>
-                    <td className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100">
-                      <div className="font-medium">{u.name}</div>
-                      <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 md:hidden">
+                      <td className="px-4 py-4 text-sm text-foreground">
+                        <div className="font-medium">{u.name}</div>
+                        <div className="mt-1 text-xs text-muted-foreground md:hidden">
+                          {u.email}
+                        </div>
+                        <div className="mt-2 flex flex-wrap gap-2 lg:hidden">
+                          {u.emailVerified ? (
+                            <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                              {t("users.table.verified_yes")}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
+                              {t("users.table.verified_no")}
+                            </span>
+                          )}
+                          {userIsBanned ? (
+                            <span className="inline-flex items-center rounded-full bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
+                              {t("users.table.status_banned")}
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                              {t("users.table.status_active")}
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="hidden md:table-cell px-4 py-4 text-sm text-muted-foreground">
                         {u.email}
-                      </div>
-                      <div className="mt-2 flex flex-wrap gap-2 lg:hidden">
-                        {u.emailVerified ? (
-                          <span className="inline-flex items-center rounded-full bg-blue-100 dark:bg-blue-900/30 px-2.5 py-0.5 text-xs font-medium text-blue-800 dark:text-blue-300">
-                            {t("users.table.verified_yes")}
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center rounded-full bg-gray-100 dark:bg-gray-900/30 px-2.5 py-0.5 text-xs font-medium text-gray-700 dark:text-gray-300">
-                            {t("users.table.verified_no")}
-                          </span>
-                        )}
+                      </td>
+                      <td className="px-4 py-4 text-sm">
+                        <select
+                          className="w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20 sm:w-auto"
+                          value={u.role}
+                          disabled={updateRole.isPending}
+                          onChange={(e) => {
+                            const parsed = userRoleSchema.safeParse(e.target.value);
+                            if (!parsed.success) return;
+                            updateRole.mutate({ id: u.id, role: parsed.data });
+                          }}
+                        >
+                          {Object.values(UserRole).map((role) => (
+                            <option key={role} value={role}>
+                              {role}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="hidden lg:table-cell px-4 py-4 text-sm text-muted-foreground">
+                        {u.emailVerified
+                          ? t("users.table.verified_yes")
+                          : t("users.table.verified_no")}
+                      </td>
+                      <td className="hidden lg:table-cell px-4 py-4 text-sm">
                         {userIsBanned ? (
-                          <span className="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900/30 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:text-red-300">
+                          <span className="inline-flex items-center rounded-full bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
                             {t("users.table.status_banned")}
                           </span>
                         ) : (
-                          <span className="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/30 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:text-green-300">
+                          <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
                             {t("users.table.status_active")}
                           </span>
                         )}
-                      </div>
-                    </td>
-                    <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-                      {u.email}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      <select
-                        className="w-full sm:w-auto rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 px-2 py-1 text-sm focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                        value={u.role}
-                        disabled={updateRole.isPending}
-                        onChange={(e) => {
-                          const parsed = userRoleSchema.safeParse(e.target.value);
-                          if (!parsed.success) return;
-                          updateRole.mutate({ id: u.id, role: parsed.data });
-                        }}
-                      >
-                        {Object.values(UserRole).map((role) => (
-                          <option key={role} value={role}>
-                            {role}
-                          </option>
-                        ))}
-                      </select>
-                    </td>
-                    <td className="hidden lg:table-cell px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
-                      {u.emailVerified
-                        ? t("users.table.verified_yes")
-                        : t("users.table.verified_no")}
-                    </td>
-                    <td className="hidden lg:table-cell px-4 py-3 text-sm">
-                      {userIsBanned ? (
-                        <span className="inline-flex items-center rounded-full bg-red-100 dark:bg-red-900/30 px-2.5 py-0.5 text-xs font-medium text-red-800 dark:text-red-300">
-                          {t("users.table.status_banned")}
-                        </span>
-                      ) : (
-                        <span className="inline-flex items-center rounded-full bg-green-100 dark:bg-green-900/30 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:text-green-300">
-                          {t("users.table.status_active")}
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-sm">
-                      {userIsBanned ? (
-                        <button
-                          type="button"
-                          onClick={() => handleUnban(u.id)}
-                          disabled={unbanUser.isPending}
-                          className="w-full sm:w-auto rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {t("users.actions.unban")}
-                        </button>
-                      ) : banBlocked ? null : (
-                        <button
-                          type="button"
-                          onClick={() => handleBanClick(u.id)}
-                          disabled={banUser.isPending}
-                          className="w-full sm:w-auto rounded-md bg-red-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-red-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {t("users.actions.ban_user")}
-                        </button>
-                      )}
-                    </td>
-                  </tr>
+                      </td>
+                      <td className="px-4 py-4 text-sm">
+                        {userIsBanned ? (
+                          <button
+                            type="button"
+                            onClick={() => handleUnban(u.id)}
+                            disabled={unbanUser.isPending}
+                            className="w-full rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                          >
+                            {t("users.actions.unban")}
+                          </button>
+                        ) : banBlocked ? null : (
+                          <button
+                            type="button"
+                            onClick={() => handleBanClick(u.id)}
+                            disabled={banUser.isPending}
+                            className="w-full rounded-full bg-destructive px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-destructive/90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                          >
+                            {t("users.actions.ban_user")}
+                          </button>
+                        )}
+                      </td>
+                    </tr>
                   );
                 })}
                 {users.length === 0 && (
                   <tr>
                     <td
-                      className="px-4 py-6 text-sm text-gray-600 dark:text-gray-400"
+                      className="px-4 py-6 text-sm text-muted-foreground"
                       colSpan={6}
                     >
                       {t("users.table.no_users")}
@@ -231,13 +233,13 @@ export default function AdminUsersPage() {
           </div>
 
           {updateRole.isError && (
-            <div className="mt-4 rounded-md bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-800 dark:text-red-300">
+            <div className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
               {t("users.update_role_error")}
             </div>
           )}
 
           {banUser.isError && (
-            <div className="mt-4 rounded-md bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-800 dark:text-red-300">
+            <div className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
               {t("users.ban_error")}
             </div>
           )}
@@ -249,19 +251,19 @@ export default function AdminUsersPage() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
             <div
-              className="fixed inset-0 bg-gray-500/75 transition-opacity"
+              className="fixed inset-0 bg-black/60 transition-opacity"
               onClick={() => setBanDialogOpen(false)}
               onKeyDown={(e) => e.key === "Escape" && setBanDialogOpen(false)}
               role="button"
               tabIndex={0}
               aria-label={t("users.ban_dialog.close_label")}
             />
-            <div className="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-800 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-              <div className="bg-white dark:bg-gray-800 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+            <div className="relative transform overflow-hidden rounded-3xl border border-border/70 bg-card/95 text-left shadow-xl backdrop-blur transition-all sm:my-8 sm:w-full sm:max-w-lg">
+              <div className="px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                 <div className="sm:flex sm:items-start">
-                  <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/30 sm:mx-0 sm:h-10 sm:w-10">
+                  <div className="mx-auto flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-destructive/10 sm:mx-0 sm:h-10 sm:w-10">
                     <svg
-                      className="h-6 w-6 text-red-600 dark:text-red-400"
+                      className="h-6 w-6 text-destructive"
                       fill="none"
                       viewBox="0 0 24 24"
                       strokeWidth="1.5"
@@ -276,18 +278,18 @@ export default function AdminUsersPage() {
                       />
                     </svg>
                   </div>
-                  <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left flex-1">
-                    <h3 className="text-base font-semibold leading-6 text-gray-900 dark:text-gray-100">
+                  <div className="mt-3 flex-1 text-center sm:ml-4 sm:mt-0 sm:text-left">
+                    <h3 className="text-base font-semibold leading-6 text-foreground">
                       {t("users.ban_dialog.title")}
                     </h3>
                     <div className="mt-2">
-                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                      <p className="text-sm text-muted-foreground">
                         {t("users.ban_dialog.description")}
                       </p>
                       <div className="mt-4">
                         <label
                           htmlFor="ban-reason"
-                          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+                          className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
                         >
                           {t("users.ban_dialog.reason_label")}
                         </label>
@@ -296,7 +298,7 @@ export default function AdminUsersPage() {
                           id="ban-reason"
                           value={banReason}
                           onChange={(e) => setBanReason(e.target.value)}
-                          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                          className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                           placeholder={t("users.ban_dialog.reason_placeholder")}
                         />
                       </div>
@@ -306,9 +308,9 @@ export default function AdminUsersPage() {
                             type="checkbox"
                             checked={deleteMessages}
                             onChange={(e) => setDeleteMessages(e.target.checked)}
-                            className="h-4 w-4 rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500"
+                            className="h-4 w-4 rounded border-border text-primary focus:ring-primary/40"
                           />
-                          <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                          <span className="ml-2 text-sm text-muted-foreground">
                             {t("users.ban_dialog.delete_messages_label")}
                           </span>
                         </label>
@@ -317,12 +319,12 @@ export default function AdminUsersPage() {
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+              <div className="border-t border-border/70 bg-muted/40 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button
                   type="button"
                   onClick={handleBanConfirm}
                   disabled={banUser.isPending}
-                  className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex w-full justify-center rounded-full bg-destructive px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-destructive/90 sm:ml-3 sm:w-auto disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {banUser.isPending
                     ? t("users.ban_dialog.confirming_button")
@@ -332,7 +334,7 @@ export default function AdminUsersPage() {
                   type="button"
                   onClick={() => setBanDialogOpen(false)}
                   disabled={banUser.isPending}
-                  className="mt-3 inline-flex w-full justify-center rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 sm:mt-0 sm:w-auto"
+                  className="mt-3 inline-flex w-full justify-center rounded-full border border-border/70 bg-background/80 px-4 py-2 text-sm font-semibold text-foreground shadow-sm hover:bg-muted/60 sm:mt-0 sm:w-auto"
                 >
                   {t("users.ban_dialog.cancel_button")}
                 </button>

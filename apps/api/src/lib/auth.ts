@@ -2,12 +2,12 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createFieldAttribute } from "better-auth/db";
 import { admin } from "better-auth/plugins";
+import { magicLink } from "better-auth/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
-import { UserRole } from "shared/auth/user-role";
 import { db } from "../db/client";
 import { account, session, user, verification } from "../db/schema";
 import { env } from "../env";
-import { sendVerificationEmail } from "../utils/email";
+import { sendMagicLinkEmail, sendVerificationEmail } from "../utils/email";
 
 // Define resources and actions for access control
 const statement = {
@@ -64,6 +64,11 @@ export const auth = betterAuth({
       adminRoles: ["admin"],
       impersonationSessionDuration: 3600 / 2, // 30 minutes
       allowImpersonatingAdmins: true,
+    }),
+    magicLink({
+      sendMagicLink: async ({ email, url }) => {
+        await sendMagicLinkEmail(email, url);
+      },
     }),
   ],
   baseURL: env.FE_BASE_URL,

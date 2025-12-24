@@ -17,9 +17,11 @@ export default function AdminBannedUsersPage() {
 
   if (isPending) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow dark:shadow-gray-900/50">
-          {t("bans.loading")}
+      <div className="app-surface">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-border/70 bg-card/90 p-6 text-sm text-muted-foreground shadow-sm shadow-black/5 backdrop-blur">
+            {t("bans.loading")}
+          </div>
         </div>
       </div>
     );
@@ -27,9 +29,9 @@ export default function AdminBannedUsersPage() {
 
   if (error) {
     return (
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow dark:shadow-gray-900/50">
-          <div className="text-sm text-red-700 dark:text-red-400">
+      <div className="app-surface">
+        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+          <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive shadow-sm shadow-black/5 backdrop-blur">
             {t("bans.load_error")}
           </div>
         </div>
@@ -41,30 +43,30 @@ export default function AdminBannedUsersPage() {
   const pagination = data?.pagination || { page: 1, limit: 20, total: 0, totalPages: 0 };
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-950">
-      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow dark:shadow-gray-900/50">
+    <div className="app-surface">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <h1 className="text-2xl font-semibold tracking-tight text-foreground">
                 {t("bans.title")}
               </h1>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+              <p className="mt-2 text-sm text-muted-foreground">
                 {t("bans.description")}
               </p>
             </div>
             <Link
               to="/users"
-              className="w-full sm:w-auto text-center rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500"
+              className="w-full rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 sm:w-auto"
             >
               {t("bans.link.view_all_users")}
             </Link>
           </div>
 
           {bans.length === 0 ? (
-            <div className="mt-6 text-center py-12">
+            <div className="mt-6 rounded-2xl border border-border/70 bg-background/80 py-12 text-center">
               <svg
-                className="mx-auto h-12 w-12 text-gray-400"
+                className="mx-auto h-12 w-12 text-muted-foreground"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -78,59 +80,59 @@ export default function AdminBannedUsersPage() {
                   d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900 dark:text-gray-100">
+              <h3 className="mt-2 text-sm font-semibold text-foreground">
                 {t("bans.empty.title")}
               </h3>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-muted-foreground">
                 {t("bans.empty.description")}
               </p>
             </div>
           ) : (
             <>
               <div className="mt-6 overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                  <thead className="bg-gray-50 dark:bg-gray-900">
+                <table className="min-w-full divide-y divide-border/70">
+                  <thead className="bg-muted/70">
                     <tr>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                         {t("bans.table.user_header")}
                       </th>
-                      <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                         {t("bans.table.email_header")}
                       </th>
-                      <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                         {t("bans.table.banned_date_header")}
                       </th>
-                      <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                         {t("bans.table.banned_by_header")}
                       </th>
-                      <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                         {t("bans.table.reason_header")}
                       </th>
-                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                         {t("bans.table.actions_header")}
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                  <tbody className="divide-y divide-border/70 bg-card/80">
                     {bans.map((ban) => (
                       <tr key={ban.id}>
                         <td className="px-4 py-3 text-sm">
                           <div className="flex items-center">
                             {ban.image && (
                               <img
-                                className="h-8 w-8 rounded-full mr-3"
+                                className="mr-3 h-8 w-8 rounded-full"
                                 src={ban.image}
                                 alt={ban.name}
                               />
                             )}
-                            <span className="text-gray-900 dark:text-gray-100 font-medium">
+                            <span className="font-medium text-foreground">
                               {ban.name}
                             </span>
                           </div>
-                          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 md:hidden">
+                          <div className="mt-1 text-xs text-muted-foreground md:hidden">
                             {ban.email}
                           </div>
-                          <div className="mt-1 text-xs text-gray-500 dark:text-gray-400 md:hidden">
+                          <div className="mt-1 text-xs text-muted-foreground md:hidden">
                             {ban.bannedAt
                               ? new Date(ban.bannedAt).toLocaleDateString(i18n.language, {
                                   year: "numeric",
@@ -139,7 +141,7 @@ export default function AdminBannedUsersPage() {
                                 })
                               : t("bans.table.not_available")}
                           </div>
-                          <div className="mt-2 space-y-1 text-xs text-gray-500 dark:text-gray-400 lg:hidden">
+                          <div className="mt-2 space-y-1 text-xs text-muted-foreground lg:hidden">
                             <div>
                               {t("bans.table.banned_by_header")}:{" "}
                               {ban.bannedByName || t("bans.table.unknown")}
@@ -150,10 +152,10 @@ export default function AdminBannedUsersPage() {
                             </div>
                           </div>
                         </td>
-                        <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        <td className="hidden md:table-cell px-4 py-3 text-sm text-muted-foreground">
                           {ban.email}
                         </td>
-                        <td className="hidden md:table-cell px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        <td className="hidden md:table-cell px-4 py-3 text-sm text-muted-foreground">
                           {ban.bannedAt
                             ? new Date(ban.bannedAt).toLocaleDateString(i18n.language, {
                                 year: "numeric",
@@ -162,10 +164,10 @@ export default function AdminBannedUsersPage() {
                               })
                             : t("bans.table.not_available")}
                         </td>
-                        <td className="hidden lg:table-cell px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        <td className="hidden lg:table-cell px-4 py-3 text-sm text-muted-foreground">
                           {ban.bannedByName || t("bans.table.unknown")}
                         </td>
-                        <td className="hidden lg:table-cell px-4 py-3 text-sm text-gray-700 dark:text-gray-300">
+                        <td className="hidden lg:table-cell px-4 py-3 text-sm text-muted-foreground">
                           {ban.bannedReason ? (
                             <span
                               className="max-w-xs truncate block"
@@ -174,7 +176,7 @@ export default function AdminBannedUsersPage() {
                               {ban.bannedReason}
                             </span>
                           ) : (
-                            <span className="text-gray-400 dark:text-gray-500 italic">
+                            <span className="text-muted-foreground/70 italic">
                               {t("bans.table.no_reason")}
                             </span>
                           )}
@@ -184,7 +186,7 @@ export default function AdminBannedUsersPage() {
                             type="button"
                             onClick={() => handleUnban(ban.id)}
                             disabled={unbanUser.isPending}
-                            className="w-full sm:w-auto rounded-md bg-green-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                           >
                             {t("bans.actions.unban")}
                           </button>
@@ -197,8 +199,8 @@ export default function AdminBannedUsersPage() {
 
               {/* Pagination */}
               {pagination.totalPages > 1 && (
-                <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
-                  <div className="text-sm text-gray-700 dark:text-gray-300">
+                <div className="mt-6 flex flex-col gap-3 border-t border-border/70 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="text-sm text-muted-foreground">
                     {t("bans.pagination.summary", {
                       page: pagination.page,
                       totalPages: pagination.totalPages,
@@ -210,7 +212,7 @@ export default function AdminBannedUsersPage() {
                       type="button"
                       onClick={() => setPage(page - 1)}
                       disabled={page <= 1}
-                      className="w-full sm:w-auto rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full rounded-full border border-border/70 bg-background/80 px-4 py-2 text-sm font-semibold text-foreground shadow-sm hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                     >
                       {t("bans.pagination.previous")}
                     </button>
@@ -218,7 +220,7 @@ export default function AdminBannedUsersPage() {
                       type="button"
                       onClick={() => setPage(page + 1)}
                       disabled={page >= pagination.totalPages}
-                      className="w-full sm:w-auto rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-gray-100 shadow-sm ring-1 ring-inset ring-gray-300 dark:ring-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full rounded-full border border-border/70 bg-background/80 px-4 py-2 text-sm font-semibold text-foreground shadow-sm hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                     >
                       {t("bans.pagination.next")}
                     </button>
@@ -229,7 +231,7 @@ export default function AdminBannedUsersPage() {
           )}
 
           {unbanUser.isError && (
-            <div className="mt-4 rounded-md bg-red-50 dark:bg-red-900/20 p-3 text-sm text-red-800 dark:text-red-300">
+            <div className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
               {t("bans.errors.unban_failed")}
             </div>
           )}

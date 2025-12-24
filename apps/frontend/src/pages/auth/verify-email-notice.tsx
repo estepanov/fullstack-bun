@@ -7,22 +7,31 @@ export default function VerifyEmailNoticePage() {
   const { t } = useTranslation("auth");
 
   return (
-    <div className="flex items-center justify-center px-4">
-      <div className="w-full max-w-md space-y-8 text-center">
-        <div className="text-6xl">📧</div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">{t("verify_email_notice.title")}</h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          {t("verify_email_notice.message")} <strong className="text-gray-900 dark:text-gray-100">{email}</strong>.
+    <div className="app-surface flex min-h-screen items-center justify-center px-4 py-10">
+      <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-10 text-center shadow-sm shadow-black/5 backdrop-blur">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-3xl">
+          📧
+        </div>
+        <h1 className="mt-6 text-3xl font-semibold tracking-tight">
+          {t("verify_email_notice.title")}
+        </h1>
+        <p className="mt-3 text-sm text-muted-foreground">
+          {t("verify_email_notice.message")}{" "}
+          <strong className="text-foreground">{email}</strong>.
         </p>
-        <p className="text-gray-600 dark:text-gray-400">{t("verify_email_notice.instruction")}</p>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {t("verify_email_notice.instruction")}
+        </p>
 
-        <div className="mt-8 rounded-md bg-blue-50 dark:bg-blue-900/20 p-4">
-          <p className="text-sm text-blue-800 dark:text-blue-300">{t("verify_email_notice.no_email")}</p>
+        <div className="mt-6 rounded-2xl border border-primary/20 bg-primary/10 p-4">
+          <p className="text-sm font-medium text-primary">
+            {t("verify_email_notice.no_email")}
+          </p>
         </div>
 
         <Link
           to="/auth/login"
-          className="inline-block mt-4 text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300"
+          className="mt-6 inline-flex items-center text-sm font-semibold text-primary hover:text-primary/80"
         >
           {t("verify_email_notice.back_to_login")}
         </Link>
