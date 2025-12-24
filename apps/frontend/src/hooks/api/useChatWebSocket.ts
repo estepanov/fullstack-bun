@@ -202,6 +202,11 @@ export const useChatWebSocket = ({
 							console.warn("Received unexpected SEND_MESSAGE from server");
 							break;
 
+						case ChatWSMessageType.PING:
+							// Client-to-server message type, should not be received
+							console.warn("Received unexpected PING from server");
+							break;
+
 						default: {
 							// Exhaustive check: if we add a new message type and don't handle it,
 							// TypeScript will error here because data.type won't be assignable to never

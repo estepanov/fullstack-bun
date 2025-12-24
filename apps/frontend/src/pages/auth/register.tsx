@@ -1,3 +1,4 @@
+import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { signUp } from "@/lib/auth-client";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -34,15 +35,11 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="app-surface flex min-h-screen items-center justify-center px-4 py-10">
+    <AppSurfaceCenter>
       <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 shadow-sm shadow-black/5 backdrop-blur">
         <div className="text-center">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            {t("register.title")}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t("register.subtitle")}
-          </p>
+          <h1 className="text-3xl font-semibold tracking-tight">{t("register.title")}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{t("register.subtitle")}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
@@ -54,7 +51,10 @@ export default function RegisterPage() {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="name" className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              <label
+                htmlFor="name"
+                className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+              >
                 {t("register.name_label")}
               </label>
               <input
@@ -69,7 +69,10 @@ export default function RegisterPage() {
             </div>
 
             <div>
-              <label htmlFor="email" className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              <label
+                htmlFor="email"
+                className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+              >
                 {t("register.email_label")}
               </label>
               <input
@@ -100,7 +103,9 @@ export default function RegisterPage() {
                 minLength={8}
                 className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
-              <p className="mt-2 text-xs text-muted-foreground">{t("register.password_hint")}</p>
+              <p className="mt-2 text-xs text-muted-foreground">
+                {t("register.password_hint")}
+              </p>
             </div>
           </div>
 
@@ -114,12 +119,15 @@ export default function RegisterPage() {
 
           <p className="text-center text-sm text-muted-foreground">
             {t("register.have_account")}{" "}
-            <Link to="/auth/login" className="font-semibold text-primary hover:text-primary/80">
+            <Link
+              to="/auth/login"
+              className="font-semibold text-primary hover:text-primary/80"
+            >
               {t("register.sign_in_link")}
             </Link>
           </p>
         </form>
       </div>
-    </div>
+    </AppSurfaceCenter>
   );
 }

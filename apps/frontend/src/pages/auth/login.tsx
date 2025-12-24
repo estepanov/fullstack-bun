@@ -1,3 +1,4 @@
+import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { signIn, useSession } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -53,15 +54,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="app-surface flex min-h-screen items-center justify-center px-4 py-10">
+    <AppSurfaceCenter>
       <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 shadow-sm shadow-black/5 backdrop-blur">
         <div className="text-center">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            {t("login.title")}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t("login.subtitle")}
-          </p>
+          <h1 className="text-3xl font-semibold tracking-tight">{t("login.title")}</h1>
+          <p className="mt-2 text-sm text-muted-foreground">{t("login.subtitle")}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
@@ -73,7 +70,10 @@ export default function LoginPage() {
 
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              <label
+                htmlFor="email"
+                className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+              >
                 {t("login.email_label")}
               </label>
               <input
@@ -127,13 +127,16 @@ export default function LoginPage() {
 
             <p>
               {t("login.no_account")}{" "}
-              <Link to="/auth/register" className="font-semibold text-primary hover:text-primary/80">
+              <Link
+                to="/auth/register"
+                className="font-semibold text-primary hover:text-primary/80"
+              >
                 {t("login.sign_up_link")}
               </Link>
             </p>
           </div>
         </form>
       </div>
-    </div>
+    </AppSurfaceCenter>
   );
 }

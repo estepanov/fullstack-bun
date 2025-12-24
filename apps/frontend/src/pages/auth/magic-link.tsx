@@ -1,3 +1,4 @@
+import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -42,15 +43,13 @@ export default function MagicLinkPage() {
   };
 
   return (
-    <div className="app-surface flex min-h-screen items-center justify-center px-4 py-10">
+    <AppSurfaceCenter>
       <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 shadow-sm shadow-black/5 backdrop-blur">
         <div className="text-center">
           <h1 className="text-3xl font-semibold tracking-tight">
             {t("magic_link.title")}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            {t("magic_link.subtitle")}
-          </p>
+          <p className="mt-2 text-sm text-muted-foreground">{t("magic_link.subtitle")}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
@@ -108,12 +107,15 @@ export default function MagicLinkPage() {
 
           <p className="text-center text-sm text-muted-foreground">
             {t("magic_link.back_to_login")}{" "}
-            <Link to="/auth/login" className="font-semibold text-primary hover:text-primary/80">
+            <Link
+              to="/auth/login"
+              className="font-semibold text-primary hover:text-primary/80"
+            >
               {t("magic_link.sign_in_link")}
             </Link>
           </p>
         </form>
       </div>
-    </div>
+    </AppSurfaceCenter>
   );
 }

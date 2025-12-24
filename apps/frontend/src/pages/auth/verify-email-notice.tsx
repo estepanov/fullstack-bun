@@ -1,3 +1,4 @@
+import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
 
@@ -7,7 +8,7 @@ export default function VerifyEmailNoticePage() {
   const { t } = useTranslation("auth");
 
   return (
-    <div className="app-surface flex min-h-screen items-center justify-center px-4 py-10">
+    <AppSurfaceCenter>
       <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-10 text-center shadow-sm shadow-black/5 backdrop-blur">
         <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-3xl">
           📧
@@ -36,6 +37,6 @@ export default function VerifyEmailNoticePage() {
           {t("verify_email_notice.back_to_login")}
         </Link>
       </div>
-    </div>
+    </AppSurfaceCenter>
   );
 }
