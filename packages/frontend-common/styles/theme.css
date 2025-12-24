@@ -122,7 +122,6 @@
 
 @layer utilities {
   .app-surface {
-    min-height: 100vh;
     background-color: var(--background);
     background-image: radial-gradient(
         1200px circle at 15% -10%,

@@ -1,5 +1,6 @@
 import { verifyEmail } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
+import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 
@@ -46,7 +47,7 @@ export default function VerifyEmailPage() {
   }, [searchParams, navigate, t]);
 
   return (
-    <div className="app-surface flex min-h-screen items-center justify-center px-4 py-10">
+    <AppSurfaceCenter>
       <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-10 text-center shadow-sm shadow-black/5 backdrop-blur">
         {status === "verifying" && (
           <>
@@ -95,6 +96,6 @@ export default function VerifyEmailPage() {
           </>
         )}
       </div>
-    </div>
+    </AppSurfaceCenter>
   );
 }
