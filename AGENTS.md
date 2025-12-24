@@ -37,3 +37,7 @@
 - Database migrations reside in `apps/api/drizzle`; run them before starting the API in new environments.
 - For new env keys, update both `.env.example` files, add or adjust validators in `apps/api/src/env.ts`, and document changes in `apps/docs/reference/environment-variables.md` (and related docs).
 - Document any env var additions or changes in `apps/docs/reference/environment-variables.md` (and related docs where applicable) so deployers stay current.
+
+## Design / UI / UX
+
+See `apps/docs/reference/design-manifesto.md` 
