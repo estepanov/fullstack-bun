@@ -60,15 +60,17 @@ export default function MagicLinkVerifyPage() {
   }, [searchParams, navigate, t]);
 
   return (
-    <div className="flex items-center justify-center px-4">
-      <div className="w-full max-w-md space-y-8 text-center">
+    <div className="app-surface flex min-h-screen items-center justify-center px-4 py-10">
+      <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-10 text-center shadow-sm shadow-black/5 backdrop-blur">
         {status === "verifying" && (
           <>
-            <div className="text-6xl">⏳</div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-3xl">
+              ⏳
+            </div>
+            <h1 className="mt-6 text-3xl font-semibold tracking-tight">
               {t("magic_link_verify.verifying_title")}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-sm text-muted-foreground">
               {t("magic_link_verify.verifying_message")}
             </p>
           </>
@@ -76,11 +78,13 @@ export default function MagicLinkVerifyPage() {
 
         {status === "success" && (
           <>
-            <div className="text-6xl">✅</div>
-            <h1 className="text-3xl font-bold text-emerald-600 dark:text-emerald-400">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-3xl">
+              ✅
+            </div>
+            <h1 className="mt-6 text-3xl font-semibold tracking-tight text-emerald-700 dark:text-emerald-300">
               {t("magic_link_verify.success_title")}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="mt-2 text-sm text-muted-foreground">
               {t("magic_link_verify.success_message")}
             </p>
           </>
@@ -88,15 +92,17 @@ export default function MagicLinkVerifyPage() {
 
         {status === "error" && (
           <>
-            <div className="text-6xl">❌</div>
-            <h1 className="text-3xl font-bold text-red-600 dark:text-red-400">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 text-3xl">
+              ❌
+            </div>
+            <h1 className="mt-6 text-3xl font-semibold tracking-tight text-destructive">
               {t("magic_link_verify.error_title")}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400">{errorMessage}</p>
+            <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
             <button
               type="button"
               onClick={() => navigate("/auth/login")}
-              className="mt-4 rounded-md bg-blue-600 dark:bg-blue-500 px-4 py-2 text-white hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+              className="mt-6 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40"
             >
               {t("magic_link_verify.go_to_login")}
             </button>
