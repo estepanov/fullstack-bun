@@ -55,6 +55,15 @@ CMD ["bun", "--filter=frontend", "dev"]
 # Build stage
 FROM base AS build
 WORKDIR /app
+
+# Accept build arguments for Vite environment variables
+ARG VITE_API_BASE_URL
+ARG VITE_ADMIN_URL
+
+# Set them as environment variables for the build process
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+ENV VITE_ADMIN_URL=${VITE_ADMIN_URL}
+
 # Copy root package files for workspace resolution
 COPY --chown=bunapp:bunapp package.json bun.lockb ./
 # Copy dependencies and source
