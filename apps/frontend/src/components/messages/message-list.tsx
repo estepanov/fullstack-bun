@@ -540,10 +540,8 @@ export const MessageList = ({
                 try {
                   await banUser.mutateAsync({
                     id: userToBan.id,
-                    data: {
-                      reason: banReason || undefined,
-                      deleteMessages,
-                    },
+                    reason: banReason || undefined,
+                    deleteMessages,
                   });
                   setBanDialogOpen(false);
                   setUserToBan(null);

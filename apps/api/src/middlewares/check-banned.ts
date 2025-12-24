@@ -1,19 +1,19 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
 import { db } from "../db/client";
-import { ban as banTable } from "../db/schema";
+import { user as userTable } from "../db/schema";
 import type { AuthMiddlewareEnv } from "./auth";
 
 /**
- * Middleware to check if user is banned
+ * Middleware to check if user is banned (for custom routes outside /auth)
  *
  * Usage:
  * ```typescript
  * const router = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
  *   .use(authMiddleware())
  *   .use(checkBannedMiddleware())
- *   .get("/protected", (c) => {
+ *   .post("/chat/send", (c) => {
  *     // User is authenticated and not banned
  *     return c.json({ user: c.var.user });
  *   });
@@ -25,16 +25,32 @@ export const checkBannedMiddleware = () =>
   createMiddleware<AuthMiddlewareEnv>(async (c, next) => {
     const userId = c.var.user.id;
 
-    // Check if user has an active ban (unbannedAt is null)
-    const [activeBan] = await db
-      .select({ reason: banTable.reason })
-      .from(banTable)
-      .where(and(eq(banTable.userId, userId), isNull(banTable.unbannedAt)))
-      .limit(1);
+    // Fetch user to check banned field
+    const userData = await db
+      .select({
+        banned: userTable.banned,
+        banReason: userTable.banReason,
+        banExpires: userTable.banExpires,
+      })
+      .from(userTable)
+      .where(eq(userTable.id, userId))
+      .limit(1)
+      .then((rows) => rows[0]);
 
-    if (activeBan) {
-      const message = activeBan.reason
-        ? `Your account has been banned. Reason: ${activeBan.reason}`
+    if (!userData) {
+      throw new HTTPException(401, {
+        message: "User not found",
+        cause: "USER_NOT_FOUND",
+      });
+    }
+
+    // Check if banned and not expired
+    const isBanned =
+      userData.banned && (!userData.banExpires || userData.banExpires > new Date());
+
+    if (isBanned) {
+      const message = userData.banReason
+        ? `Your account has been banned. Reason: ${userData.banReason}`
         : "Your account has been banned";
 
       throw new HTTPException(403, {

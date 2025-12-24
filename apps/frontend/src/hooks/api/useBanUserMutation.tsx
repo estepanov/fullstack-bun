@@ -1,24 +1,34 @@
-import { apiClient } from "@/lib/api-client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import type { InferResponseType } from "hono";
-import type { BanUserInput } from "shared/auth/user-ban";
-
-const $post = apiClient.admin.users[":id"].ban.$post;
+import { authClient } from "@/lib/auth-client";
+import { useDeleteUserMessagesMutation } from "./useDeleteUserMessagesMutation";
 
 export const useBanUserMutation = () => {
   const queryClient = useQueryClient();
+  const deleteMessages = useDeleteUserMessagesMutation();
 
-  return useMutation<
-    InferResponseType<typeof $post>,
-    Error,
-    { id: string; data: BanUserInput }
-  >({
-    mutationFn: async ({ id, data }) => {
-      const res = await $post({
-        param: { id },
-        json: data,
+  return useMutation({
+    mutationFn: async ({
+      id,
+      reason,
+      deleteMessages: shouldDeleteMessages
+    }: {
+      id: string;
+      reason?: string;
+      deleteMessages?: boolean
+    }) => {
+      // First, ban the user via better-auth plugin
+      const { data, error } = await authClient.admin.banUser({
+        userId: id,
+        banReason: reason,
       });
-      return await res.json();
+      if (error) throw error;
+
+      // Then, optionally delete all their messages
+      if (shouldDeleteMessages) {
+        await deleteMessages.mutateAsync({ userId: id });
+      }
+
+      return data;
     },
     onSuccess: async () => {
       // Invalidate any relevant queries after banning a user

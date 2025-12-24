@@ -1,13 +1,14 @@
 import { z } from "zod";
 
 export const UserRole = {
-  USER: "USER",
-  ADMIN: "ADMIN",
+  USER: "user",
+  ADMIN: "admin",
+  MODERATOR: "moderator",
 } as const;
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
-export const userRoleSchema = z.enum([UserRole.USER, UserRole.ADMIN]);
+export const userRoleSchema = z.enum([UserRole.USER, UserRole.ADMIN, UserRole.MODERATOR]);
 
 export const updateUserRoleSchema = z.object({
   role: userRoleSchema,
