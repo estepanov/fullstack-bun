@@ -84,10 +84,13 @@ COPY --from=build --chown=bunapp:bunapp /app/apps/frontend/package.json ./apps/f
 # Copy necessary runtime dependencies and build output
 COPY --from=build --chown=bunapp:bunapp /app/node_modules ./node_modules
 COPY --from=build --chown=bunapp:bunapp /app/apps/frontend/node_modules ./apps/frontend/node_modules
-COPY --from=build --chown=bunapp:bunapp /app/apps/frontend/build ./build
+COPY --from=build --chown=bunapp:bunapp /app/apps/frontend/build ./apps/frontend/build
+COPY --from=build --chown=bunapp:bunapp /app/apps/frontend/server.ts ./apps/frontend/server.ts
 # Drop privileges for runtime
 USER bunapp
 # Expose production port
 EXPOSE 5173
+# Set working directory to frontend app
+WORKDIR /app/apps/frontend
 # Serve the built app
-CMD ["bun", "run", "--bun", "build/server/index.js"]
+CMD ["bun", "run", "--bun", "server.ts"]
