@@ -99,6 +99,14 @@ Example for local development:
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/mydatabase"
 ```
 
+### `REDIS_URL`
+
+**Required.** Redis connection string.
+
+```txt
+REDIS_URL="redis://:redispassword@redis:6379"
+```
+
 ### `BETTER_AUTH_SECRET`
 
 **Required.** Secret key for better-auth. Generate with `openssl rand -base64 32`.

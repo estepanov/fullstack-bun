@@ -1,7 +1,5 @@
 import { relations } from "drizzle-orm";
-import { boolean, index, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
-
-export const userRoleEnum = pgEnum("user_role", ["USER", "ADMIN"]);
+import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -9,35 +7,16 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
   image: text("image"),
-  role: userRoleEnum("role").notNull().default("USER"),
+  role: text("role").notNull().default("user"),
+  banned: boolean("banned").default(false).notNull(),
+  banReason: text("ban_reason"),
+  banExpires: timestamp("ban_expires"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
-
-export const ban = pgTable(
-  "ban",
-  {
-    id: text("id").primaryKey(),
-    userId: text("user_id")
-      .notNull()
-      .references(() => user.id, { onDelete: "cascade" }),
-    bannedBy: text("banned_by")
-      .notNull()
-      .references(() => user.id, { onDelete: "set null" }),
-    reason: text("reason"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
-    // If unbannedAt is set, the ban is lifted
-    unbannedAt: timestamp("unbanned_at"),
-    unbannedBy: text("unbanned_by").references(() => user.id, { onDelete: "set null" }),
-  },
-  (table) => [
-    index("ban_userId_idx").on(table.userId),
-    index("ban_bannedBy_idx").on(table.bannedBy),
-  ],
-);
 
 export const session = pgTable(
   "session",
@@ -54,6 +33,7 @@ export const session = pgTable(
     userId: text("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    impersonatedBy: text("impersonated_by"),
   },
   (table) => [index("session_userId_idx").on(table.userId)],
 );
@@ -101,8 +81,6 @@ export const verification = pgTable(
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
-  bans: many(ban, { relationName: "bannedUser" }),
-  bannedUsers: many(ban, { relationName: "banningAdmin" }),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -115,23 +93,6 @@ export const sessionRelations = relations(session, ({ one }) => ({
 export const accountRelations = relations(account, ({ one }) => ({
   user: one(user, {
     fields: [account.userId],
-    references: [user.id],
-  }),
-}));
-
-export const banRelations = relations(ban, ({ one }) => ({
-  user: one(user, {
-    fields: [ban.userId],
-    references: [user.id],
-    relationName: "bannedUser",
-  }),
-  admin: one(user, {
-    fields: [ban.bannedBy],
-    references: [user.id],
-    relationName: "banningAdmin",
-  }),
-  unbannedByAdmin: one(user, {
-    fields: [ban.unbannedBy],
     references: [user.id],
   }),
 }));

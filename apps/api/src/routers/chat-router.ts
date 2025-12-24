@@ -12,29 +12,13 @@ import {
 import { db } from "../db/client";
 import { user as userTable } from "../db/schema";
 import { auth } from "../lib/auth";
+import { checkUserBan } from "../lib/ban-check";
 import { chatManager } from "../lib/chat-manager";
 import { chatService } from "../lib/chat-service";
 import { checkChatThrottle } from "../lib/chat-throttle";
 import { decodeWsMessage } from "../lib/ws-message";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
-
-/**
- * Check if a user has an active ban
- */
-async function checkUserBan(
-  userId: string,
-): Promise<{ banned: boolean; reason: string | null }> {
-  const activeBan = await db.query.ban.findFirst({
-    where: (ban, { eq, and, isNull }) =>
-      and(eq(ban.userId, userId), isNull(ban.unbannedAt)),
-  });
-
-  return {
-    banned: !!activeBan,
-    reason: activeBan?.reason || null,
-  };
-}
 
 export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
   // WebSocket endpoint

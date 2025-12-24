@@ -30,10 +30,8 @@ export default function AdminUsersPage() {
     banUser.mutate(
       {
         id: selectedUserId,
-        data: {
-          reason: banReason || undefined,
-          deleteMessages,
-        },
+        reason: banReason || undefined,
+        deleteMessages,
       },
       {
         onSuccess: () => {
