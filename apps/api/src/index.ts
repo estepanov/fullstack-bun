@@ -43,10 +43,12 @@ const baseApp = app
       userAgent: c.req.header("User-Agent"),
     };
     if (error instanceof HTTPException) {
-      logger.error(`------ HTTPException ------\n${debugObj} \n------------`);
+      logger.error("Hono Error Handler");
+      logger.error(debugObj);
       return error.getResponse();
     }
-    logger.error(`------ UNCAUGHT ERROR ------\n${debugObj} \n------------`);
+    logger.error("Uncaught error");
+    logger.error(debugObj);
     return c.newResponse(null, { status: 500 });
   });
 
