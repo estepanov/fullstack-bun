@@ -134,7 +134,7 @@ export const MessageList = ({
           {/* Message content */}
           <div className={`flex min-w-0 flex-col ${isOwn ? "items-end" : ""}`}>
             <div
-              className={`inline-flex gap-2 ${isOwn ? "flex-row justify-end" : "flex-row-reverse items-start"}`}
+              className={`inline-flex gap-2 ${isOwn ? "flex-row justify-end" : "items-start"}`}
             >
               {canManage && (
                 <DropdownMenu>

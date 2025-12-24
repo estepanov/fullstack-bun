@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 export const AdminAuthGuard = ({ children }: { children: ReactNode }) => {
   const { data: session, isPending } = useSession();
   const { t } = useTranslation("admin");
-  const loginUrl = `${import.meta.env.VITE_FRONTEND_URL || "http://localhost:5173"}/auth/login`;
+  const loginUrl = `${import.meta.env.VITE_FRONTEND_URL}/auth/login`;
 
   useEffect(() => {
     if (!isPending && !session && typeof window !== "undefined") {

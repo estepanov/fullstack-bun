@@ -203,6 +203,30 @@ VITE_API_BASE_URL="http://localhost:3001"
 
 In local development `development` and for all static builds it should be `production`
 
+## Admin
+
+The `.env` for `/apps/admin`
+
+### `VITE_API_BASE_URL`
+
+**Required.** Base URL for the API used by the admin UI.
+
+```txt
+VITE_API_BASE_URL="http://localhost:3001"
+```
+
+### `VITE_FRONTEND_URL`
+
+**Required.** Base URL for the main frontend app (used for linking back).
+
+```txt
+VITE_FRONTEND_URL="http://localhost:5173"
+```
+
+### `NODE_ENV`
+
+In local development `development` and for all static builds it should be `production`
+
 ## Notes on Docker vs Local
 
 - Docker Compose loads env from the repo root `.env` plus `apps/api/.env` and `apps/frontend/.env`.

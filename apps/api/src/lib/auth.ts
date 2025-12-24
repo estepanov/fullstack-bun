@@ -75,8 +75,11 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendOnSignUp: true,
+    autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
       // Send email using nodemailer
+      // Avoid awaiting the email sending to prevent timing attacks. On serverless platforms, use waitUntil or similar to ensure the email is sent.
+      // https://www.better-auth.com/docs/authentication/email-password#email-verification
       await sendVerificationEmail(user.email, url);
     },
   },

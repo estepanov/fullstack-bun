@@ -25,16 +25,20 @@
     "clsx": "^2.1.1",
     "hono": "^4.11.0",
     "lucide-react": "^0.483.0",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
     "react-i18next": "^15.4.1",
     "react-router": "^7.10.1",
     "shared": "workspace:*",
     "tailwind-merge": "^3.4.0"
   },
+  "peerDependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
   "devDependencies": {
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "typescript": "~5.7.2"
   }
 }

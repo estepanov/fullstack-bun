@@ -30,8 +30,12 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
         sessionId: c.get("sessionId"),
       });
       const roomId = c.req.query("room") ?? "global";
+      const guestId = c.req.query("guestId");
       let userId: string | null = null;
       let userName: string | null = null;
+      let role: "guest" | "member" | "admin" = "guest";
+      const fallbackGuestId = `ws-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      let presenceId = `guest:${guestId ?? fallbackGuestId}`;
       let isVerified = false;
       let isAdminUser = false;
 
@@ -90,8 +94,10 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
               userId = userData.id;
               userName = userData.name;
               isVerified = userData.emailVerified;
-              const role = userData.role as UserRole | undefined;
-              isAdminUser = role ? isAdmin(role) : false;
+              const userRole = userData.role as UserRole | undefined;
+              isAdminUser = userRole ? isAdmin(userRole) : false;
+              role = isAdminUser ? "admin" : "member";
+              presenceId = userId;
               logger.info(`WebSocket opened: userId=${userId}, verified=${isVerified}`);
             } else {
               logger.info("WebSocket opened: unauthenticated user");
@@ -101,7 +107,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
           }
 
           // Add to connection manager
-          chatManager.addClient({ ws, userId, userName });
+          chatManager.addClient({ ws, userId, userName, role, presenceId });
 
           // Send connection confirmation
           ws.send(
@@ -134,6 +140,10 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
             const rawMessage = await decodeWsMessage(evt.data);
             // Parse incoming message
             const data = JSON.parse(rawMessage);
+            if (data?.type === ChatWSMessageType.PING) {
+              chatManager.touchClient(ws);
+              return;
+            }
             const parsed = getSendMessageSchema({
               allowNewlines: isAdminUser,
             }).safeParse(data);
@@ -156,6 +166,8 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
               );
               return;
             }
+
+            chatManager.touchClient(ws);
 
             // Check authentication
             if (!userId) {
@@ -263,7 +275,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
         onClose(_evt, ws: WSContext) {
           const logger = c.get("logger");
           logger.info(`WebSocket closed: userId=${userId}`);
-          chatManager.removeClient({ ws, userId, userName });
+          chatManager.removeClient({ ws, userId, userName, role, presenceId });
         },
 
         onError(evt, _ws: WSContext) {

@@ -1,5 +1,9 @@
 {
   "title": "Chat-Demo",
   "description": "Dies ist ein Boilerplate für eine Fullstack-Bun-Anwendung mit React, TypeScript und Tailwind CSS.",
-  "get_started": "Bearbeite <code>apps/frontend/src/pages/landing.tsx</code> und speichere, um HMR zu testen"
+  "get_started": "Bearbeite <code>apps/frontend/src/pages/landing.tsx</code> und speichere, um HMR zu testen",
+  "online_counts": "Jetzt online",
+  "online_guests": "Gäste",
+  "online_members": "Mitglieder",
+  "online_admins": "Administratoren"
 }

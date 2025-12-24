@@ -1,5 +1,5 @@
 import { Card } from "frontend-common/components/ui";
-import { useChatWebSocket } from "@/hooks/api/useChatWebSocket";
+import type { UseChatWebSocketReturn } from "@/hooks/api/useChatWebSocket";
 import { useSession } from "@/lib/auth-client";
 import { isAdminSession } from "frontend-common/auth";
 import { useTranslation } from "react-i18next";
@@ -7,10 +7,25 @@ import { MessageScrollProvider } from "./message-context";
 import { MessageForm } from "./message-form";
 import { MessageList } from "./message-list";
 
-export const MessagesContainer = () => {
+type MessagesContainerProps = Pick<
+  UseChatWebSocketReturn,
+  | "messages"
+  | "sendMessage"
+  | "connectionStatus"
+  | "error"
+  | "isAuthenticated"
+  | "throttle"
+>;
+
+export const MessagesContainer = ({
+  messages,
+  sendMessage,
+  connectionStatus,
+  error,
+  isAuthenticated,
+  throttle,
+}: MessagesContainerProps) => {
   const { t } = useTranslation("messages");
-  const { messages, sendMessage, connectionStatus, error, isAuthenticated, throttle } =
-    useChatWebSocket();
   const { data } = useSession();
   const isAdmin = isAdminSession(data);
   const hasMessages = messages.length > 0;
