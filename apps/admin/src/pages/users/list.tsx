@@ -72,8 +72,8 @@ export default function AdminUsersPage() {
     );
   }
 
-  const isBannedUser = (user: { banned?: boolean; bannedAt?: string | null }) =>
-    Boolean(user.banned || user.bannedAt);
+  const isBannedUser = (user: { banned?: boolean | null }) =>
+    Boolean(user.banned);
 
   const users = data && "users" in data && Array.isArray(data.users) ? data.users : [];
 

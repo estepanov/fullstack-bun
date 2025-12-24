@@ -80,10 +80,13 @@ COPY --from=build --chown=bunapp:bunapp /app/apps/admin/package.json ./apps/admi
 # Copy necessary runtime dependencies and build output
 COPY --from=build --chown=bunapp:bunapp /app/node_modules ./node_modules
 COPY --from=build --chown=bunapp:bunapp /app/apps/admin/node_modules ./apps/admin/node_modules
-COPY --from=build --chown=bunapp:bunapp /app/apps/admin/build ./build
+COPY --from=build --chown=bunapp:bunapp /app/apps/admin/build ./apps/admin/build
+COPY --from=build --chown=bunapp:bunapp /app/apps/admin/server.ts ./apps/admin/server.ts
 # Drop privileges for runtime
 USER bunapp
 # Expose production port
 EXPOSE 5175
+# Set working directory to admin app
+WORKDIR /app/apps/admin
 # Serve the built app
-CMD ["bun", "run", "--bun", "build/server/index.js"]
+CMD ["bun", "run", "--bun", "server.ts"]

@@ -1,13 +1,10 @@
 import { useBannedUsersQuery } from "@/hooks/api/useBannedUsersQuery";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
 export default function AdminBannedUsersPage() {
-  const [page, setPage] = useState(1);
-  const [limit] = useState(20);
-  const { data, isPending, error } = useBannedUsersQuery({ page, limit });
+  const { data, isPending, error } = useBannedUsersQuery();
   const unbanUser = useUnbanUserMutation();
   const { t, i18n } = useTranslation("admin");
 
@@ -40,7 +37,6 @@ export default function AdminBannedUsersPage() {
   }
 
   const bans = data?.bans || [];
-  const pagination = data?.pagination || { page: 1, limit: 20, total: 0, totalPages: 0 };
 
   return (
     <div className="app-surface">
@@ -103,9 +99,6 @@ export default function AdminBannedUsersPage() {
                         {t("bans.table.banned_date_header")}
                       </th>
                       <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                        {t("bans.table.banned_by_header")}
-                      </th>
-                      <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                         {t("bans.table.reason_header")}
                       </th>
                       <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -133,22 +126,16 @@ export default function AdminBannedUsersPage() {
                             {ban.email}
                           </div>
                           <div className="mt-1 text-xs text-muted-foreground md:hidden">
-                            {ban.bannedAt
-                              ? new Date(ban.bannedAt).toLocaleDateString(i18n.language, {
-                                  year: "numeric",
-                                  month: "short",
-                                  day: "numeric",
-                                })
-                              : t("bans.table.not_available")}
+                            {new Date(ban.updatedAt).toLocaleDateString(i18n.language, {
+                              year: "numeric",
+                              month: "short",
+                              day: "numeric",
+                            })}
                           </div>
                           <div className="mt-2 space-y-1 text-xs text-muted-foreground lg:hidden">
                             <div>
-                              {t("bans.table.banned_by_header")}:{" "}
-                              {ban.bannedByName || t("bans.table.unknown")}
-                            </div>
-                            <div>
                               {t("bans.table.reason_header")}:{" "}
-                              {ban.bannedReason || t("bans.table.no_reason")}
+                              {ban.banReason || t("bans.table.no_reason")}
                             </div>
                           </div>
                         </td>
@@ -156,24 +143,19 @@ export default function AdminBannedUsersPage() {
                           {ban.email}
                         </td>
                         <td className="hidden md:table-cell px-4 py-3 text-sm text-muted-foreground">
-                          {ban.bannedAt
-                            ? new Date(ban.bannedAt).toLocaleDateString(i18n.language, {
-                                year: "numeric",
-                                month: "short",
-                                day: "numeric",
-                              })
-                            : t("bans.table.not_available")}
+                          {new Date(ban.updatedAt).toLocaleDateString(i18n.language, {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          })}
                         </td>
                         <td className="hidden lg:table-cell px-4 py-3 text-sm text-muted-foreground">
-                          {ban.bannedByName || t("bans.table.unknown")}
-                        </td>
-                        <td className="hidden lg:table-cell px-4 py-3 text-sm text-muted-foreground">
-                          {ban.bannedReason ? (
+                          {ban.banReason ? (
                             <span
                               className="max-w-xs truncate block"
-                              title={ban.bannedReason}
+                              title={ban.banReason}
                             >
-                              {ban.bannedReason}
+                              {ban.banReason}
                             </span>
                           ) : (
                             <span className="text-muted-foreground/70 italic">
@@ -196,37 +178,6 @@ export default function AdminBannedUsersPage() {
                   </tbody>
                 </table>
               </div>
-
-              {/* Pagination */}
-              {pagination.totalPages > 1 && (
-                <div className="mt-6 flex flex-col gap-3 border-t border-border/70 pt-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="text-sm text-muted-foreground">
-                    {t("bans.pagination.summary", {
-                      page: pagination.page,
-                      totalPages: pagination.totalPages,
-                      total: pagination.total,
-                    })}
-                  </div>
-                  <div className="flex flex-col gap-2 sm:flex-row">
-                    <button
-                      type="button"
-                      onClick={() => setPage(page - 1)}
-                      disabled={page <= 1}
-                      className="w-full rounded-full border border-border/70 bg-background/80 px-4 py-2 text-sm font-semibold text-foreground shadow-sm hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-                    >
-                      {t("bans.pagination.previous")}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPage(page + 1)}
-                      disabled={page >= pagination.totalPages}
-                      className="w-full rounded-full border border-border/70 bg-background/80 px-4 py-2 text-sm font-semibold text-foreground shadow-sm hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-                    >
-                      {t("bans.pagination.next")}
-                    </button>
-                  </div>
-                </div>
-              )}
             </>
           )}
 
