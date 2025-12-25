@@ -4,6 +4,7 @@ import { getExtendedUser } from "@/types/user";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate, useSearchParams } from "react-router";
+import { USERNAME_CONFIG } from "shared/config/user-profile";
 
 export default function CompleteProfilePage() {
   const [name, setName] = useState("");
@@ -28,7 +29,7 @@ export default function CompleteProfilePage() {
 
   // Debounced username availability check
   useEffect(() => {
-    if (!username || username.length < 3) {
+    if (!username || username.length < USERNAME_CONFIG.minLength) {
       setUsernameAvailability({ checking: false, available: null, message: "" });
       return;
     }
@@ -42,10 +43,16 @@ export default function CompleteProfilePage() {
         });
 
         if (response.error) {
+          let message = "something went wrong";
+          if (response.error?.code === "USERNAME_IS_INVALID") {
+            message = "Invalid or prohibited username";
+          } else {
+            console.error("unhandled response.error?.code", response.error);
+          }
           setUsernameAvailability({
             checking: false,
             available: false,
-            message: "somethingw went wrong",
+            message,
           });
           return;
         }
@@ -80,7 +87,6 @@ export default function CompleteProfilePage() {
       const payload: { name?: string; username?: string; displayUsername?: string } = {};
       if (needsName && name) payload.name = name;
       if (needsUsername && username) {
-        payload.username = username;
         payload.displayUsername = username;
       }
 
@@ -182,9 +188,9 @@ export default function CompleteProfilePage() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder={t("complete_profile.username_placeholder")}
-                  pattern="[a-zA-Z0-9_-]+"
-                  minLength={3}
-                  maxLength={30}
+                  pattern={USERNAME_CONFIG.pattern.source}
+                  minLength={USERNAME_CONFIG.minLength}
+                  maxLength={USERNAME_CONFIG.maxLength}
                   required
                   className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   disabled={isLoading || isSuccess}

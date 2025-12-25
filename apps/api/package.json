@@ -25,6 +25,7 @@
     "postgres": "^3.4.7",
     "shared": "workspace:*",
     "uuid": "^11.1.0",
+    "validation-better-auth": "^1.3.4",
     "zod": "^4.2.1"
   },
   "devDependencies": {
