@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
   const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
+  const passwordMinLength = AUTH_CONFIG.emailPassword.minPasswordLength;
 
   useEffect(() => {
     if (!passwordsEnabled) {
@@ -112,11 +113,11 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t("register.password_placeholder")}
                 required
-                minLength={8}
+                minLength={passwordMinLength}
                 className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               <p className="mt-2 text-xs text-muted-foreground">
-                {t("register.password_hint")}
+                {t("register.password_hint", { minLength: passwordMinLength })}
               </p>
             </div>
           </div>

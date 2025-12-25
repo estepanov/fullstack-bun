@@ -348,6 +348,7 @@ function UsernameEditor({
 
 function PasswordSection() {
   const { t } = useTranslation("auth");
+  const passwordMinLength = AUTH_CONFIG.emailPassword.minPasswordLength;
   const [editingPassword, setEditingPassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -368,8 +369,8 @@ function PasswordSection() {
       setPasswordError(t("dashboard.password_required"));
       return;
     }
-    if (newPassword.length < 8) {
-      setPasswordError(t("dashboard.password_hint"));
+    if (newPassword.length < passwordMinLength) {
+      setPasswordError(t("dashboard.password_hint", { minLength: passwordMinLength }));
       return;
     }
     if (newPassword !== confirmPassword) {
@@ -496,7 +497,7 @@ function PasswordSection() {
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              {t("dashboard.password_hint")}
+              {t("dashboard.password_hint", { minLength: passwordMinLength })}
             </p>
             {passwordError && (
               <p className="text-xs font-medium text-destructive">{passwordError}</p>

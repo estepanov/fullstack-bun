@@ -9,6 +9,14 @@ export type AuthConfig = {
      * Enable email + password sign-in and sign-up flows.
      */
     enabled: boolean;
+    /**
+     * Minimum password length enforced by better-auth.
+     */
+    minPasswordLength: number;
+    /**
+     * Maximum password length enforced by better-auth.
+     */
+    maxPasswordLength: number;
   };
   magicLink: {
     /**
@@ -29,6 +37,8 @@ export type AuthConfig = {
 export const AUTH_CONFIG: AuthConfig = {
   emailPassword: {
     enabled: true,
+    minPasswordLength: 8,
+    maxPasswordLength: 35,
   },
   magicLink: {
     enabled: true,
