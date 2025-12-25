@@ -21,7 +21,7 @@ export const signIn = {
     options?: {
       onSuccess?: () => void;
       onError?: (ctx: { error: { message?: string; status?: number } }) => void;
-    }
+    },
   ) => {
     return originalSignIn.email(credentials, {
       onSuccess: options?.onSuccess,

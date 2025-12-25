@@ -1,7 +1,7 @@
-import { Card } from "frontend-common/components/ui";
 import type { UseChatWebSocketReturn } from "@/hooks/api/useChatWebSocket";
 import { useSession } from "@/lib/auth-client";
 import { isAdminSession } from "frontend-common/auth";
+import { Card } from "frontend-common/components/ui";
 import { useTranslation } from "react-i18next";
 import { MessageScrollProvider } from "./message-context";
 import { MessageForm } from "./message-form";
@@ -14,6 +14,7 @@ type MessagesContainerProps = Pick<
   | "connectionStatus"
   | "error"
   | "isAuthenticated"
+  | "profileIncomplete"
   | "throttle"
 >;
 
@@ -23,6 +24,7 @@ export const MessagesContainer = ({
   connectionStatus,
   error,
   isAuthenticated,
+  profileIncomplete,
   throttle,
 }: MessagesContainerProps) => {
   const { t } = useTranslation("messages");
@@ -125,6 +127,7 @@ export const MessagesContainer = ({
       <MessageForm
         sendMessage={sendMessage}
         isAuthenticated={isAuthenticated}
+        profileIncomplete={profileIncomplete}
         session={data}
         isAdmin={isAdmin}
         connectionStatus={connectionStatus}

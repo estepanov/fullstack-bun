@@ -1,5 +1,6 @@
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { signOut, useSession } from "@/lib/auth-client";
+import { getExtendedUser } from "@/types/user";
 import { getSessionUserRole } from "frontend-common/auth";
 import { useTranslation } from "react-i18next";
 
@@ -8,6 +9,7 @@ function DashboardContent() {
   const { t } = useTranslation("auth");
 
   if (!session) return null;
+  const user = getExtendedUser(session.user);
   const role = getSessionUserRole(session);
 
   return (
@@ -29,21 +31,21 @@ function DashboardContent() {
                   {t("dashboard.name_label")}
                 </dt>
                 <dd className="mt-1 text-sm text-foreground">
-                  {session.user.name || t("dashboard.not_provided")}
+                  {user.name || t("dashboard.not_provided")}
                 </dd>
               </div>
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {t("dashboard.email_label")}
                 </dt>
-                <dd className="mt-1 text-sm text-foreground">{session.user.email}</dd>
+                <dd className="mt-1 text-sm text-foreground">{user.email}</dd>
               </div>
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {t("dashboard.email_verified_label")}
                 </dt>
                 <dd className="mt-1 text-sm text-foreground">
-                  {session.user.emailVerified ? (
+                  {user.emailVerified ? (
                     <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
                       {t("dashboard.verified_badge")}
                     </span>
@@ -58,7 +60,15 @@ function DashboardContent() {
                 <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {t("dashboard.user_id_label")}
                 </dt>
-                <dd className="mt-1 text-sm text-foreground">{session.user.id}</dd>
+                <dd className="mt-1 text-sm text-foreground">{user.id}</dd>
+              </div>
+              <div>
+                <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {t("dashboard.user_username_label")}
+                </dt>
+                <dd className="mt-1 text-sm text-foreground">
+                  {user.displayUsername || t("dashboard.not_provided")}
+                </dd>
               </div>
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">

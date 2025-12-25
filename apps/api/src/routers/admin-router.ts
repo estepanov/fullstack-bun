@@ -8,11 +8,12 @@ import { user } from "../db/schema";
 import { chatManager } from "../lib/chat-manager";
 import { chatService } from "../lib/chat-service";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
+import { checkProfileComplete } from "../middlewares/check-profile-complete";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
 import { requireAdmin } from "../middlewares/require-admin";
 
 const adminRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
-  .use(authMiddleware(), requireAdmin())
+  .use(authMiddleware(), requireAdmin(), checkProfileComplete())
   .patch("/users/:id/role", zValidator("json", updateUserRoleSchema), async (c) => {
     const logger = c.get("logger");
 

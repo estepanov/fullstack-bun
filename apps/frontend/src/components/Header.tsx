@@ -83,7 +83,7 @@ export const Header = () => {
   const isAdmin = isAdminSession(session);
 
   return (
-    <header className="py-4 bg-accent/70">
+    <header className="py-4 bg-accent">
       <Container>
         <nav className="relative z-50 flex justify-between">
           <div className="flex items-center md:gap-x-12">

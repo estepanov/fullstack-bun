@@ -9,6 +9,7 @@ const config: RouteConfig = [
   route("/auth/register", "./pages/auth/register.tsx"),
   route("/auth/verify-email", "./pages/auth/verify-email.tsx"),
   route("/auth/verify-email-notice", "./pages/auth/verify-email-notice.tsx"),
+  route("/profile/complete", "./pages/profile/complete.tsx"),
   route("/dashboard", "./pages/dashboard.tsx"),
   route("*?", "catchall.tsx"),
 ];

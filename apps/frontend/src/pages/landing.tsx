@@ -11,6 +11,7 @@ const LandingPage = () => {
     connectionStatus,
     error,
     isAuthenticated,
+    profileIncomplete,
     throttle,
     onlineCounts,
   } = useChatWebSocket();
@@ -69,6 +70,7 @@ const LandingPage = () => {
         <MessagesContainer
           messages={messages}
           sendMessage={sendMessage}
+          profileIncomplete={profileIncomplete}
           connectionStatus={connectionStatus}
           error={error}
           isAuthenticated={isAuthenticated}

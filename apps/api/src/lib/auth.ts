@@ -1,9 +1,14 @@
 import { betterAuth } from "better-auth";
+import { emailHarmony } from "better-auth-harmony";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createFieldAttribute } from "better-auth/db";
-import { admin } from "better-auth/plugins";
+import { admin, username } from "better-auth/plugins";
 import { magicLink } from "better-auth/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
+import { completeProfileSchema } from "shared/auth/user-profile";
+import { usernameField } from "shared/auth/user-profile-fields";
+import { USERNAME_CONFIG } from "shared/config/user-profile";
+import { validator } from "validation-better-auth";
 import { db } from "../db/client";
 import { account, session, user, verification } from "../db/schema";
 import { env } from "../env";
@@ -17,6 +22,7 @@ const statement = {
 } as const;
 
 const ac = createAccessControl(statement);
+const usernameSchema = usernameField();
 
 // Define roles with granular permissions
 export const roles = {
@@ -53,6 +59,7 @@ export const auth = betterAuth({
         required: true,
         defaultValue: "user",
         input: false,
+        returned: true,
       }),
     },
   },
@@ -70,6 +77,26 @@ export const auth = betterAuth({
         await sendMagicLinkEmail(email, url);
       },
     }),
+    username({
+      minUsernameLength: USERNAME_CONFIG.minLength,
+      maxUsernameLength: USERNAME_CONFIG.maxLength,
+      usernameValidator: (username) => {
+        return usernameSchema.safeParse(username).success;
+      },
+    }),
+    emailHarmony(),
+    validator([
+      {
+        path: "/update-user",
+        schema: completeProfileSchema,
+        before: (ctx) => {
+          if (ctx.body?.username) {
+            // so that a normalized version is always username
+            throw new Error("set displayUsername instead");
+          }
+        },
+      },
+    ]),
   ],
   baseURL: env.FE_BASE_URL,
   basePath: "/auth",

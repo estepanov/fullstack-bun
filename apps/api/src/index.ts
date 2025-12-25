@@ -11,6 +11,7 @@ import { loggerMiddleware, requestLogFormat } from "./middlewares/logger";
 import { adminRouter } from "./routers/admin-router";
 import { chatRouter } from "./routers/chat-router";
 import { exampleRouter } from "./routers/example-router";
+import { userRouter } from "./routers/user-router";
 
 const app = new Hono();
 
@@ -57,7 +58,8 @@ const appWithRoutes = isDevelopmentEnv()
       .route("example", exampleRouter)
       .route("admin", adminRouter)
       .route("chat", chatRouter)
-  : baseApp.route("admin", adminRouter).route("chat", chatRouter);
+      .route("user", userRouter)
+  : baseApp.route("admin", adminRouter).route("chat", chatRouter).route("user", userRouter);
 
 const routes = appWithRoutes
   .get("/health", async (c) => {
