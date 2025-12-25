@@ -1,9 +1,9 @@
-import { Container } from "frontend-common/components/ui";
-import { Popover, PopoverContent, PopoverTrigger } from "frontend-common/components/ui";
 import { signOut, useSession } from "@/lib/auth-client";
 import { isAdminSession } from "frontend-common/auth";
+import { Container } from "frontend-common/components/ui";
+import { Popover, PopoverContent, PopoverTrigger } from "frontend-common/components/ui";
 import { cn } from "frontend-common/lib";
-import { RowsIcon } from "lucide-react";
+import { MenuIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink, NavLink as RouterNavLink } from "react-router";
 
@@ -37,7 +37,7 @@ const MobileNavigation = () => {
         className="relative z-10 flex h-8 w-8 items-center justify-center focus:not-data-focus:outline-hidden"
         aria-label={t("mobile_nav_icon_label")}
       >
-        <RowsIcon />
+        <MenuIcon />
       </PopoverTrigger>
       <PopoverContent
         align="end"
@@ -58,7 +58,9 @@ const MobileNavigation = () => {
         <hr className="m-2 border-slate-300/40 dark:border-gray-600/40" />
         {session ? (
           <div className="flex flex-col gap-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">{session.user.email}</span>
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {session.user.email}
+            </span>
             <button
               type="button"
               onClick={() => signOut()}
@@ -109,7 +111,9 @@ export const Header = () => {
             <div className="hidden md:flex md:items-center md:gap-x-4">
               {session ? (
                 <>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">{session.user.email}</span>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {session.user.email}
+                  </span>
                   <button
                     type="button"
                     onClick={() => signOut()}

@@ -31,12 +31,10 @@ const LandingPage = () => {
   ];
 
   return (
-    <div className="app-surface">
+    <div className="app-surface flex-1">
       <Container className="space-y-6 py-10">
         <div className="space-y-2">
-          <h1 className="text-3xl font-semibold tracking-tight">
-            {tLanding("title")}
-          </h1>
+          <h1 className="text-3xl font-semibold tracking-tight">{tLanding("title")}</h1>
           <p className="text-muted-foreground">{tLanding("description")}</p>
         </div>
         <p className="text-sm text-muted-foreground">
@@ -60,9 +58,7 @@ const LandingPage = () => {
                 key={stat.label}
                 className="rounded-xl border border-border/70 bg-background/70 px-4 py-3"
               >
-                <div className="text-2xl font-semibold text-foreground">
-                  {stat.value}
-                </div>
+                <div className="text-2xl font-semibold text-foreground">{stat.value}</div>
                 <div className="text-xs font-medium text-muted-foreground">
                   {stat.label}
                 </div>

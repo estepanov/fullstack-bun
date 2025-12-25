@@ -50,11 +50,9 @@ export default function AdminUsersPage() {
 
   if (isPending) {
     return (
-      <div className="app-surface">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-border/70 bg-card/90 p-6 text-sm text-muted-foreground shadow-sm shadow-black/5 backdrop-blur">
-            {t("users.loading")}
-          </div>
+      <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-border/70 bg-card/90 p-6 text-sm text-muted-foreground shadow-sm shadow-black/5 backdrop-blur">
+          {t("users.loading")}
         </div>
       </div>
     );
@@ -62,24 +60,21 @@ export default function AdminUsersPage() {
 
   if (error) {
     return (
-      <div className="app-surface">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive shadow-sm shadow-black/5 backdrop-blur">
-            {t("users.load_error")}
-          </div>
+      <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive shadow-sm shadow-black/5 backdrop-blur">
+          {t("users.load_error")}
         </div>
       </div>
     );
   }
 
-  const isBannedUser = (user: { banned?: boolean | null }) =>
-    Boolean(user.banned);
+  const isBannedUser = (user: { banned?: boolean | null }) => Boolean(user.banned);
 
   const users = data && "users" in data && Array.isArray(data.users) ? data.users : [];
 
   return (
-    <div className="app-surface">
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+    <>
+      <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
         <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
@@ -220,10 +215,7 @@ export default function AdminUsersPage() {
                 })}
                 {users.length === 0 && (
                   <tr>
-                    <td
-                      className="px-4 py-6 text-sm text-muted-foreground"
-                      colSpan={6}
-                    >
+                    <td className="px-4 py-6 text-sm text-muted-foreground" colSpan={6}>
                       {t("users.table.no_users")}
                     </td>
                   </tr>
@@ -343,6 +335,6 @@ export default function AdminUsersPage() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

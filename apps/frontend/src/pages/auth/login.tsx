@@ -41,7 +41,7 @@ export default function LoginPage() {
 
   if (isPending) {
     return (
-      <div className="app-surface flex items-center justify-center px-4">
+      <div className="app-surface flex-1 flex items-center justify-center px-4">
         <div className="text-center">
           <div className="text-lg">{t("common.loading")}</div>
         </div>

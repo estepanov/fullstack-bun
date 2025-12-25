@@ -9,7 +9,7 @@ export const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
   const { t } = useTranslation("admin");
 
   return (
-    <header className="h-16 border-b border-border bg-background px-4 sm:px-6 flex items-center">
+    <header className="lg:hidden flex h-16 border-b border-border bg-background px-4 sm:px-6 items-center">
       <div className="flex items-center gap-3 flex-1">
         <button
           type="button"
