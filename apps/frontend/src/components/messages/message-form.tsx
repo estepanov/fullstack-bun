@@ -1,6 +1,6 @@
+import type { FESession } from "@/lib/auth-client";
 import { Button } from "frontend-common/components/ui";
 import { Textarea } from "frontend-common/components/ui";
-import type { FESession } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -9,6 +9,7 @@ import { ChatWSMessageType, MESSAGE_CONFIG, getSendMessageSchema } from "shared"
 interface MessageFormProps {
   sendMessage: (message: string) => boolean;
   isAuthenticated: boolean;
+  profileIncomplete?: boolean;
   session: FESession | null | undefined;
   isAdmin?: boolean;
   connectionStatus: "connecting" | "connected" | "disconnected" | "error";
@@ -23,6 +24,7 @@ interface MessageFormProps {
 export const MessageForm = ({
   sendMessage,
   isAuthenticated,
+  profileIncomplete,
   session,
   isAdmin = false,
   connectionStatus,
@@ -32,9 +34,7 @@ export const MessageForm = ({
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const throttleSeconds = throttle ? Math.ceil(throttle.remainingMs / 1000) : 0;
-  const throttleWindowSeconds = throttle
-    ? Math.ceil(throttle.windowMs / 1000)
-    : 0;
+  const throttleWindowSeconds = throttle ? Math.ceil(throttle.windowMs / 1000) : 0;
   const isThrottled = Boolean(throttle);
 
   useEffect(() => {
@@ -46,14 +46,39 @@ export const MessageForm = ({
   // Show login prompt if not authenticated
   if (!isAuthenticated) {
     return (
-      <div className="rounded-lg border bg-gray-50 p-4 text-center">
-        <p className="text-gray-600">
+      <div className="rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 p-4 text-center shadow-sm dark:border-primary/30 dark:from-primary/10 dark:to-primary/5">
+        <p className="text-sm text-foreground">
           <Trans
             i18nKey="form.login_prompt"
             ns="messages"
             components={{
               loginLink: (
-                <Link to="/auth/login" className="text-blue-600 hover:underline" />
+                <Link
+                  to="/auth/login"
+                  className="font-semibold text-primary hover:underline dark:text-primary"
+                />
+              ),
+            }}
+          />
+        </p>
+      </div>
+    );
+  }
+
+  // Show profile completion prompt if profile is incomplete
+  if (profileIncomplete) {
+    return (
+      <div className="rounded-xl border border-amber-500/20 bg-gradient-to-br from-amber-50 to-amber-100/50 p-4 text-center shadow-sm dark:border-amber-500/30 dark:from-amber-950/40 dark:to-amber-900/20">
+        <p className="text-sm text-amber-900 dark:text-amber-100">
+          <Trans
+            i18nKey="form.complete_profile_prompt"
+            ns="messages"
+            components={{
+              profileLink: (
+                <Link
+                  to="/profile/complete"
+                  className="font-semibold text-amber-700 hover:underline dark:text-amber-300"
+                />
               ),
             }}
           />
@@ -65,8 +90,10 @@ export const MessageForm = ({
   // Show verification prompt if email not verified
   if (!session?.user?.emailVerified) {
     return (
-      <div className="rounded-lg border bg-yellow-50 p-4 text-center">
-        <p className="text-yellow-800">{t("form.verify_email_prompt")}</p>
+      <div className="rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-50 to-yellow-100/50 p-4 text-center shadow-sm dark:border-yellow-500/30 dark:from-yellow-950/40 dark:to-yellow-900/20">
+        <p className="text-sm text-yellow-900 dark:text-yellow-100">
+          {t("form.verify_email_prompt")}
+        </p>
       </div>
     );
   }
@@ -116,8 +143,7 @@ export const MessageForm = ({
     }
   };
 
-  const isDisabled =
-    connectionStatus !== "connected" || !message.trim() || isThrottled;
+  const isDisabled = connectionStatus !== "connected" || !message.trim() || isThrottled;
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col space-y-2">

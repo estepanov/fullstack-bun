@@ -17,7 +17,9 @@ import { chatManager } from "../lib/chat-manager";
 import { chatService } from "../lib/chat-service";
 import { checkChatThrottle } from "../lib/chat-throttle";
 import { decodeWsMessage } from "../lib/ws-message";
+import { getMissingFields } from "../config/required-fields";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
+import { checkProfileComplete } from "../middlewares/check-profile-complete";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
 
 export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
@@ -38,6 +40,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
       let presenceId = `guest:${guestId ?? fallbackGuestId}`;
       let isVerified = false;
       let isAdminUser = false;
+      let hasIncompleteProfile = false;
 
       return {
         async onOpen(_evt, ws: WSContext) {
@@ -91,14 +94,23 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
                 return;
               }
 
+              // Check if profile is complete
+              const missingFields = getMissingFields(session.user);
+              if (missingFields.length > 0) {
+                hasIncompleteProfile = true;
+                logger.info(
+                  `User with incomplete profile connected: userId=${userData.id}, missing=${missingFields.join(", ")}`,
+                );
+              }
+
               userId = userData.id;
-              userName = userData.name;
+              userName = userData.name || "User";
               isVerified = userData.emailVerified;
               const userRole = userData.role as UserRole | undefined;
               isAdminUser = userRole ? isAdmin(userRole) : false;
               role = isAdminUser ? "admin" : "member";
               presenceId = userId;
-              logger.info(`WebSocket opened: userId=${userId}, verified=${isVerified}`);
+              logger.info(`WebSocket opened: userId=${userId}, verified=${isVerified}, incompleteProfile=${hasIncompleteProfile}`);
             } else {
               logger.info("WebSocket opened: unauthenticated user");
             }
@@ -114,6 +126,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
             JSON.stringify({
               type: ChatWSMessageType.CONNECTED,
               userId,
+              profileIncomplete: hasIncompleteProfile,
               trace: trace(),
             }),
           );
@@ -187,6 +200,19 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
                 JSON.stringify({
                   type: ChatWSMessageType.ERROR,
                   error: "Please verify your email before sending messages",
+                  trace: trace(),
+                }),
+              );
+              return;
+            }
+
+            // Check profile completion
+            if (hasIncompleteProfile) {
+              ws.send(
+                JSON.stringify({
+                  type: ChatWSMessageType.ERROR,
+                  error: "Please complete your profile before sending messages",
+                  profileIncomplete: true,
                   trace: trace(),
                 }),
               );
@@ -287,7 +313,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
   )
 
   // REST endpoint for initial message load (optional fallback)
-  .get("/history", async (c) => {
+  .get("/history", authMiddleware(), checkProfileComplete(), async (c) => {
     try {
       const limit = Number(c.req.query("limit")) || 100;
       const messages = await chatService.getMessageHistory(limit);
@@ -302,6 +328,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
   .patch(
     "/messages/:id",
     authMiddleware(),
+    checkProfileComplete(),
     zValidator("json", getUpdateMessageSchema()),
     async (c) => {
       const messageId = c.req.param("id");
@@ -347,7 +374,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
   )
 
   // Delete a message (owner or admin)
-  .delete("/messages/:id", authMiddleware(), async (c) => {
+  .delete("/messages/:id", authMiddleware(), checkProfileComplete(), async (c) => {
     const messageId = c.req.param("id");
     const logger = c.get("logger");
     const role = c.var.user.role as UserRole | undefined;

@@ -28,6 +28,7 @@
       "invalid": "Message is invalid"
     },
     "login_prompt": "Please <loginLink>log in</loginLink> to send messages",
+    "complete_profile_prompt": "Please <profileLink>complete your profile</profileLink> to send messages",
     "verify_email_prompt": "Please verify your email to send messages"
   },
   "actions": {

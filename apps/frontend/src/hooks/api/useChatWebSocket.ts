@@ -12,6 +12,7 @@ export interface UseChatWebSocketReturn {
 	connectionStatus: "connecting" | "connected" | "disconnected" | "error";
 	error: string | null;
 	isAuthenticated: boolean;
+	profileIncomplete: boolean;
 	onlineCounts: { guests: number; members: number; admins: number } | null;
 	throttle:
 		| {
@@ -52,6 +53,7 @@ export const useChatWebSocket = ({
 	>("connecting");
 	const [error, setError] = useState<string | null>(null);
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
+	const [profileIncomplete, setProfileIncomplete] = useState(false);
 	const [onlineCounts, setOnlineCounts] = useState<{
 		guests: number;
 		members: number;
@@ -131,6 +133,7 @@ export const useChatWebSocket = ({
 					switch (data.type) {
 						case ChatWSMessageType.CONNECTED:
 							setIsAuthenticated(!!data.userId);
+							setProfileIncomplete(!!data.profileIncomplete);
 							break;
 						case ChatWSMessageType.PRESENCE:
 							setOnlineCounts(data.data);
@@ -387,6 +390,7 @@ export const useChatWebSocket = ({
 		connectionStatus,
 		error,
 		isAuthenticated,
+		profileIncomplete,
 		onlineCounts,
 		throttle:
 			throttleRemainingMs !== null && throttleMeta

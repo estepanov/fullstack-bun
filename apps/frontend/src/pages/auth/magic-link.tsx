@@ -105,15 +105,21 @@ export default function MagicLinkPage() {
               : t("magic_link.submit_button")}
           </button>
 
-          <p className="text-center text-sm text-muted-foreground">
-            {t("magic_link.back_to_login")}{" "}
-            <Link
-              to="/auth/login"
-              className="font-semibold text-primary hover:text-primary/80"
-            >
-              {t("magic_link.sign_in_link")}
-            </Link>
-          </p>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border/50" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">or</span>
+            </div>
+          </div>
+
+          <Link
+            to="/auth/login"
+            className="block w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
+          >
+            {t("magic_link.sign_in_link")}
+          </Link>
         </form>
       </div>
     </AppSurfaceCenter>

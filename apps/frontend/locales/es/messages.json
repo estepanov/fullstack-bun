@@ -28,6 +28,7 @@
       "invalid": "El mensaje no es válido"
     },
     "login_prompt": "Por favor <loginLink>inicia sesión</loginLink> para enviar mensajes",
+    "complete_profile_prompt": "Por favor <profileLink>completa tu perfil</profileLink> para enviar mensajes",
     "verify_email_prompt": "Por favor verifica tu correo electrónico para enviar mensajes"
   },
   "actions": {

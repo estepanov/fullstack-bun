@@ -45,8 +45,18 @@ export default function MagicLinkVerifyPage() {
         authClient.$store.notify("$sessionSignal");
         setStatus("success");
 
+        // Fetch session to check profile completeness
+        const session = await authClient.getSession();
+
+        // Determine redirect URL based on profile completion
+        const hasName = session?.data?.user?.name?.trim();
+
+        const redirectUrl = hasName
+          ? "/dashboard"
+          : "/profile/complete?redirect=/dashboard";
+
         setTimeout(() => {
-          navigate("/dashboard", { replace: true });
+          navigate(redirectUrl, { replace: true });
         }, 1500);
       } catch (error) {
         console.error(error);

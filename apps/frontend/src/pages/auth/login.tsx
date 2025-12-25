@@ -55,7 +55,7 @@ export default function LoginPage() {
 
   return (
     <AppSurfaceCenter>
-      <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 shadow-sm shadow-black/5 backdrop-blur">
+      <div className="w-full flex-1 max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 shadow-sm shadow-black/5 backdrop-blur">
         <div className="text-center">
           <h1 className="text-3xl font-semibold tracking-tight">{t("login.title")}</h1>
           <p className="mt-2 text-sm text-muted-foreground">{t("login.subtitle")}</p>
@@ -114,26 +114,30 @@ export default function LoginPage() {
             {isLoading ? t("login.submitting_button") : t("login.submit_button")}
           </button>
 
-          <div className="space-y-3 text-center text-sm text-muted-foreground">
-            <p>
-              {t("login.magic_link_prompt")}{" "}
-              <Link
-                to="/auth/magic-link"
-                className="font-semibold text-foreground hover:text-primary"
-              >
-                {t("login.magic_link_link")}
-              </Link>
-            </p>
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-border/50" />
+            </div>
+            <div className="relative flex justify-center text-xs uppercase">
+              <span className="bg-card px-2 text-muted-foreground">or</span>
+            </div>
+          </div>
 
-            <p>
-              {t("login.no_account")}{" "}
-              <Link
-                to="/auth/register"
-                className="font-semibold text-primary hover:text-primary/80"
-              >
-                {t("login.sign_up_link")}
-              </Link>
-            </p>
+          <Link
+            to="/auth/magic-link"
+            className="block w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
+          >
+            {t("login.magic_link_link")}
+          </Link>
+
+          <div className="pt-4 border-t border-border/50 text-center">
+            <p className="text-sm text-muted-foreground">{t("login.no_account")}</p>
+            <Link
+              to="/auth/register"
+              className="mt-2 w-full inline-block rounded-full bg-secondary px-6 py-2 text-sm font-semibold text-secondary-foreground hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
+            >
+              {t("login.sign_up_link")}
+            </Link>
           </div>
         </form>
       </div>
