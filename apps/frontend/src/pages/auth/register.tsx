@@ -1,9 +1,10 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { signUp } from "@/lib/auth-client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { Link } from "react-router";
+import { AUTH_CONFIG } from "shared/config/auth";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -13,6 +14,17 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
+  const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
+
+  useEffect(() => {
+    if (!passwordsEnabled) {
+      navigate("/auth/login", { replace: true });
+    }
+  }, [navigate, passwordsEnabled]);
+
+  if (!passwordsEnabled) {
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
