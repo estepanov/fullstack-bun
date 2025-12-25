@@ -11,7 +11,7 @@ function DashboardContent() {
   const role = getSessionUserRole(session);
 
   return (
-    <div className="app-surface">
+    <div className="app-surface flex-1">
       <div className="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
         <div className="space-y-6">
           <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
@@ -22,9 +22,7 @@ function DashboardContent() {
           </div>
 
           <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
-            <h2 className="text-xl font-semibold">
-              {t("dashboard.user_info_title")}
-            </h2>
+            <h2 className="text-xl font-semibold">{t("dashboard.user_info_title")}</h2>
             <dl className="mt-4 grid gap-4 sm:grid-cols-2">
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">

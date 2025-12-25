@@ -7,7 +7,7 @@ export const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex lg:flex-row flex-col min-h-dvh">
       <AdminSidebar className="hidden lg:flex" />
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
@@ -25,12 +25,10 @@ export const AdminLayout = () => {
           />
         </div>
       )}
-      <main className="flex-1 flex min-h-0 flex-col overflow-y-auto bg-gray-50 dark:bg-gray-950">
-        <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
-        <div className="flex-1 p-4 sm:p-6">
-          <Outlet />
-        </div>
-      </main>
+      <AdminHeader onMenuClick={() => setSidebarOpen(true)} />
+      <div className="app-surface flex flex-1">
+        <Outlet />
+      </div>
     </div>
   );
 };

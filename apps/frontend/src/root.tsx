@@ -16,9 +16,7 @@ export default function Root() {
       <body className="flex flex-col min-h-dvh">
         <RootAppProvider>
           <Header />
-          <main className="flex-1">
-            <Outlet />
-          </main>
+          <Outlet />
           <Footer />
         </RootAppProvider>
         <ScrollRestoration />

@@ -14,11 +14,9 @@ export default function AdminBannedUsersPage() {
 
   if (isPending) {
     return (
-      <div className="app-surface">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-border/70 bg-card/90 p-6 text-sm text-muted-foreground shadow-sm shadow-black/5 backdrop-blur">
-            {t("bans.loading")}
-          </div>
+      <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-border/70 bg-card/90 p-6 text-sm text-muted-foreground shadow-sm shadow-black/5 backdrop-blur">
+          {t("bans.loading")}
         </div>
       </div>
     );
@@ -26,11 +24,9 @@ export default function AdminBannedUsersPage() {
 
   if (error) {
     return (
-      <div className="app-surface">
-        <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-          <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive shadow-sm shadow-black/5 backdrop-blur">
-            {t("bans.load_error")}
-          </div>
+      <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
+        <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive shadow-sm shadow-black/5 backdrop-blur">
+          {t("bans.load_error")}
         </div>
       </div>
     );
@@ -39,154 +35,145 @@ export default function AdminBannedUsersPage() {
   const bans = data?.bans || [];
 
   return (
-    <div className="app-surface">
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-                {t("bans.title")}
-              </h1>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {t("bans.description")}
-              </p>
-            </div>
-            <Link
-              to="/users"
-              className="w-full rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 sm:w-auto"
-            >
-              {t("bans.link.view_all_users")}
-            </Link>
+    <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
+      <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              {t("bans.title")}
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">{t("bans.description")}</p>
           </div>
+          <Link
+            to="/users"
+            className="w-full rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 sm:w-auto"
+          >
+            {t("bans.link.view_all_users")}
+          </Link>
+        </div>
 
-          {bans.length === 0 ? (
-            <div className="mt-6 rounded-2xl border border-border/70 bg-background/80 py-12 text-center">
-              <svg
-                className="mx-auto h-12 w-12 text-muted-foreground"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <title>{t("bans.empty.icon_title")}</title>
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <h3 className="mt-2 text-sm font-semibold text-foreground">
-                {t("bans.empty.title")}
-              </h3>
-              <p className="mt-1 text-sm text-muted-foreground">
-                {t("bans.empty.description")}
-              </p>
-            </div>
-          ) : (
-            <>
-              <div className="mt-6 overflow-x-auto">
-                <table className="min-w-full divide-y divide-border/70">
-                  <thead className="bg-muted/70">
-                    <tr>
-                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                        {t("bans.table.user_header")}
-                      </th>
-                      <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                        {t("bans.table.email_header")}
-                      </th>
-                      <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                        {t("bans.table.banned_date_header")}
-                      </th>
-                      <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                        {t("bans.table.reason_header")}
-                      </th>
-                      <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                        {t("bans.table.actions_header")}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-border/70 bg-card/80">
-                    {bans.map((ban) => (
-                      <tr key={ban.id}>
-                        <td className="px-4 py-3 text-sm">
-                          <div className="flex items-center">
-                            {ban.image && (
-                              <img
-                                className="mr-3 h-8 w-8 rounded-full"
-                                src={ban.image}
-                                alt={ban.name}
-                              />
-                            )}
-                            <span className="font-medium text-foreground">
-                              {ban.name}
-                            </span>
-                          </div>
-                          <div className="mt-1 text-xs text-muted-foreground md:hidden">
-                            {ban.email}
-                          </div>
-                          <div className="mt-1 text-xs text-muted-foreground md:hidden">
-                            {new Date(ban.updatedAt).toLocaleDateString(i18n.language, {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                          </div>
-                          <div className="mt-2 space-y-1 text-xs text-muted-foreground lg:hidden">
-                            <div>
-                              {t("bans.table.reason_header")}:{" "}
-                              {ban.banReason || t("bans.table.no_reason")}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="hidden md:table-cell px-4 py-3 text-sm text-muted-foreground">
+        {bans.length === 0 ? (
+          <div className="mt-6 rounded-2xl border border-border/70 bg-background/80 py-12 text-center">
+            <svg
+              className="mx-auto h-12 w-12 text-muted-foreground"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              aria-hidden="true"
+            >
+              <title>{t("bans.empty.icon_title")}</title>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <h3 className="mt-2 text-sm font-semibold text-foreground">
+              {t("bans.empty.title")}
+            </h3>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {t("bans.empty.description")}
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="mt-6 overflow-x-auto">
+              <table className="min-w-full divide-y divide-border/70">
+                <thead className="bg-muted/70">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                      {t("bans.table.user_header")}
+                    </th>
+                    <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                      {t("bans.table.email_header")}
+                    </th>
+                    <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                      {t("bans.table.banned_date_header")}
+                    </th>
+                    <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                      {t("bans.table.reason_header")}
+                    </th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                      {t("bans.table.actions_header")}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border/70 bg-card/80">
+                  {bans.map((ban) => (
+                    <tr key={ban.id}>
+                      <td className="px-4 py-3 text-sm">
+                        <div className="flex items-center">
+                          {ban.image && (
+                            <img
+                              className="mr-3 h-8 w-8 rounded-full"
+                              src={ban.image}
+                              alt={ban.name}
+                            />
+                          )}
+                          <span className="font-medium text-foreground">{ban.name}</span>
+                        </div>
+                        <div className="mt-1 text-xs text-muted-foreground md:hidden">
                           {ban.email}
-                        </td>
-                        <td className="hidden md:table-cell px-4 py-3 text-sm text-muted-foreground">
+                        </div>
+                        <div className="mt-1 text-xs text-muted-foreground md:hidden">
                           {new Date(ban.updatedAt).toLocaleDateString(i18n.language, {
                             year: "numeric",
                             month: "short",
                             day: "numeric",
                           })}
-                        </td>
-                        <td className="hidden lg:table-cell px-4 py-3 text-sm text-muted-foreground">
-                          {ban.banReason ? (
-                            <span
-                              className="max-w-xs truncate block"
-                              title={ban.banReason}
-                            >
-                              {ban.banReason}
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground/70 italic">
-                              {t("bans.table.no_reason")}
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-sm">
-                          <button
-                            type="button"
-                            onClick={() => handleUnban(ban.id)}
-                            disabled={unbanUser.isPending}
-                            className="w-full rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-                          >
-                            {t("bans.actions.unban")}
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </>
-          )}
-
-          {unbanUser.isError && (
-            <div className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-              {t("bans.errors.unban_failed")}
+                        </div>
+                        <div className="mt-2 space-y-1 text-xs text-muted-foreground lg:hidden">
+                          <div>
+                            {t("bans.table.reason_header")}:{" "}
+                            {ban.banReason || t("bans.table.no_reason")}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="hidden md:table-cell px-4 py-3 text-sm text-muted-foreground">
+                        {ban.email}
+                      </td>
+                      <td className="hidden md:table-cell px-4 py-3 text-sm text-muted-foreground">
+                        {new Date(ban.updatedAt).toLocaleDateString(i18n.language, {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </td>
+                      <td className="hidden lg:table-cell px-4 py-3 text-sm text-muted-foreground">
+                        {ban.banReason ? (
+                          <span className="max-w-xs truncate block" title={ban.banReason}>
+                            {ban.banReason}
+                          </span>
+                        ) : (
+                          <span className="text-muted-foreground/70 italic">
+                            {t("bans.table.no_reason")}
+                          </span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm">
+                        <button
+                          type="button"
+                          onClick={() => handleUnban(ban.id)}
+                          disabled={unbanUser.isPending}
+                          className="w-full rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                        >
+                          {t("bans.actions.unban")}
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          )}
-        </div>
+          </>
+        )}
+
+        {unbanUser.isError && (
+          <div className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+            {t("bans.errors.unban_failed")}
+          </div>
+        )}
       </div>
     </div>
   );
