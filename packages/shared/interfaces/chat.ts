@@ -153,6 +153,7 @@ export type ThrottledMessagePayload = z.infer<typeof throttledMessageSchema>;
 export const connectedMessageSchema = z.object({
   type: z.literal(ChatWSMessageType.CONNECTED),
   userId: z.string().nullable(),
+  profileIncomplete: z.boolean().optional(),
   trace: wsTraceSchema.optional(),
 });
 

@@ -1,4 +1,5 @@
 import { useSession } from "@/lib/auth-client";
+import { getExtendedUser } from "@/types/user";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useLocation } from "react-router";
@@ -50,9 +51,11 @@ export function ProtectedRoute({
 
   // Check profile completion (skip for profile completion page itself)
   if (requireCompleteProfile && location.pathname !== "/profile/complete") {
-    const hasName = session.user.name && session.user.name.trim() !== "";
+    const user = getExtendedUser(session.user);
+    const hasName = user.name && user.name.trim() !== "";
+    const hasUsername = user.username && user.username.trim() !== "";
 
-    if (!hasName) {
+    if (!hasName || !hasUsername) {
       // Redirect to profile completion with return URL
       const returnUrl = `${location.pathname}${location.search}`;
       return (

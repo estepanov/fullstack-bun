@@ -1,35 +1,101 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
-import { apiClient } from "@/lib/api-client";
-import { useSession } from "@/lib/auth-client";
-import { useState } from "react";
+import { authClient, useSession } from "@/lib/auth-client";
+import { getExtendedUser } from "@/types/user";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router";
+import { Navigate, useNavigate, useSearchParams } from "react-router";
 
 export default function CompleteProfilePage() {
   const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [usernameAvailability, setUsernameAvailability] = useState<{
+    checking: boolean;
+    available: boolean | null;
+    message: string;
+  }>({ checking: false, available: null, message: "" });
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const { isPending, refetch } = useSession();
+  const { data: session, isPending, refetch } = useSession();
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
   const [searchParams] = useSearchParams();
+
+  // Determine which fields are missing
+  const user = session?.user ? getExtendedUser(session.user) : null;
+  const needsName = !user?.name || user.name.trim() === "";
+  const needsUsername = !user?.username || user.username.trim() === "";
+
+  // Debounced username availability check
+  useEffect(() => {
+    if (!username || username.length < 3) {
+      setUsernameAvailability({ checking: false, available: null, message: "" });
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setUsernameAvailability({ checking: true, available: null, message: "" });
+
+      try {
+        const response = await authClient.isUsernameAvailable({
+          username,
+        });
+
+        if (response.error) {
+          setUsernameAvailability({
+            checking: false,
+            available: false,
+            message: "somethingw went wrong",
+          });
+          return;
+        }
+        setUsernameAvailability({
+          checking: false,
+          available: response?.data?.available,
+          message: response?.data?.available
+            ? t("complete_profile.username_available")
+            : t("complete_profile.username_taken"),
+        });
+      } catch {
+        setUsernameAvailability({
+          checking: false,
+          available: null,
+          message: "",
+        });
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [username, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setIsLoading(true);
 
-    const api = apiClient.user.profile.complete.$patch;
+    const api = authClient.updateUser;
 
     try {
-      const response = await api({ json: { name } });
+      // Build payload with only missing fields
+      const payload: { name?: string; username?: string; displayUsername?: string } = {};
+      if (needsName && name) payload.name = name;
+      if (needsUsername && username) {
+        payload.username = username;
+        payload.displayUsername = username;
+      }
 
-      if (!response.ok) {
-        const data = await response
-          .json()
-          .catch(() => ({ error: "Failed to update profile" }));
-        throw new Error(data.error || "Failed to update profile");
+      const response = await api(payload);
+
+      if (response.error) {
+        const data = response.error;
+        const message =
+          typeof data === "object" &&
+          data !== null &&
+          "error" in data &&
+          typeof (data as { error?: unknown }).error === "string"
+            ? (data as { error?: string }).error
+            : "Failed to update profile";
+        throw new Error(message);
       }
       setIsSuccess(true);
       // Refresh session to get updated user data
@@ -52,6 +118,10 @@ export default function CompleteProfilePage() {
         </div>
       </div>
     );
+  }
+
+  if ((!isPending && !session) || (!needsName && !needsUsername)) {
+    return <Navigate to="/" replace />;
   }
 
   return (
@@ -77,24 +147,68 @@ export default function CompleteProfilePage() {
           )}
 
           <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="name"
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-              >
-                {t("complete_profile.name_label")}
-              </label>
-              <input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={t("complete_profile.name_placeholder")}
-                required
-                className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
-                disabled={isLoading || isSuccess}
-              />
-            </div>
+            {needsName && (
+              <div>
+                <label
+                  htmlFor="name"
+                  className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+                >
+                  {t("complete_profile.name_label")}
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder={t("complete_profile.name_placeholder")}
+                  required
+                  className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  disabled={isLoading || isSuccess}
+                />
+              </div>
+            )}
+
+            {needsUsername && (
+              <div>
+                <label
+                  htmlFor="username"
+                  className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+                >
+                  {t("complete_profile.username_label")}
+                </label>
+                <input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder={t("complete_profile.username_placeholder")}
+                  pattern="[a-zA-Z0-9_-]+"
+                  minLength={3}
+                  maxLength={30}
+                  required
+                  className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  disabled={isLoading || isSuccess}
+                />
+                {username && (
+                  <p
+                    className={`mt-1 text-xs ${
+                      usernameAvailability.checking
+                        ? "text-muted-foreground"
+                        : usernameAvailability.available === true
+                          ? "text-green-600"
+                          : usernameAvailability.available === false
+                            ? "text-destructive"
+                            : "text-muted-foreground"
+                    }`}
+                  >
+                    {usernameAvailability.checking
+                      ? t("complete_profile.username_checking")
+                      : usernameAvailability.message ||
+                        t("complete_profile.username_hint")}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
           <button

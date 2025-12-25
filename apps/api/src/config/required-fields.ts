@@ -13,7 +13,7 @@ type AuthedUser = AuthSession["user"];
  * 3. Update the completeProfileSchema in user-router.ts
  * 4. Update the frontend profile completion form
  */
-export const REQUIRED_USER_FIELDS = ["name"] as const;
+export const REQUIRED_USER_FIELDS = ["name", "username"] as const;
 
 export type RequiredUserField = (typeof REQUIRED_USER_FIELDS)[number];
 

@@ -9,6 +9,7 @@ import {
   getSendMessageSchema,
   getUpdateMessageSchema,
 } from "shared/interfaces/chat";
+import { getMissingFields } from "../config/required-fields";
 import { db } from "../db/client";
 import { user as userTable } from "../db/schema";
 import { auth } from "../lib/auth";
@@ -17,7 +18,6 @@ import { chatManager } from "../lib/chat-manager";
 import { chatService } from "../lib/chat-service";
 import { checkChatThrottle } from "../lib/chat-throttle";
 import { decodeWsMessage } from "../lib/ws-message";
-import { getMissingFields } from "../config/required-fields";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
 import { checkProfileComplete } from "../middlewares/check-profile-complete";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
@@ -110,7 +110,9 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
               isAdminUser = userRole ? isAdmin(userRole) : false;
               role = isAdminUser ? "admin" : "member";
               presenceId = userId;
-              logger.info(`WebSocket opened: userId=${userId}, verified=${isVerified}, incompleteProfile=${hasIncompleteProfile}`);
+              logger.info(
+                `WebSocket opened: userId=${userId}, verified=${isVerified}, incompleteProfile=${hasIncompleteProfile}`,
+              );
             } else {
               logger.info("WebSocket opened: unauthenticated user");
             }
@@ -206,23 +208,10 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
               return;
             }
 
-            // Check profile completion
-            if (hasIncompleteProfile) {
-              ws.send(
-                JSON.stringify({
-                  type: ChatWSMessageType.ERROR,
-                  error: "Please complete your profile before sending messages",
-                  profileIncomplete: true,
-                  trace: trace(),
-                }),
-              );
-              return;
-            }
-
             // Fetch fresh user data (in case name/avatar changed)
             const userData = await db
               .select({
-                name: userTable.name,
+                displayUsername: userTable.displayUsername,
                 image: userTable.image,
               })
               .from(userTable)
@@ -274,10 +263,26 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
               return;
             }
 
+            if (!userData.displayUsername) {
+              hasIncompleteProfile = true;
+            }
+
+            if (hasIncompleteProfile) {
+              ws.send(
+                JSON.stringify({
+                  type: ChatWSMessageType.ERROR,
+                  error: "Please complete your profile before sending messages",
+                  profileIncomplete: true,
+                  trace: trace(),
+                }),
+              );
+              return;
+            }
+
             // Store message in Redis
             const chatMessage = await chatService.addMessage({
               userId,
-              userName: userData.name,
+              userName: userData.displayUsername as string,
               userAvatar: userData.image,
               message: parsed.data.message,
             });

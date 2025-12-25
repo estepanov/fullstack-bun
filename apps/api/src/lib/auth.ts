@@ -1,7 +1,8 @@
 import { betterAuth } from "better-auth";
+import { emailHarmony } from "better-auth-harmony";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createFieldAttribute } from "better-auth/db";
-import { admin } from "better-auth/plugins";
+import { admin, username } from "better-auth/plugins";
 import { magicLink } from "better-auth/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
 import { db } from "../db/client";
@@ -53,6 +54,7 @@ export const auth = betterAuth({
         required: true,
         defaultValue: "user",
         input: false,
+        returned: true,
       }),
     },
   },
@@ -70,6 +72,11 @@ export const auth = betterAuth({
         await sendMagicLinkEmail(email, url);
       },
     }),
+    username({
+      minUsernameLength: 3,
+      maxUsernameLength: 30,
+    }),
+    emailHarmony(),
   ],
   baseURL: env.FE_BASE_URL,
   basePath: "/auth",
