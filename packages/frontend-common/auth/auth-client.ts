@@ -1,4 +1,5 @@
 import { adminClient, magicLinkClient, usernameClient, lastLoginMethodClient } from "better-auth/client/plugins";
+import { passkeyClient } from "@better-auth/passkey/client";
 import { createAuthClient } from "better-auth/react";
 import { AUTH_CONFIG } from "shared/config/auth";
 import { SessionStore } from "./session-utils";
@@ -7,7 +8,13 @@ export function createAuthClientInstance(baseURL: string) {
   const authClient = createAuthClient({
     baseURL,
     basePath: AUTH_CONFIG.basePath,
-    plugins: [adminClient(), magicLinkClient(), usernameClient(), lastLoginMethodClient()],
+    plugins: [
+      adminClient(),
+      magicLinkClient(),
+      usernameClient(),
+      lastLoginMethodClient(),
+      passkeyClient(),
+    ],
     fetchOptions: {
       onRequest: (ctx) => {
         const sessionStore = new SessionStore();

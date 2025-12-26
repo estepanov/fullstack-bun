@@ -183,6 +183,15 @@ Development containers mount source code and config as volumes:
 - `./package.json` → `/app/package.json` (read-only)
 
 Node modules are preserved using anonymous volumes to prevent overwriting.
+If you add or change dependencies and the container still can't find them, remove
+only the API node_modules volumes (keep database volumes intact) and rebuild:
+
+```bash
+docker-compose down
+docker volume rm myapp_api_node_modules myapp_api_app_node_modules
+docker-compose build --no-cache api
+docker-compose up api
+```
 
 ## Dockerfile Details
 

@@ -43,6 +43,13 @@
       "when": 1766762967376,
       "tag": "0005_tidy_silver_samurai",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1766772118909,
+      "tag": "0006_passkey_table",
+      "breakpoints": true
     }
   ]
 }

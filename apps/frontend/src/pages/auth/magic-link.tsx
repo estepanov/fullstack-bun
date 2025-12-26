@@ -4,7 +4,7 @@ import { authClient } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useSearchParams } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { AUTH_CONFIG } from "shared/config/auth";
 
 export default function MagicLinkPage() {
@@ -13,14 +13,17 @@ export default function MagicLinkPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [activeSocialProvider, setActiveSocialProvider] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [passkeyLoading, setPasskeyLoading] = useState(false);
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { t } = useTranslation("auth");
   const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
   const githubEnabled = AUTH_CONFIG.social.github.enabled;
+  const passkeyEnabled = AUTH_CONFIG.passkey.enabled;
   const socialEnabled = Object.values(AUTH_CONFIG.social).some(
     (provider) => provider.enabled,
   );
-  const showOrDivider = passwordsEnabled || socialEnabled;
+  const showOrDivider = passwordsEnabled || socialEnabled || passkeyEnabled;
 
   const errorParam = searchParams.get("error");
 
@@ -63,6 +66,24 @@ export default function MagicLinkPage() {
     } finally {
       setActiveSocialProvider(null);
     }
+  };
+
+  const handlePasskeyLogin = async () => {
+    setError("");
+    setPasskeyLoading(true);
+    const { error: passkeyError } = await authClient.signIn.passkey({
+      autoFill: false,
+      fetchOptions: {
+        onSuccess: () => {
+          navigate("/dashboard");
+        },
+      },
+    });
+
+    if (passkeyError) {
+      setError(passkeyError.message || t("magic_link.passkey_error"));
+    }
+    setPasskeyLoading(false);
   };
 
   return (
@@ -112,6 +133,7 @@ export default function MagicLinkPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t("magic_link.email_placeholder")}
+                autoComplete="username webauthn"
                 required
                 className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
@@ -147,6 +169,19 @@ export default function MagicLinkPage() {
               isDisabled={activeSocialProvider !== null}
               onClick={handleGitHubLogin}
             />
+          )}
+
+          {passkeyEnabled && (
+            <button
+              type="button"
+              onClick={handlePasskeyLogin}
+              disabled={passkeyLoading}
+              className="flex items-center justify-center gap-2 w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors disabled:opacity-60"
+            >
+              {passkeyLoading
+                ? t("magic_link.passkey_loading")
+                : t("magic_link.passkey_button")}
+            </button>
           )}
 
           {passwordsEnabled && (

@@ -22,7 +22,7 @@ export function SocialAuthButton({
       type="button"
       onClick={onClick}
       disabled={isDisabled || isLoading}
-      className={`w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors disabled:opacity-50 ${
+      className={`cursor-pointer w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${
         isLastUsed ? "bg-primary/10 border-primary/30" : ""
       }`}
     >

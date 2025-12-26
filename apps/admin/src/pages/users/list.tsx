@@ -195,7 +195,7 @@ export default function AdminUsersPage() {
                             type="button"
                             onClick={() => handleUnban(u.id)}
                             disabled={unbanUser.isPending}
-                            className="w-full rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                            className="cursor-pointer w-full rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                           >
                             {t("users.actions.unban")}
                           </button>
@@ -204,7 +204,7 @@ export default function AdminUsersPage() {
                             type="button"
                             onClick={() => handleBanClick(u.id)}
                             disabled={banUser.isPending}
-                            className="w-full rounded-full bg-destructive px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-destructive/90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                            className="cursor-pointer w-full rounded-full bg-destructive px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-destructive/90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                           >
                             {t("users.actions.ban_user")}
                           </button>
@@ -316,7 +316,7 @@ export default function AdminUsersPage() {
                   type="button"
                   onClick={handleBanConfirm}
                   disabled={banUser.isPending}
-                  className="inline-flex w-full justify-center rounded-full bg-destructive px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-destructive/90 sm:ml-3 sm:w-auto disabled:cursor-not-allowed disabled:opacity-50"
+                  className="cursor-pointer inline-flex w-full justify-center rounded-full bg-destructive px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-destructive/90 sm:ml-3 sm:w-auto disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {banUser.isPending
                     ? t("users.ban_dialog.confirming_button")
@@ -326,7 +326,7 @@ export default function AdminUsersPage() {
                   type="button"
                   onClick={() => setBanDialogOpen(false)}
                   disabled={banUser.isPending}
-                  className="mt-3 inline-flex w-full justify-center rounded-full border border-border/70 bg-background/80 px-4 py-2 text-sm font-semibold text-foreground shadow-sm hover:bg-muted/60 sm:mt-0 sm:w-auto"
+                  className="cursor-pointer mt-3 inline-flex w-full justify-center rounded-full border border-border/70 bg-background/80 px-4 py-2 text-sm font-semibold text-foreground shadow-sm hover:bg-muted/60 sm:mt-0 sm:w-auto disabled:cursor-not-allowed"
                 >
                   {t("users.ban_dialog.cancel_button")}
                 </button>

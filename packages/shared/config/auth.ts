@@ -25,6 +25,12 @@ export type AuthConfig = {
      */
     enabled: boolean;
   };
+  passkey: {
+    /**
+     * Enable passkey (WebAuthn) sign-in and registration.
+     */
+    enabled: boolean;
+  };
   social: {
     /**
      * Enable social OAuth providers. Each provider also requires env credentials.
@@ -65,6 +71,9 @@ export const AUTH_CONFIG: AuthConfig = {
     maxPasswordLength: 35,
   },
   magicLink: {
+    enabled: true,
+  },
+  passkey: {
     enabled: true,
   },
   social: {

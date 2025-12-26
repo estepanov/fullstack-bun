@@ -58,7 +58,7 @@ export const AdminSidebar = ({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex items-center justify-center rounded-md border border-sidebar-border p-2 text-sidebar-foreground lg:hidden"
+            className="cursor-pointer inline-flex items-center justify-center rounded-md border border-sidebar-border p-2 text-sidebar-foreground lg:hidden"
             aria-label={t("navigation.close_menu", "Close navigation")}
           >
             <X className="h-4 w-4" />

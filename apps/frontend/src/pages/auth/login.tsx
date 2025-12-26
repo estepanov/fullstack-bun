@@ -2,7 +2,7 @@ import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient, signIn, useSession } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { Link } from "react-router";
@@ -16,19 +16,23 @@ export default function LoginPage() {
   const [resetMessage, setResetMessage] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [passkeyLoading, setPasskeyLoading] = useState(false);
   const [activeSocialProvider, setActiveSocialProvider] = useState<string | null>(null);
   const [lastUsedMethod, setLastUsedMethod] = useState<string | null>(null);
+  const autoPasskeyAttempted = useRef(false);
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
   const lastUsedBadge = t("login.last_used_badge");
   const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
   const magicLinkEnabled = AUTH_CONFIG.magicLink.enabled;
+  const passkeyEnabled = AUTH_CONFIG.passkey.enabled;
   const githubEnabled = AUTH_CONFIG.social.github.enabled;
   const socialEnabled = Object.values(AUTH_CONFIG.social).some(
     (provider) => provider.enabled,
   );
-  const showAltDivider = passwordsEnabled && (magicLinkEnabled || socialEnabled);
+  const showAltDivider =
+    passwordsEnabled && (magicLinkEnabled || socialEnabled || passkeyEnabled);
 
   useEffect(() => {
     if (!isPending && session) {
@@ -38,15 +42,46 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isPending || session) return;
-    if (!passwordsEnabled && magicLinkEnabled && !socialEnabled) {
+    if (!passwordsEnabled && magicLinkEnabled && !socialEnabled && !passkeyEnabled) {
       navigate("/auth/magic-link", { replace: true });
     }
-  }, [isPending, magicLinkEnabled, navigate, passwordsEnabled, session, socialEnabled]);
+  }, [
+    isPending,
+    magicLinkEnabled,
+    navigate,
+    passwordsEnabled,
+    passkeyEnabled,
+    session,
+    socialEnabled,
+  ]);
 
   useEffect(() => {
     const method = authClient.getLastUsedLoginMethod();
     setLastUsedMethod(method || null);
   }, []);
+
+  useEffect(() => {
+    if (!passkeyEnabled || isPending || session) return;
+    if (typeof window === "undefined" || !("PublicKeyCredential" in window)) return;
+
+    const preloadPasskeys = async () => {
+      if (!PublicKeyCredential.isConditionalMediationAvailable) return;
+      const canAutoFill = await PublicKeyCredential.isConditionalMediationAvailable();
+      if (!canAutoFill) return;
+      if (autoPasskeyAttempted.current) return;
+      autoPasskeyAttempted.current = true;
+      await authClient.signIn.passkey({
+        autoFill: true,
+        fetchOptions: {
+          onSuccess: () => {
+            navigate("/dashboard");
+          },
+        },
+      });
+    };
+
+    void preloadPasskeys();
+  }, [isPending, navigate, passkeyEnabled, session]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,6 +113,24 @@ export default function LoginPage() {
     } finally {
       setActiveSocialProvider(null);
     }
+  };
+
+  const handlePasskeyLogin = async () => {
+    setError("");
+    setPasskeyLoading(true);
+    const { error: passkeyError } = await authClient.signIn.passkey({
+      autoFill: false,
+      fetchOptions: {
+        onSuccess: () => {
+          navigate("/dashboard");
+        },
+      },
+    });
+
+    if (passkeyError) {
+      setError(passkeyError.message || t("login.passkey_error"));
+    }
+    setPasskeyLoading(false);
   };
 
   const handlePasswordReset = async () => {
@@ -157,6 +210,7 @@ export default function LoginPage() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={t("login.email_placeholder")}
+                    autoComplete="username webauthn"
                     required
                     className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
@@ -175,6 +229,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={t("login.password_placeholder")}
+                    autoComplete="current-password webauthn"
                     required
                     className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
@@ -233,10 +288,28 @@ export default function LoginPage() {
             </>
           ) : null}
 
+          {passkeyEnabled && (
+            <button
+              type="button"
+              onClick={handlePasskeyLogin}
+              disabled={passkeyLoading || isLoading}
+              className={`flex items-center justify-center gap-2 w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors ${
+                lastUsedMethod === LoginMethod.PASSKEY
+                  ? "bg-primary/10 border-primary/30"
+                  : ""
+              }`}
+            >
+              {passkeyLoading ? t("login.passkey_loading") : t("login.passkey_button")}
+              {lastUsedMethod === LoginMethod.PASSKEY && (
+                <span className="text-xs text-primary">{lastUsedBadge}</span>
+              )}
+            </button>
+          )}
+
           {magicLinkEnabled && (
             <Link
               to="/auth/magic-link"
-                className={`flex items-center justify-center gap-2 w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors ${
+              className={`flex items-center justify-center gap-2 w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors ${
                 lastUsedMethod === LoginMethod.MAGIC_LINK ? "bg-primary/10 border-primary/30" : ""
               }`}
             >

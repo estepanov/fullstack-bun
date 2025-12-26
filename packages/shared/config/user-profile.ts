@@ -27,3 +27,5 @@ export const USERNAME_CONFIG = {
 export const REQUIRED_USER_FIELDS = ["name", "username"] as const;
 
 export type RequiredUserField = (typeof REQUIRED_USER_FIELDS)[number];
+
+export const RESERVED_NAMES = new Set(["admin", "administrator", "support", "help"]);

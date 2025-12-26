@@ -14,7 +14,7 @@ export const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
         <button
           type="button"
           onClick={onMenuClick}
-          className="inline-flex items-center justify-center rounded-md border border-border p-2 text-foreground lg:hidden"
+          className="cursor-pointer inline-flex items-center justify-center rounded-md border border-border p-2 text-foreground lg:hidden"
           aria-label={t("navigation.open_menu", "Open navigation")}
         >
           <Menu className="h-5 w-5" />

@@ -64,7 +64,7 @@ const MobileNavigation = () => {
             <button
               type="button"
               onClick={() => signOut()}
-              className="text-left text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300"
+              className="cursor-pointer text-left text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300"
             >
               Sign Out
             </button>
@@ -117,7 +117,7 @@ export const Header = () => {
                   <button
                     type="button"
                     onClick={() => signOut()}
-                    className="text-sm text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300"
+                    className="cursor-pointer text-sm text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300"
                   >
                     Sign Out
                   </button>

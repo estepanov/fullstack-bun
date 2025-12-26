@@ -20,7 +20,7 @@
     "@tailwindcss/vite": "^4.1.18",
     "@tanstack/react-query": "^5.90.12",
     "api": "workspace:*",
-    "better-auth": "^1.4.7",
+    "better-auth": "^1.4.9",
     "frontend-common": "workspace:*",
     "hono": "^4.11.0",
     "i18next": "^25.7.2",

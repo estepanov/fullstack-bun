@@ -32,6 +32,19 @@ type AccountRecord = {
   userId: string;
   scopes: string[];
 };
+type PasskeyRecord = {
+  id: string;
+  name?: string | null;
+  publicKey: string;
+  userId: string;
+  credentialID: string;
+  counter: number;
+  deviceType: string;
+  backedUp: boolean;
+  transports?: string | null;
+  createdAt?: string | Date | null;
+  aaguid?: string | null;
+};
 
 const parseErrorMessage = (error: unknown, fallback: string) => {
   if (!error) return fallback;
@@ -547,7 +560,7 @@ function PasswordSection({
             aria-expanded={editingPassword}
             aria-controls={panelId}
           >
-            {t("dashboard.edit_button")}
+            {editingPassword ? t("dashboard.cancel_button") : t("dashboard.edit_button")}
           </button>
         </div>
         {editingPassword && (
@@ -886,10 +899,219 @@ function SessionsSection() {
                     <p className="text-xs font-semibold uppercase tracking-[0.2em]">
                       {t("dashboard.sessions_user_agent_label")}
                     </p>
-                    <p className="mt-1 text-sm text-foreground break-words">
+                    <p className="mt-1 text-sm text-foreground wrap-break-words">
                       {sessionItem.userAgent || "-"}
                     </p>
                   </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
+
+function PasskeysSection() {
+  const { t } = useTranslation("auth");
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [passkeys, setPasskeys] = useState<PasskeyRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [adding, setAdding] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [name, setName] = useState("");
+
+  const sortedPasskeys = useMemo(() => {
+    return [...passkeys].sort((a, b) => {
+      const aCreated = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const bCreated = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return bCreated - aCreated;
+    });
+  }, [passkeys]);
+
+  const loadPasskeys = async () => {
+    setLoading(true);
+    setError("");
+    const response = await authClient.passkey.listUserPasskeys({});
+    if (response.error) {
+      setError(parseErrorMessage(response.error, t("dashboard.passkeys_load_error")));
+      setPasskeys([]);
+    } else {
+      setPasskeys((response.data as PasskeyRecord[]) ?? []);
+    }
+    setLoading(false);
+  };
+
+  const handleAddPasskey = async () => {
+    setAdding(true);
+    setError("");
+    const trimmedName = name.trim();
+    const response = await authClient.passkey.addPasskey({
+      name: trimmedName || undefined,
+    });
+    if (response.error) {
+      setError(parseErrorMessage(response.error, t("dashboard.passkeys_add_error")));
+    } else {
+      setName("");
+      await loadPasskeys();
+    }
+    setAdding(false);
+  };
+
+  const handleDeletePasskey = async (passkeyId: string) => {
+    setDeletingId(passkeyId);
+    setError("");
+    const response = await authClient.passkey.deletePasskey({ id: passkeyId });
+    if (response.error) {
+      setError(parseErrorMessage(response.error, t("dashboard.passkeys_delete_error")));
+    } else {
+      await loadPasskeys();
+    }
+    setDeletingId(null);
+  };
+
+  useEffect(() => {
+    void loadPasskeys();
+  }, []);
+
+  return (
+    <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-xl font-semibold">{t("dashboard.passkeys_title")}</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {t("dashboard.passkeys_description")}
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => setShowAddForm((curr) => !curr)}
+            className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+            disabled={loading}
+          >
+            {showAddForm ? "Hide new passkey form" : "Add new passkey"}
+          </button>
+          <button
+            type="button"
+            onClick={loadPasskeys}
+            className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+            disabled={loading}
+          >
+            {loading
+              ? t("dashboard.passkeys_refreshing_button")
+              : t("dashboard.passkeys_refresh_button")}
+          </button>
+        </div>
+      </div>
+
+      {showAddForm && (
+        <form className="space-y-3 rounded-xl border border-border/60 bg-background/70 p-4 mt-6 grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+          <label className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            {t("dashboard.passkeys_name_label")}
+            <input
+              type="text"
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              className="mt-2 w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              disabled={adding}
+              placeholder={t("dashboard.passkeys_name_placeholder")}
+            />
+          </label>
+          <div className="flex flex-col justify-end mb-3">
+            <button
+              type="submit"
+              onClick={(e) => {
+                e.preventDefault();
+                handleAddPasskey();
+              }}
+              disabled={adding}
+              className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+            >
+              {adding
+                ? t("dashboard.passkeys_adding_button")
+                : t("dashboard.passkeys_add_button")}
+            </button>
+          </div>
+        </form>
+      )}
+
+      {error && <p className="mt-4 text-sm font-medium text-destructive">{error}</p>}
+
+      <div className="mt-6 space-y-4">
+        {loading ? (
+          <p className="text-sm text-muted-foreground">
+            {t("dashboard.passkeys_loading")}
+          </p>
+        ) : sortedPasskeys.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t("dashboard.passkeys_empty")}</p>
+        ) : (
+          sortedPasskeys.map((passkey) => {
+            const isDeleting = deletingId === passkey.id;
+            return (
+              <div
+                key={passkey.id}
+                className="rounded-xl border border-border/70 bg-background/80 p-4 shadow-sm"
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                      {t("dashboard.passkeys_name_label")}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">
+                      {passkey.name || t("dashboard.passkeys_name_fallback")}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleDeletePasskey(passkey.id)}
+                    disabled={isDeleting}
+                    className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+                  >
+                    {isDeleting
+                      ? t("dashboard.passkeys_deleting_button")
+                      : t("dashboard.passkeys_delete_button")}
+                  </button>
+                </div>
+                <div className="mt-4 grid gap-3 text-sm text-muted-foreground sm:grid-cols-4">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                      {t("dashboard.passkeys_device_label")}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">
+                      {formatProviderLabel(passkey.deviceType)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                      {t("dashboard.passkeys_backed_up_label")}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">
+                      {passkey.backedUp
+                        ? t("dashboard.passkeys_backed_up_yes")
+                        : t("dashboard.passkeys_backed_up_no")}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                      {t("dashboard.passkeys_created_label")}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">
+                      {formatDateTime(passkey.createdAt)}
+                    </p>
+                  </div>
+                  {passkey.transports ? (
+                    <div className="sm:col-span-1">
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                        {t("dashboard.passkeys_transports_label")}
+                      </p>
+                      <p className="mt-1 text-sm text-foreground wrap-break-words">
+                        {passkey.transports}
+                      </p>
+                    </div>
+                  ) : null}
                 </div>
               </div>
             );
@@ -1000,7 +1222,7 @@ function AccountsSection() {
                     <p className="text-xs font-semibold uppercase tracking-[0.2em]">
                       {t("dashboard.accounts_account_id_label")}
                     </p>
-                    <p className="mt-1 text-sm text-foreground break-words">
+                    <p className="mt-1 text-sm text-foreground wrap-break-words">
                       {account.accountId}
                     </p>
                   </div>
@@ -1116,6 +1338,8 @@ function DashboardContent() {
                   {user.lastLoginMethod ? (
                     user.lastLoginMethod === LoginMethod.MAGIC_LINK ? (
                       t("dashboard.last_login_method_magic_link")
+                    ) : user.lastLoginMethod === LoginMethod.PASSKEY ? (
+                      t("dashboard.last_login_method_passkey")
                     ) : (
                       user.lastLoginMethod.charAt(0).toUpperCase() +
                       user.lastLoginMethod.slice(1)
@@ -1134,6 +1358,7 @@ function DashboardContent() {
             email={userProfile?.email}
             hasPassword={!!userProfile?.hasPassword}
           />
+          {AUTH_CONFIG.passkey.enabled && <PasskeysSection />}
           <SessionsSection />
           {AUTH_CONFIG.accountLinking.enabled && <AccountsSection />}
 

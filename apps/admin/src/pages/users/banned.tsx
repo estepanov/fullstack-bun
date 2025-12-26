@@ -156,7 +156,7 @@ export default function AdminBannedUsersPage() {
                           type="button"
                           onClick={() => handleUnban(ban.id)}
                           disabled={unbanUser.isPending}
-                          className="w-full rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                          className="cursor-pointer w-full rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
                         >
                           {t("bans.actions.unban")}
                         </button>

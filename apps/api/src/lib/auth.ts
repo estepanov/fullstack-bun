@@ -1,3 +1,4 @@
+import { passkey as passkeyPlugin } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { emailHarmony } from "better-auth-harmony";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
@@ -11,8 +12,9 @@ import { usernameField } from "shared/auth/user-profile-fields";
 import { AUTH_CONFIG } from "shared/config/auth";
 import { USERNAME_CONFIG } from "shared/config/user-profile";
 import { validator } from "validation-better-auth";
+import { APP_NAME } from "../app.config";
 import { db } from "../db/client";
-import { account, session, user, verification } from "../db/schema";
+import { account, passkey, session, user, verification } from "../db/schema";
 import { env } from "../env";
 import {
   sendMagicLinkEmail,
@@ -90,12 +92,25 @@ const plugins = [
   ]),
 ];
 
+const passkeyOrigin = env.FE_BASE_URL;
+const passkeyRpID = new URL(passkeyOrigin).hostname;
+
 if (AUTH_CONFIG.magicLink.enabled) {
   plugins.push(
     magicLink({
       sendMagicLink: async ({ email, url }) => {
         await sendMagicLinkEmail(email, url);
       },
+    }),
+  );
+}
+
+if (AUTH_CONFIG.passkey.enabled) {
+  plugins.push(
+    passkeyPlugin({
+      rpID: passkeyRpID,
+      rpName: APP_NAME,
+      origin: passkeyOrigin,
     }),
   );
 }
@@ -108,6 +123,7 @@ export const auth = betterAuth({
       session,
       account,
       verification,
+      passkey,
     },
   }),
   user: {
