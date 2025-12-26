@@ -1,15 +1,17 @@
-import { Container } from "frontend-common/components/ui";
 import { Link } from "frontend-common/components/ui";
+import { useTranslation } from "react-i18next";
 
 const CatchAll = () => {
+  const { t } = useTranslation("catchall");
+
   return (
-    <Container className="space-y-2 mt-4">
-      <h1 className="text-2xl font-bold">Not Found</h1>
-      <p className="text-muted-foreground">
-        The page you are looking for does not exist.
+    <div className="app-surface flex-1 flex flex-col justify-center items-center space-y-4">
+      <h1 className="text-2xl font-bold text-center">{t("title")}</h1>
+      <p className="text-muted-foreground text-center">
+        {t("message")}
       </p>
-      <Link to="/">Back to the landing page</Link>
-    </Container>
+      <Link to="/">{t("back_link")}</Link>
+    </div>
   );
 };
 

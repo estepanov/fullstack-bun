@@ -1,16 +1,779 @@
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-import { signOut, useSession } from "@/lib/auth-client";
+import { GET_USER_PROFILE_QUERY_KEY } from "@/hooks/api/query-key";
+import { useGetUserProfileQuery } from "@/hooks/api/useGetUserProfileQuery";
+import { apiClient } from "@/lib/api-client";
+import { authClient, signOut, useSession } from "@/lib/auth-client";
 import { getExtendedUser } from "@/types/user";
+import { useQueryClient } from "@tanstack/react-query";
 import { getSessionUserRole } from "frontend-common/auth";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AUTH_CONFIG } from "shared/config/auth";
+import { USERNAME_CONFIG } from "shared/config/user-profile";
+
+type UpdateCallback = () => Promise<void>;
+type SessionRecord = {
+  id: string;
+  userId: string;
+  expiresAt: string | Date;
+  createdAt?: string | Date;
+  updatedAt?: string | Date;
+  ipAddress?: string | null;
+  userAgent?: string | null;
+  impersonatedBy?: string | null;
+};
+
+const parseErrorMessage = (error: unknown, fallback: string) => {
+  if (!error) return fallback;
+  if (typeof error === "string") return error;
+  if (typeof error === "object" && error !== null && "message" in error) {
+    const message = (error as { message?: string }).message;
+    if (typeof message === "string" && message.trim() !== "") return message;
+  }
+  if (typeof error === "object" && error !== null && "error" in error) {
+    const message = (error as { error?: unknown }).error;
+    if (typeof message === "string" && message.trim() !== "") return message;
+  }
+  return fallback;
+};
+
+const formatDateTime = (value?: string | Date | null) => {
+  if (!value) return "-";
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return "-";
+  return date.toLocaleString();
+};
+
+function NameEditor({
+  name,
+  onUpdated,
+}: { name?: string | null; onUpdated: UpdateCallback }) {
+  const { t } = useTranslation("auth");
+  const [editing, setEditing] = useState(false);
+  const [nameValue, setNameValue] = useState("");
+  const [nameError, setNameError] = useState("");
+  const [nameSaving, setNameSaving] = useState(false);
+
+  useEffect(() => {
+    if (!editing) {
+      setNameValue(name ?? "");
+      setNameError("");
+    }
+  }, [editing, name]);
+
+  const handleSaveName = async () => {
+    const trimmed = nameValue.trim();
+    setNameError("");
+    if (!trimmed) {
+      setNameError(t("dashboard.name_required"));
+      return;
+    }
+    if (trimmed === (name ?? "")) {
+      setEditing(false);
+      return;
+    }
+    setNameSaving(true);
+    try {
+      const response = await authClient.updateUser({ name: trimmed });
+      if (response.error) {
+        throw new Error(
+          parseErrorMessage(response.error, t("dashboard.name_save_error")),
+        );
+      }
+      await onUpdated();
+      setEditing(false);
+    } catch (error) {
+      setNameError(parseErrorMessage(error, t("dashboard.name_save_error")));
+    } finally {
+      setNameSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        {t("dashboard.name_label")}
+      </dt>
+      <dd className="mt-1 text-sm text-foreground">
+        {editing ? (
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={nameValue}
+              onChange={(event) => {
+                setNameValue(event.target.value);
+                if (nameError) {
+                  setNameError("");
+                }
+              }}
+              className="block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              disabled={nameSaving}
+            />
+            {nameError && (
+              <p className="text-xs font-medium text-destructive">{nameError}</p>
+            )}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleSaveName}
+                disabled={nameSaving}
+                className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+              >
+                {t("dashboard.save_button")}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditing(false);
+                  setNameError("");
+                }}
+                disabled={nameSaving}
+                className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+              >
+                {t("dashboard.cancel_button")}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span>{name || t("dashboard.not_provided")}</span>
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className="inline-flex items-center rounded-full border border-border/70 px-2 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+              aria-label={t("dashboard.edit_button")}
+            >
+              {t("dashboard.edit_button")}
+            </button>
+          </div>
+        )}
+      </dd>
+    </div>
+  );
+}
+
+function UsernameEditor({
+  displayUsername,
+  onUpdated,
+}: {
+  displayUsername?: string | null;
+  onUpdated: UpdateCallback;
+}) {
+  const { t } = useTranslation("auth");
+  const [editing, setEditing] = useState(false);
+  const [usernameValue, setUsernameValue] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [usernameSaving, setUsernameSaving] = useState(false);
+  const [usernameAvailability, setUsernameAvailability] = useState<{
+    checking: boolean;
+    available: boolean | null;
+    message: string;
+  }>({ checking: false, available: null, message: "" });
+
+  useEffect(() => {
+    if (!editing) {
+      setUsernameValue(displayUsername ?? "");
+      setUsernameAvailability({ checking: false, available: null, message: "" });
+      setUsernameError("");
+    }
+  }, [displayUsername, editing]);
+
+  useEffect(() => {
+    if (!editing) return;
+    const normalized = usernameValue.trim();
+    const current = (displayUsername ?? "").trim();
+
+    if (!normalized || normalized.length < USERNAME_CONFIG.minLength) {
+      setUsernameAvailability({ checking: false, available: null, message: "" });
+      return;
+    }
+
+    if (normalized === current) {
+      setUsernameAvailability({ checking: false, available: true, message: "" });
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      setUsernameAvailability({ checking: true, available: null, message: "" });
+      try {
+        const response = await authClient.isUsernameAvailable({
+          username: normalized,
+        });
+
+        if (response.error) {
+          let message = t("complete_profile.username_invalid");
+          if (response.error?.code !== "USERNAME_IS_INVALID") {
+            message = t("dashboard.username_check_failed");
+          }
+          setUsernameAvailability({
+            checking: false,
+            available: false,
+            message,
+          });
+          return;
+        }
+
+        setUsernameAvailability({
+          checking: false,
+          available: response?.data?.available,
+          message: response?.data?.available
+            ? t("complete_profile.username_available")
+            : t("complete_profile.username_taken"),
+        });
+      } catch {
+        setUsernameAvailability({
+          checking: false,
+          available: null,
+          message: t("dashboard.username_check_failed"),
+        });
+      }
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [displayUsername, editing, t, usernameValue]);
+
+  const usernameStatusMessage = useMemo(() => {
+    if (!editing) return "";
+    if (!usernameValue) return "";
+    if (usernameError) return "";
+    if (usernameAvailability.checking) {
+      return t("complete_profile.username_checking");
+    }
+    return usernameAvailability.message || t("complete_profile.username_hint");
+  }, [editing, t, usernameAvailability, usernameError, usernameValue]);
+
+  const handleSaveUsername = async () => {
+    const trimmed = usernameValue.trim();
+    setUsernameError("");
+    if (!trimmed) {
+      setUsernameError(t("dashboard.username_required"));
+      return;
+    }
+    if (!USERNAME_CONFIG.pattern.test(trimmed)) {
+      setUsernameError(t("complete_profile.username_invalid"));
+      return;
+    }
+    if (trimmed.length < USERNAME_CONFIG.minLength) {
+      setUsernameError(t("complete_profile.username_hint"));
+      return;
+    }
+    if (trimmed === (displayUsername ?? "")) {
+      setEditing(false);
+      return;
+    }
+    if (usernameAvailability.available === false) {
+      setUsernameError(
+        usernameAvailability.message || t("complete_profile.username_taken"),
+      );
+      setUsernameAvailability({ checking: false, available: null, message: "" });
+      return;
+    }
+    setUsernameSaving(true);
+    try {
+      const response = await authClient.updateUser({ displayUsername: trimmed });
+      if (response.error) {
+        throw new Error(
+          parseErrorMessage(response.error, t("dashboard.username_save_error")),
+        );
+      }
+      await onUpdated();
+      setEditing(false);
+    } catch (error) {
+      setUsernameError(parseErrorMessage(error, t("dashboard.username_save_error")));
+      setUsernameAvailability({ checking: false, available: null, message: "" });
+    } finally {
+      setUsernameSaving(false);
+    }
+  };
+
+  return (
+    <div>
+      <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+        {t("dashboard.user_username_label")}
+      </dt>
+      <dd className="mt-1 text-sm text-foreground">
+        {editing ? (
+          <div className="space-y-2">
+            <input
+              type="text"
+              value={usernameValue}
+              onChange={(event) => {
+                setUsernameValue(event.target.value);
+                if (usernameError) {
+                  setUsernameError("");
+                }
+              }}
+              minLength={USERNAME_CONFIG.minLength}
+              maxLength={USERNAME_CONFIG.maxLength}
+              pattern={USERNAME_CONFIG.pattern.source}
+              className="block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+              disabled={usernameSaving}
+            />
+            {usernameStatusMessage && (
+              <p
+                className={`text-xs ${
+                  usernameAvailability.checking
+                    ? "text-muted-foreground"
+                    : usernameAvailability.available === true
+                      ? "text-emerald-600"
+                      : usernameAvailability.available === false
+                        ? "text-destructive"
+                        : "text-muted-foreground"
+                }`}
+              >
+                {usernameStatusMessage}
+              </p>
+            )}
+            {usernameError && (
+              <p className="text-xs font-medium text-destructive">{usernameError}</p>
+            )}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleSaveUsername}
+                disabled={usernameSaving}
+                className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+              >
+                {t("dashboard.save_button")}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditing(false);
+                  setUsernameError("");
+                }}
+                disabled={usernameSaving}
+                className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+              >
+                {t("dashboard.cancel_button")}
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span>{displayUsername || t("dashboard.not_provided")}</span>
+            <button
+              type="button"
+              onClick={() => setEditing(true)}
+              className="inline-flex items-center rounded-full border border-border/70 px-2 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+              aria-label={t("dashboard.edit_button")}
+            >
+              {t("dashboard.edit_button")}
+            </button>
+          </div>
+        )}
+      </dd>
+    </div>
+  );
+}
+
+function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
+  const { t } = useTranslation("auth");
+  const passwordMinLength = AUTH_CONFIG.emailPassword.minPasswordLength;
+  const [editingPassword, setEditingPassword] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [revokeOtherSessions, setRevokeOtherSessions] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const queryClient = useQueryClient();
+
+  const handleSavePassword = async () => {
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    if (!newPassword) {
+      setPasswordError(t("dashboard.password_required"));
+      return;
+    }
+    if (newPassword.length < passwordMinLength) {
+      setPasswordError(t("dashboard.password_hint", { minLength: passwordMinLength }));
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      setPasswordError(t("dashboard.password_mismatch"));
+      return;
+    }
+
+    // If user has a password, require current password
+    if (hasPassword && !currentPassword) {
+      setPasswordError(t("dashboard.password_current_required"));
+      return;
+    }
+
+    setPasswordSaving(true);
+    try {
+      if (hasPassword) {
+        // User has password - use changePassword
+        const response = await authClient.changePassword({
+          currentPassword,
+          newPassword,
+          revokeOtherSessions,
+        });
+
+        if (response.error) {
+          throw new Error(
+            parseErrorMessage(response.error, t("dashboard.password_update_error")),
+          );
+        }
+      } else {
+        // User doesn't have password - use setPassword endpoint
+        const response = await apiClient.user["set-password"].$post({
+          json: { newPassword },
+        });
+
+        if (!response.ok) {
+          const data = (await response.json()) as { error?: string };
+          throw new Error(
+            parseErrorMessage(data.error, t("dashboard.password_update_error")),
+          );
+        }
+
+        await queryClient.invalidateQueries({
+          queryKey: [GET_USER_PROFILE_QUERY_KEY],
+        });
+      }
+
+      setPasswordSuccess(t("dashboard.password_update_success"));
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmPassword("");
+      setRevokeOtherSessions(false);
+      setEditingPassword(false);
+    } catch (error) {
+      setPasswordError(parseErrorMessage(error, t("dashboard.password_update_error")));
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+
+  if (!AUTH_CONFIG.emailPassword.enabled) {
+    return null;
+  }
+
+  return (
+    <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
+      <h2 className="text-xl font-semibold">{t("dashboard.security_title")}</h2>
+      <div className="mt-4 space-y-3 text-sm text-foreground">
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              {t("dashboard.password_label")}
+            </p>
+            <p className="mt-1 text-sm text-foreground">
+              {hasPassword ? (
+                "••••••••"
+              ) : (
+                <span className="italic"> {t("dashboard.password_not_set")}</span>
+              )}
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setEditingPassword((value) => !value);
+              setPasswordError("");
+              setPasswordSuccess("");
+            }}
+            className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+          >
+            {t("dashboard.edit_button")}
+          </button>
+        </div>
+        {editingPassword && (
+          <div className="space-y-3 rounded-xl border border-border/60 bg-background/70 p-4">
+            {hasPassword && (
+              <div>
+                <label
+                  htmlFor="current-password"
+                  className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+                >
+                  {t("dashboard.password_current_label")}
+                </label>
+                <input
+                  name="current-password"
+                  type="password"
+                  value={currentPassword}
+                  onChange={(event) => {
+                    setCurrentPassword(event.target.value);
+                    if (passwordError) {
+                      setPasswordError("");
+                    }
+                  }}
+                  placeholder={t("dashboard.password_current_placeholder")}
+                  className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  disabled={passwordSaving}
+                  required
+                />
+              </div>
+            )}
+
+            <div>
+              <label
+                htmlFor="new-password"
+                className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+              >
+                {t("dashboard.password_new_label")}
+              </label>
+              <input
+                name="new-password"
+                type="password"
+                value={newPassword}
+                onChange={(event) => {
+                  setNewPassword(event.target.value);
+                  if (passwordError) {
+                    setPasswordError("");
+                  }
+                }}
+                placeholder={t("dashboard.password_new_placeholder")}
+                className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                disabled={passwordSaving}
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="confirm-new-password"
+                className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+              >
+                {t("dashboard.password_confirm_label")}
+              </label>
+              <input
+                name="confirm-new-password"
+                type="password"
+                value={confirmPassword}
+                onChange={(event) => {
+                  setConfirmPassword(event.target.value);
+                  if (passwordError) {
+                    setPasswordError("");
+                  }
+                }}
+                placeholder={t("dashboard.password_confirm_placeholder")}
+                className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                disabled={passwordSaving}
+              />
+            </div>
+            {hasPassword && (
+              <div className="flex items-center gap-2 text-sm text-foreground">
+                <input
+                  id="revoke-other-sessions"
+                  name="revoke-other-sessions"
+                  type="checkbox"
+                  checked={revokeOtherSessions}
+                  onChange={(event) => {
+                    setRevokeOtherSessions(event.target.checked);
+                  }}
+                  disabled={passwordSaving}
+                  className="h-4 w-4 rounded border-border text-primary focus:ring-primary/30"
+                />
+                <label htmlFor="revoke-other-sessions">
+                  {t("dashboard.password_revoke_other_sessions_label")}
+                </label>
+              </div>
+            )}
+            <p className="text-xs text-muted-foreground">
+              {t("dashboard.password_hint", { minLength: passwordMinLength })}
+            </p>
+            {passwordError && (
+              <p className="text-xs font-medium text-destructive">{passwordError}</p>
+            )}
+            {passwordSuccess && (
+              <p className="text-xs font-medium text-emerald-600">{passwordSuccess}</p>
+            )}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={handleSavePassword}
+                disabled={passwordSaving}
+                className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+              >
+                {passwordSaving
+                  ? t("dashboard.password_saving_button")
+                  : t("dashboard.password_save_button")}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setEditingPassword(false);
+                  setPasswordError("");
+                  setPasswordSuccess("");
+                  setCurrentPassword("");
+                  setNewPassword("");
+                  setConfirmPassword("");
+                  setRevokeOtherSessions(false);
+                }}
+                disabled={passwordSaving}
+                className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+              >
+                {t("dashboard.cancel_button")}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function SessionsSection() {
+  const { t } = useTranslation("auth");
+  const { data: session } = useSession();
+  const [sessions, setSessions] = useState<SessionRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [revoking, setRevoking] = useState(false);
+
+  const currentSessionId = session?.session?.id;
+
+  const sortedSessions = useMemo(() => {
+    return [...sessions].sort((a, b) => {
+      if (a.id === currentSessionId) return -1;
+      if (b.id === currentSessionId) return 1;
+      const aExpires = new Date(a.expiresAt).getTime();
+      const bExpires = new Date(b.expiresAt).getTime();
+      return bExpires - aExpires;
+    });
+  }, [currentSessionId, sessions]);
+
+  const loadSessions = async () => {
+    setLoading(true);
+    setError("");
+    const response = await authClient.listSessions();
+    if (response.error) {
+      setError(parseErrorMessage(response.error, t("dashboard.sessions_load_error")));
+      setSessions([]);
+    } else {
+      setSessions((response.data as SessionRecord[]) ?? []);
+    }
+    setLoading(false);
+  };
+
+  const handleRevokeOtherSessions = async () => {
+    setRevoking(true);
+    setError("");
+    const response = await authClient.revokeOtherSessions();
+    if (response.error) {
+      setError(parseErrorMessage(response.error, t("dashboard.sessions_revoke_error")));
+    } else {
+      await loadSessions();
+    }
+    setRevoking(false);
+  };
+
+  useEffect(() => {
+    void loadSessions();
+  }, []);
+
+  return (
+    <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-xl font-semibold">{t("dashboard.sessions_title")}</h2>
+          <p className="mt-2 text-sm text-muted-foreground">
+            {t("dashboard.sessions_description")}
+          </p>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 justify-end">
+          <button
+            type="button"
+            onClick={loadSessions}
+            className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+            disabled={loading}
+          >
+            {loading
+              ? t("dashboard.sessions_refreshing_button")
+              : t("dashboard.sessions_refresh_button")}
+          </button>
+          <button
+            type="button"
+            onClick={handleRevokeOtherSessions}
+            className="inline-flex items-center rounded-full bg-destructive px-3 py-1 text-xs font-semibold text-white shadow-sm hover:bg-destructive/90 focus:outline-none focus:ring-2 focus:ring-destructive/40 disabled:opacity-50"
+            disabled={revoking}
+          >
+            {revoking
+              ? t("dashboard.sessions_revoking_button")
+              : t("dashboard.sessions_revoke_other_button")}
+          </button>
+        </div>
+      </div>
+      {error && <p className="mt-4 text-sm font-medium text-destructive">{error}</p>}
+      <div className="mt-6 space-y-4">
+        {loading ? (
+          <p className="text-sm text-muted-foreground">
+            {t("dashboard.sessions_loading")}
+          </p>
+        ) : sortedSessions.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{t("dashboard.sessions_empty")}</p>
+        ) : (
+          sortedSessions.map((sessionItem) => {
+            const isCurrent = sessionItem.id === currentSessionId;
+            return (
+              <div
+                key={sessionItem.id}
+                className="rounded-xl border border-border/70 bg-background/80 p-4 shadow-sm relative"
+              >
+                {isCurrent && (
+                  <span className="absolute right-4 top-4 inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                    {t("dashboard.sessions_current_badge")}
+                  </span>
+                )}
+                <div className="grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                      {t("dashboard.sessions_expires_label")}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">
+                      {formatDateTime(sessionItem.expiresAt)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                      {t("dashboard.sessions_created_label")}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">
+                      {formatDateTime(sessionItem.createdAt)}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                      {t("dashboard.sessions_ip_label")}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">
+                      {sessionItem.ipAddress || "-"}
+                    </p>
+                  </div>
+                  <div className="sm:col-span-3">
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                      {t("dashboard.sessions_user_agent_label")}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground break-words">
+                      {sessionItem.userAgent || "-"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
 
 function DashboardContent() {
-  const { data: session } = useSession();
+  const { data: session, refetch } = useSession();
+  const { data: userProfile } = useGetUserProfileQuery();
   const { t } = useTranslation("auth");
 
   if (!session) return null;
+
   const user = getExtendedUser(session.user);
   const role = getSessionUserRole(session);
+
+  const handleProfileRefresh = async () => {
+    await refetch();
+  };
 
   return (
     <div className="app-surface flex-1">
@@ -26,14 +789,7 @@ function DashboardContent() {
           <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
             <h2 className="text-xl font-semibold">{t("dashboard.user_info_title")}</h2>
             <dl className="mt-4 grid gap-4 sm:grid-cols-2">
-              <div>
-                <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                  {t("dashboard.name_label")}
-                </dt>
-                <dd className="mt-1 text-sm text-foreground">
-                  {user.name || t("dashboard.not_provided")}
-                </dd>
-              </div>
+              <NameEditor name={user.name} onUpdated={handleProfileRefresh} />
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {t("dashboard.email_label")}
@@ -62,14 +818,10 @@ function DashboardContent() {
                 </dt>
                 <dd className="mt-1 text-sm text-foreground">{user.id}</dd>
               </div>
-              <div>
-                <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                  {t("dashboard.user_username_label")}
-                </dt>
-                <dd className="mt-1 text-sm text-foreground">
-                  {user.displayUsername || t("dashboard.not_provided")}
-                </dd>
-              </div>
+              <UsernameEditor
+                displayUsername={user.displayUsername}
+                onUpdated={handleProfileRefresh}
+              />
               <div>
                 <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                   {t("dashboard.role_label")}
@@ -78,6 +830,9 @@ function DashboardContent() {
               </div>
             </dl>
           </div>
+
+          <PasswordSection hasPassword={!!userProfile?.hasPassword} />
+          <SessionsSection />
 
           <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
             <h2 className="text-xl font-semibold">{t("dashboard.actions_title")}</h2>

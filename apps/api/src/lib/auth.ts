@@ -7,6 +7,7 @@ import { magicLink } from "better-auth/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
 import { completeProfileSchema } from "shared/auth/user-profile";
 import { usernameField } from "shared/auth/user-profile-fields";
+import { AUTH_CONFIG } from "shared/config/auth";
 import { USERNAME_CONFIG } from "shared/config/user-profile";
 import { validator } from "validation-better-auth";
 import { db } from "../db/client";
@@ -43,6 +44,47 @@ export const roles = {
   }),
 };
 
+const plugins = [
+  admin({
+    ac,
+    roles,
+    defaultRole: "user",
+    adminRoles: ["admin"],
+    impersonationSessionDuration: 3600 / 2, // 30 minutes
+    allowImpersonatingAdmins: true,
+  }),
+  username({
+    minUsernameLength: USERNAME_CONFIG.minLength,
+    maxUsernameLength: USERNAME_CONFIG.maxLength,
+    usernameValidator: (username) => {
+      return usernameSchema.safeParse(username).success;
+    },
+  }),
+  emailHarmony(),
+  validator([
+    {
+      path: "/update-user",
+      schema: completeProfileSchema,
+      before: (ctx) => {
+        if (ctx.body?.username) {
+          // so that a normalized version is always username
+          throw new Error("set displayUsername instead");
+        }
+      },
+    },
+  ]),
+];
+
+if (AUTH_CONFIG.magicLink.enabled) {
+  plugins.push(
+    magicLink({
+      sendMagicLink: async ({ email, url }) => {
+        await sendMagicLinkEmail(email, url);
+      },
+    }),
+  );
+}
+
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
@@ -63,47 +105,15 @@ export const auth = betterAuth({
       }),
     },
   },
-  plugins: [
-    admin({
-      ac,
-      roles,
-      defaultRole: "user",
-      adminRoles: ["admin"],
-      impersonationSessionDuration: 3600 / 2, // 30 minutes
-      allowImpersonatingAdmins: true,
-    }),
-    magicLink({
-      sendMagicLink: async ({ email, url }) => {
-        await sendMagicLinkEmail(email, url);
-      },
-    }),
-    username({
-      minUsernameLength: USERNAME_CONFIG.minLength,
-      maxUsernameLength: USERNAME_CONFIG.maxLength,
-      usernameValidator: (username) => {
-        return usernameSchema.safeParse(username).success;
-      },
-    }),
-    emailHarmony(),
-    validator([
-      {
-        path: "/update-user",
-        schema: completeProfileSchema,
-        before: (ctx) => {
-          if (ctx.body?.username) {
-            // so that a normalized version is always username
-            throw new Error("set displayUsername instead");
-          }
-        },
-      },
-    ]),
-  ],
+  plugins,
   baseURL: env.FE_BASE_URL,
   basePath: "/auth",
   trustedOrigins: env.CORS_ALLOWLISTED_ORIGINS,
   emailAndPassword: {
-    enabled: true,
+    enabled: AUTH_CONFIG.emailPassword.enabled,
     requireEmailVerification: true,
+    minPasswordLength: AUTH_CONFIG.emailPassword.minPasswordLength,
+    maxPasswordLength: AUTH_CONFIG.emailPassword.maxPasswordLength,
   },
   emailVerification: {
     sendOnSignUp: true,
@@ -120,7 +130,7 @@ export const auth = betterAuth({
     github: {
       clientId: env.GITHUB_CLIENT_ID || "",
       clientSecret: env.GITHUB_CLIENT_SECRET || "",
-      enabled: !!env.GITHUB_CLIENT_ID,
+      enabled: AUTH_CONFIG.social.github.enabled && !!env.GITHUB_CLIENT_ID,
     },
   },
 });

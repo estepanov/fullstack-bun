@@ -3,6 +3,7 @@ import { authClient } from "@/lib/auth-client";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router";
+import { AUTH_CONFIG } from "shared/config/auth";
 
 export default function MagicLinkPage() {
   const [email, setEmail] = useState("");
@@ -11,6 +12,11 @@ export default function MagicLinkPage() {
   const [sent, setSent] = useState(false);
   const [searchParams] = useSearchParams();
   const { t } = useTranslation("auth");
+  const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
+  const socialEnabled = Object.values(AUTH_CONFIG.social).some(
+    (provider) => provider.enabled,
+  );
+  const showOrDivider = passwordsEnabled || socialEnabled;
 
   const errorParam = searchParams.get("error");
 
@@ -105,21 +111,25 @@ export default function MagicLinkPage() {
               : t("magic_link.submit_button")}
           </button>
 
-          <div className="relative">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-border/50" />
+          {showOrDivider && (
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border/50" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-card px-2 text-muted-foreground">or</span>
+              </div>
             </div>
-            <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-card px-2 text-muted-foreground">or</span>
-            </div>
-          </div>
+          )}
 
-          <Link
-            to="/auth/login"
-            className="block w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
-          >
-            {t("magic_link.sign_in_link")}
-          </Link>
+          {passwordsEnabled && (
+            <Link
+              to="/auth/login"
+              className="block w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
+            >
+              {t("magic_link.sign_in_link")}
+            </Link>
+          )}
         </form>
       </div>
     </AppSurfaceCenter>

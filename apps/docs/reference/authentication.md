@@ -53,6 +53,56 @@ User authenticated
 
 better-auth automatically handles JWT tokens and session management. Tokens are refreshed automatically when needed.
 
+## Shared Authentication Configuration
+
+Authentication configuration is shared across the API and frontend apps to keep validation,
+profile requirements, and client behavior consistent. The source of truth lives in the
+workspace packages.
+
+### Shared User Profile Rules
+
+`packages/shared/config/user-profile.ts` defines the reusable constraints that power both
+backend validation and frontend UI:
+
+- `USERNAME_CONFIG` (length, pattern, description) is consumed by:
+  - `apps/api/src/lib/auth.ts` (better-auth `username` plugin)
+  - `packages/shared/auth/user-profile-fields.ts` (Zod schema)
+  - `apps/frontend/src/pages/profile/complete.tsx` (form validation)
+- `REQUIRED_USER_FIELDS` drives profile completion:
+  - `apps/api/src/config/required-fields.ts` checks missing fields
+  - `apps/frontend` profile completion UX ensures the same fields are required
+
+**When changing required fields**
+1. Update `packages/shared/config/user-profile.ts`.
+2. Add validators in `packages/shared/auth/user-profile-fields.ts` if needed.
+3. Update the user profile schema in the API database (if you add columns).
+4. Update the profile completion UI in `apps/frontend/src/pages/profile/complete.tsx`.
+
+### Shared Auth Client Setup
+
+Frontend apps should create a better-auth client instance using the shared helper in
+`packages/frontend-common/auth`:
+
+```typescript
+import { createAuthClientInstance } from "frontend-common/auth";
+
+export const authClient = createAuthClientInstance(
+  import.meta.env.VITE_API_BASE_URL
+);
+```
+
+The shared client configuration:
+- Sets `basePath` to `/auth` so all apps hit the same API routes.
+- Enables the shared plugins (admin, magic-link, username).
+
+### Requirements
+
+To keep shared authentication configuration working across apps:
+
+- Ensure the consuming app depends on `shared` and `frontend-common` workspace packages.
+- Configure `VITE_API_BASE_URL` in frontend/admin so the shared client points at the API.
+- Keep API `FE_BASE_URL` and `CORS_ALLOWLISTED_ORIGINS` aligned with the frontend URL.
+
 ## API Endpoints
 
 All endpoints are handled by better-auth automatically at `/auth/*`:

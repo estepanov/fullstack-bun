@@ -1,9 +1,10 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { signUp } from "@/lib/auth-client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { Link } from "react-router";
+import { AUTH_CONFIG } from "shared/config/auth";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -13,6 +14,18 @@ export default function RegisterPage() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
+  const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
+  const passwordMinLength = AUTH_CONFIG.emailPassword.minPasswordLength;
+
+  useEffect(() => {
+    if (!passwordsEnabled) {
+      navigate("/auth/login", { replace: true });
+    }
+  }, [navigate, passwordsEnabled]);
+
+  if (!passwordsEnabled) {
+    return null;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -100,11 +113,11 @@ export default function RegisterPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder={t("register.password_placeholder")}
                 required
-                minLength={8}
+                minLength={passwordMinLength}
                 className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               <p className="mt-2 text-xs text-muted-foreground">
-                {t("register.password_hint")}
+                {t("register.password_hint", { minLength: passwordMinLength })}
               </p>
             </div>
           </div>

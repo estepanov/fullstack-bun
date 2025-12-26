@@ -26,6 +26,7 @@ const initPromise = i18nInstance
     supportedLngs: LANGUAGES.map((lang) => lang.code),
     defaultNS: "common",
     ns: [
+      "catchall",
       "common",
       "color_mode_toggle",
       "footer",
