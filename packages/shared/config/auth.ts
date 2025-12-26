@@ -32,6 +32,28 @@ export type AuthConfig = {
       enabled: boolean;
     };
   };
+  accountLinking: {
+    /**
+     * Enable linking multiple auth providers to a single user.
+     */
+    enabled: boolean;
+    /**
+     * Allow linking accounts with different emails.
+     */
+    allowDifferentEmails: boolean;
+    /**
+     * Providers that are allowed to link without verified emails.
+     */
+    trustedProviders: string[];
+    /**
+     * Update user name/image when a new account is linked.
+     */
+    updateUserInfoOnLink: boolean;
+    /**
+     * Allow unlinking the last remaining account.
+     */
+    allowUnlinkingAll: boolean;
+  };
 };
 
 export const AUTH_CONFIG: AuthConfig = {
@@ -45,7 +67,14 @@ export const AUTH_CONFIG: AuthConfig = {
   },
   social: {
     github: {
-      enabled: false,
+      enabled: true, // still requires github specific env vars
     },
+  },
+  accountLinking: {
+    enabled: true,
+    allowDifferentEmails: false,
+    trustedProviders: [],
+    updateUserInfoOnLink: false,
+    allowUnlinkingAll: false,
   },
 } as const;

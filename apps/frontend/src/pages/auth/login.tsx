@@ -1,5 +1,5 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
-import { signIn, useSession } from "@/lib/auth-client";
+import { authClient, signIn, useSession } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -9,6 +9,8 @@ import { AUTH_CONFIG } from "shared/config/auth";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [resetStatus, setResetStatus] = useState<"idle" | "sending" | "sent">("idle");
+  const [resetMessage, setResetMessage] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { data: session, isPending } = useSession();
@@ -50,6 +52,38 @@ export default function LoginPage() {
         },
       },
     );
+  };
+
+  const handlePasswordReset = async () => {
+    if (!email) {
+      setResetStatus("idle");
+      setResetMessage(t("login.reset_link_missing_email"));
+      return;
+    }
+
+    setResetStatus("sending");
+    setResetMessage("");
+
+    try {
+      if (typeof window === "undefined") {
+        throw new Error("Window not available");
+      }
+      const { error: resetError } = await authClient.requestPasswordReset({
+        email,
+        redirectTo: `${window.location.origin}/auth/reset-password`,
+      });
+
+      if (resetError) {
+        throw new Error(resetError.message || t("login.reset_link_error"));
+      }
+
+      setResetStatus("sent");
+      setResetMessage(t("login.reset_link_sent", { email }));
+    } catch (resetError) {
+      console.error(resetError);
+      setResetStatus("idle");
+      setResetMessage(t("login.reset_link_error"));
+    }
   };
 
   if (isPending) {
@@ -118,6 +152,30 @@ export default function LoginPage() {
                     required
                     className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
+                  <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>{t("login.forgot_password")}</span>
+                    <button
+                      type="button"
+                      onClick={handlePasswordReset}
+                      disabled={resetStatus === "sending"}
+                      className="font-semibold text-primary hover:text-primary/80 disabled:opacity-60"
+                    >
+                      {resetStatus === "sending"
+                        ? t("login.reset_link_sending")
+                        : t("login.reset_link")}
+                    </button>
+                  </div>
+                  {resetMessage && (
+                    <p
+                      className={`mt-2 text-xs ${
+                        resetStatus === "sent"
+                          ? "text-emerald-600 dark:text-emerald-300"
+                          : "text-destructive"
+                      }`}
+                    >
+                      {resetMessage}
+                    </p>
+                  )}
                 </div>
               </div>
 

@@ -13,7 +13,11 @@ import { validator } from "validation-better-auth";
 import { db } from "../db/client";
 import { account, session, user, verification } from "../db/schema";
 import { env } from "../env";
-import { sendMagicLinkEmail, sendVerificationEmail } from "../utils/email";
+import {
+  sendMagicLinkEmail,
+  sendResetPasswordEmail,
+  sendVerificationEmail,
+} from "../utils/email";
 
 // Define resources and actions for access control
 const statement = {
@@ -109,11 +113,17 @@ export const auth = betterAuth({
   baseURL: env.FE_BASE_URL,
   basePath: "/auth",
   trustedOrigins: env.CORS_ALLOWLISTED_ORIGINS,
+  account: {
+    accountLinking: AUTH_CONFIG.accountLinking,
+  },
   emailAndPassword: {
     enabled: AUTH_CONFIG.emailPassword.enabled,
     requireEmailVerification: true,
     minPasswordLength: AUTH_CONFIG.emailPassword.minPasswordLength,
     maxPasswordLength: AUTH_CONFIG.emailPassword.maxPasswordLength,
+    sendResetPassword: async ({ user, url }) => {
+      await sendResetPasswordEmail(user.email, url);
+    },
   },
   emailVerification: {
     sendOnSignUp: true,
@@ -130,7 +140,10 @@ export const auth = betterAuth({
     github: {
       clientId: env.GITHUB_CLIENT_ID || "",
       clientSecret: env.GITHUB_CLIENT_SECRET || "",
-      enabled: AUTH_CONFIG.social.github.enabled && !!env.GITHUB_CLIENT_ID,
+      enabled:
+        AUTH_CONFIG.social.github.enabled &&
+        !!env.GITHUB_CLIENT_ID &&
+        !!env.GITHUB_CLIENT_SECRET,
     },
   },
 });

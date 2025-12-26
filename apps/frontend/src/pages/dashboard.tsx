@@ -7,7 +7,7 @@ import { getExtendedUser } from "@/types/user";
 import { useQueryClient } from "@tanstack/react-query";
 import { getSessionUserRole } from "frontend-common/auth";
 import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
 import { USERNAME_CONFIG } from "shared/config/user-profile";
 
@@ -21,6 +21,15 @@ type SessionRecord = {
   ipAddress?: string | null;
   userAgent?: string | null;
   impersonatedBy?: string | null;
+};
+type AccountRecord = {
+  id: string;
+  providerId: string;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  accountId: string;
+  userId: string;
+  scopes: string[];
 };
 
 const parseErrorMessage = (error: unknown, fallback: string) => {
@@ -44,11 +53,18 @@ const formatDateTime = (value?: string | Date | null) => {
   return date.toLocaleString();
 };
 
+const formatProviderLabel = (providerId: string) => {
+  return providerId.replace(/[-_]/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
+};
+
 function NameEditor({
   name,
   onUpdated,
 }: { name?: string | null; onUpdated: UpdateCallback }) {
   const { t } = useTranslation("auth");
+  const inputId = "dashboard-name";
+  const errorId = "dashboard-name-error";
+  const labelId = "dashboard-name-label";
   const [editing, setEditing] = useState(false);
   const [nameValue, setNameValue] = useState("");
   const [nameError, setNameError] = useState("");
@@ -91,13 +107,17 @@ function NameEditor({
 
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+      <dt
+        id={labelId}
+        className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+      >
         {t("dashboard.name_label")}
       </dt>
       <dd className="mt-1 text-sm text-foreground">
         {editing ? (
           <div className="space-y-2">
             <input
+              id={inputId}
               type="text"
               value={nameValue}
               onChange={(event) => {
@@ -108,9 +128,18 @@ function NameEditor({
               }}
               className="block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
               disabled={nameSaving}
+              aria-invalid={nameError ? true : undefined}
+              aria-labelledby={labelId}
+              aria-describedby={nameError ? errorId : undefined}
             />
             {nameError && (
-              <p className="text-xs font-medium text-destructive">{nameError}</p>
+              <p
+                id={errorId}
+                role="alert"
+                className="text-xs font-medium text-destructive"
+              >
+                {nameError}
+              </p>
             )}
             <div className="flex items-center gap-2">
               <button
@@ -160,6 +189,10 @@ function UsernameEditor({
   onUpdated: UpdateCallback;
 }) {
   const { t } = useTranslation("auth");
+  const inputId = "dashboard-username";
+  const statusId = "dashboard-username-status";
+  const errorId = "dashboard-username-error";
+  const labelId = "dashboard-username-label";
   const [editing, setEditing] = useState(false);
   const [usernameValue, setUsernameValue] = useState("");
   const [usernameError, setUsernameError] = useState("");
@@ -288,13 +321,17 @@ function UsernameEditor({
 
   return (
     <div>
-      <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+      <dt
+        id={labelId}
+        className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+      >
         {t("dashboard.user_username_label")}
       </dt>
       <dd className="mt-1 text-sm text-foreground">
         {editing ? (
           <div className="space-y-2">
             <input
+              id={inputId}
               type="text"
               value={usernameValue}
               onChange={(event) => {
@@ -308,9 +345,19 @@ function UsernameEditor({
               pattern={USERNAME_CONFIG.pattern.source}
               className="block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
               disabled={usernameSaving}
+              aria-invalid={usernameError ? true : undefined}
+              aria-labelledby={labelId}
+              aria-describedby={
+                [usernameStatusMessage ? statusId : "", usernameError ? errorId : ""]
+                  .filter(Boolean)
+                  .join(" ") || undefined
+              }
             />
             {usernameStatusMessage && (
               <p
+                id={statusId}
+                role={usernameAvailability.checking ? "status" : undefined}
+                aria-live={usernameAvailability.checking ? "polite" : undefined}
                 className={`text-xs ${
                   usernameAvailability.checking
                     ? "text-muted-foreground"
@@ -325,7 +372,13 @@ function UsernameEditor({
               </p>
             )}
             {usernameError && (
-              <p className="text-xs font-medium text-destructive">{usernameError}</p>
+              <p
+                id={errorId}
+                role="alert"
+                className="text-xs font-medium text-destructive"
+              >
+                {usernameError}
+              </p>
             )}
             <div className="flex items-center gap-2">
               <button
@@ -367,9 +420,19 @@ function UsernameEditor({
   );
 }
 
-function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
+function PasswordSection({
+  hasPassword,
+  email,
+}: { hasPassword: boolean; email?: string }) {
   const { t } = useTranslation("auth");
   const passwordMinLength = AUTH_CONFIG.emailPassword.minPasswordLength;
+  const currentPasswordId = "dashboard-current-password";
+  const newPasswordId = "dashboard-new-password";
+  const confirmPasswordId = "dashboard-confirm-password";
+  const errorId = "dashboard-password-error";
+  const successId = "dashboard-password-success";
+  const panelId = "dashboard-password-panel";
+  const [sentPasswordResetEmail, setSentPasswordResetEmail] = useState(false);
   const [editingPassword, setEditingPassword] = useState(false);
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -379,6 +442,8 @@ function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
   const [passwordSuccess, setPasswordSuccess] = useState("");
   const [passwordSaving, setPasswordSaving] = useState(false);
   const queryClient = useQueryClient();
+  const resetRedirectTo =
+    typeof window === "undefined" ? "" : `${window.location.origin}/auth/reset-password`;
 
   const handleSavePassword = async () => {
     setPasswordError("");
@@ -478,21 +543,27 @@ function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
               setPasswordSuccess("");
             }}
             className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+            aria-expanded={editingPassword}
+            aria-controls={panelId}
           >
             {t("dashboard.edit_button")}
           </button>
         </div>
         {editingPassword && (
-          <div className="space-y-3 rounded-xl border border-border/60 bg-background/70 p-4">
+          <div
+            id={panelId}
+            className="space-y-3 rounded-xl border border-border/60 bg-background/70 p-4"
+          >
             {hasPassword && (
               <div>
                 <label
-                  htmlFor="current-password"
+                  htmlFor={currentPasswordId}
                   className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
                 >
                   {t("dashboard.password_current_label")}
                 </label>
                 <input
+                  id={currentPasswordId}
                   name="current-password"
                   type="password"
                   value={currentPassword}
@@ -506,18 +577,66 @@ function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
                   className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   disabled={passwordSaving}
                   required
+                  aria-invalid={passwordError ? true : undefined}
+                  aria-describedby={passwordError ? errorId : undefined}
                 />
+                {email && (
+                  <p className="text-xs mt-2 text-muted-foreground">
+                    {sentPasswordResetEmail ? (
+                      <>
+                        <Trans
+                          i18nKey="dashboard.password_current_forgot_email_sent"
+                          ns="auth"
+                          values={{ email }}
+                          components={{
+                            address: <span className="font-semibold" />,
+                          }}
+                        />
+                      </>
+                    ) : (
+                      <>
+                        <Trans
+                          i18nKey="dashboard.password_current_forgot"
+                          ns="auth"
+                          components={{
+                            forgotLink: (
+                              <button
+                                type="button"
+                                onClick={async () => {
+                                  try {
+                                    if (!resetRedirectTo) {
+                                      return;
+                                    }
+                                    await authClient.requestPasswordReset({
+                                      email,
+                                      redirectTo: resetRedirectTo,
+                                    });
+                                    setSentPasswordResetEmail(true);
+                                  } catch (error) {
+                                    console.error(error);
+                                  }
+                                }}
+                                className="font-semibold text-primary hover:underline dark:text-primary"
+                              />
+                            ),
+                          }}
+                        />
+                      </>
+                    )}
+                  </p>
+                )}
               </div>
             )}
 
             <div>
               <label
-                htmlFor="new-password"
+                htmlFor={newPasswordId}
                 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
               >
                 {t("dashboard.password_new_label")}
               </label>
               <input
+                id={newPasswordId}
                 name="new-password"
                 type="password"
                 value={newPassword}
@@ -530,16 +649,22 @@ function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
                 placeholder={t("dashboard.password_new_placeholder")}
                 className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                 disabled={passwordSaving}
+                aria-invalid={passwordError ? true : undefined}
+                aria-describedby={passwordError ? errorId : undefined}
               />
             </div>
+            <p className="text-xs text-muted-foreground">
+              {t("dashboard.password_hint", { minLength: passwordMinLength })}
+            </p>
             <div>
               <label
-                htmlFor="confirm-new-password"
+                htmlFor={confirmPasswordId}
                 className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
               >
                 {t("dashboard.password_confirm_label")}
               </label>
               <input
+                id={confirmPasswordId}
                 name="confirm-new-password"
                 type="password"
                 value={confirmPassword}
@@ -552,8 +677,11 @@ function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
                 placeholder={t("dashboard.password_confirm_placeholder")}
                 className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                 disabled={passwordSaving}
+                aria-invalid={passwordError ? true : undefined}
+                aria-describedby={passwordError ? errorId : undefined}
               />
             </div>
+
             {hasPassword && (
               <div className="flex items-center gap-2 text-sm text-foreground">
                 <input
@@ -572,14 +700,24 @@ function PasswordSection({ hasPassword }: { hasPassword: boolean }) {
                 </label>
               </div>
             )}
-            <p className="text-xs text-muted-foreground">
-              {t("dashboard.password_hint", { minLength: passwordMinLength })}
-            </p>
             {passwordError && (
-              <p className="text-xs font-medium text-destructive">{passwordError}</p>
+              <p
+                id={errorId}
+                role="alert"
+                className="text-xs font-medium text-destructive"
+              >
+                {passwordError}
+              </p>
             )}
             {passwordSuccess && (
-              <p className="text-xs font-medium text-emerald-600">{passwordSuccess}</p>
+              <p
+                id={successId}
+                role="status"
+                aria-live="polite"
+                className="text-xs font-medium text-emerald-600"
+              >
+                {passwordSuccess}
+              </p>
             )}
             <div className="flex items-center gap-2">
               <button
@@ -761,6 +899,145 @@ function SessionsSection() {
   );
 }
 
+function AccountsSection() {
+  const { t } = useTranslation("auth");
+  const [accounts, setAccounts] = useState<AccountRecord[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [unlinkingId, setUnlinkingId] = useState<string | null>(null);
+
+  const sortedAccounts = useMemo(() => {
+    return [...accounts]
+      .filter((acc) => acc.providerId !== "credential")
+      .sort((a, b) => {
+        const aCreated = new Date(a.createdAt).getTime();
+        const bCreated = new Date(b.createdAt).getTime();
+        return bCreated - aCreated;
+      });
+  }, [accounts]);
+
+  const loadAccounts = async () => {
+    setLoading(true);
+    setError("");
+    const response = await authClient.listAccounts();
+    if (response.error) {
+      setError(parseErrorMessage(response.error, t("dashboard.accounts_load_error")));
+      setAccounts([]);
+    } else {
+      setAccounts((response.data as AccountRecord[]) ?? []);
+    }
+    setLoading(false);
+  };
+
+  const handleUnlink = async (account: AccountRecord) => {
+    setUnlinkingId(account.id);
+    setError("");
+    const response = await authClient.unlinkAccount({
+      providerId: account.providerId,
+      accountId: account.accountId,
+    });
+    if (response.error) {
+      setError(parseErrorMessage(response.error, t("dashboard.accounts_unlink_error")));
+    } else {
+      await loadAccounts();
+    }
+    setUnlinkingId(null);
+  };
+
+  useEffect(() => {
+    void loadAccounts();
+  }, []);
+
+  return (
+    <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
+      <div>
+        <h2 className="text-xl font-semibold">{t("dashboard.accounts_title")}</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          {t("dashboard.accounts_description")}
+        </p>
+      </div>
+      {error && <p className="mt-4 text-sm font-medium text-destructive">{error}</p>}
+      <div className="mt-6 space-y-4">
+        {loading ? (
+          <p className="text-sm text-muted-foreground">
+            {t("dashboard.accounts_loading")}
+          </p>
+        ) : sortedAccounts.length === 0 ? (
+          <p className="text-sm italic text-muted-foreground">
+            {t("dashboard.accounts_empty")}
+          </p>
+        ) : (
+          sortedAccounts.map((account) => {
+            const isUnlinking = unlinkingId === account.id;
+            return (
+              <div
+                key={account.id}
+                className="rounded-xl border border-border/70 bg-background/80 p-4 shadow-sm"
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                      {t("dashboard.accounts_provider_label")}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">
+                      {formatProviderLabel(account.providerId)}
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleUnlink(account)}
+                    className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+                    disabled={isUnlinking}
+                  >
+                    {isUnlinking
+                      ? t("dashboard.accounts_unlinking_button")
+                      : t("dashboard.accounts_unlink_button")}
+                  </button>
+                </div>
+                <div className="mt-4 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                      {t("dashboard.accounts_account_id_label")}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground break-words">
+                      {account.accountId}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                      {t("dashboard.accounts_linked_label")}
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">
+                      {formatDateTime(account.createdAt)}
+                    </p>
+                  </div>
+                  {account.scopes?.length ? (
+                    <div className="sm:col-span-2">
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                        {t("dashboard.accounts_scopes_label")}
+                      </p>
+                      <div className="mt-2 flex flex-wrap gap-2">
+                        {account.scopes.map((scope) => (
+                          <span
+                            key={scope}
+                            className="rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground"
+                          >
+                            {scope}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+    </div>
+  );
+}
+
 function DashboardContent() {
   const { data: session, refetch } = useSession();
   const { data: userProfile } = useGetUserProfileQuery();
@@ -831,8 +1108,12 @@ function DashboardContent() {
             </dl>
           </div>
 
-          <PasswordSection hasPassword={!!userProfile?.hasPassword} />
+          <PasswordSection
+            email={userProfile?.email}
+            hasPassword={!!userProfile?.hasPassword}
+          />
           <SessionsSection />
+          {AUTH_CONFIG.accountLinking.enabled && <AccountsSection />}
 
           <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
             <h2 className="text-xl font-semibold">{t("dashboard.actions_title")}</h2>

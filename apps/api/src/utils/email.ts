@@ -199,3 +199,58 @@ export async function sendMagicLinkEmail(
     throw error;
   }
 }
+
+/**
+ * Send reset password email
+ */
+export async function sendResetPasswordEmail(
+  email: string,
+  resetPasswordUrl: string,
+): Promise<void> {
+  const transporter = createTransporter();
+
+  if (!transporter) {
+    console.error(
+      "Cannot send reset password email: SMTP not configured. Please set SMTP_* environment variables.",
+    );
+    // In development, log the reset password URL instead
+    console.log(`\n🔒 Reset Password URL for ${email}:\n${resetPasswordUrl}\n`);
+    return;
+  }
+
+  const smtpFrom = env.SMTP_FROM;
+
+  try {
+    await transporter.sendMail({
+      from: smtpFrom,
+      to: email,
+      subject: formatSubject("Reset your password"),
+      text: renderEmailText({
+        title: "Reset Your Password",
+        intro:
+          "We received a request to reset your password. Click the link below to continue.",
+        actionText: "Reset Password",
+        actionUrl: resetPasswordUrl,
+        footer: "If you didn't request a password reset, you can safely ignore this email.",
+        accentColor: "#dc2626",
+      }),
+      html: renderEmailTemplate({
+        title: "Reset Your Password",
+        intro:
+          "We received a request to reset your password. Click the button below to continue.",
+        actionText: "Reset Password",
+        actionUrl: resetPasswordUrl,
+        footer: "If you didn't request a password reset, you can safely ignore this email.",
+        accentColor: "#dc2626",
+      }),
+    });
+
+    console.log(`✅ Reset password email sent to ${email}`);
+  } catch (error) {
+    console.error("Failed to send reset password email:", error);
+    if (isDevelopmentEnv()) {
+      console.log(`\n🔒 Reset Password URL for ${email}:\n${resetPasswordUrl}\n`);
+    }
+    throw error;
+  }
+}
