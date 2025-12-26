@@ -2,9 +2,10 @@ import { betterAuth } from "better-auth";
 import { emailHarmony } from "better-auth-harmony";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createFieldAttribute } from "better-auth/db";
-import { admin, username } from "better-auth/plugins";
+import { admin, lastLoginMethod, username } from "better-auth/plugins";
 import { magicLink } from "better-auth/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
+import { LoginMethod } from "shared/auth/login-method";
 import { completeProfileSchema } from "shared/auth/user-profile";
 import { usernameField } from "shared/auth/user-profile-fields";
 import { AUTH_CONFIG } from "shared/config/auth";
@@ -65,6 +66,16 @@ const plugins = [
     },
   }),
   emailHarmony(),
+  lastLoginMethod({
+    storeInDatabase: true,
+    customResolveMethod: (ctx) => {
+      if (ctx.path === "/magic-link/verify") {
+        return LoginMethod.MAGIC_LINK;
+      }
+      // Return null to use default resolution
+      return null;
+    },
+  }),
   validator([
     {
       path: "/update-user",

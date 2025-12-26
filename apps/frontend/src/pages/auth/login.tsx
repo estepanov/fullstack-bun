@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
 import { Link } from "react-router";
+import { LoginMethod } from "shared/auth/login-method";
 import { AUTH_CONFIG } from "shared/config/auth";
 
 export default function LoginPage() {
@@ -16,9 +17,11 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activeSocialProvider, setActiveSocialProvider] = useState<string | null>(null);
+  const [lastUsedMethod, setLastUsedMethod] = useState<string | null>(null);
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
+  const lastUsedBadge = t("login.last_used_badge");
   const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
   const magicLinkEnabled = AUTH_CONFIG.magicLink.enabled;
   const githubEnabled = AUTH_CONFIG.social.github.enabled;
@@ -39,6 +42,11 @@ export default function LoginPage() {
       navigate("/auth/magic-link", { replace: true });
     }
   }, [isPending, magicLinkEnabled, navigate, passwordsEnabled, session, socialEnabled]);
+
+  useEffect(() => {
+    const method = authClient.getLastUsedLoginMethod();
+    setLastUsedMethod(method || null);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -200,9 +208,16 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+                className={`w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 ${
+                  lastUsedMethod === "email" ? "ring-2 ring-primary/60" : ""
+                }`}
               >
-                {isLoading ? t("login.submitting_button") : t("login.submit_button")}
+                <span className="flex items-center justify-center gap-2">
+                  {isLoading ? t("login.submitting_button") : t("login.submit_button")}
+                  {lastUsedMethod === "email" && !isLoading && (
+                    <span className="text-xs opacity-90">{lastUsedBadge}</span>
+                  )}
+                </span>
               </button>
 
               {showAltDivider && (
@@ -221,9 +236,14 @@ export default function LoginPage() {
           {magicLinkEnabled && (
             <Link
               to="/auth/magic-link"
-              className="block w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
+                className={`flex items-center justify-center gap-2 w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors ${
+                lastUsedMethod === LoginMethod.MAGIC_LINK ? "bg-primary/10 border-primary/30" : ""
+              }`}
             >
               {t("login.magic_link_link")}
+              {lastUsedMethod === LoginMethod.MAGIC_LINK && (
+                <span className="text-xs text-primary">{lastUsedBadge}</span>
+              )}
             </Link>
           )}
 
@@ -233,6 +253,8 @@ export default function LoginPage() {
               loadingLabel={t("login.social_submitting")}
               isLoading={activeSocialProvider === "github"}
               isDisabled={activeSocialProvider !== null}
+              isLastUsed={lastUsedMethod === "github"}
+              lastUsedLabel={lastUsedBadge}
               onClick={handleGitHubLogin}
             />
           )}

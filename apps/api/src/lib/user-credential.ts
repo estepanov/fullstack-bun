@@ -1,7 +1,7 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
+import { AUTH_CONFIG } from "shared/config/auth";
 import { db } from "../db/client";
 import { account } from "../db/schema";
-import { AUTH_CONFIG } from "shared/config/auth";
 
 /**
  * Check if a user has a password-based credential account.
@@ -17,7 +17,7 @@ export async function checkUserHasPassword(userId: string): Promise<boolean> {
   }
 
   const credentialAccount = await db.query.account.findFirst({
-    where: eq(account.userId, userId),
+    where: and(eq(account.userId, userId), eq(account.providerId, "credential")),
     columns: {
       providerId: true,
     },
