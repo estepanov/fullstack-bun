@@ -111,7 +111,7 @@ export const auth = betterAuth({
   },
   plugins,
   baseURL: env.API_BASE_URL,
-  basePath: "/auth",
+  basePath: AUTH_CONFIG.basePath,
   trustedOrigins: env.CORS_ALLOWLISTED_ORIGINS,
   account: {
     accountLinking: AUTH_CONFIG.accountLinking,

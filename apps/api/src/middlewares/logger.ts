@@ -1,5 +1,6 @@
 import { createMiddleware } from "hono/factory";
 import { HTTPException } from "hono/http-exception";
+import { AUTH_CONFIG } from "shared/config/auth";
 import { type AppLogger, appLogger } from "../utils/logger";
 
 export const requestLogFormat = ({
@@ -28,7 +29,7 @@ export const loggerMiddleware = () =>
     const sessionId = c.req.header("x-session-id");
     const isOptionsReq = c.req.method === "OPTIONS";
     const isWebSocketUpgrade = c.req.header("upgrade")?.toLowerCase() === "websocket";
-    const isAuthCallback = c.req.path.includes("/auth/callback/");
+    const isAuthCallback = c.req.path.includes(`${AUTH_CONFIG.basePath}/callback/`);
     const fallbackId = () => `ws-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
     // OPTIONS requests (CORS preflight) and WS upgrades won't include these headers.

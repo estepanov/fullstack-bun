@@ -1,11 +1,12 @@
 import { adminClient, magicLinkClient, usernameClient } from "better-auth/client/plugins";
 import { createAuthClient } from "better-auth/react";
+import { AUTH_CONFIG } from "shared/config/auth";
 import { SessionStore } from "./session-utils";
 
 export function createAuthClientInstance(baseURL: string) {
   const authClient = createAuthClient({
     baseURL,
-    basePath: "/auth",
+    basePath: AUTH_CONFIG.basePath,
     plugins: [adminClient(), magicLinkClient(), usernameClient()],
     fetchOptions: {
       onRequest: (ctx) => {
