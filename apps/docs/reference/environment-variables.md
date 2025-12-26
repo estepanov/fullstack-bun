@@ -117,6 +117,14 @@ BETTER_AUTH_SECRET="your-secret-key-here"
 
 Keep this value secure and never commit it to version control.
 
+### `API_BASE_URL`
+
+**Required.** The API base URL (used for OAuth callbacks).
+
+```txt
+API_BASE_URL="http://localhost:3001"
+```
+
 ### `FE_BASE_URL`
 
 **Required.** The URL where your FE is hosted. Used for generating email verification links.

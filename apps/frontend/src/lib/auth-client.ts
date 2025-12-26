@@ -13,9 +13,8 @@ export const {
   sendVerificationEmail,
 } = authClient;
 
-// Wrapper for signIn that handles email verification
-export const signIn = {
-  ...originalSignIn,
+// Wrapper for signIn that handles email verification while keeping other methods.
+export const signIn = Object.assign(originalSignIn, {
   email: async (
     credentials: { email: string; password: string },
     options?: {
@@ -47,6 +46,6 @@ export const signIn = {
       },
     });
   },
-};
+});
 
 export type FESession = NonNullable<ReturnType<typeof useSession>["data"]>;

@@ -1,5 +1,7 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
+import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient } from "@/lib/auth-client";
+import { signInWithSocialProvider } from "@/lib/social-auth";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router";
@@ -9,10 +11,12 @@ export default function MagicLinkPage() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [activeSocialProvider, setActiveSocialProvider] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const [searchParams] = useSearchParams();
   const { t } = useTranslation("auth");
   const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
+  const githubEnabled = AUTH_CONFIG.social.github.enabled;
   const socialEnabled = Object.values(AUTH_CONFIG.social).some(
     (provider) => provider.enabled,
   );
@@ -46,6 +50,19 @@ export default function MagicLinkPage() {
         },
       },
     );
+  };
+
+  const handleGitHubLogin = async () => {
+    setError("");
+    setActiveSocialProvider("github");
+    try {
+      await signInWithSocialProvider("github");
+    } catch (socialError) {
+      console.error("GitHub login failed:", socialError);
+      setError(t("magic_link.social_error"));
+    } finally {
+      setActiveSocialProvider(null);
+    }
   };
 
   return (
@@ -120,6 +137,16 @@ export default function MagicLinkPage() {
                 <span className="bg-card px-2 text-muted-foreground">or</span>
               </div>
             </div>
+          )}
+
+          {githubEnabled && (
+            <SocialAuthButton
+              label={t("magic_link.github_button")}
+              loadingLabel={t("magic_link.social_submitting")}
+              isLoading={activeSocialProvider === "github"}
+              isDisabled={activeSocialProvider !== null}
+              onClick={handleGitHubLogin}
+            />
           )}
 
           {passwordsEnabled && (

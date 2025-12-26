@@ -101,7 +101,7 @@ To keep shared authentication configuration working across apps:
 
 - Ensure the consuming app depends on `shared` and `frontend-common` workspace packages.
 - Configure `VITE_API_BASE_URL` in frontend/admin so the shared client points at the API.
-- Keep API `FE_BASE_URL` and `CORS_ALLOWLISTED_ORIGINS` aligned with the frontend URL.
+- Keep API `API_BASE_URL` aligned with the API URL, and `FE_BASE_URL`/`CORS_ALLOWLISTED_ORIGINS` aligned with the frontend URL.
 
 ## API Endpoints
 

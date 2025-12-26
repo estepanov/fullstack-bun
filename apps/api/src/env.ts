@@ -24,6 +24,7 @@ export const env = createEnv({
 
     // Better Auth
     BETTER_AUTH_SECRET: z.string().min(32),
+    API_BASE_URL: z.string().min(4),
     FE_BASE_URL: z.string().min(4),
 
     // Email (SMTP) - Optional

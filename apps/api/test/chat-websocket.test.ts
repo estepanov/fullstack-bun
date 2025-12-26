@@ -2,6 +2,7 @@ const ensureTestEnv = () => {
   process.env.NODE_ENV ||= "test";
   process.env.PORT ||= "0";
   process.env.CORS_ALLOWLISTED_ORIGINS ||= "http://localhost:5173";
+  process.env.API_BASE_URL ||= "http://localhost:3001";
   process.env.FE_BASE_URL ||= "http://localhost:5173";
   process.env.BETTER_AUTH_SECRET ||=
     "test-secret-test-secret-test-secret-123";
