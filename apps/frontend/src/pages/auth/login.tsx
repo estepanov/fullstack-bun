@@ -1,5 +1,7 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
+import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient, signIn, useSession } from "@/lib/auth-client";
+import { signInWithSocialProvider } from "@/lib/social-auth";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -13,14 +15,17 @@ export default function LoginPage() {
   const [resetMessage, setResetMessage] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [activeSocialProvider, setActiveSocialProvider] = useState<string | null>(null);
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
   const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
   const magicLinkEnabled = AUTH_CONFIG.magicLink.enabled;
+  const githubEnabled = AUTH_CONFIG.social.github.enabled;
   const socialEnabled = Object.values(AUTH_CONFIG.social).some(
     (provider) => provider.enabled,
   );
+  const showAltDivider = passwordsEnabled && (magicLinkEnabled || socialEnabled);
 
   useEffect(() => {
     if (!isPending && session) {
@@ -52,6 +57,19 @@ export default function LoginPage() {
         },
       },
     );
+  };
+
+  const handleGitHubLogin = async () => {
+    setError("");
+    setActiveSocialProvider("github");
+    try {
+      await signInWithSocialProvider("github");
+    } catch (socialError) {
+      console.error("GitHub login failed:", socialError);
+      setError(t("login.social_error"));
+    } finally {
+      setActiveSocialProvider(null);
+    }
   };
 
   const handlePasswordReset = async () => {
@@ -109,7 +127,7 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-          {error && passwordsEnabled && (
+          {error && (
             <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
               <p className="text-sm font-medium text-destructive">{error}</p>
             </div>
@@ -187,7 +205,7 @@ export default function LoginPage() {
                 {isLoading ? t("login.submitting_button") : t("login.submit_button")}
               </button>
 
-              {magicLinkEnabled && (
+              {showAltDivider && (
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
                     <div className="w-full border-t border-border/50" />
@@ -207,6 +225,16 @@ export default function LoginPage() {
             >
               {t("login.magic_link_link")}
             </Link>
+          )}
+
+          {githubEnabled && (
+            <SocialAuthButton
+              label={t("login.github_button")}
+              loadingLabel={t("login.social_submitting")}
+              isLoading={activeSocialProvider === "github"}
+              isDisabled={activeSocialProvider !== null}
+              onClick={handleGitHubLogin}
+            />
           )}
 
           {passwordsEnabled && (

@@ -28,10 +28,16 @@ export const loggerMiddleware = () =>
     const sessionId = c.req.header("x-session-id");
     const isOptionsReq = c.req.method === "OPTIONS";
     const isWebSocketUpgrade = c.req.header("upgrade")?.toLowerCase() === "websocket";
+    const isAuthCallback = c.req.path.includes("/auth/callback/");
     const fallbackId = () => `ws-${Date.now()}-${Math.random().toString(16).slice(2)}`;
 
     // OPTIONS requests (CORS preflight) and WS upgrades won't include these headers.
-    if (!isOptionsReq && !isWebSocketUpgrade && (!requestId || !sessionId)) {
+    if (
+      !isAuthCallback &&
+      !isOptionsReq &&
+      !isWebSocketUpgrade &&
+      (!requestId || !sessionId)
+    ) {
       throw new HTTPException(400, { message: "Missing required headers" });
     }
     const resolvedRequestId =

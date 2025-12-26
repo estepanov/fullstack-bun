@@ -47,6 +47,7 @@ Add the following to `apps/api/.env`:
 ```txt
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/mydatabase"
 BETTER_AUTH_SECRET="your-generated-secret-here"
+API_BASE_URL="http://localhost:3001"
 FE_BASE_URL="http://localhost:5173"
 CORS_ALLOWLISTED_ORIGINS="http://localhost:5173"
 PORT="3001"

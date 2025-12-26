@@ -63,6 +63,24 @@ const renderEmailTemplate = ({
   </html>
 `;
 
+const mapEmailActionUrl = (actionUrl: string) => {
+  try {
+    const apiBase = new URL(env.API_BASE_URL);
+    const frontendBase = new URL(env.FE_BASE_URL);
+    const parsedUrl = new URL(actionUrl);
+
+    if (parsedUrl.origin !== apiBase.origin) {
+      return actionUrl;
+    }
+
+    parsedUrl.protocol = frontendBase.protocol;
+    parsedUrl.host = frontendBase.host;
+    return parsedUrl.toString();
+  } catch {
+    return actionUrl;
+  }
+};
+
 // Create reusable transporter
 const createTransporter = () => {
   const smtpHost = env.SMTP_HOST;
@@ -94,6 +112,7 @@ export async function sendVerificationEmail(
   email: string,
   verificationUrl: string,
 ): Promise<void> {
+  const actionUrl = mapEmailActionUrl(verificationUrl);
   const transporter = createTransporter();
 
   if (!transporter) {
@@ -101,7 +120,7 @@ export async function sendVerificationEmail(
       "Cannot send verification email: SMTP not configured. Please set SMTP_* environment variables.",
     );
     // In development, log the verification URL instead
-    console.log(`\n📧 Email Verification URL for ${email}:\n${verificationUrl}\n`);
+    console.log(`\n📧 Email Verification URL for ${email}:\n${actionUrl}\n`);
     return;
   }
 
@@ -117,7 +136,7 @@ export async function sendVerificationEmail(
         intro:
           "Thank you for signing up! Please verify your email address by clicking the link below:",
         actionText: "Verify Email",
-        actionUrl: verificationUrl,
+        actionUrl,
         footer:
           "If you didn't sign up for this account, you can safely ignore this email.",
         accentColor: "#007bff",
@@ -127,7 +146,7 @@ export async function sendVerificationEmail(
         intro:
           "Thank you for signing up! Please verify your email address by clicking the button below:",
         actionText: "Verify Email",
-        actionUrl: verificationUrl,
+        actionUrl,
         footer:
           "If you didn't sign up for this account, you can safely ignore this email.",
         accentColor: "#007bff",
@@ -139,7 +158,7 @@ export async function sendVerificationEmail(
     console.error("Failed to send verification email:", error);
     // In development, log the URL as fallback
     if (isDevelopmentEnv()) {
-      console.log(`\n📧 Email Verification URL for ${email}:\n${verificationUrl}\n`);
+      console.log(`\n📧 Email Verification URL for ${email}:\n${actionUrl}\n`);
     }
     throw error;
   }
@@ -152,6 +171,7 @@ export async function sendMagicLinkEmail(
   email: string,
   magicLinkUrl: string,
 ): Promise<void> {
+  const actionUrl = mapEmailActionUrl(magicLinkUrl);
   const transporter = createTransporter();
 
   if (!transporter) {
@@ -159,7 +179,7 @@ export async function sendMagicLinkEmail(
       "Cannot send magic link email: SMTP not configured. Please set SMTP_* environment variables.",
     );
     // In development, log the magic link URL instead
-    console.log(`\n🔑 Magic Link URL for ${email}:\n${magicLinkUrl}\n`);
+    console.log(`\n🔑 Magic Link URL for ${email}:\n${actionUrl}\n`);
     return;
   }
 
@@ -175,7 +195,7 @@ export async function sendMagicLinkEmail(
         intro:
           "Click the link below to sign in. This link will expire shortly for your security.",
         actionText: "Sign In",
-        actionUrl: magicLinkUrl,
+        actionUrl,
         footer: "If you didn't request this email, you can safely ignore it.",
         accentColor: "#0f766e",
       }),
@@ -184,7 +204,7 @@ export async function sendMagicLinkEmail(
         intro:
           "Click the button below to sign in. This link will expire shortly for your security.",
         actionText: "Sign In",
-        actionUrl: magicLinkUrl,
+        actionUrl,
         footer: "If you didn't request this email, you can safely ignore it.",
         accentColor: "#0f766e",
       }),
@@ -194,7 +214,7 @@ export async function sendMagicLinkEmail(
   } catch (error) {
     console.error("Failed to send magic link email:", error);
     if (isDevelopmentEnv()) {
-      console.log(`\n🔑 Magic Link URL for ${email}:\n${magicLinkUrl}\n`);
+      console.log(`\n🔑 Magic Link URL for ${email}:\n${actionUrl}\n`);
     }
     throw error;
   }
@@ -207,6 +227,7 @@ export async function sendResetPasswordEmail(
   email: string,
   resetPasswordUrl: string,
 ): Promise<void> {
+  const actionUrl = mapEmailActionUrl(resetPasswordUrl);
   const transporter = createTransporter();
 
   if (!transporter) {
@@ -214,7 +235,7 @@ export async function sendResetPasswordEmail(
       "Cannot send reset password email: SMTP not configured. Please set SMTP_* environment variables.",
     );
     // In development, log the reset password URL instead
-    console.log(`\n🔒 Reset Password URL for ${email}:\n${resetPasswordUrl}\n`);
+    console.log(`\n🔒 Reset Password URL for ${email}:\n${actionUrl}\n`);
     return;
   }
 
@@ -230,7 +251,7 @@ export async function sendResetPasswordEmail(
         intro:
           "We received a request to reset your password. Click the link below to continue.",
         actionText: "Reset Password",
-        actionUrl: resetPasswordUrl,
+        actionUrl,
         footer: "If you didn't request a password reset, you can safely ignore this email.",
         accentColor: "#dc2626",
       }),
@@ -239,7 +260,7 @@ export async function sendResetPasswordEmail(
         intro:
           "We received a request to reset your password. Click the button below to continue.",
         actionText: "Reset Password",
-        actionUrl: resetPasswordUrl,
+        actionUrl,
         footer: "If you didn't request a password reset, you can safely ignore this email.",
         accentColor: "#dc2626",
       }),
@@ -249,7 +270,7 @@ export async function sendResetPasswordEmail(
   } catch (error) {
     console.error("Failed to send reset password email:", error);
     if (isDevelopmentEnv()) {
-      console.log(`\n🔒 Reset Password URL for ${email}:\n${resetPasswordUrl}\n`);
+      console.log(`\n🔒 Reset Password URL for ${email}:\n${actionUrl}\n`);
     }
     throw error;
   }

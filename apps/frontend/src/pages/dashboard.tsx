@@ -994,7 +994,7 @@ function AccountsSection() {
                       : t("dashboard.accounts_unlink_button")}
                   </button>
                 </div>
-                <div className="mt-4 grid gap-3 text-sm text-muted-foreground sm:grid-cols-2">
+                <div className="mt-4 grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-[0.2em]">
                       {t("dashboard.accounts_account_id_label")}
@@ -1012,7 +1012,7 @@ function AccountsSection() {
                     </p>
                   </div>
                   {account.scopes?.length ? (
-                    <div className="sm:col-span-2">
+                    <div className="sm:col-span-1">
                       <p className="text-xs font-semibold uppercase tracking-[0.2em]">
                         {t("dashboard.accounts_scopes_label")}
                       </p>
