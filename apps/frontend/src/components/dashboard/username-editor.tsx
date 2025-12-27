@@ -237,7 +237,7 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
                     setEditing(false);
                     setSubmitError("");
                   }}
-                  variant="outline"
+                  variant="ghost"
                   size="xs"
                   disabled={form.state.isSubmitting}
                   // className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"

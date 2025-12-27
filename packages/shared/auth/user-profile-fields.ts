@@ -21,10 +21,7 @@ export const usernameField = () =>
       `Username must be ${USERNAME_CONFIG.maxLength} characters or less`,
     )
     .regex(USERNAME_CONFIG.pattern, USERNAME_CONFIG.patternDescription)
-    .refine(
-      (value) => !isReservedUsername(value),
-      "Username cannot be admin or administrator",
-    );
+    .refine((value) => !isReservedUsername(value), "Username prohibited");
 
 export const displayUsernameField = () =>
   z
@@ -38,7 +35,4 @@ export const displayUsernameField = () =>
       `Username must be ${USERNAME_CONFIG.maxLength} characters or less`,
     )
     .regex(USERNAME_CONFIG.pattern, USERNAME_CONFIG.patternDescription)
-    .refine(
-      (value) => !isReservedUsername(value),
-      "Username cannot be admin or administrator",
-    );
+    .refine((value) => !isReservedUsername(value), "Username prohibited");

@@ -3,7 +3,7 @@ import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
 import { useUpdateUserRoleMutation } from "@/hooks/api/useUpdateUserRoleMutation";
 import { useSession } from "@/lib/auth-client";
-import { Button, Input } from "frontend-common/components/ui";
+import { Button, Input, Label } from "frontend-common/components/ui";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -284,12 +284,12 @@ export default function AdminUsersPage() {
                         {t("users.ban_dialog.description")}
                       </p>
                       <div className="mt-4">
-                        <label
+                        <Label
                           htmlFor="ban-reason"
-                          className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+                          size="xs"
                         >
                           {t("users.ban_dialog.reason_label")}
-                        </label>
+                        </Label>
                         <Input
                           type="text"
                           id="ban-reason"
@@ -300,7 +300,7 @@ export default function AdminUsersPage() {
                         />
                       </div>
                       <div className="mt-4">
-                        <label className="flex items-center">
+                        <Label className="flex items-center">
                           <Input
                             type="checkbox"
                             checked={deleteMessages}
@@ -309,7 +309,7 @@ export default function AdminUsersPage() {
                           <span className="ml-2 text-sm text-muted-foreground">
                             {t("users.ban_dialog.delete_messages_label")}
                           </span>
-                        </label>
+                        </Label>
                       </div>
                     </div>
                   </div>

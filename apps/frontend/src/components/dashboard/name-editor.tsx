@@ -117,11 +117,7 @@ export function NameEditor({ name, onUpdated }: NameEditorProps) {
                 </p>
               )}
               <div className="flex items-center gap-2">
-                <Button
-                  type="submit"
-                  disabled={form.state.isSubmitting}
-                  size="xs"
-                >
+                <Button type="submit" disabled={form.state.isSubmitting} size="xs">
                   {t("dashboard.save_button")}
                 </Button>
                 <Button
@@ -131,7 +127,7 @@ export function NameEditor({ name, onUpdated }: NameEditorProps) {
                     setSubmitError("");
                   }}
                   disabled={form.state.isSubmitting}
-                  variant="outline"
+                  variant="ghost"
                   size="xs"
                 >
                   {t("dashboard.cancel_button")}

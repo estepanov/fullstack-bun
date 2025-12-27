@@ -3,7 +3,7 @@ import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient, signIn, useSession } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
-import { Button, Input } from "frontend-common/components/ui";
+import { Button, Input, Label } from "frontend-common/components/ui";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -189,7 +189,7 @@ export default function LoginPage() {
           <p className="mt-2 text-sm text-muted-foreground">{t("login.subtitle")}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-2">
           {error && (
             <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
               <p className="text-sm font-medium text-destructive">{error}</p>
@@ -198,14 +198,9 @@ export default function LoginPage() {
 
           {passwordsEnabled ? (
             <>
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                  >
-                    {t("login.email_label")}
-                  </label>
+              <div className="space-y-2">
+                <div className="gap-1">
+                  <Label htmlFor="email">{t("login.email_label")}</Label>
                   <Input
                     id="email"
                     type="email"
@@ -217,13 +212,8 @@ export default function LoginPage() {
                   />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                  >
-                    {t("login.password_label")}
-                  </label>
+                <div className="gap-1">
+                  <Label htmlFor="password">{t("login.password_label")}</Label>
                   <Input
                     id="password"
                     type="password"
@@ -265,11 +255,7 @@ export default function LoginPage() {
                 type="submit"
                 disabled={isLoading}
                 className="w-full"
-                variant={
-                  lastUsedMethod === LoginMethod.EMAIL && !isLoading
-                    ? "default"
-                    : "outline"
-                }
+                variant="default"
               >
                 <span className="flex items-center justify-center gap-2">
                   {isLoading ? t("login.submitting_button") : t("login.submit_button")}

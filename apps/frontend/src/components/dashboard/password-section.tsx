@@ -8,7 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
-import { Button, Input } from "../ui";
+import { Button, Input, Label } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 interface PasswordSectionProps {
@@ -91,6 +91,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
   });
 
   // Reset form when exiting edit mode
+  // biome-ignore lint/correctness/useExhaustiveDependencies: simple reset
   useEffect(() => {
     if (!editingPassword) {
       form.reset();
@@ -150,12 +151,9 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                 name="currentPassword"
                 children={(field) => (
                   <div>
-                    <label
-                      htmlFor={currentPasswordId}
-                      className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                    >
+                    <Label htmlFor={currentPasswordId}>
                       {t("dashboard.password_current_label")}
-                    </label>
+                    </Label>
                     <Input
                       id={currentPasswordId}
                       name="current-password"
@@ -237,12 +235,9 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
               name="newPassword"
               children={(field) => (
                 <div>
-                  <label
-                    htmlFor={newPasswordId}
-                    className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                  >
+                  <Label htmlFor={newPasswordId}>
                     {t("dashboard.password_new_label")}
-                  </label>
+                  </Label>
                   <Input
                     id={newPasswordId}
                     name="new-password"
@@ -277,12 +272,9 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
               name="confirmPassword"
               children={(field) => (
                 <div>
-                  <label
-                    htmlFor={confirmPasswordId}
-                    className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                  >
+                  <Label htmlFor={confirmPasswordId}>
                     {t("dashboard.password_confirm_label")}
-                  </label>
+                  </Label>
                   <Input
                     id={confirmPasswordId}
                     name="confirm-new-password"
@@ -341,21 +333,16 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
               </p>
             )}
             {submitSuccess && (
-              <p
+              <output
                 id={successId}
-                role="status"
                 aria-live="polite"
                 className="text-xs font-medium text-emerald-600"
               >
                 {submitSuccess}
-              </p>
+              </output>
             )}
             <div className="flex items-center gap-2">
-              <Button
-                type="submit"
-                disabled={form.state.isSubmitting}
-                size="xs"
-              >
+              <Button type="submit" disabled={form.state.isSubmitting} size="xs">
                 {form.state.isSubmitting
                   ? t("dashboard.password_saving_button")
                   : t("dashboard.password_save_button")}
@@ -368,7 +355,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                   setSubmitSuccess("");
                 }}
                 disabled={form.state.isSubmitting}
-                variant="outline"
+                variant="ghost"
                 size="xs"
               >
                 {t("dashboard.cancel_button")}

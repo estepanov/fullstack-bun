@@ -1,6 +1,6 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { signUp } from "@/lib/auth-client";
-import { Button, Input } from "frontend-common/components/ui";
+import { Button, Input, Label } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -56,57 +56,41 @@ export default function RegisterPage() {
           <p className="mt-2 text-sm text-muted-foreground">{t("register.subtitle")}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
           {error && (
             <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
               <p className="text-sm font-medium text-destructive">{error}</p>
             </div>
           )}
+          <div className="gap-1">
+            <Label htmlFor="name">{t("register.name_label")}</Label>
+            <Input
+              id="name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder={t("register.name_placeholder")}
+              required
+              className="w-full"
+            />
+          </div>
 
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="name"
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-              >
-                {t("register.name_label")}
-              </label>
-              <Input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder={t("register.name_placeholder")}
-                required
-                className="mt-2 block w-full"
-              />
-            </div>
+          <div className="gap-1">
+            <Label htmlFor="email">{t("register.email_label")}</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t("register.email_placeholder")}
+              required
+              className="w-full"
+            />
+          </div>
 
+          <div className="gap-1">
+            <Label htmlFor="password">{t("register.password_label")}</Label>
             <div>
-              <label
-                htmlFor="email"
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-              >
-                {t("register.email_label")}
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("register.email_placeholder")}
-                required
-                className="mt-2 block w-full"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-              >
-                {t("register.password_label")}
-              </label>
               <Input
                 id="password"
                 type="password"
@@ -115,7 +99,7 @@ export default function RegisterPage() {
                 placeholder={t("register.password_placeholder")}
                 required
                 minLength={passwordMinLength}
-                className="mt-2 block w-full"
+                className="w-full"
               />
               <p className="mt-2 text-xs text-muted-foreground">
                 {t("register.password_hint", { minLength: passwordMinLength })}
@@ -123,11 +107,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full"
-          >
+          <Button type="submit" disabled={isLoading} className="w-full">
             {isLoading ? t("register.submitting_button") : t("register.submit_button")}
           </Button>
 

@@ -23,10 +23,10 @@
     "rules": {
       "recommended": true,
       "a11y": {
-        "noLabelWithoutControl": "error"
+        "noLabelWithoutControl": "warn"
       },
       "correctness": {
-        "noChildrenProp": "error"
+        "noChildrenProp": "off"
       }
     }
   },

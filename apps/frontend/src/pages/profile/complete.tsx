@@ -1,7 +1,7 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { authClient, useSession } from "@/lib/auth-client";
 import { getExtendedUser } from "@/types/user";
-import { Button, Input } from "frontend-common/components/ui";
+import { Button, Input, Label } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate, useSearchParams } from "react-router";
@@ -146,22 +146,17 @@ export default function CompleteProfilePage() {
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-2">
           {error && (
             <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
               <p className="text-sm font-medium text-destructive">{error}</p>
             </div>
           )}
 
-          <div className="space-y-4">
+          <div className="space-y-2">
             {needsName && (
-              <div>
-                <label
-                  htmlFor="name"
-                  className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                >
-                  {t("complete_profile.name_label")}
-                </label>
+              <div className="gap-1">
+                <Label htmlFor="name">{t("complete_profile.name_label")}</Label>
                 <Input
                   id="name"
                   type="text"
@@ -176,13 +171,8 @@ export default function CompleteProfilePage() {
             )}
 
             {needsUsername && (
-              <div>
-                <label
-                  htmlFor="username"
-                  className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                >
-                  {t("complete_profile.username_label")}
-                </label>
+              <div className="gap-1">
+                <Label htmlFor="username">{t("complete_profile.username_label")}</Label>
                 <Input
                   id="username"
                   type="text"

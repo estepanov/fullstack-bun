@@ -10,7 +10,7 @@ import { useForm } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
-import { Button, Input } from "../ui";
+import { Button, Input, Label } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 export function PasskeysSection() {
@@ -131,7 +131,7 @@ export function PasskeysSection() {
           <form.Field
             name="name"
             children={(field) => (
-              <label>
+              <Label>
                 {t("dashboard.passkeys_name_label")}
                 <Input
                   type="text"
@@ -142,7 +142,7 @@ export function PasskeysSection() {
                   disabled={form.state.isSubmitting}
                   placeholder={t("dashboard.passkeys_name_placeholder")}
                 />
-              </label>
+              </Label>
             )}
           />
           <div className="flex flex-col justify-end mb-3">

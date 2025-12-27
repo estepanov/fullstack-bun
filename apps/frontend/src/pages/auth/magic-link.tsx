@@ -3,7 +3,7 @@ import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
-import { Button, Input } from "frontend-common/components/ui";
+import { Button, Input, Label } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
@@ -106,7 +106,7 @@ export default function MagicLinkPage() {
           <p className="mt-2 text-sm text-muted-foreground">{t("magic_link.subtitle")}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-2">
           {errorParam && !error && (
             <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
               <p className="text-sm font-medium text-destructive">
@@ -129,37 +129,21 @@ export default function MagicLinkPage() {
             </div>
           )}
 
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-              >
-                {t("magic_link.email_label")}
-              </label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("magic_link.email_placeholder")}
-                autoComplete="username webauthn"
-                required
-                className="mt-2 block w-full"
-              />
-            </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="email">{t("magic_link.email_label")}</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t("magic_link.email_placeholder")}
+              autoComplete="username webauthn"
+              required
+              className="w-full"
+            />
           </div>
 
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full"
-            variant={
-              lastUsedMethod === LoginMethod.MAGIC_LINK && !isLoading
-                ? "default"
-                : "outline"
-            }
-          >
+          <Button type="submit" disabled={isLoading} className="w-full" variant="default">
             <span className="flex items-center justify-center gap-2">
               {isLoading
                 ? t("magic_link.submitting_button")
