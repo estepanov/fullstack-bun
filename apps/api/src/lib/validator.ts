@@ -29,7 +29,20 @@ export function zodValidator<
 
     switch (target) {
       case "json":
-        value = await c.req.json().catch(() => ({}));
+        try {
+          value = await c.req.json();
+        } catch (error) {
+          const logger = (c as Context).get?.("logger");
+          logger?.warn({ error }, "Failed to parse JSON body");
+          return c.json(
+            {
+              success: false,
+              error: "Invalid JSON",
+              message: "Request body must be valid JSON",
+            },
+            400,
+          );
+        }
         break;
       case "form":
         value = await c.req.parseBody();
