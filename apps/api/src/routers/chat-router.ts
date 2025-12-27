@@ -1,4 +1,3 @@
-import { zValidator } from "@hono/zod-validator";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { upgradeWebSocket } from "hono/bun";
@@ -17,6 +16,7 @@ import { checkUserBan } from "../lib/ban-check";
 import { chatManager } from "../lib/chat-manager";
 import { chatService } from "../lib/chat-service";
 import { checkChatThrottle } from "../lib/chat-throttle";
+import { zodValidator } from "../lib/validator";
 import { decodeWsMessage } from "../lib/ws-message";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
 import { checkProfileComplete } from "../middlewares/check-profile-complete";
@@ -324,7 +324,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
       const messages = await chatService.getMessageHistory(limit);
       return c.json({ messages });
     } catch (error) {
-      c.get("logger").error("Failed to fetch chat history:", error);
+      c.get("logger").error({ error }, "Failed to fetch chat history:");
       return c.json({ error: "Failed to fetch chat history" }, 500);
     }
   })
@@ -334,7 +334,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
     "/messages/:id",
     authMiddleware(),
     checkProfileComplete(),
-    zValidator("json", getUpdateMessageSchema()),
+    zodValidator("json", getUpdateMessageSchema()),
     async (c) => {
       const messageId = c.req.param("id");
       const logger = c.get("logger");

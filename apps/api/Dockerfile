@@ -10,7 +10,7 @@ RUN set -eux; \
 # Install dependencies stage
 FROM base AS deps
 # Copy root package files
-COPY package.json bun.lockb ./
+COPY package.json bun.lock ./
 # Copy workspace packages
 COPY packages ./packages
 # Copy API package files and config
@@ -24,10 +24,9 @@ RUN bun install
 FROM base AS dev
 WORKDIR /app
 # Copy root package files for workspace resolution
-COPY --chown=bunapp:bunapp package.json bun.lockb ./
-# Copy dependencies from deps stage
+COPY --chown=bunapp:bunapp package.json bun.lock ./
+# Copy dependencies from deps stage (Bun hoists all dependencies to root node_modules)
 COPY --from=deps --chown=bunapp:bunapp /app/node_modules ./node_modules
-COPY --from=deps --chown=bunapp:bunapp /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=deps --chown=bunapp:bunapp /app/packages ./packages
 # Copy source code
 COPY --chown=bunapp:bunapp apps/api ./apps/api
@@ -40,10 +39,9 @@ FROM base AS production
 WORKDIR /app
 ENV NODE_ENV=production
 # Copy root package files for workspace resolution
-COPY --chown=bunapp:bunapp package.json bun.lockb ./
-# Copy dependencies
+COPY --chown=bunapp:bunapp package.json bun.lock ./
+# Copy dependencies (Bun hoists all dependencies to root node_modules)
 COPY --from=deps --chown=bunapp:bunapp /app/node_modules ./node_modules
-COPY --from=deps --chown=bunapp:bunapp /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=deps --chown=bunapp:bunapp /app/packages ./packages
 # Copy source code
 COPY --chown=bunapp:bunapp apps/api ./apps/api

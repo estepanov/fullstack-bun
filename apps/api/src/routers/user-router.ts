@@ -1,8 +1,8 @@
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { setPasswordSchema } from "shared/auth/password";
 import { auth } from "../lib/auth";
 import { checkUserHasPassword } from "../lib/user-credential";
+import { zodValidator } from "../lib/validator";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
 import { AUTH_CONFIG } from "shared/config/auth";
@@ -68,7 +68,7 @@ const userRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
       const hasPassword = await checkUserHasPassword(user.id);
       return c.json({ hasPassword });
     } catch (error) {
-      logger.error("Error checking password status", { error });
+      logger.error({ error }, "Error checking password status");
       return c.json({ error: "Failed to check password status" }, 500);
     }
   })
@@ -77,7 +77,7 @@ const userRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
    * Set password for users who don't have one (OAuth users).
    * This endpoint will fail if the user already has a credential account.
    */
-  .post("/set-password", zValidator("json", setPasswordSchema({})), async (c) => {
+  .post("/set-password", zodValidator("json", setPasswordSchema({})), async (c) => {
     const logger = c.get("logger");
 
     // Return 403 if password authentication is disabled

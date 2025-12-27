@@ -93,7 +93,7 @@ const routes = appWithRoutes
         allHealthy ? 200 : 503,
       );
     } catch (error) {
-      logger.error("Health check failed:", error);
+      logger.error({ error }, "Health check failed:");
       return c.json(
         {
           status: "error",

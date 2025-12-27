@@ -30,7 +30,8 @@ export const setPasswordSchema = ({
 } = {}) =>
   z.object({
     newPassword: z
-      .string({ required_error: passwordRequired })
+      .string()
+      .min(1, passwordRequired)
       .min(AUTH_CONFIG.emailPassword.minPasswordLength, passwordTooShort)
       .max(AUTH_CONFIG.emailPassword.maxPasswordLength, passwordTooLong),
   });
@@ -52,7 +53,8 @@ export const changePasswordSchema = ({
   z.object({
     currentPassword: z.string().min(1, currentPasswordRequired),
     newPassword: z
-      .string({ required_error: passwordRequired })
+      .string()
+      .min(1, passwordRequired)
       .min(AUTH_CONFIG.emailPassword.minPasswordLength, passwordTooShort)
       .max(AUTH_CONFIG.emailPassword.maxPasswordLength, passwordTooLong),
     revokeOtherSessions: z.boolean().optional(),

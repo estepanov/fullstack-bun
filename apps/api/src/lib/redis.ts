@@ -22,7 +22,7 @@ export const getRedisClient = (): Redis => {
     });
 
     redisClient.on("error", (err) => {
-      appLogger.error("Redis Client Error:", err);
+      appLogger.error({ err }, "Redis Client Error:");
     });
 
     redisClient.on("connect", () => {
@@ -50,7 +50,7 @@ export const isRedisReady = async (): Promise<boolean> => {
     const result = await client.ping();
     return result === "PONG";
   } catch (error) {
-    appLogger.error("Redis health check failed:", error);
+    appLogger.error({ error }, "Redis health check failed:");
     return false;
   }
 };
