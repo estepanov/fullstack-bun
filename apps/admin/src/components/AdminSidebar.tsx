@@ -55,14 +55,16 @@ export const AdminSidebar = ({
       <div className="p-6 border-b border-sidebar-border flex items-center justify-between gap-3">
         <h1 className="text-xl font-bold text-sidebar-foreground">{APP_NAME}</h1>
         {showCloseButton && (
-          <button
+          <Button
             type="button"
             onClick={onClose}
-            className="cursor-pointer inline-flex items-center justify-center rounded-md border border-sidebar-border p-2 text-sidebar-foreground lg:hidden"
+            variant="outline"
+            size="icon"
+            className="lg:hidden"
             aria-label={t("navigation.close_menu", "Close navigation")}
           >
             <X className="h-4 w-4" />
-          </button>
+          </Button>
         )}
       </div>
 

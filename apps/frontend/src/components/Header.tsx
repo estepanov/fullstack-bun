@@ -1,6 +1,6 @@
 import { signOut, useSession } from "@/lib/auth-client";
 import { isAdminSession } from "frontend-common/auth";
-import { Container } from "frontend-common/components/ui";
+import { Button, Container } from "frontend-common/components/ui";
 import { Popover, PopoverContent, PopoverTrigger } from "frontend-common/components/ui";
 import { cn } from "frontend-common/lib";
 import { MenuIcon } from "lucide-react";
@@ -61,13 +61,15 @@ const MobileNavigation = () => {
             <span className="text-sm text-gray-600 dark:text-gray-400">
               {session.user.email}
             </span>
-            <button
+            <Button
               type="button"
               onClick={() => signOut()}
-              className="cursor-pointer text-left text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300"
+              variant="link"
+              size="xs"
+              className="cursor-pointer text-left text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 px-0"
             >
               Sign Out
-            </button>
+            </Button>
           </div>
         ) : (
           <NavLink to="/auth/login">{t("nav_links.sign_in")}</NavLink>
@@ -110,18 +112,20 @@ export const Header = () => {
           <div className="flex items-center gap-x-5 md:gap-x-8">
             <div className="hidden md:flex md:items-center md:gap-x-4">
               {session ? (
-                <>
+                <div>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     {session.user.email}
                   </span>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => signOut()}
-                    className="cursor-pointer text-sm text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300"
+                    variant="link"
+                    size="xs"
+                    className="text-destructive"
                   >
                     Sign Out
-                  </button>
-                </>
+                  </Button>
+                </div>
               ) : (
                 <NavLink to="/auth/login">{t("nav_links.sign_in")}</NavLink>
               )}

@@ -8,6 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
+import { Button, Input } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 interface PasswordSectionProps {
@@ -119,19 +120,20 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
               )}
             </p>
           </div>
-          <button
+          <Button
             type="button"
             onClick={() => {
               setEditingPassword((value) => !value);
               setSubmitError("");
               setSubmitSuccess("");
             }}
-            className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+            variant="outline"
+            size="xs"
             aria-expanded={editingPassword}
             aria-controls={panelId}
           >
             {editingPassword ? t("dashboard.cancel_button") : t("dashboard.edit_button")}
-          </button>
+          </Button>
         </div>
         {editingPassword && (
           <form
@@ -154,7 +156,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                     >
                       {t("dashboard.password_current_label")}
                     </label>
-                    <input
+                    <Input
                       id={currentPasswordId}
                       name="current-password"
                       type="password"
@@ -162,7 +164,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                       placeholder={t("dashboard.password_current_placeholder")}
-                      className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="mt-2 block w-full"
                       disabled={form.state.isSubmitting}
                       required
                       aria-invalid={field.state.meta.errors.length > 0}
@@ -199,7 +201,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                               ns="auth"
                               components={{
                                 forgotLink: (
-                                  <button
+                                  <Button
                                     type="button"
                                     onClick={async () => {
                                       try {
@@ -215,7 +217,9 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                                         console.error(error);
                                       }
                                     }}
-                                    className="font-semibold text-primary hover:underline dark:text-primary"
+                                    variant="link"
+                                    size="xs"
+                                    className="font-semibold"
                                   />
                                 ),
                               }}
@@ -239,7 +243,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                   >
                     {t("dashboard.password_new_label")}
                   </label>
-                  <input
+                  <Input
                     id={newPasswordId}
                     name="new-password"
                     type="password"
@@ -247,7 +251,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder={t("dashboard.password_new_placeholder")}
-                    className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="mt-2 block w-full"
                     disabled={form.state.isSubmitting}
                     aria-invalid={field.state.meta.errors.length > 0}
                     aria-describedby={
@@ -279,7 +283,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                   >
                     {t("dashboard.password_confirm_label")}
                   </label>
-                  <input
+                  <Input
                     id={confirmPasswordId}
                     name="confirm-new-password"
                     type="password"
@@ -287,7 +291,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder={t("dashboard.password_confirm_placeholder")}
-                    className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="mt-2 block w-full"
                     disabled={form.state.isSubmitting}
                     aria-invalid={field.state.meta.errors.length > 0}
                     aria-describedby={
@@ -312,14 +316,13 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                 name="revokeOtherSessions"
                 children={(field) => (
                   <div className="flex items-center gap-2 text-sm text-foreground">
-                    <input
+                    <Input
                       id="revoke-other-sessions"
                       name="revoke-other-sessions"
                       type="checkbox"
                       checked={field.state.value ?? false}
                       onChange={(e) => field.handleChange(e.target.checked)}
                       disabled={form.state.isSubmitting}
-                      className="h-4 w-4 rounded border-border text-primary focus:ring-primary/30"
                     />
                     <label htmlFor="revoke-other-sessions">
                       {t("dashboard.password_revoke_other_sessions_label")}
@@ -348,16 +351,16 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
               </p>
             )}
             <div className="flex items-center gap-2">
-              <button
+              <Button
                 type="submit"
                 disabled={form.state.isSubmitting}
-                className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+                size="xs"
               >
                 {form.state.isSubmitting
                   ? t("dashboard.password_saving_button")
                   : t("dashboard.password_save_button")}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => {
                   setEditingPassword(false);
@@ -365,10 +368,11 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                   setSubmitSuccess("");
                 }}
                 disabled={form.state.isSubmitting}
-                className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+                variant="outline"
+                size="xs"
               >
                 {t("dashboard.cancel_button")}
-              </button>
+              </Button>
             </div>
           </form>
         )}

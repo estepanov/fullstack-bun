@@ -8,6 +8,7 @@ import type { AccountRecord } from "@/types/dashboard";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
+import { Button } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 export function AccountsSection() {
@@ -97,16 +98,17 @@ export function AccountsSection() {
                       {formatProviderLabel(account.providerId)}
                     </p>
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => handleUnlink(account)}
-                    className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+                    variant="destructive"
+                    size="xs"
                     disabled={isUnlinking}
                   >
                     {isUnlinking
                       ? t("dashboard.accounts_unlinking_button")
                       : t("dashboard.accounts_unlink_button")}
-                  </button>
+                  </Button>
                 </div>
                 <div className="mt-4 grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
                   <div>

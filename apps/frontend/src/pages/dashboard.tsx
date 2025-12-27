@@ -9,6 +9,7 @@ import { useGetUserProfileQuery } from "@/hooks/api/useGetUserProfileQuery";
 import { signOut, useSession } from "@/lib/auth-client";
 import { getExtendedUser } from "@/types/user";
 import { getSessionUserRole } from "frontend-common/auth";
+import { Button } from "frontend-common/components/ui";
 import { useTranslation } from "react-i18next";
 
 function DashboardContent() {
@@ -53,13 +54,13 @@ function DashboardContent() {
           <DashboardCard>
             <h2 className="text-xl font-semibold">{t("dashboard.actions_title")}</h2>
             <div className="mt-4">
-              <button
+              <Button
                 type="button"
                 onClick={() => signOut()}
-                className="inline-flex items-center rounded-full bg-destructive px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-destructive/90 focus:outline-none focus:ring-2 focus:ring-destructive/40"
+                variant="destructive"
               >
                 {t("dashboard.sign_out_button")}
-              </button>
+              </Button>
             </div>
           </DashboardCard>
 

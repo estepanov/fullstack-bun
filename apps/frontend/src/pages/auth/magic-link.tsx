@@ -1,10 +1,13 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
+import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
-import { useState } from "react";
+import { Button, Input } from "frontend-common/components/ui";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
+import { LoginMethod } from "shared/auth/login-method";
 import { AUTH_CONFIG } from "shared/config/auth";
 
 export default function MagicLinkPage() {
@@ -14,9 +17,11 @@ export default function MagicLinkPage() {
   const [activeSocialProvider, setActiveSocialProvider] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
   const [passkeyLoading, setPasskeyLoading] = useState(false);
+  const [lastUsedMethod, setLastUsedMethod] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
+  const lastUsedBadge = t("login.last_used_badge");
   const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
   const githubEnabled = AUTH_CONFIG.social.github.enabled;
   const passkeyEnabled = AUTH_CONFIG.passkey.enabled;
@@ -26,6 +31,11 @@ export default function MagicLinkPage() {
   const showOrDivider = passwordsEnabled || socialEnabled || passkeyEnabled;
 
   const errorParam = searchParams.get("error");
+
+  useEffect(() => {
+    const method = authClient.getLastUsedLoginMethod();
+    setLastUsedMethod(method || null);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,7 +137,7 @@ export default function MagicLinkPage() {
               >
                 {t("magic_link.email_label")}
               </label>
-              <input
+              <Input
                 id="email"
                 type="email"
                 value={email}
@@ -135,20 +145,30 @@ export default function MagicLinkPage() {
                 placeholder={t("magic_link.email_placeholder")}
                 autoComplete="username webauthn"
                 required
-                className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="mt-2 block w-full"
               />
             </div>
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={isLoading}
-            className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+            className="w-full"
+            variant={
+              lastUsedMethod === LoginMethod.MAGIC_LINK && !isLoading
+                ? "default"
+                : "outline"
+            }
           >
-            {isLoading
-              ? t("magic_link.submitting_button")
-              : t("magic_link.submit_button")}
-          </button>
+            <span className="flex items-center justify-center gap-2">
+              {isLoading
+                ? t("magic_link.submitting_button")
+                : t("magic_link.submit_button")}
+              {lastUsedMethod === LoginMethod.MAGIC_LINK && !isLoading && (
+                <LastUsedBadge label={lastUsedBadge} />
+              )}
+            </span>
+          </Button>
 
           {showOrDivider && (
             <div className="relative">
@@ -167,30 +187,43 @@ export default function MagicLinkPage() {
               loadingLabel={t("magic_link.social_submitting")}
               isLoading={activeSocialProvider === "github"}
               isDisabled={activeSocialProvider !== null}
+              isLastUsed={lastUsedMethod === "github"}
+              lastUsedLabel={lastUsedBadge}
               onClick={handleGitHubLogin}
             />
           )}
 
           {passkeyEnabled && (
-            <button
+            <Button
               type="button"
               onClick={handlePasskeyLogin}
               disabled={passkeyLoading}
-              className="flex items-center justify-center gap-2 w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors disabled:opacity-60"
+              variant={lastUsedMethod === LoginMethod.PASSKEY ? "default" : "outline"}
+              className="w-full"
             >
-              {passkeyLoading
-                ? t("magic_link.passkey_loading")
-                : t("magic_link.passkey_button")}
-            </button>
+              <span className="flex items-center justify-center gap-2">
+                {passkeyLoading
+                  ? t("magic_link.passkey_loading")
+                  : t("magic_link.passkey_button")}
+                {lastUsedMethod === LoginMethod.PASSKEY && !passkeyLoading && (
+                  <LastUsedBadge label={lastUsedBadge} />
+                )}
+              </span>
+            </Button>
           )}
 
           {passwordsEnabled && (
-            <Link
-              to="/auth/login"
-              className="block w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
+            <Button
+              type="button"
+              className="w-full"
+              variant={lastUsedMethod === LoginMethod.EMAIL ? "default" : "outline"}
+              onClick={() => navigate("/auth/login")}
             >
               {t("magic_link.sign_in_link")}
-            </Link>
+              {lastUsedMethod === LoginMethod.EMAIL && !passkeyLoading && (
+                <LastUsedBadge label={lastUsedBadge} />
+              )}
+            </Button>
           )}
         </form>
       </div>

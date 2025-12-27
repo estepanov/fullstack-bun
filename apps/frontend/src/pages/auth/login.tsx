@@ -1,7 +1,9 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
+import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient, signIn, useSession } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
+import { Button, Input } from "frontend-common/components/ui";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -204,7 +206,7 @@ export default function LoginPage() {
                   >
                     {t("login.email_label")}
                   </label>
-                  <input
+                  <Input
                     id="email"
                     type="email"
                     value={email}
@@ -212,7 +214,6 @@ export default function LoginPage() {
                     placeholder={t("login.email_placeholder")}
                     autoComplete="username webauthn"
                     required
-                    className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
 
@@ -223,7 +224,7 @@ export default function LoginPage() {
                   >
                     {t("login.password_label")}
                   </label>
-                  <input
+                  <Input
                     id="password"
                     type="password"
                     value={password}
@@ -231,20 +232,20 @@ export default function LoginPage() {
                     placeholder={t("login.password_placeholder")}
                     autoComplete="current-password webauthn"
                     required
-                    className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
-                  <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="mt-2 flex items-center text-xs text-muted-foreground">
                     <span>{t("login.forgot_password")}</span>
-                    <button
+                    <Button
                       type="button"
+                      size="xs"
                       onClick={handlePasswordReset}
                       disabled={resetStatus === "sending"}
-                      className="font-semibold text-primary hover:text-primary/80 disabled:opacity-60"
+                      variant="link"
                     >
                       {resetStatus === "sending"
                         ? t("login.reset_link_sending")
                         : t("login.reset_link")}
-                    </button>
+                    </Button>
                   </div>
                   {resetMessage && (
                     <p
@@ -260,20 +261,23 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <button
+              <Button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50 ${
-                  lastUsedMethod === "email" ? "ring-2 ring-primary/60" : ""
-                }`}
+                className="w-full"
+                variant={
+                  lastUsedMethod === LoginMethod.EMAIL && !isLoading
+                    ? "default"
+                    : "outline"
+                }
               >
                 <span className="flex items-center justify-center gap-2">
                   {isLoading ? t("login.submitting_button") : t("login.submit_button")}
                   {lastUsedMethod === "email" && !isLoading && (
-                    <span className="text-xs opacity-90">{lastUsedBadge}</span>
+                    <LastUsedBadge label={lastUsedBadge} />
                   )}
                 </span>
-              </button>
+              </Button>
 
               {showAltDivider && (
                 <div className="relative">
@@ -289,35 +293,36 @@ export default function LoginPage() {
           ) : null}
 
           {passkeyEnabled && (
-            <button
+            <Button
               type="button"
               onClick={handlePasskeyLogin}
               disabled={passkeyLoading || isLoading}
-              className={`flex items-center justify-center gap-2 w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors ${
-                lastUsedMethod === LoginMethod.PASSKEY
-                  ? "bg-primary/10 border-primary/30"
-                  : ""
-              }`}
+              className="w-full"
+              variant={lastUsedMethod === LoginMethod.PASSKEY ? "default" : "outline"}
             >
-              {passkeyLoading ? t("login.passkey_loading") : t("login.passkey_button")}
-              {lastUsedMethod === LoginMethod.PASSKEY && (
-                <span className="text-xs text-primary">{lastUsedBadge}</span>
-              )}
-            </button>
+              <span className="flex items-center justify-center gap-2">
+                {passkeyLoading ? t("login.passkey_loading") : t("login.passkey_button")}
+                {lastUsedMethod === LoginMethod.PASSKEY && (
+                  <LastUsedBadge label={lastUsedBadge} />
+                )}
+              </span>
+            </Button>
           )}
 
           {magicLinkEnabled && (
-            <Link
-              to="/auth/magic-link"
-              className={`flex items-center justify-center gap-2 w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors ${
-                lastUsedMethod === LoginMethod.MAGIC_LINK ? "bg-primary/10 border-primary/30" : ""
-              }`}
+            <Button
+              type="button"
+              onClick={() => navigate("/auth/magic-link")}
+              className="w-full"
+              variant={lastUsedMethod === LoginMethod.MAGIC_LINK ? "default" : "outline"}
             >
-              {t("login.magic_link_link")}
-              {lastUsedMethod === LoginMethod.MAGIC_LINK && (
-                <span className="text-xs text-primary">{lastUsedBadge}</span>
-              )}
-            </Link>
+              <span className="flex items-center justify-center gap-2">
+                {t("login.magic_link_link")}
+                {lastUsedMethod === LoginMethod.MAGIC_LINK && (
+                  <LastUsedBadge label={lastUsedBadge} />
+                )}
+              </span>
+            </Button>
           )}
 
           {githubEnabled && (

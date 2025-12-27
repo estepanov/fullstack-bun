@@ -497,12 +497,11 @@ export const MessageList = ({
                 />
               </div>
               <div className="flex items-center space-x-2">
-                <input
+                <Input
                   type="checkbox"
                   id="delete-messages"
                   checked={deleteMessages}
                   onChange={(e) => setDeleteMessages(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                 />
                 <label
                   htmlFor="delete-messages"

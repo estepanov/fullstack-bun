@@ -1,5 +1,6 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { signUp } from "@/lib/auth-client";
+import { Button, Input } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -70,14 +71,14 @@ export default function RegisterPage() {
               >
                 {t("register.name_label")}
               </label>
-              <input
+              <Input
                 id="name"
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder={t("register.name_placeholder")}
                 required
-                className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="mt-2 block w-full"
               />
             </div>
 
@@ -88,14 +89,14 @@ export default function RegisterPage() {
               >
                 {t("register.email_label")}
               </label>
-              <input
+              <Input
                 id="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder={t("register.email_placeholder")}
                 required
-                className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="mt-2 block w-full"
               />
             </div>
 
@@ -106,7 +107,7 @@ export default function RegisterPage() {
               >
                 {t("register.password_label")}
               </label>
-              <input
+              <Input
                 id="password"
                 type="password"
                 value={password}
@@ -114,7 +115,7 @@ export default function RegisterPage() {
                 placeholder={t("register.password_placeholder")}
                 required
                 minLength={passwordMinLength}
-                className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="mt-2 block w-full"
               />
               <p className="mt-2 text-xs text-muted-foreground">
                 {t("register.password_hint", { minLength: passwordMinLength })}
@@ -122,13 +123,13 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          <button
+          <Button
             type="submit"
             disabled={isLoading}
-            className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+            className="w-full"
           >
             {isLoading ? t("register.submitting_button") : t("register.submit_button")}
-          </button>
+          </Button>
 
           <p className="text-center text-sm text-muted-foreground">
             {t("register.have_account")}{" "}

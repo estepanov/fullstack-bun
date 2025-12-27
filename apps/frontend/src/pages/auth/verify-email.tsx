@@ -1,4 +1,5 @@
 import { verifyEmail } from "@/lib/auth-client";
+import { Button } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { useTranslation } from "react-i18next";
@@ -86,13 +87,13 @@ export default function VerifyEmailPage() {
               {t("verify_email.error_title")}
             </h1>
             <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
-            <button
+            <Button
               type="button"
               onClick={() => navigate("/auth/login")}
-              className="mt-6 rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="mt-6"
             >
               {t("verify_email.go_to_login")}
-            </button>
+            </Button>
           </>
         )}
       </div>

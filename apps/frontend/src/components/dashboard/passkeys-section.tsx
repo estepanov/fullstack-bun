@@ -10,6 +10,7 @@ import { useForm } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
+import { Button, Input } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 export function PasskeysSection() {
@@ -95,24 +96,26 @@ export function PasskeysSection() {
           </p>
         </div>
         <div className="flex gap-2">
-          <button
+          <Button
             type="button"
             onClick={() => setShowAddForm((curr) => !curr)}
-            className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+            variant="outline"
+            size="xs"
             disabled={loading}
           >
             {showAddForm ? "Hide new passkey form" : "Add new passkey"}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={loadPasskeys}
-            className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+            variant="outline"
+            size="xs"
             disabled={loading}
           >
             {loading
               ? t("dashboard.passkeys_refreshing_button")
               : t("dashboard.passkeys_refresh_button")}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -128,14 +131,14 @@ export function PasskeysSection() {
           <form.Field
             name="name"
             children={(field) => (
-              <label className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+              <label>
                 {t("dashboard.passkeys_name_label")}
-                <input
+                <Input
                   type="text"
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="mt-2 w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="mt-2 w-full"
                   disabled={form.state.isSubmitting}
                   placeholder={t("dashboard.passkeys_name_placeholder")}
                 />
@@ -143,15 +146,11 @@ export function PasskeysSection() {
             )}
           />
           <div className="flex flex-col justify-end mb-3">
-            <button
-              type="submit"
-              disabled={form.state.isSubmitting}
-              className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
-            >
+            <Button type="submit" disabled={form.state.isSubmitting}>
               {form.state.isSubmitting
                 ? t("dashboard.passkeys_adding_button")
                 : t("dashboard.passkeys_add_button")}
-            </button>
+            </Button>
           </div>
         </form>
       )}
@@ -182,16 +181,17 @@ export function PasskeysSection() {
                       {passkey.name || t("dashboard.passkeys_name_fallback")}
                     </p>
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={() => handleDeletePasskey(passkey.id)}
                     disabled={isDeleting}
-                    className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+                    variant="destructive"
+                    size="xs"
                   >
                     {isDeleting
                       ? t("dashboard.passkeys_deleting_button")
                       : t("dashboard.passkeys_delete_button")}
-                  </button>
+                  </Button>
                 </div>
                 <div className="mt-4 grid gap-3 text-sm text-muted-foreground sm:grid-cols-4">
                   <div>

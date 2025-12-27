@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useSession } from "@/lib/auth-client";
 import { authClient } from "@/lib/auth-client";
 import { parseErrorMessage, formatDateTime } from "@/lib/dashboard/utils";
+import { Button } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 import type { SessionRecord } from "@/types/dashboard";
 
@@ -65,26 +66,28 @@ export function SessionsSection() {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2 justify-end">
-          <button
+          <Button
             type="button"
             onClick={loadSessions}
-            className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+            variant="outline"
+            size="xs"
             disabled={loading}
           >
             {loading
               ? t("dashboard.sessions_refreshing_button")
               : t("dashboard.sessions_refresh_button")}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={handleRevokeOtherSessions}
-            className="inline-flex items-center rounded-full bg-destructive px-3 py-1 text-xs font-semibold text-white shadow-sm hover:bg-destructive/90 focus:outline-none focus:ring-2 focus:ring-destructive/40 disabled:opacity-50"
+            variant="destructive"
+            size="xs"
             disabled={revoking}
           >
             {revoking
               ? t("dashboard.sessions_revoking_button")
               : t("dashboard.sessions_revoke_other_button")}
-          </button>
+          </Button>
         </div>
       </div>
       {error && <p className="mt-4 text-sm font-medium text-destructive">{error}</p>}

@@ -6,6 +6,7 @@ import { useForm } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { USERNAME_CONFIG } from "shared/config/user-profile";
+import { Button, Input } from "../ui";
 
 interface UsernameEditorProps {
   displayUsername?: string | null;
@@ -164,7 +165,7 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
                 name="displayUsername"
                 children={(field) => (
                   <>
-                    <input
+                    <Input
                       id={inputId}
                       type="text"
                       value={field.state.value}
@@ -173,7 +174,7 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
                       minLength={USERNAME_CONFIG.minLength}
                       maxLength={USERNAME_CONFIG.maxLength}
                       pattern={USERNAME_CONFIG.pattern.source}
-                      className="block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="block w-full"
                       disabled={form.state.isSubmitting}
                       aria-invalid={field.state.meta.errors.length > 0}
                       aria-labelledby={labelId}
@@ -222,38 +223,42 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
                 </p>
               )}
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   type="submit"
                   disabled={form.state.isSubmitting}
-                  className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+                  variant="default"
+                  size="xs"
                 >
                   {t("dashboard.save_button")}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={() => {
                     setEditing(false);
                     setSubmitError("");
                   }}
+                  variant="outline"
+                  size="xs"
                   disabled={form.state.isSubmitting}
-                  className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+                  // className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
                 >
                   {t("dashboard.cancel_button")}
-                </button>
+                </Button>
               </div>
             </div>
           </form>
         ) : (
           <div className="flex items-center gap-2">
             <span>{displayUsername || t("dashboard.not_provided")}</span>
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="xs"
               onClick={() => setEditing(true)}
-              className="inline-flex items-center rounded-full border border-border/70 px-2 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
               aria-label={t("dashboard.edit_button")}
             >
               {t("dashboard.edit_button")}
-            </button>
+            </Button>
           </div>
         )}
       </dd>

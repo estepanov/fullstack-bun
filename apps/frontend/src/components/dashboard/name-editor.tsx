@@ -5,6 +5,7 @@ import type { UpdateCallback } from "@/types/dashboard";
 import { useForm } from "@tanstack/react-form";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Button, Input } from "../ui";
 
 interface NameEditorProps {
   name?: string | null;
@@ -81,7 +82,7 @@ export function NameEditor({ name, onUpdated }: NameEditorProps) {
                 name="name"
                 children={(field) => (
                   <>
-                    <input
+                    <Input
                       id={inputId}
                       type="text"
                       value={field.state.value}
@@ -90,7 +91,7 @@ export function NameEditor({ name, onUpdated }: NameEditorProps) {
                         setSubmitError("");
                         field.handleChange(e.target.value);
                       }}
-                      className="block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="block w-full"
                       disabled={form.state.isSubmitting}
                       aria-invalid={field.state.meta.errors.length > 0}
                       aria-labelledby={labelId}
@@ -116,38 +117,40 @@ export function NameEditor({ name, onUpdated }: NameEditorProps) {
                 </p>
               )}
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   type="submit"
                   disabled={form.state.isSubmitting}
-                  className="inline-flex items-center rounded-full bg-primary px-3 py-1 text-xs font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+                  size="xs"
                 >
                   {t("dashboard.save_button")}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={() => {
                     setEditing(false);
                     setSubmitError("");
                   }}
                   disabled={form.state.isSubmitting}
-                  className="inline-flex items-center rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50"
+                  variant="outline"
+                  size="xs"
                 >
                   {t("dashboard.cancel_button")}
-                </button>
+                </Button>
               </div>
             </div>
           </form>
         ) : (
           <div className="flex items-center gap-2">
             <span>{name || t("dashboard.not_provided")}</span>
-            <button
+            <Button
               type="button"
               onClick={() => setEditing(true)}
-              className="inline-flex items-center rounded-full border border-border/70 px-2 py-1 text-xs font-semibold text-foreground shadow-sm hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary/30"
+              variant="outline"
+              size="xs"
               aria-label={t("dashboard.edit_button")}
             >
               {t("dashboard.edit_button")}
-            </button>
+            </Button>
           </div>
         )}
       </dd>
