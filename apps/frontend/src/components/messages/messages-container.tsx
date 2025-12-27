@@ -66,7 +66,7 @@ export const MessagesContainer = ({
             isLoading ? "opacity-100" : "opacity-0"
           }`}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-amber-50 dark:from-slate-950 dark:via-slate-900 dark:to-amber-950/40" />
+          <div className="absolute inset-0 bg-linear-to-br from-slate-50 via-white to-amber-50 dark:from-slate-950 dark:via-slate-900 dark:to-amber-950/40" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.18),transparent_55%)] dark:bg-[radial-gradient(circle_at_top,rgba(251,191,36,0.12),transparent_60%)]" />
           <div className="relative z-10 flex h-full items-center justify-center p-6">
             <div className="w-full max-w-sm text-center">

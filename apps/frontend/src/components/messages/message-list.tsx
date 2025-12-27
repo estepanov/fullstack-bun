@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "frontend-common/components/ui";
-import { Input } from "frontend-common/components/ui";
+import { Input, Label } from "frontend-common/components/ui";
 import { Textarea } from "frontend-common/components/ui";
 import { isEmojiOnlyMessage } from "frontend-common/lib";
 import { Ban, MoreVertical, PencilLine, Trash2 } from "lucide-react";
@@ -215,14 +215,14 @@ export const MessageList = ({
             </div>
             <div
               data-message-bubble
-              className={`relative mt-[5px] min-w-14 rounded-2xl border px-3 py-2 text-sm leading-relaxed shadow-sm ${
+              className={`relative mt-1.25 min-w-14 rounded-2xl border px-3 py-2 text-sm leading-relaxed shadow-sm ${
                 isOwn
                   ? "border-primary/30 bg-primary text-primary-foreground text-right"
                   : "border-border/60 bg-card text-foreground text-left"
               }`}
             >
               <span
-                className={`absolute -top-[7px] h-2 w-[18px] ${
+                className={`absolute -top-1.75 h-2 w-4.5 ${
                   isOwn ? "right-3 bg-primary/30" : "left-3 bg-border/60"
                 }`}
                 style={{
@@ -233,7 +233,7 @@ export const MessageList = ({
                 aria-hidden="true"
               />
               <span
-                className={`absolute -top-[7px] h-2 w-[18px] ${
+                className={`absolute -top-1.75 h-2 w-4.5 ${
                   isOwn ? "right-3 bg-primary" : "left-3 bg-card"
                 }`}
                 style={{ clipPath: "polygon(50% 0, 0 100%, 100% 100%)" }}
@@ -485,9 +485,9 @@ export const MessageList = ({
                 <p className="text-sm font-medium">{userToBan.name}</p>
               </div>
               <div>
-                <label htmlFor="ban-reason" className="block text-sm font-medium mb-1">
+                <Label htmlFor="ban-reason" className="block mb-1">
                   {t("ban.reason_label")}
-                </label>
+                </Label>
                 <Input
                   id="ban-reason"
                   type="text"
@@ -497,19 +497,13 @@ export const MessageList = ({
                 />
               </div>
               <div className="flex items-center space-x-2">
-                <input
+                <Input
                   type="checkbox"
                   id="delete-messages"
                   checked={deleteMessages}
                   onChange={(e) => setDeleteMessages(e.target.checked)}
-                  className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary"
                 />
-                <label
-                  htmlFor="delete-messages"
-                  className="text-sm font-medium cursor-pointer"
-                >
-                  {t("ban.delete_messages_label")}
-                </label>
+                <Label htmlFor="delete-messages">{t("ban.delete_messages_label")}</Label>
               </div>
               {banError && (
                 <div className="rounded-md border border-destructive/20 bg-destructive/10 p-2 text-sm text-destructive">

@@ -3,6 +3,7 @@ import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
 import { useUpdateUserRoleMutation } from "@/hooks/api/useUpdateUserRoleMutation";
 import { useSession } from "@/lib/auth-client";
+import { Button, Input, Label } from "frontend-common/components/ui";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -191,23 +192,27 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="px-4 py-4 text-sm">
                         {userIsBanned ? (
-                          <button
+                          <Button
                             type="button"
                             onClick={() => handleUnban(u.id)}
                             disabled={unbanUser.isPending}
-                            className="w-full rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                            size="xs"
+                            variant="ghost"
+                            className="w-full sm:w-auto"
                           >
                             {t("users.actions.unban")}
-                          </button>
+                          </Button>
                         ) : banBlocked ? null : (
-                          <button
+                          <Button
                             type="button"
                             onClick={() => handleBanClick(u.id)}
                             disabled={banUser.isPending}
-                            className="w-full rounded-full bg-destructive px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-destructive/90 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                            variant="destructive"
+                            size="xs"
+                            className="w-full sm:w-auto"
                           >
                             {t("users.actions.ban_user")}
-                          </button>
+                          </Button>
                         )}
                       </td>
                     </tr>
@@ -279,57 +284,58 @@ export default function AdminUsersPage() {
                         {t("users.ban_dialog.description")}
                       </p>
                       <div className="mt-4">
-                        <label
+                        <Label
                           htmlFor="ban-reason"
-                          className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
+                          size="xs"
                         >
                           {t("users.ban_dialog.reason_label")}
-                        </label>
-                        <input
+                        </Label>
+                        <Input
                           type="text"
                           id="ban-reason"
                           value={banReason}
                           onChange={(e) => setBanReason(e.target.value)}
-                          className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                          className="mt-2 block w-full"
                           placeholder={t("users.ban_dialog.reason_placeholder")}
                         />
                       </div>
                       <div className="mt-4">
-                        <label className="flex items-center">
-                          <input
+                        <Label className="flex items-center">
+                          <Input
                             type="checkbox"
                             checked={deleteMessages}
                             onChange={(e) => setDeleteMessages(e.target.checked)}
-                            className="h-4 w-4 rounded border-border text-primary focus:ring-primary/40"
                           />
                           <span className="ml-2 text-sm text-muted-foreground">
                             {t("users.ban_dialog.delete_messages_label")}
                           </span>
-                        </label>
+                        </Label>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               <div className="border-t border-border/70 bg-muted/40 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                <button
+                <Button
                   type="button"
                   onClick={handleBanConfirm}
                   disabled={banUser.isPending}
-                  className="inline-flex w-full justify-center rounded-full bg-destructive px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-destructive/90 sm:ml-3 sm:w-auto disabled:cursor-not-allowed disabled:opacity-50"
+                  variant="destructive"
+                  className="w-full sm:ml-3 sm:w-auto"
                 >
                   {banUser.isPending
                     ? t("users.ban_dialog.confirming_button")
                     : t("users.ban_dialog.confirm_button")}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={() => setBanDialogOpen(false)}
                   disabled={banUser.isPending}
-                  className="mt-3 inline-flex w-full justify-center rounded-full border border-border/70 bg-background/80 px-4 py-2 text-sm font-semibold text-foreground shadow-sm hover:bg-muted/60 sm:mt-0 sm:w-auto"
+                  variant="outline"
+                  className="mt-3 w-full sm:mt-0 sm:w-auto"
                 >
                   {t("users.ban_dialog.cancel_button")}
-                </button>
+                </Button>
               </div>
             </div>
           </div>

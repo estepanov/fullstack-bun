@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { websocket } from "hono/bun";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
+import { AUTH_CONFIG } from "shared/config/auth";
 import { db } from "./db/client";
 import { env, isDevelopmentEnv } from "./env";
 import { auth } from "./lib/auth";
@@ -59,7 +60,10 @@ const appWithRoutes = isDevelopmentEnv()
       .route("admin", adminRouter)
       .route("chat", chatRouter)
       .route("user", userRouter)
-  : baseApp.route("admin", adminRouter).route("chat", chatRouter).route("user", userRouter);
+  : baseApp
+      .route("admin", adminRouter)
+      .route("chat", chatRouter)
+      .route("user", userRouter);
 
 const routes = appWithRoutes
   .get("/health", async (c) => {
@@ -103,7 +107,7 @@ const routes = appWithRoutes
       );
     }
   })
-  .on(["POST", "GET", "OPTIONS"], "/auth/*", async (c) => {
+  .on(["POST", "GET", "OPTIONS"], `${AUTH_CONFIG.basePath}/*`, async (c) => {
     const response = await auth.handler(c.req.raw);
     const { method, url } = c.req;
     const { status } = response;

@@ -13,9 +13,10 @@
     "test": "bun test"
   },
   "dependencies": {
+    "@better-auth/passkey": "^1.4.9",
     "@hono/zod-validator": "^0.4.3",
     "@t3-oss/env-core": "^0.13.10",
-    "better-auth": "^1.4.7",
+    "better-auth": "^1.4.9",
     "better-auth-harmony": "^1.2.5",
     "drizzle-orm": "^0.45.1",
     "hono": "^4.7.4",

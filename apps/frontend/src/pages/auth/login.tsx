@@ -1,11 +1,14 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
+import { AuthOrDivider } from "@/components/auth/AuthOrDivider";
+import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient, signIn, useSession } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
-import { useEffect, useState } from "react";
+import { Button, Input, Label, StyledLink } from "frontend-common/components/ui";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { Link } from "react-router";
+import { LoginMethod } from "shared/auth/login-method";
 import { AUTH_CONFIG } from "shared/config/auth";
 
 export default function LoginPage() {
@@ -15,17 +18,23 @@ export default function LoginPage() {
   const [resetMessage, setResetMessage] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [passkeyLoading, setPasskeyLoading] = useState(false);
   const [activeSocialProvider, setActiveSocialProvider] = useState<string | null>(null);
+  const [lastUsedMethod, setLastUsedMethod] = useState<string | null>(null);
+  const autoPasskeyAttempted = useRef(false);
   const { data: session, isPending } = useSession();
   const navigate = useNavigate();
   const { t } = useTranslation("auth");
+  const lastUsedBadge = t("login.last_used_badge");
   const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
   const magicLinkEnabled = AUTH_CONFIG.magicLink.enabled;
+  const passkeyEnabled = AUTH_CONFIG.passkey.enabled;
   const githubEnabled = AUTH_CONFIG.social.github.enabled;
   const socialEnabled = Object.values(AUTH_CONFIG.social).some(
     (provider) => provider.enabled,
   );
-  const showAltDivider = passwordsEnabled && (magicLinkEnabled || socialEnabled);
+  const showAltDivider =
+    passwordsEnabled && (magicLinkEnabled || socialEnabled || passkeyEnabled);
 
   useEffect(() => {
     if (!isPending && session) {
@@ -35,10 +44,46 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (isPending || session) return;
-    if (!passwordsEnabled && magicLinkEnabled && !socialEnabled) {
+    if (!passwordsEnabled && magicLinkEnabled && !socialEnabled && !passkeyEnabled) {
       navigate("/auth/magic-link", { replace: true });
     }
-  }, [isPending, magicLinkEnabled, navigate, passwordsEnabled, session, socialEnabled]);
+  }, [
+    isPending,
+    magicLinkEnabled,
+    navigate,
+    passwordsEnabled,
+    passkeyEnabled,
+    session,
+    socialEnabled,
+  ]);
+
+  useEffect(() => {
+    const method = authClient.getLastUsedLoginMethod();
+    setLastUsedMethod(method || null);
+  }, []);
+
+  useEffect(() => {
+    if (!passkeyEnabled || isPending || session) return;
+    if (typeof window === "undefined" || !("PublicKeyCredential" in window)) return;
+
+    const preloadPasskeys = async () => {
+      if (!PublicKeyCredential.isConditionalMediationAvailable) return;
+      const canAutoFill = await PublicKeyCredential.isConditionalMediationAvailable();
+      if (!canAutoFill) return;
+      if (autoPasskeyAttempted.current) return;
+      autoPasskeyAttempted.current = true;
+      await authClient.signIn.passkey({
+        autoFill: true,
+        fetchOptions: {
+          onSuccess: () => {
+            navigate("/dashboard");
+          },
+        },
+      });
+    };
+
+    void preloadPasskeys();
+  }, [isPending, navigate, passkeyEnabled, session]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,6 +115,24 @@ export default function LoginPage() {
     } finally {
       setActiveSocialProvider(null);
     }
+  };
+
+  const handlePasskeyLogin = async () => {
+    setError("");
+    setPasskeyLoading(true);
+    const { error: passkeyError } = await authClient.signIn.passkey({
+      autoFill: false,
+      fetchOptions: {
+        onSuccess: () => {
+          navigate("/dashboard");
+        },
+      },
+    });
+
+    if (passkeyError) {
+      setError(passkeyError.message || t("login.passkey_error"));
+    }
+    setPasskeyLoading(false);
   };
 
   const handlePasswordReset = async () => {
@@ -126,7 +189,7 @@ export default function LoginPage() {
           <p className="mt-2 text-sm text-muted-foreground">{t("login.subtitle")}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-2">
           {error && (
             <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
               <p className="text-sm font-medium text-destructive">{error}</p>
@@ -135,53 +198,45 @@ export default function LoginPage() {
 
           {passwordsEnabled ? (
             <>
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="email"
-                    className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                  >
-                    {t("login.email_label")}
-                  </label>
-                  <input
+              <div className="space-y-2">
+                <div className="gap-1">
+                  <Label htmlFor="email">{t("login.email_label")}</Label>
+                  <Input
                     id="email"
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder={t("login.email_placeholder")}
+                    autoComplete="username webauthn"
                     required
-                    className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="password"
-                    className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                  >
-                    {t("login.password_label")}
-                  </label>
-                  <input
+                <div className="gap-1">
+                  <Label htmlFor="password">{t("login.password_label")}</Label>
+                  <Input
                     id="password"
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder={t("login.password_placeholder")}
+                    autoComplete="current-password webauthn"
                     required
-                    className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                   />
-                  <div className="mt-2 flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="mt-2 flex gap-1 items-center text-xs text-muted-foreground">
                     <span>{t("login.forgot_password")}</span>
-                    <button
+                    <Button
                       type="button"
+                      size="xs"
                       onClick={handlePasswordReset}
                       disabled={resetStatus === "sending"}
-                      className="font-semibold text-primary hover:text-primary/80 disabled:opacity-60"
+                      variant="link"
+                      className="p-0"
                     >
                       {resetStatus === "sending"
                         ? t("login.reset_link_sending")
                         : t("login.reset_link")}
-                    </button>
+                    </Button>
                   </div>
                   {resetMessage && (
                     <p
@@ -197,34 +252,55 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <button
+              <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
+                className="w-full"
+                variant="default"
               >
-                {isLoading ? t("login.submitting_button") : t("login.submit_button")}
-              </button>
+                <span className="flex items-center justify-center gap-2">
+                  {isLoading ? t("login.submitting_button") : t("login.submit_button")}
+                  {lastUsedMethod === "email" && !isLoading && (
+                    <LastUsedBadge label={lastUsedBadge} />
+                  )}
+                </span>
+              </Button>
 
-              {showAltDivider && (
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border/50" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">or</span>
-                  </div>
-                </div>
-              )}
+              {showAltDivider && <AuthOrDivider className="my-4" />}
             </>
           ) : null}
 
-          {magicLinkEnabled && (
-            <Link
-              to="/auth/magic-link"
-              className="block w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
+          {passkeyEnabled && (
+            <Button
+              type="button"
+              onClick={handlePasskeyLogin}
+              disabled={passkeyLoading || isLoading}
+              className="w-full"
+              variant={lastUsedMethod === LoginMethod.PASSKEY ? "default" : "outline"}
             >
-              {t("login.magic_link_link")}
-            </Link>
+              <span className="flex items-center justify-center gap-2">
+                {passkeyLoading ? t("login.passkey_loading") : t("login.passkey_button")}
+                {lastUsedMethod === LoginMethod.PASSKEY && (
+                  <LastUsedBadge label={lastUsedBadge} />
+                )}
+              </span>
+            </Button>
+          )}
+
+          {magicLinkEnabled && (
+            <Button
+              type="button"
+              onClick={() => navigate("/auth/magic-link")}
+              className="w-full"
+              variant={lastUsedMethod === LoginMethod.MAGIC_LINK ? "default" : "outline"}
+            >
+              <span className="flex items-center justify-center gap-2">
+                {t("login.magic_link_link")}
+                {lastUsedMethod === LoginMethod.MAGIC_LINK && (
+                  <LastUsedBadge label={lastUsedBadge} />
+                )}
+              </span>
+            </Button>
           )}
 
           {githubEnabled && (
@@ -233,19 +309,18 @@ export default function LoginPage() {
               loadingLabel={t("login.social_submitting")}
               isLoading={activeSocialProvider === "github"}
               isDisabled={activeSocialProvider !== null}
+              isLastUsed={lastUsedMethod === "github"}
+              lastUsedLabel={lastUsedBadge}
               onClick={handleGitHubLogin}
             />
           )}
 
           {passwordsEnabled && (
-            <div className="pt-4 border-t border-border/50 text-center">
+            <div className="mt-4 pt-4 border-t border-border/50 text-center flex flex-col gap-2">
               <p className="text-sm text-muted-foreground">{t("login.no_account")}</p>
-              <Link
-                to="/auth/register"
-                className="mt-2 w-full inline-block rounded-full bg-secondary px-6 py-2 text-sm font-semibold text-secondary-foreground hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
-              >
+              <StyledLink className="w-full" variant="secondary" to="/auth/register">
                 {t("login.sign_up_link")}
-              </Link>
+              </StyledLink>
             </div>
           )}
         </form>

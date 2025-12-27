@@ -1,5 +1,5 @@
 {
-  "exclude": ["node_modules", "../frontend"],
+  "exclude": ["node_modules", "../frontend", "dist"],
   "compilerOptions": {
     "target": "ES2020",
     "skipLibCheck": true,

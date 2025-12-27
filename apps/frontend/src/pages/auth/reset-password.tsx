@@ -1,5 +1,6 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { resetPassword } from "@/lib/auth-client";
+import { Button, Input, Label } from "frontend-common/components/ui";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router";
@@ -127,22 +128,19 @@ export default function ResetPasswordPage() {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+            <form onSubmit={handleSubmit} className="mt-8 space-y-4">
               {errorMessage && (
                 <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
                   <p className="text-sm font-medium text-destructive">{errorMessage}</p>
                 </div>
               )}
 
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="new-password"
-                    className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                  >
+              <div className="space-y-2">
+                <div className="gap-1">
+                  <Label htmlFor="new-password">
                     {t("reset_password.password_label")}
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="new-password"
                     type="password"
                     value={password}
@@ -150,21 +148,18 @@ export default function ResetPasswordPage() {
                     placeholder={t("reset_password.password_placeholder")}
                     required
                     minLength={passwordMinLength}
-                    className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="mt-2 block w-full"
                   />
                   <p className="mt-2 text-xs text-muted-foreground">
                     {t("reset_password.password_hint", { minLength: passwordMinLength })}
                   </p>
                 </div>
 
-                <div>
-                  <label
-                    htmlFor="confirm-password"
-                    className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-                  >
+                <div className="gap-1">
+                  <Label htmlFor="confirm-password">
                     {t("reset_password.confirm_label")}
-                  </label>
-                  <input
+                  </Label>
+                  <Input
                     id="confirm-password"
                     type="password"
                     value={confirmPassword}
@@ -172,20 +167,16 @@ export default function ResetPasswordPage() {
                     placeholder={t("reset_password.confirm_placeholder")}
                     required
                     minLength={passwordMinLength}
-                    className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    className="mt-2 block w-full"
                   />
                 </div>
               </div>
 
-              <button
-                type="submit"
-                disabled={status === "submitting"}
-                className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
-              >
+              <Button type="submit" disabled={status === "submitting"} className="w-full">
                 {status === "submitting"
                   ? t("reset_password.submitting_button")
                   : t("reset_password.submit_button")}
-              </button>
+              </Button>
 
               <p className="text-center text-sm text-muted-foreground">
                 {t("reset_password.remembered_password")}{" "}

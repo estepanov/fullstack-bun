@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { USERNAME_CONFIG } from "../config/user-profile";
+import { RESERVED_NAMES, USERNAME_CONFIG } from "../config/user-profile";
 
 export const nameField = () =>
   z.string().min(1, "Name is required").max(100, "Name must be 100 characters or less");
 
 const isReservedUsername = (value: string) => {
   const normalized = value.normalize("NFKC").replace(/\s+/g, "").trim().toLowerCase();
-  return normalized === "admin" || normalized === "administrator";
+  return RESERVED_NAMES.has(normalized);
 };
 
 export const usernameField = () =>
@@ -21,10 +21,7 @@ export const usernameField = () =>
       `Username must be ${USERNAME_CONFIG.maxLength} characters or less`,
     )
     .regex(USERNAME_CONFIG.pattern, USERNAME_CONFIG.patternDescription)
-    .refine(
-      (value) => !isReservedUsername(value),
-      "Username cannot be admin or administrator",
-    );
+    .refine((value) => !isReservedUsername(value), "Username prohibited");
 
 export const displayUsernameField = () =>
   z
@@ -38,7 +35,4 @@ export const displayUsernameField = () =>
       `Username must be ${USERNAME_CONFIG.maxLength} characters or less`,
     )
     .regex(USERNAME_CONFIG.pattern, USERNAME_CONFIG.patternDescription)
-    .refine(
-      (value) => !isReservedUsername(value),
-      "Username cannot be admin or administrator",
-    );
+    .refine((value) => !isReservedUsername(value), "Username prohibited");

@@ -20,7 +20,15 @@
   },
   "linter": {
     "enabled": true,
-    "rules": { "recommended": true }
+    "rules": {
+      "recommended": true,
+      "a11y": {
+        "noLabelWithoutControl": "warn"
+      },
+      "correctness": {
+        "noChildrenProp": "off"
+      }
+    }
   },
   "javascript": {
     "formatter": {

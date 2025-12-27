@@ -46,7 +46,7 @@ export const MessageForm = ({
   // Show login prompt if not authenticated
   if (!isAuthenticated) {
     return (
-      <div className="rounded-xl border border-primary/20 bg-gradient-to-br from-primary/5 to-primary/10 p-4 text-center shadow-sm dark:border-primary/30 dark:from-primary/10 dark:to-primary/5">
+      <div className="rounded-xl border border-primary/20 bg-linear-to-br from-primary/5 to-primary/10 p-4 text-center shadow-sm dark:border-primary/30 dark:from-primary/10 dark:to-primary/5">
         <p className="text-sm text-foreground">
           <Trans
             i18nKey="form.login_prompt"
@@ -68,7 +68,7 @@ export const MessageForm = ({
   // Show profile completion prompt if profile is incomplete
   if (profileIncomplete) {
     return (
-      <div className="rounded-xl border border-amber-500/20 bg-gradient-to-br from-amber-50 to-amber-100/50 p-4 text-center shadow-sm dark:border-amber-500/30 dark:from-amber-950/40 dark:to-amber-900/20">
+      <div className="rounded-xl border border-amber-500/20 bg-linear-to-br from-amber-50 to-amber-100/50 p-4 text-center shadow-sm dark:border-amber-500/30 dark:from-amber-950/40 dark:to-amber-900/20">
         <p className="text-sm text-amber-900 dark:text-amber-100">
           <Trans
             i18nKey="form.complete_profile_prompt"
@@ -90,7 +90,7 @@ export const MessageForm = ({
   // Show verification prompt if email not verified
   if (!session?.user?.emailVerified) {
     return (
-      <div className="rounded-xl border border-yellow-500/20 bg-gradient-to-br from-yellow-50 to-yellow-100/50 p-4 text-center shadow-sm dark:border-yellow-500/30 dark:from-yellow-950/40 dark:to-yellow-900/20">
+      <div className="rounded-xl border border-yellow-500/20 bg-linear-to-br from-yellow-50 to-yellow-100/50 p-4 text-center shadow-sm dark:border-yellow-500/30 dark:from-yellow-950/40 dark:to-yellow-900/20">
         <p className="text-sm text-yellow-900 dark:text-yellow-100">
           {t("form.verify_email_prompt")}
         </p>

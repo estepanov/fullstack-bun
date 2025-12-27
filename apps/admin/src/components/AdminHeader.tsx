@@ -1,3 +1,4 @@
+import { Button } from "frontend-common/components/ui";
 import { Menu } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -11,14 +12,16 @@ export const AdminHeader = ({ onMenuClick }: AdminHeaderProps) => {
   return (
     <header className="lg:hidden flex h-16 border-b border-border bg-background px-4 sm:px-6 items-center">
       <div className="flex items-center gap-3 flex-1">
-        <button
+        <Button
           type="button"
           onClick={onMenuClick}
-          className="inline-flex items-center justify-center rounded-md border border-border p-2 text-foreground lg:hidden"
+          variant="outline"
+          size="icon"
+          className="lg:hidden"
           aria-label={t("navigation.open_menu", "Open navigation")}
         >
           <Menu className="h-5 w-5" />
-        </button>
+        </Button>
         {/* Breadcrumbs or page title can go here */}
         <h1 className="text-lg font-semibold text-foreground lg:hidden">
           {t("portal", "Admin Portal")}

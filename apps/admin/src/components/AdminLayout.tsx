@@ -1,3 +1,4 @@
+import { Button } from "frontend-common/components/ui";
 import { useState } from "react";
 import { Outlet } from "react-router";
 import { AdminHeader } from "./AdminHeader";
@@ -11,9 +12,10 @@ export const AdminLayout = () => {
       <AdminSidebar className="hidden lg:flex" />
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">
-          <button
+          <Button
             type="button"
-            className="absolute inset-0 bg-black/50"
+            variant="ghost"
+            className="absolute inset-0 bg-black/50 rounded-none hover:bg-black/50"
             onClick={() => setSidebarOpen(false)}
             aria-label="Close navigation"
           />

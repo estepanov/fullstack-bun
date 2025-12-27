@@ -13,6 +13,7 @@ export type ExtendedUser = {
   banned?: boolean | null;
   banReason?: string | null;
   banExpires?: Date | null;
+  lastLoginMethod?: string | null;
 };
 
 export type ExtendedSession = {

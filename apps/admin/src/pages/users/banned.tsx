@@ -1,5 +1,6 @@
 import { useBannedUsersQuery } from "@/hooks/api/useBannedUsersQuery";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
+import { Button } from "frontend-common/components/ui";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
@@ -152,14 +153,15 @@ export default function AdminBannedUsersPage() {
                         )}
                       </td>
                       <td className="px-4 py-3 text-sm">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => handleUnban(ban.id)}
                           disabled={unbanUser.isPending}
-                          className="w-full rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
+                          size="xs"
+                          className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white"
                         >
                           {t("bans.actions.unban")}
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}

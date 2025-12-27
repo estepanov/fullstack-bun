@@ -4,6 +4,7 @@
  * This will require rebooting backend and rebuilding any frontends
  */
 export type AuthConfig = {
+  basePath: string;
   emailPassword: {
     /**
      * Enable email + password sign-in and sign-up flows.
@@ -21,6 +22,12 @@ export type AuthConfig = {
   magicLink: {
     /**
      * Enable passwordless magic link sign-in.
+     */
+    enabled: boolean;
+  };
+  passkey: {
+    /**
+     * Enable passkey (WebAuthn) sign-in and registration.
      */
     enabled: boolean;
   };
@@ -57,12 +64,16 @@ export type AuthConfig = {
 };
 
 export const AUTH_CONFIG: AuthConfig = {
+  basePath: "/auth",
   emailPassword: {
     enabled: true,
     minPasswordLength: 8,
     maxPasswordLength: 35,
   },
   magicLink: {
+    enabled: true,
+  },
+  passkey: {
     enabled: true,
   },
   social: {

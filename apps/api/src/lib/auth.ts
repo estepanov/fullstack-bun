@@ -1,17 +1,20 @@
+import { passkey as passkeyPlugin } from "@better-auth/passkey";
 import { betterAuth } from "better-auth";
 import { emailHarmony } from "better-auth-harmony";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createFieldAttribute } from "better-auth/db";
-import { admin, username } from "better-auth/plugins";
+import { admin, lastLoginMethod, username } from "better-auth/plugins";
 import { magicLink } from "better-auth/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
+import { LoginMethod } from "shared/auth/login-method";
 import { completeProfileSchema } from "shared/auth/user-profile";
 import { usernameField } from "shared/auth/user-profile-fields";
 import { AUTH_CONFIG } from "shared/config/auth";
 import { USERNAME_CONFIG } from "shared/config/user-profile";
 import { validator } from "validation-better-auth";
+import { APP_NAME } from "../app.config";
 import { db } from "../db/client";
-import { account, session, user, verification } from "../db/schema";
+import { account, passkey, session, user, verification } from "../db/schema";
 import { env } from "../env";
 import {
   sendMagicLinkEmail,
@@ -65,6 +68,16 @@ const plugins = [
     },
   }),
   emailHarmony(),
+  lastLoginMethod({
+    storeInDatabase: true,
+    customResolveMethod: (ctx) => {
+      if (ctx.path === "/magic-link/verify") {
+        return LoginMethod.MAGIC_LINK;
+      }
+      // Return null to use default resolution
+      return null;
+    },
+  }),
   validator([
     {
       path: "/update-user",
@@ -79,12 +92,25 @@ const plugins = [
   ]),
 ];
 
+const passkeyOrigin = env.FE_BASE_URL;
+const passkeyRpID = new URL(passkeyOrigin).hostname;
+
 if (AUTH_CONFIG.magicLink.enabled) {
   plugins.push(
     magicLink({
       sendMagicLink: async ({ email, url }) => {
         await sendMagicLinkEmail(email, url);
       },
+    }),
+  );
+}
+
+if (AUTH_CONFIG.passkey.enabled) {
+  plugins.push(
+    passkeyPlugin({
+      rpID: passkeyRpID,
+      rpName: APP_NAME,
+      origin: passkeyOrigin,
     }),
   );
 }
@@ -97,6 +123,7 @@ export const auth = betterAuth({
       session,
       account,
       verification,
+      passkey,
     },
   }),
   user: {
@@ -111,7 +138,7 @@ export const auth = betterAuth({
   },
   plugins,
   baseURL: env.API_BASE_URL,
-  basePath: "/auth",
+  basePath: AUTH_CONFIG.basePath,
   trustedOrigins: env.CORS_ALLOWLISTED_ORIGINS,
   account: {
     accountLinking: AUTH_CONFIG.accountLinking,

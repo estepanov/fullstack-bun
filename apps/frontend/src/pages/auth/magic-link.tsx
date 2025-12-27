@@ -1,10 +1,14 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
+import { AuthOrDivider } from "@/components/auth/AuthOrDivider";
+import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
-import { useState } from "react";
+import { Button, Input, Label } from "frontend-common/components/ui";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useSearchParams } from "react-router";
+import { useNavigate, useSearchParams } from "react-router";
+import { LoginMethod } from "shared/auth/login-method";
 import { AUTH_CONFIG } from "shared/config/auth";
 
 export default function MagicLinkPage() {
@@ -13,16 +17,26 @@ export default function MagicLinkPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [activeSocialProvider, setActiveSocialProvider] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
+  const [passkeyLoading, setPasskeyLoading] = useState(false);
+  const [lastUsedMethod, setLastUsedMethod] = useState<string | null>(null);
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { t } = useTranslation("auth");
+  const lastUsedBadge = t("login.last_used_badge");
   const passwordsEnabled = AUTH_CONFIG.emailPassword.enabled;
   const githubEnabled = AUTH_CONFIG.social.github.enabled;
+  const passkeyEnabled = AUTH_CONFIG.passkey.enabled;
   const socialEnabled = Object.values(AUTH_CONFIG.social).some(
     (provider) => provider.enabled,
   );
-  const showOrDivider = passwordsEnabled || socialEnabled;
+  const showOrDivider = passwordsEnabled || socialEnabled || passkeyEnabled;
 
   const errorParam = searchParams.get("error");
+
+  useEffect(() => {
+    const method = authClient.getLastUsedLoginMethod();
+    setLastUsedMethod(method || null);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,6 +79,24 @@ export default function MagicLinkPage() {
     }
   };
 
+  const handlePasskeyLogin = async () => {
+    setError("");
+    setPasskeyLoading(true);
+    const { error: passkeyError } = await authClient.signIn.passkey({
+      autoFill: false,
+      fetchOptions: {
+        onSuccess: () => {
+          navigate("/dashboard");
+        },
+      },
+    });
+
+    if (passkeyError) {
+      setError(passkeyError.message || t("magic_link.passkey_error"));
+    }
+    setPasskeyLoading(false);
+  };
+
   return (
     <AppSurfaceCenter>
       <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 shadow-sm shadow-black/5 backdrop-blur">
@@ -75,7 +107,7 @@ export default function MagicLinkPage() {
           <p className="mt-2 text-sm text-muted-foreground">{t("magic_link.subtitle")}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-2">
           {errorParam && !error && (
             <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
               <p className="text-sm font-medium text-destructive">
@@ -98,45 +130,33 @@ export default function MagicLinkPage() {
             </div>
           )}
 
-          <div className="space-y-4">
-            <div>
-              <label
-                htmlFor="email"
-                className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground"
-              >
-                {t("magic_link.email_label")}
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder={t("magic_link.email_placeholder")}
-                required
-                className="mt-2 block w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground shadow-sm focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="email">{t("magic_link.email_label")}</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t("magic_link.email_placeholder")}
+              autoComplete="username webauthn"
+              required
+              className="w-full"
+            />
           </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:opacity-50"
-          >
-            {isLoading
-              ? t("magic_link.submitting_button")
-              : t("magic_link.submit_button")}
-          </button>
+          <Button type="submit" disabled={isLoading} className="w-full" variant="default">
+            <span className="flex items-center justify-center gap-2">
+              {isLoading
+                ? t("magic_link.submitting_button")
+                : t("magic_link.submit_button")}
+              {lastUsedMethod === LoginMethod.MAGIC_LINK && !isLoading && (
+                <LastUsedBadge label={lastUsedBadge} />
+              )}
+            </span>
+          </Button>
 
           {showOrDivider && (
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border/50" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">or</span>
-              </div>
-            </div>
+            <AuthOrDivider />
           )}
 
           {githubEnabled && (
@@ -145,17 +165,43 @@ export default function MagicLinkPage() {
               loadingLabel={t("magic_link.social_submitting")}
               isLoading={activeSocialProvider === "github"}
               isDisabled={activeSocialProvider !== null}
+              isLastUsed={lastUsedMethod === "github"}
+              lastUsedLabel={lastUsedBadge}
               onClick={handleGitHubLogin}
             />
           )}
 
+          {passkeyEnabled && (
+            <Button
+              type="button"
+              onClick={handlePasskeyLogin}
+              disabled={passkeyLoading}
+              variant={lastUsedMethod === LoginMethod.PASSKEY ? "default" : "outline"}
+              className="w-full"
+            >
+              <span className="flex items-center justify-center gap-2">
+                {passkeyLoading
+                  ? t("magic_link.passkey_loading")
+                  : t("magic_link.passkey_button")}
+                {lastUsedMethod === LoginMethod.PASSKEY && !passkeyLoading && (
+                  <LastUsedBadge label={lastUsedBadge} />
+                )}
+              </span>
+            </Button>
+          )}
+
           {passwordsEnabled && (
-            <Link
-              to="/auth/login"
-              className="block w-full rounded-full border-2 border-border/70 bg-background/50 px-4 py-2.5 text-center text-sm font-semibold text-foreground shadow-sm hover:bg-background hover:border-border focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
+            <Button
+              type="button"
+              className="w-full"
+              variant={lastUsedMethod === LoginMethod.EMAIL ? "default" : "outline"}
+              onClick={() => navigate("/auth/login")}
             >
               {t("magic_link.sign_in_link")}
-            </Link>
+              {lastUsedMethod === LoginMethod.EMAIL && !passkeyLoading && (
+                <LastUsedBadge label={lastUsedBadge} />
+              )}
+            </Button>
           )}
         </form>
       </div>
