@@ -1,4 +1,3 @@
-import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import {
   type Example,
@@ -7,6 +6,7 @@ import {
 } from "shared/interfaces/example";
 import { v4 as uuidv4 } from "uuid";
 import { env } from "../env";
+import { zodValidator } from "../lib/validator";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
 
 const DB: Example[] = [
@@ -34,7 +34,7 @@ const exampleRouter = new Hono<LoggerMiddlewareEnv>()
     const id = c.req.param("id");
     return c.json({ id, name: `Example ${id}` });
   })
-  .post("/", zValidator("json", newExampleSchema({})), async (c) => {
+  .post("/", zodValidator("json", newExampleSchema({})), async (c) => {
     const body = await c.req.json<NewExample>();
     c.var.logger.info(body, "Incoming body");
     DB.push({ id: uuidv4(), message: body.message, postedAt: new Date().toISOString() });

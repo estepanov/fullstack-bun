@@ -1,4 +1,3 @@
-import { zValidator } from "@hono/zod-validator";
 import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { updateUserRoleSchema } from "shared/auth/user-role";
@@ -7,6 +6,7 @@ import { db } from "../db/client";
 import { user } from "../db/schema";
 import { chatManager } from "../lib/chat-manager";
 import { chatService } from "../lib/chat-service";
+import { zodValidator } from "../lib/validator";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
 import { checkProfileComplete } from "../middlewares/check-profile-complete";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
@@ -14,7 +14,7 @@ import { requireAdmin } from "../middlewares/require-admin";
 
 const adminRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
   .use(authMiddleware(), requireAdmin(), checkProfileComplete())
-  .patch("/users/:id/role", zValidator("json", updateUserRoleSchema), async (c) => {
+  .patch("/users/:id/role", zodValidator("json", updateUserRoleSchema), async (c) => {
     const logger = c.get("logger");
 
     try {
