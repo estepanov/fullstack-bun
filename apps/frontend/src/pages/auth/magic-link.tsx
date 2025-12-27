@@ -1,4 +1,5 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
+import { AuthOrDivider } from "@/components/auth/AuthOrDivider";
 import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient } from "@/lib/auth-client";
@@ -155,14 +156,7 @@ export default function MagicLinkPage() {
           </Button>
 
           {showOrDivider && (
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border/50" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-card px-2 text-muted-foreground">or</span>
-              </div>
-            </div>
+            <AuthOrDivider />
           )}
 
           {githubEnabled && (

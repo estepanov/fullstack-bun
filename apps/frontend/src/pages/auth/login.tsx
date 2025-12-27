@@ -1,13 +1,13 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
+import { AuthOrDivider } from "@/components/auth/AuthOrDivider";
 import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient, signIn, useSession } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
-import { Button, Input, Label } from "frontend-common/components/ui";
+import { Button, Input, Label, StyledLink } from "frontend-common/components/ui";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
-import { Link } from "react-router";
 import { LoginMethod } from "shared/auth/login-method";
 import { AUTH_CONFIG } from "shared/config/auth";
 
@@ -223,7 +223,7 @@ export default function LoginPage() {
                     autoComplete="current-password webauthn"
                     required
                   />
-                  <div className="mt-2 flex items-center text-xs text-muted-foreground">
+                  <div className="mt-2 flex gap-1 items-center text-xs text-muted-foreground">
                     <span>{t("login.forgot_password")}</span>
                     <Button
                       type="button"
@@ -231,6 +231,7 @@ export default function LoginPage() {
                       onClick={handlePasswordReset}
                       disabled={resetStatus === "sending"}
                       variant="link"
+                      className="p-0"
                     >
                       {resetStatus === "sending"
                         ? t("login.reset_link_sending")
@@ -265,16 +266,7 @@ export default function LoginPage() {
                 </span>
               </Button>
 
-              {showAltDivider && (
-                <div className="relative">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t border-border/50" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 text-muted-foreground">or</span>
-                  </div>
-                </div>
-              )}
+              {showAltDivider && <AuthOrDivider className="my-4" />}
             </>
           ) : null}
 
@@ -324,14 +316,11 @@ export default function LoginPage() {
           )}
 
           {passwordsEnabled && (
-            <div className="pt-4 border-t border-border/50 text-center">
+            <div className="mt-4 pt-4 border-t border-border/50 text-center flex flex-col gap-2">
               <p className="text-sm text-muted-foreground">{t("login.no_account")}</p>
-              <Link
-                to="/auth/register"
-                className="mt-2 w-full inline-block rounded-full bg-secondary px-6 py-2 text-sm font-semibold text-secondary-foreground hover:bg-secondary/80 focus:outline-none focus:ring-2 focus:ring-primary/40 transition-colors"
-              >
+              <StyledLink className="w-full" variant="secondary" to="/auth/register">
                 {t("login.sign_up_link")}
-              </Link>
+              </StyledLink>
             </div>
           )}
         </form>

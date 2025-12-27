@@ -7,4 +7,5 @@ export * from "./input";
 export * from "./label";
 export * from "./link";
 export * from "./popover";
+export * from "./styled-link";
 export * from "./textarea";
