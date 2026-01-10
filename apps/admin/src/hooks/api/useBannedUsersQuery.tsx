@@ -1,30 +1,32 @@
-import { authClient } from "@/lib/auth-client";
+import { apiClient } from "@/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
 import { ADMIN_BANS_GET_QUERY_KEY } from "./query-key";
 
-export const useBannedUsersQuery = () => {
+interface UseBannedUsersQueryParams {
+  page?: number;
+  limit?: number;
+}
+
+export const useBannedUsersQuery = (params?: UseBannedUsersQueryParams) => {
+  const page = params?.page ?? 1;
+  const limit = params?.limit ?? 10;
+
   return useQuery({
-    queryKey: [ADMIN_BANS_GET_QUERY_KEY],
+    queryKey: [ADMIN_BANS_GET_QUERY_KEY, page, limit],
     queryFn: async () => {
-      const { data, error } = await authClient.admin.listUsers({
-        query: {},
+      const response = await apiClient.admin.users.banned.$get({
+        query: {
+          page: String(page),
+          limit: String(limit),
+        },
       });
-      if (error) throw error;
 
-      const bannedUsers = data.users.filter((u) => u.banned);
+      if (!response.ok) {
+        throw new Error("Failed to fetch banned users");
+      }
 
-      return {
-        bans: bannedUsers.map((u) => ({
-          id: u.id,
-          name: u.name,
-          email: u.email,
-          image: u.image,
-          banned: true,
-          banReason: u.banReason,
-          createdAt: u.createdAt,
-          updatedAt: u.updatedAt,
-        })),
-      };
+      const data = await response.json();
+      return data;
     },
   });
 };

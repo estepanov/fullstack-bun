@@ -8,10 +8,16 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { UserRole, userRoleSchema } from "shared/auth/user-role";
+import { PAGINATION_CONFIG } from "shared/config/pagination";
 
 export default function AdminUsersPage() {
   const { data: session } = useSession();
-  const { data, isPending, error } = useAdminUsersQuery();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGINATION_CONFIG.defaultPageSize);
+  const { data, isPending, error } = useAdminUsersQuery({
+    page: currentPage,
+    limit: pageSize,
+  });
   const updateRole = useUpdateUserRoleMutation();
   const banUser = useBanUserMutation();
   const unbanUser = useUnbanUserMutation();
@@ -71,7 +77,8 @@ export default function AdminUsersPage() {
 
   const isBannedUser = (user: { banned?: boolean | null }) => Boolean(user.banned);
 
-  const users = data && "users" in data && Array.isArray(data.users) ? data.users : [];
+  const users = data?.users || [];
+  const pagination = data?.pagination;
 
   return (
     <>
@@ -128,7 +135,14 @@ export default function AdminUsersPage() {
                   return (
                     <tr key={u.id}>
                       <td className="px-4 py-4 text-sm text-foreground">
-                        <div className="font-medium">{u.name}</div>
+                        <div className="flex items-center gap-2">
+                          <span className="font-medium">{u.name}</span>
+                          {userIsSelf && (
+                            <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-300">
+                              {t("users.table.you_badge")}
+                            </span>
+                          )}
+                        </div>
                         <div className="mt-1 text-xs text-muted-foreground md:hidden">
                           {u.email}
                         </div>
@@ -229,6 +243,105 @@ export default function AdminUsersPage() {
             </table>
           </div>
 
+          {/* Pagination Controls */}
+          {pagination && (
+            <div className="mt-6 border-t border-border/70 pt-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="text-sm text-muted-foreground">
+                    {t("users.pagination.showing", {
+                      start: (pagination.page - 1) * pagination.limit + 1,
+                      end: Math.min(
+                        pagination.page * pagination.limit,
+                        pagination.totalCount,
+                      ),
+                      total: pagination.totalCount,
+                    })}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Label
+                      htmlFor="page-size"
+                      className="text-sm text-muted-foreground whitespace-nowrap"
+                    >
+                      {t("users.pagination.page_size")}:
+                    </Label>
+                    <select
+                      id="page-size"
+                      value={pageSize}
+                      onChange={(e) => {
+                        setPageSize(Number(e.target.value));
+                        setCurrentPage(1);
+                      }}
+                      className="rounded-lg border border-border/70 bg-background/80 px-3 py-1.5 text-sm text-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    >
+                      {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
+                        <option key={size} value={size}>
+                          {size}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                {pagination.totalPages > 1 && (
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={!pagination.hasPreviousPage || isPending}
+                    >
+                      {t("users.pagination.previous")}
+                    </Button>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+                        .filter((page) => {
+                          // Show first page, last page, current page, and pages around current
+                          return (
+                            page === 1 ||
+                            page === pagination.totalPages ||
+                            Math.abs(page - pagination.page) <= 1
+                          );
+                        })
+                        .map((page, idx, arr) => {
+                          // Add ellipsis if there's a gap
+                          const showEllipsisBefore = idx > 0 && page - arr[idx - 1] > 1;
+                          return (
+                            <div key={page} className="flex items-center gap-1">
+                              {showEllipsisBefore && (
+                                <span className="px-2 text-muted-foreground">...</span>
+                              )}
+                              <Button
+                                type="button"
+                                variant={page === pagination.page ? "default" : "ghost"}
+                                size="sm"
+                                onClick={() => setCurrentPage(page)}
+                                disabled={isPending}
+                                className="min-w-10"
+                              >
+                                {page}
+                              </Button>
+                            </div>
+                          );
+                        })}
+                    </div>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))
+                      }
+                      disabled={!pagination.hasNextPage || isPending}
+                    >
+                      {t("users.pagination.next")}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {updateRole.isError && (
             <div className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
               {t("users.update_role_error")}
@@ -284,10 +397,7 @@ export default function AdminUsersPage() {
                         {t("users.ban_dialog.description")}
                       </p>
                       <div className="mt-4">
-                        <Label
-                          htmlFor="ban-reason"
-                          size="xs"
-                        >
+                        <Label htmlFor="ban-reason" size="xs">
                           {t("users.ban_dialog.reason_label")}
                         </Label>
                         <Input

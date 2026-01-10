@@ -35,7 +35,8 @@
       "status_header": "Status",
       "actions_header": "Actions",
       "status_banned": "Banned",
-      "status_active": "Active"
+      "status_active": "Active",
+      "you_badge": "You"
     },
     "actions": {
       "unban": "Unban",
@@ -53,7 +54,13 @@
       "confirming_button": "Banning...",
       "cancel_button": "Cancel"
     },
-    "ban_error": "Failed to ban user"
+    "ban_error": "Failed to ban user",
+    "pagination": {
+      "showing": "Showing {{start}}-{{end}} of {{total}} users",
+      "page_size": "Per page",
+      "previous": "Previous",
+      "next": "Next"
+    }
   },
   "bans": {
     "title": "Banned Users",
@@ -83,7 +90,8 @@
       "unban": "Unban"
     },
     "pagination": {
-      "summary": "Showing page {{page}} of {{totalPages}} ({{total}} total)",
+      "showing": "Showing {{start}}-{{end}} of {{total}} banned users",
+      "page_size": "Per page",
       "previous": "Previous",
       "next": "Next"
     },

@@ -35,7 +35,8 @@
       "status_header": "Status",
       "actions_header": "Aktionen",
       "status_banned": "Gesperrt",
-      "status_active": "Aktiv"
+      "status_active": "Aktiv",
+      "you_badge": "Sie"
     },
     "actions": {
       "unban": "Entsperren",
@@ -53,7 +54,13 @@
       "confirming_button": "Sperren...",
       "cancel_button": "Abbrechen"
     },
-    "ban_error": "Benutzer konnte nicht gesperrt werden"
+    "ban_error": "Benutzer konnte nicht gesperrt werden",
+    "pagination": {
+      "showing": "Zeige {{start}}-{{end}} von {{total}} Benutzern",
+      "page_size": "Pro Seite",
+      "previous": "Zurück",
+      "next": "Weiter"
+    }
   },
   "bans": {
     "title": "Gesperrte Benutzer",
@@ -83,7 +90,8 @@
       "unban": "Entsperren"
     },
     "pagination": {
-      "summary": "Seite {{page}} von {{totalPages}} ({{total}} insgesamt)",
+      "showing": "Zeige {{start}}-{{end}} von {{total}} gesperrten Benutzern",
+      "page_size": "Pro Seite",
       "previous": "Zurück",
       "next": "Weiter"
     },

@@ -108,33 +108,33 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
     <DashboardCard>
       <h2 className="text-xl font-semibold">{t("dashboard.security_title")}</h2>
       <div className="mt-4 space-y-3 text-sm text-foreground">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-              {t("dashboard.password_label")}
-            </p>
-            <p className="mt-1 text-sm text-foreground">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            {t("dashboard.password_label")}
+          </p>
+          <div className="mt-1 flex items-center gap-2">
+            <span className="text-sm text-foreground">
               {hasPassword ? (
                 "••••••••"
               ) : (
                 <span className="italic"> {t("dashboard.password_not_set")}</span>
               )}
-            </p>
+            </span>
+            <Button
+              type="button"
+              onClick={() => {
+                setEditingPassword((value) => !value);
+                setSubmitError("");
+                setSubmitSuccess("");
+              }}
+              variant="outline"
+              size="xs"
+              aria-expanded={editingPassword}
+              aria-controls={panelId}
+            >
+              {editingPassword ? t("dashboard.cancel_button") : t("dashboard.edit_button")}
+            </Button>
           </div>
-          <Button
-            type="button"
-            onClick={() => {
-              setEditingPassword((value) => !value);
-              setSubmitError("");
-              setSubmitSuccess("");
-            }}
-            variant="outline"
-            size="xs"
-            aria-expanded={editingPassword}
-            aria-controls={panelId}
-          >
-            {editingPassword ? t("dashboard.cancel_button") : t("dashboard.edit_button")}
-          </Button>
         </div>
         {editingPassword && (
           <form

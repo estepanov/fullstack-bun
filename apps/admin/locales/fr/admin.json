@@ -35,7 +35,8 @@
       "status_header": "Statut",
       "actions_header": "Actions",
       "status_banned": "Banni",
-      "status_active": "Actif"
+      "status_active": "Actif",
+      "you_badge": "Vous"
     },
     "actions": {
       "unban": "Débannir",
@@ -53,7 +54,13 @@
       "confirming_button": "Bannissement...",
       "cancel_button": "Annuler"
     },
-    "ban_error": "Impossible de bannir l'utilisateur"
+    "ban_error": "Impossible de bannir l'utilisateur",
+    "pagination": {
+      "showing": "Affichage de {{start}}-{{end}} sur {{total}} utilisateurs",
+      "page_size": "Par page",
+      "previous": "Précédent",
+      "next": "Suivant"
+    }
   },
   "bans": {
     "title": "Utilisateurs bannis",
@@ -83,7 +90,8 @@
       "unban": "Débannir"
     },
     "pagination": {
-      "summary": "Page {{page}} sur {{totalPages}} ({{total}} au total)",
+      "showing": "Affichage de {{start}}-{{end}} sur {{total}} utilisateurs bannis",
+      "page_size": "Par page",
       "previous": "Précédent",
       "next": "Suivant"
     },
