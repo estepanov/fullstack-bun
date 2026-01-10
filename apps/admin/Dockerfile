@@ -62,9 +62,8 @@ ENV VITE_FRONTEND_URL=${VITE_FRONTEND_URL}
 
 # Copy root package files for workspace resolution
 COPY --chown=bunapp:bunapp package.json bun.lock ./
-# Copy dependencies and source
+# Copy dependencies and source (Bun hoists all dependencies to root node_modules)
 COPY --from=deps --chown=bunapp:bunapp /app/node_modules ./node_modules
-COPY --from=deps --chown=bunapp:bunapp /app/apps/admin/node_modules ./apps/admin/node_modules
 COPY --from=deps --chown=bunapp:bunapp /app/packages ./packages
 # Copy API directory for TypeScript config resolution
 COPY --from=deps --chown=bunapp:bunapp /app/apps/api ./apps/api
@@ -86,9 +85,8 @@ ENV NODE_ENV=production
 COPY --from=build --chown=bunapp:bunapp /app/package.json ./package.json
 COPY --from=build --chown=bunapp:bunapp /app/bun.lock ./bun.lock
 COPY --from=build --chown=bunapp:bunapp /app/apps/admin/package.json ./apps/admin/package.json
-# Copy necessary runtime dependencies and build output
+# Copy necessary runtime dependencies and build output (Bun hoists all dependencies to root node_modules)
 COPY --from=build --chown=bunapp:bunapp /app/node_modules ./node_modules
-COPY --from=build --chown=bunapp:bunapp /app/apps/admin/node_modules ./apps/admin/node_modules
 COPY --from=build --chown=bunapp:bunapp /app/apps/admin/build ./apps/admin/build
 COPY --from=build --chown=bunapp:bunapp /app/apps/admin/server.ts ./apps/admin/server.ts
 # Drop privileges for runtime
