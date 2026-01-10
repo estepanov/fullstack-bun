@@ -1,16 +1,16 @@
-import type { Context, Env, MiddlewareHandler, ValidationTargets } from "hono";
-
-type ValidationTarget = keyof ValidationTargets;
+import type { Context, Env, MiddlewareHandler } from "hono";
+import { validator } from "hono/validator";
 
 /**
  * Custom Zod validator middleware for Hono that works with Zod v4.2+
  * This replaces @hono/zod-validator to avoid type compatibility issues
+ * Uses Hono's built-in validator for proper c.req.valid() integration
  */
 export function zodValidator<
   // Use a relaxed type constraint that matches Zod's safeParse structure
   // biome-ignore lint/suspicious/noExplicitAny: override handle receiving unknown
   TSchema extends { safeParse: (data: unknown) => any; _input?: any; _output?: any },
-  TTarget extends ValidationTarget,
+  TTarget extends "json" | "form" | "query" | "param" | "header",
   E extends Env = Env,
   P extends string = string,
 >(
@@ -24,42 +24,7 @@ export function zodValidator<
     out: { [K in TTarget]: TSchema["_output"] };
   }
 > {
-  return async (c, next) => {
-    let value: unknown;
-
-    switch (target) {
-      case "json":
-        try {
-          value = await c.req.json();
-        } catch (error) {
-          const logger = (c as Context).get?.("logger");
-          logger?.warn({ error }, "Failed to parse JSON body");
-          return c.json(
-            {
-              success: false,
-              error: "Invalid JSON",
-              message: "Request body must be valid JSON",
-            },
-            400,
-          );
-        }
-        break;
-      case "form":
-        value = await c.req.parseBody();
-        break;
-      case "query":
-        value = c.req.query();
-        break;
-      case "param":
-        value = c.req.param();
-        break;
-      case "header":
-        value = c.req.header();
-        break;
-      default:
-        throw new Error(`Unsupported validation target: ${target}`);
-    }
-
+  return validator(target, (value, c) => {
     const result = schema.safeParse(value);
 
     if (!result.success) {
@@ -83,12 +48,6 @@ export function zodValidator<
       );
     }
 
-    // Store the validated data in the request context
-    // This uses Hono's internal API pattern for storing validated data
-    // biome-ignore lint/suspicious/noExplicitAny: override handle receiving unknown
-    const req = c.req as unknown as Record<string, any>;
-    req[target] = result.data;
-
-    await next();
-  };
+    return result.data;
+  });
 }

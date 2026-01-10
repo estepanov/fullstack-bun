@@ -1,6 +1,8 @@
-import { eq } from "drizzle-orm";
+import { count, desc, eq } from "drizzle-orm";
 import { Hono } from "hono";
+import { z } from "zod";
 import { updateUserRoleSchema } from "shared/auth/user-role";
+import { PAGINATION_CONFIG } from "shared/config/pagination";
 import { ChatWSMessageType } from "shared/interfaces/chat";
 import { db } from "../db/client";
 import { user } from "../db/schema";
@@ -12,8 +14,135 @@ import { checkProfileComplete } from "../middlewares/check-profile-complete";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
 import { requireAdmin } from "../middlewares/require-admin";
 
+// Schema for pagination query parameters
+const paginationQuerySchema = z.object({
+  page: z.coerce.number().int().positive().default(1),
+  limit: z.coerce
+    .number()
+    .int()
+    .positive()
+    .max(PAGINATION_CONFIG.maxPageSize)
+    .default(PAGINATION_CONFIG.defaultPageSize),
+});
+
 const adminRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
   .use(authMiddleware(), requireAdmin(), checkProfileComplete())
+  .get("/users", zodValidator("query", paginationQuerySchema), async (c) => {
+    const logger = c.get("logger");
+
+    try {
+      const { page, limit } = c.req.valid("query");
+      const offset = (page - 1) * limit;
+
+      logger.info(`Fetching users - page: ${page}, limit: ${limit}`);
+
+      // Get total count
+      const [{ value: totalCount }] = await db
+        .select({ value: count() })
+        .from(user);
+
+      // Get paginated users
+      const users = await db
+        .select({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          emailVerified: user.emailVerified,
+          image: user.image,
+          role: user.role,
+          banned: user.banned,
+          banReason: user.banReason,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        })
+        .from(user)
+        .orderBy(desc(user.createdAt))
+        .limit(limit)
+        .offset(offset);
+
+      const totalPages = Math.ceil(totalCount / limit);
+
+      return c.json({
+        success: true,
+        users,
+        pagination: {
+          page,
+          limit,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      });
+    } catch (error) {
+      logger.error({ err: error }, "Failed to fetch users");
+      return c.json(
+        {
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        },
+        500,
+      );
+    }
+  })
+  .get("/users/banned", zodValidator("query", paginationQuerySchema), async (c) => {
+    const logger = c.get("logger");
+
+    try {
+      const { page, limit } = c.req.valid("query");
+      const offset = (page - 1) * limit;
+
+      logger.info(`Fetching banned users - page: ${page}, limit: ${limit}`);
+
+      // Get total count of banned users
+      const [{ value: totalCount }] = await db
+        .select({ value: count() })
+        .from(user)
+        .where(eq(user.banned, true));
+
+      // Get paginated banned users
+      const bannedUsers = await db
+        .select({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          banned: user.banned,
+          banReason: user.banReason,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        })
+        .from(user)
+        .where(eq(user.banned, true))
+        .orderBy(desc(user.updatedAt))
+        .limit(limit)
+        .offset(offset);
+
+      const totalPages = Math.ceil(totalCount / limit);
+
+      return c.json({
+        success: true,
+        bans: bannedUsers,
+        pagination: {
+          page,
+          limit,
+          totalCount,
+          totalPages,
+          hasNextPage: page < totalPages,
+          hasPreviousPage: page > 1,
+        },
+      });
+    } catch (error) {
+      logger.error({ err: error }, "Failed to fetch banned users");
+      return c.json(
+        {
+          success: false,
+          error: error instanceof Error ? error.message : String(error),
+        },
+        500,
+      );
+    }
+  })
   .patch("/users/:id/role", zodValidator("json", updateUserRoleSchema), async (c) => {
     const logger = c.get("logger");
 

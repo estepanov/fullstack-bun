@@ -1,11 +1,18 @@
 import { useBannedUsersQuery } from "@/hooks/api/useBannedUsersQuery";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
-import { Button } from "frontend-common/components/ui";
+import { Button, Label } from "frontend-common/components/ui";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
+import { PAGINATION_CONFIG } from "shared/config/pagination";
 
 export default function AdminBannedUsersPage() {
-  const { data, isPending, error } = useBannedUsersQuery();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(PAGINATION_CONFIG.defaultPageSize);
+  const { data, isPending, error } = useBannedUsersQuery({
+    page: currentPage,
+    limit: pageSize,
+  });
   const unbanUser = useUnbanUserMutation();
   const { t, i18n } = useTranslation("admin");
 
@@ -34,6 +41,7 @@ export default function AdminBannedUsersPage() {
   }
 
   const bans = data?.bans || [];
+  const pagination = data?.pagination;
 
   return (
     <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
@@ -168,6 +176,103 @@ export default function AdminBannedUsersPage() {
                 </tbody>
               </table>
             </div>
+
+            {/* Pagination Controls */}
+            {pagination && (
+              <div className="mt-6 border-t border-border/70 pt-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="text-sm text-muted-foreground">
+                      {t("bans.pagination.showing", {
+                        start: (pagination.page - 1) * pagination.limit + 1,
+                        end: Math.min(
+                          pagination.page * pagination.limit,
+                          pagination.totalCount,
+                        ),
+                        total: pagination.totalCount,
+                      })}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Label
+                        htmlFor="pageSize"
+                        className="text-sm text-muted-foreground whitespace-nowrap"
+                      >
+                        {t("bans.pagination.page_size")}:
+                      </Label>
+                      <select
+                        id="pageSize"
+                        value={pageSize}
+                        onChange={(e) => {
+                          setPageSize(Number(e.target.value));
+                          setCurrentPage(1);
+                        }}
+                        className="rounded-lg border border-border/70 bg-background/80 px-3 py-1.5 text-sm text-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      >
+                        {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
+                          <option key={size} value={size}>
+                            {size}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  {pagination.totalPages > 1 && (
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                        disabled={!pagination.hasPreviousPage || isPending}
+                      >
+                        {t("bans.pagination.previous")}
+                      </Button>
+                      <div className="flex items-center gap-1">
+                        {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+                          .filter((page) => {
+                            return (
+                              page === 1 ||
+                              page === pagination.totalPages ||
+                              Math.abs(page - pagination.page) <= 1
+                            );
+                          })
+                          .map((page, idx, arr) => {
+                            const showEllipsisBefore = idx > 0 && page - arr[idx - 1] > 1;
+                            return (
+                              <div key={page} className="flex items-center gap-1">
+                                {showEllipsisBefore && (
+                                  <span className="px-2 text-muted-foreground">...</span>
+                                )}
+                                <Button
+                                  type="button"
+                                  variant={page === pagination.page ? "default" : "ghost"}
+                                  size="sm"
+                                  onClick={() => setCurrentPage(page)}
+                                  disabled={isPending}
+                                  className="min-w-10"
+                                >
+                                  {page}
+                                </Button>
+                              </div>
+                            );
+                          })}
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))
+                        }
+                        disabled={!pagination.hasNextPage || isPending}
+                      >
+                        {t("bans.pagination.next")}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
           </>
         )}
 
