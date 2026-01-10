@@ -32,6 +32,8 @@
       "verified_header": "Verifiziert",
       "verified_yes": "Ja",
       "verified_no": "Nein",
+      "verified_description": "Diese E-Mail-Adresse ist bestätigt. Anmelde-Links und Benachrichtigungen funktionieren wie erwartet.",
+      "unverified_description": "Diese E-Mail ist noch nicht bestätigt. Bitte den Benutzer um Bestätigung, bevor sie verwendet wird.",
       "no_users": "Keine Benutzer gefunden.",
       "status_header": "Status",
       "actions_header": "Aktionen",

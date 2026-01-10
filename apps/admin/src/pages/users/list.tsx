@@ -3,7 +3,17 @@ import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
 import { useUpdateUserRoleMutation } from "@/hooks/api/useUpdateUserRoleMutation";
 import { useSession } from "@/lib/auth-client";
-import { Badge, Button, Input, Label } from "frontend-common/components/ui";
+import {
+  Badge,
+  Button,
+  Input,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Select,
+} from "frontend-common/components/ui";
+import { CheckIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -80,6 +90,44 @@ export default function AdminUsersPage() {
   const users = data?.users || [];
   const pagination = data?.pagination;
 
+  const EmailStatusBadge = ({
+    verified,
+    size = "sm",
+  }: {
+    verified: boolean;
+    size?: "xs" | "sm";
+  }) => {
+    const label = verified ? t("users.table.verified_yes") : t("users.table.verified_no");
+    const description = verified
+      ? t("users.table.verified_description")
+      : t("users.table.unverified_description");
+
+    return (
+      <Popover>
+        <PopoverTrigger asChild>
+          <Badge
+            variant={verified ? "success" : "default"}
+            size={size}
+            className="cursor-help"
+            aria-label={label}
+          >
+            {verified ? (
+              <CheckIcon className="h-3.5 w-3.5" aria-hidden />
+            ) : (
+              <XIcon className="h-3.5 w-3.5" aria-hidden />
+            )}
+          </Badge>
+        </PopoverTrigger>
+        <PopoverContent side="top" align="start" className="w-64">
+          <div className="space-y-1">
+            <div className="text-sm font-semibold text-foreground">{label}</div>
+            <p className="text-sm text-muted-foreground">{description}</p>
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  };
+
   return (
     <>
       <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
@@ -115,9 +163,6 @@ export default function AdminUsersPage() {
                     {t("users.table.role_header")}
                   </th>
                   <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {t("users.table.verified_header")}
-                  </th>
-                  <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {t("users.table.status_header")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -150,16 +195,12 @@ export default function AdminUsersPage() {
                           )}
                         </div>
                         <div className="mt-1 text-xs text-muted-foreground md:hidden">
-                          {u.email}
+                          <div className="flex items-center gap-2">
+                            <span className="text-foreground">{u.email}</span>
+                            <EmailStatusBadge verified={u.emailVerified} size="xs" />
+                          </div>
                         </div>
                         <div className="mt-2 flex flex-wrap gap-2 lg:hidden">
-                          {u.emailVerified ? (
-                            <Badge variant="primary">
-                              {t("users.table.verified_yes")}
-                            </Badge>
-                          ) : (
-                            <Badge>{t("users.table.verified_no")}</Badge>
-                          )}
                           {userIsBanned ? (
                             <Badge variant="destructive">
                               {t("users.table.status_banned")}
@@ -172,11 +213,16 @@ export default function AdminUsersPage() {
                         </div>
                       </td>
                       <td className="hidden md:table-cell px-4 py-4 text-sm text-muted-foreground">
-                        {u.email}
+                        <div className="flex items-center gap-2">
+                          <span>{u.email}</span>
+                          <EmailStatusBadge verified={u.emailVerified} size="xs" />
+                        </div>
                       </td>
                       <td className="px-4 py-4 text-sm">
-                        <select
-                          className="w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20 sm:w-auto"
+                        <Select
+                          className="w-full sm:w-auto"
+                          variant="soft"
+                          size="md"
                           value={u.role}
                           disabled={updateRole.isPending}
                           onChange={(e) => {
@@ -190,12 +236,7 @@ export default function AdminUsersPage() {
                               {role}
                             </option>
                           ))}
-                        </select>
-                      </td>
-                      <td className="hidden lg:table-cell px-4 py-4 text-sm text-muted-foreground">
-                        {u.emailVerified
-                          ? t("users.table.verified_yes")
-                          : t("users.table.verified_no")}
+                        </Select>
                       </td>
                       <td className="hidden lg:table-cell px-4 py-4 text-sm">
                         {userIsBanned ? (
@@ -238,7 +279,7 @@ export default function AdminUsersPage() {
                 })}
                 {users.length === 0 && (
                   <tr>
-                    <td className="px-4 py-6 text-sm text-muted-foreground" colSpan={6}>
+                    <td className="px-4 py-6 text-sm text-muted-foreground" colSpan={5}>
                       {t("users.table.no_users")}
                     </td>
                   </tr>
@@ -269,21 +310,22 @@ export default function AdminUsersPage() {
                     >
                       {t("users.pagination.page_size")}:
                     </Label>
-                    <select
+                    <Select
                       id="page-size"
+                      variant="subtle"
+                      size="sm"
                       value={pageSize}
                       onChange={(e) => {
                         setPageSize(Number(e.target.value));
                         setCurrentPage(1);
                       }}
-                      className="rounded-lg border border-border/70 bg-background/80 px-3 py-1.5 text-sm text-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                     >
                       {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
                         <option key={size} value={size}>
                           {size}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
                 </div>
                 {pagination.totalPages > 1 && (

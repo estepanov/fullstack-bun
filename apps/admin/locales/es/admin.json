@@ -32,6 +32,8 @@
       "verified_header": "Verificado",
       "verified_yes": "Sí",
       "verified_no": "No",
+      "verified_description": "Este correo está verificado. Los enlaces de acceso y las notificaciones funcionarán correctamente.",
+      "unverified_description": "Este correo aún no está verificado. Pide al usuario que confirme su dirección antes de usarla.",
       "no_users": "No se encontraron usuarios.",
       "status_header": "Estado",
       "actions_header": "Acciones",

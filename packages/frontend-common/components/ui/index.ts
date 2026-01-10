@@ -10,3 +10,4 @@ export * from "./link";
 export * from "./popover";
 export * from "./styled-link";
 export * from "./textarea";
+export * from "./select";

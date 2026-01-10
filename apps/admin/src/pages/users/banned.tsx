@@ -1,6 +1,6 @@
 import { useBannedUsersQuery } from "@/hooks/api/useBannedUsersQuery";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
-import { Button, Label } from "frontend-common/components/ui";
+import { Button, Label, Select } from "frontend-common/components/ui";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -199,21 +199,22 @@ export default function AdminBannedUsersPage() {
                       >
                         {t("bans.pagination.page_size")}:
                       </Label>
-                      <select
+                      <Select
                         id="pageSize"
+                        variant="subtle"
+                        size="md"
                         value={pageSize}
                         onChange={(e) => {
                           setPageSize(Number(e.target.value));
                           setCurrentPage(1);
                         }}
-                        className="rounded-lg border border-border/70 bg-background/80 px-3 py-1.5 text-sm text-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                       >
                         {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
                           <option key={size} value={size}>
                             {size}
                           </option>
                         ))}
-                      </select>
+                      </Select>
                     </div>
                   </div>
                   {pagination.totalPages > 1 && (
