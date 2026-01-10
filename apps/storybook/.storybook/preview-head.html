@@ -1,0 +1,44 @@
+<script>
+  // Apply theme from globals to the document root
+  (function() {
+    function applyTheme() {
+      // Get theme from URL params
+      const params = new URLSearchParams(window.location.search);
+      const globals = params.get('globals');
+      let theme = 'light';
+
+      if (globals) {
+        const match = globals.match(/theme:(\w+)/);
+        if (match) {
+          theme = match[1];
+        }
+      }
+
+      // Apply theme class to root
+      const root = document.documentElement;
+      root.classList.remove('light', 'dark');
+      root.classList.add(theme);
+      root.style.colorScheme = theme;
+    }
+
+    // Apply on load
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', applyTheme);
+    } else {
+      applyTheme();
+    }
+
+    // Re-apply when URL changes (for SPA navigation)
+    let lastUrl = window.location.href;
+    new MutationObserver(() => {
+      const currentUrl = window.location.href;
+      if (currentUrl !== lastUrl) {
+        lastUrl = currentUrl;
+        applyTheme();
+      }
+    }).observe(document, { subtree: true, childList: true });
+
+    // Listen for popstate (back/forward navigation)
+    window.addEventListener('popstate', applyTheme);
+  })();
+</script>

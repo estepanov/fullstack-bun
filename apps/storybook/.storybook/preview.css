@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/* Import theme styles from shared package */
+@import "../../../packages/frontend-common/styles/theme.css";
+
+/* Tell Tailwind to scan frontend-common for classes used in components */
+@source "../../../packages/frontend-common/**/*.{ts,tsx}";

@@ -1,0 +1,175 @@
+
+# Fullstack Bun UI Library
+
+Welcome to the **Fullstack Bun UI Component Library**! This is a comprehensive collection of reusable React components built with modern web technologies.
+
+## Overview
+
+This component library is designed to provide a consistent, accessible, and themeable set of UI components for the Fullstack Bun project. All components are built with:
+
+- **React 19** - Latest React features and optimizations
+- **Tailwind CSS v4** - Utility-first CSS framework
+- **Radix UI** - Accessible component primitives
+- **Class Variance Authority (CVA)** - Type-safe component variants
+- **TypeScript** - Full type safety and IntelliSense support
+
+## Features
+
+### Theme Support
+
+All components support **light** and **dark** themes out of the box. Use the theme switcher in the toolbar (moon/sun icon) to preview components in different themes.
+
+The theme system uses:
+- CSS custom properties for easy customization
+- OKLch color space for perceptually uniform colors
+- Automatic system preference detection
+
+### Accessibility
+
+Components are built on top of Radix UI primitives, ensuring:
+- Keyboard navigation
+- Screen reader support
+- ARIA attributes
+- Focus management
+
+### Variants
+
+Many components support multiple visual variants and sizes through CVA, providing flexibility while maintaining type safety.
+
+## Available Components
+
+### Form Components
+- **Button** - Primary interactive element with multiple variants
+- **Input** - Text input with various types including checkbox
+- **Textarea** - Multi-line text input
+- **Label** - Form labels with variants
+
+### Layout Components
+- **Card** - Container for content with header, footer, and action slots
+- **Container** - Max-width centered container
+
+### Overlay Components
+- **Dialog** - Modal dialogs for important interactions
+- **Popover** - Floating content panels
+- **DropdownMenu** - Contextual menus with advanced features
+
+### Navigation Components
+- **Link** - Standard link with primary styling
+- **StyledLink** - Link component with button variants
+
+## Getting Started
+
+### Installation
+
+This library is part of the Fullstack Bun monorepo and is available as the `frontend-common` workspace package.
+
+```bash
+# The package is already available in the monorepo
+import { Button } from 'frontend-common/components/ui';
+```
+
+### Basic Usage
+
+```tsx
+import { Button, Card, CardHeader, CardTitle, CardContent } from 'frontend-common/components/ui';
+
+function MyComponent() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Welcome</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <p>Get started with our components</p>
+        <Button>Click me</Button>
+      </CardContent>
+    </Card>
+  );
+}
+```
+
+### Using Themes
+
+Wrap your application with the `ThemeProvider`:
+
+```tsx
+import { ThemeProvider } from 'frontend-common/providers';
+
+function App() {
+  return (
+    <ThemeProvider defaultTheme="system" storageKey="app-theme">
+      {/* Your app content */}
+    </ThemeProvider>
+  );
+}
+```
+
+### Import Styles
+
+Import the theme CSS in your application:
+
+```tsx
+import 'frontend-common/styles/theme.css';
+```
+
+## Component Documentation
+
+Each component in this library has:
+
+- **Interactive examples** - Try out components with different props
+- **Controls** - Modify component properties in real-time
+- **Auto-generated docs** - Prop types and descriptions
+- **Usage examples** - Common patterns and use cases
+
+Navigate through the sidebar to explore all available components.
+
+## Design Principles
+
+### Simplicity
+Components are designed to be easy to use with sensible defaults while remaining flexible for advanced use cases.
+
+### Consistency
+Visual design and behavior patterns are consistent across all components.
+
+### Accessibility
+All components follow WCAG guidelines and best practices for accessibility.
+
+### Performance
+Components are optimized for performance with minimal re-renders and efficient styling.
+
+## Color System
+
+The theme uses CSS custom properties with the following semantic tokens:
+
+- **Background** - Main background colors
+- **Foreground** - Text colors
+- **Primary** - Brand/accent colors
+- **Secondary** - Supporting colors
+- **Muted** - Subtle backgrounds and text
+- **Accent** - Hover states and highlights
+- **Destructive** - Error and delete actions
+- **Border** - Border colors
+- **Input** - Form input backgrounds
+- **Ring** - Focus ring colors
+
+## Contributing
+
+This component library is maintained as part of the Fullstack Bun project. When adding new components:
+
+1. Follow existing patterns and conventions
+2. Ensure full TypeScript support
+3. Add comprehensive Storybook stories
+4. Include accessibility considerations
+5. Support both light and dark themes
+6. Document all props and variants
+
+## Resources
+
+- [Radix UI Documentation](https://www.radix-ui.com/)
+- [Tailwind CSS Documentation](https://tailwindcss.com/)
+- [React Documentation](https://react.dev/)
+- [GitHub Repository](https://github.com/estepanov/fullstack-bun)
+
+---
+
+**Ready to explore?** Start by browsing the component categories in the sidebar!

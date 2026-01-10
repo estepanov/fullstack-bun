@@ -13,6 +13,9 @@ hero:
     - theme: alt
       text: Reference
       link: /reference
+    - theme: alt
+      text: Demo Frontend App
+      link: https://frontend.demo.fullstackbun.dev
 
 features:
   - title: React 19 + Vite

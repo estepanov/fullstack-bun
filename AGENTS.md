@@ -1,4 +1,5 @@
 # Repository Guidelines
+Always use Context7 MCP when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
 
 ## Project Structure & Module Organization
 - Monorepo managed by Bun workspaces; app code lives in `apps/`, shared libraries in `packages/`.
@@ -8,6 +9,7 @@
 - `packages/shared`: cross-app interfaces and types consumed via workspace dependency `shared`.
 
 ## Build, Test, and Development Commands
+- Always use `bun` and `bunx` instead of `npm` or `yarn` or `pnpm`
 - Install deps once from the repo root: `bun install`.
 - Set up env files: `bun run setup` (copies `.env.example` for API and frontend).
 - Run both apps during development: `bun run dev` (concurrently runs API and frontend).

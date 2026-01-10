@@ -1,0 +1,38 @@
+{
+  "name": "storybook-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "build": "storybook build",
+    "preview": "bunx http-server storybook-static",
+    "format": "bun run biome format --write ./src ./.storybook",
+    "lint": "bun run biome lint ./src ./.storybook"
+  },
+  "dependencies": {
+    "frontend-common": "workspace:*",
+    "lucide-react": "^0.483.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
+    "react-router": "^7.10.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@storybook/addon-a11y": "^10.1.11",
+    "@storybook/addon-docs": "^10.1.11",
+    "@storybook/addon-onboarding": "^10.1.11",
+    "@storybook/addon-vitest": "^10.1.11",
+    "@storybook/react": "^10.1.11",
+    "@storybook/react-vite": "^10.1.11",
+    "@tailwindcss/vite": "^4.1.18",
+    "@vitest/browser-playwright": "latest",
+    "@vitest/coverage-v8": "latest",
+    "playwright": "latest",
+    "storybook": "^10.1.11",
+    "tailwindcss": "^4.1.18",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
+    "vitest": "latest"
+  }
+}

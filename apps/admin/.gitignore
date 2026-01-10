@@ -25,3 +25,6 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# React router tests
+.react-router

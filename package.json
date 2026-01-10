@@ -14,7 +14,11 @@
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
     "@types/bun": "latest",
-    "concurrently": "^9.0.1"
+    "@vitest/browser-playwright": "^4.0.16",
+    "@vitest/coverage-v8": "^4.0.16",
+    "concurrently": "^9.0.1",
+    "playwright": "^1.57.0",
+    "vitest": "^4.0.16"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
@@ -27,6 +31,9 @@
     "format": "bun run --filter=* format",
     "lint": "bun run --filter=* lint",
     "setup": "bun scripts/initial-setup.ts",
+    "storybook:dev": "bun --filter=storybook-app dev",
+    "storybook:build": "bun --filter=storybook-app build",
+    "storybook:preview": "bun --filter=storybook-app preview",
     "docker:dev": "docker-compose up",
     "docker:dev:build": "docker-compose up --build",
     "docker:dev:down": "docker-compose down",
@@ -34,7 +41,9 @@
     "docker:prod": "docker-compose -f docker-compose.prod.yml up -d",
     "docker:prod:build": "docker-compose -f docker-compose.prod.yml up -d --build",
     "docker:prod:down": "docker-compose -f docker-compose.prod.yml down",
-    "docker:prod:clean": "docker-compose -f docker-compose.prod.yml down -v"
+    "docker:prod:clean": "docker-compose -f docker-compose.prod.yml down -v",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "trustedDependencies": ["@biomejs/biome", "esbuild", "msw"]
 }
