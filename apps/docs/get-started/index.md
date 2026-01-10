@@ -68,6 +68,23 @@ openssl rand -base64 32
 
 To learn more about specific variables visit the [environment variables reference page](/reference/environment-variables.md).
 
+### Prefer Docker-only? (no local Postgres/Redis setup)
+
+If you don't want to install Postgres or Redis locally, you can run the entire stack (frontend, API, PostgreSQL, and Redis) with Docker:
+
+```sh
+cp .env.example .env
+bun run docker:dev
+```
+
+This uses the included Docker Compose setup to start everything together. You can stop it with:
+
+```sh
+bun run docker:dev:down
+```
+
+For more options (rebuilds, cleaning volumes, production images), see the [Docker guide](/docker.md). If you choose this Docker path, you can skip steps 5–8 below because Docker will start the databases and apps for you.
+
 5. Start infrastructure (Postgres + Redis)
 
 The project requires PostgreSQL and Redis. The recommended local approach is to run both via
@@ -81,15 +98,7 @@ docker-compose up postgres redis -d
 This starts PostgreSQL and Redis containers and exposes them on `localhost` using the ports from
 the repo root `.env` (or the defaults in `docker-compose.yml`).
 
-If you prefer to run *everything* in containers (frontend + API + Postgres + Redis), run:
-
-```sh
-docker-compose up postgres redis -d
-```
-
-The `-d` flag runs them in detached mode (background). This will start PostgreSQL on port 5432 and Redis on port 6379.
-
-**Note:** If you prefer to run everything (frontend, backend, and databases) in Docker, see the [Docker guide](/docker.html) instead.
+If you're using the Docker-only path above, skip this step because Docker already started the databases for you.
 
 6. Run database migrations
 
