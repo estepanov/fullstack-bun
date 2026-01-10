@@ -3,7 +3,7 @@ import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
 import { useUpdateUserRoleMutation } from "@/hooks/api/useUpdateUserRoleMutation";
 import { useSession } from "@/lib/auth-client";
-import { Button, Input, Label } from "frontend-common/components/ui";
+import { Badge, Button, Input, Label } from "frontend-common/components/ui";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -138,9 +138,9 @@ export default function AdminUsersPage() {
                         <div className="flex items-center gap-2">
                           <span className="font-medium">{u.name}</span>
                           {userIsSelf && (
-                            <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-300">
+                            <Badge variant="info" size="sm">
                               {t("users.table.you_badge")}
-                            </span>
+                            </Badge>
                           )}
                         </div>
                         <div className="mt-1 text-xs text-muted-foreground md:hidden">
@@ -148,22 +148,20 @@ export default function AdminUsersPage() {
                         </div>
                         <div className="mt-2 flex flex-wrap gap-2 lg:hidden">
                           {u.emailVerified ? (
-                            <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                            <Badge variant="primary">
                               {t("users.table.verified_yes")}
-                            </span>
+                            </Badge>
                           ) : (
-                            <span className="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
-                              {t("users.table.verified_no")}
-                            </span>
+                            <Badge>{t("users.table.verified_no")}</Badge>
                           )}
                           {userIsBanned ? (
-                            <span className="inline-flex items-center rounded-full bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
+                            <Badge variant="destructive">
                               {t("users.table.status_banned")}
-                            </span>
+                            </Badge>
                           ) : (
-                            <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                            <Badge variant="success">
                               {t("users.table.status_active")}
-                            </span>
+                            </Badge>
                           )}
                         </div>
                       </td>
@@ -195,13 +193,13 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="hidden lg:table-cell px-4 py-4 text-sm">
                         {userIsBanned ? (
-                          <span className="inline-flex items-center rounded-full bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
+                          <Badge variant="destructive">
                             {t("users.table.status_banned")}
-                          </span>
+                          </Badge>
                         ) : (
-                          <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                          <Badge variant="success">
                             {t("users.table.status_active")}
-                          </span>
+                          </Badge>
                         )}
                       </td>
                       <td className="px-4 py-4 text-sm">
