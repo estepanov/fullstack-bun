@@ -1,10 +1,12 @@
+import type { UpdateCallback } from "@/types/dashboard";
+import type { ExtendedUser } from "@/types/user";
+import { CheckIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { LoginMethod } from "shared/auth/login-method";
+import { Badge } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 import { NameEditor } from "./name-editor";
 import { UsernameEditor } from "./username-editor";
-import type { UpdateCallback } from "@/types/dashboard";
-import type { ExtendedUser } from "@/types/user";
-import { LoginMethod } from "shared/auth/login-method";
 
 interface UserInfoSectionProps {
   user: ExtendedUser;
@@ -32,13 +34,12 @@ export function UserInfoSection({ user, role, onUpdated }: UserInfoSectionProps)
           </dt>
           <dd className="mt-1 text-sm text-foreground">
             {user.emailVerified ? (
-              <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+              <Badge variant="success" size="sm" className="gap-1">
+                <CheckIcon className="h-4 w-4" />
                 {t("dashboard.verified_badge")}
-              </span>
+              </Badge>
             ) : (
-              <span className="inline-flex items-center rounded-full bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-700 dark:text-amber-300">
-                {t("dashboard.not_verified_badge")}
-              </span>
+              <Badge variant="destructive">{t("dashboard.not_verified_badge")}</Badge>
             )}
           </dd>
         </div>
@@ -48,10 +49,7 @@ export function UserInfoSection({ user, role, onUpdated }: UserInfoSectionProps)
           </dt>
           <dd className="mt-1 text-sm text-foreground">{user.id}</dd>
         </div>
-        <UsernameEditor
-          displayUsername={user.displayUsername}
-          onUpdated={onUpdated}
-        />
+        <UsernameEditor displayUsername={user.displayUsername} onUpdated={onUpdated} />
         {role && role !== "user" && (
           <div>
             <dt className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -75,9 +73,7 @@ export function UserInfoSection({ user, role, onUpdated }: UserInfoSectionProps)
                 user.lastLoginMethod.slice(1)
               )
             ) : (
-              <span className="italic">
-                {t("dashboard.last_login_method_not_set")}
-              </span>
+              <span className="italic">{t("dashboard.last_login_method_not_set")}</span>
             )}
           </dd>
         </div>

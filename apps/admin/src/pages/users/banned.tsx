@@ -1,6 +1,14 @@
 import { useBannedUsersQuery } from "@/hooks/api/useBannedUsersQuery";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
-import { Button, Label, Select } from "frontend-common/components/ui";
+import {
+  Button,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "frontend-common/components/ui";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -200,20 +208,27 @@ export default function AdminBannedUsersPage() {
                         {t("bans.pagination.page_size")}:
                       </Label>
                       <Select
-                        id="pageSize"
-                        variant="subtle"
-                        size="md"
-                        value={pageSize}
-                        onChange={(e) => {
-                          setPageSize(Number(e.target.value));
+                        value={String(pageSize)}
+                        onValueChange={(value) => {
+                          setPageSize(Number(value));
                           setCurrentPage(1);
                         }}
                       >
-                        {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
-                          <option key={size} value={size}>
-                            {size}
-                          </option>
-                        ))}
+                        <SelectTrigger
+                          id="pageSize"
+                          variant="subtle"
+                          size="md"
+                          aria-label={t("bans.pagination.page_size")}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
+                            <SelectItem key={size} value={String(size)}>
+                              {size}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
                       </Select>
                     </div>
                   </div>

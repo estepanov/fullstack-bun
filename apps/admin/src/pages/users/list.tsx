@@ -12,6 +12,10 @@ import {
   PopoverContent,
   PopoverTrigger,
   Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "frontend-common/components/ui";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useState } from "react";
@@ -220,22 +224,29 @@ export default function AdminUsersPage() {
                       </td>
                       <td className="px-4 py-4 text-sm">
                         <Select
-                          className="w-full sm:w-auto"
-                          variant="soft"
-                          size="md"
                           value={u.role}
                           disabled={updateRole.isPending}
-                          onChange={(e) => {
-                            const parsed = userRoleSchema.safeParse(e.target.value);
+                          onValueChange={(value) => {
+                            const parsed = userRoleSchema.safeParse(value);
                             if (!parsed.success) return;
                             updateRole.mutate({ id: u.id, role: parsed.data });
                           }}
                         >
-                          {Object.values(UserRole).map((role) => (
-                            <option key={role} value={role}>
-                              {role}
-                            </option>
-                          ))}
+                          <SelectTrigger
+                            className="w-full sm:w-auto"
+                            variant="soft"
+                            size="md"
+                            aria-label={t("users.table.role_header")}
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.values(UserRole).map((role) => (
+                              <SelectItem key={role} value={role}>
+                                {role}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
                         </Select>
                       </td>
                       <td className="hidden lg:table-cell px-4 py-4 text-sm">
@@ -311,20 +322,27 @@ export default function AdminUsersPage() {
                       {t("users.pagination.page_size")}:
                     </Label>
                     <Select
-                      id="page-size"
-                      variant="subtle"
-                      size="sm"
-                      value={pageSize}
-                      onChange={(e) => {
-                        setPageSize(Number(e.target.value));
+                      value={String(pageSize)}
+                      onValueChange={(value) => {
+                        setPageSize(Number(value));
                         setCurrentPage(1);
                       }}
                     >
-                      {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
-                        <option key={size} value={size}>
-                          {size}
-                        </option>
-                      ))}
+                      <SelectTrigger
+                        id="page-size"
+                        variant="subtle"
+                        size="sm"
+                        aria-label={t("users.pagination.page_size")}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
+                          <SelectItem key={size} value={String(size)}>
+                            {size}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
                     </Select>
                   </div>
                 </div>

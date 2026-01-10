@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
 
 export const selectVariants = cva(
-  "border-input text-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 w-full min-w-0 border bg-transparent shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+  "border-input text-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 inline-flex w-full min-w-0 items-center justify-between gap-2 border bg-background px-3 text-sm shadow-xs transition-[color,box-shadow,border] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[state=open]:border-ring data-[state=open]:ring-ring/30 data-[placeholder]:text-muted-foreground",
   {
     variants: {
       variant: {

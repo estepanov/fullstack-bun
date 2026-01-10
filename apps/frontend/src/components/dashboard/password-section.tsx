@@ -132,7 +132,9 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
               aria-expanded={editingPassword}
               aria-controls={panelId}
             >
-              {editingPassword ? t("dashboard.cancel_button") : t("dashboard.edit_button")}
+              {editingPassword
+                ? t("dashboard.cancel_button")
+                : t("dashboard.edit_button")}
             </Button>
           </div>
         </div>
@@ -217,7 +219,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                                     }}
                                     variant="link"
                                     size="xs"
-                                    className="font-semibold"
+                                    className="font-semibold p-0"
                                   />
                                 ),
                               }}
