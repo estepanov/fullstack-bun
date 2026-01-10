@@ -26,6 +26,7 @@
     },
     "table": {
       "user_header": "Usuario",
+      "name_not_provided": "No proporcionado",
       "email_header": "Correo",
       "role_header": "Rol",
       "verified_header": "Verificado",

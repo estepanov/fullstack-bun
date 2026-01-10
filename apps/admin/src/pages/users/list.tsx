@@ -136,7 +136,13 @@ export default function AdminUsersPage() {
                     <tr key={u.id}>
                       <td className="px-4 py-4 text-sm text-foreground">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{u.name}</span>
+                          {u.name ? (
+                            <span className="font-medium">{u.name}</span>
+                          ) : (
+                            <span className="text-muted-foreground/70 italic">
+                              {t("users.table.name_not_provided")}
+                            </span>
+                          )}
                           {userIsSelf && (
                             <Badge variant="info" size="sm">
                               {t("users.table.you_badge")}
