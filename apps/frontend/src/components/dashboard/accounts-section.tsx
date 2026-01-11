@@ -8,7 +8,7 @@ import type { AccountRecord } from "@/types/dashboard";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
-import { Alert, Button, InputError } from "../ui";
+import { Alert, Button } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 export function AccountsSection() {
