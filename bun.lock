@@ -60,6 +60,7 @@
       "dependencies": {
         "@better-auth/passkey": "^1.4.9",
         "@t3-oss/env-core": "^0.13.10",
+        "auth-email-security": "workspace:*",
         "better-auth": "^1.4.9",
         "better-auth-harmony": "^1.2.5",
         "drizzle-orm": "^0.45.1",
@@ -179,6 +180,16 @@
         "typescript": "~5.7.2",
         "vite": "^6.2.0",
         "vitest": "latest",
+      },
+    },
+    "packages/auth-email-security": {
+      "name": "auth-email-security",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "^5.0.0",
       },
     },
     "packages/frontend-common": {
@@ -1050,6 +1061,8 @@
     "ast-v8-to-istanbul": ["ast-v8-to-istanbul@0.3.10", "", { "dependencies": { "@jridgewell/trace-mapping": "^0.3.31", "estree-walker": "^3.0.3", "js-tokens": "^9.0.1" } }, "sha512-p4K7vMz2ZSk3wN8l5o3y2bJAoZXT3VuJI5OLTATY/01CYWumWvwkUw0SqDBnNq6IiTO3qDa1eSQDibAV8g7XOQ=="],
 
     "atomic-sleep": ["atomic-sleep@1.0.0", "", {}, "sha512-kNOjDqAh7px0XWNI+4QbzoiR/nTkHAWNud2uvnJquD1/x5a7EQZMJT0AczqK0Qn67oY/TTQ1LbUKajZpp3I9tQ=="],
+
+    "auth-email-security": ["auth-email-security@workspace:packages/auth-email-security"],
 
     "autoprefixer": ["autoprefixer@10.4.23", "", { "dependencies": { "browserslist": "^4.28.1", "caniuse-lite": "^1.0.30001760", "fraction.js": "^5.3.4", "picocolors": "^1.1.1", "postcss-value-parser": "^4.2.0" }, "peerDependencies": { "postcss": "^8.1.0" }, "bin": { "autoprefixer": "bin/autoprefixer" } }, "sha512-YYTXSFulfwytnjAPlw8QHncHJmlvFKtczb8InXaAx9Q0LbfDnfEYDE55omerIJKihhmU61Ft+cAOSzQVaBUmeA=="],
 

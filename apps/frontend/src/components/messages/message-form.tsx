@@ -1,5 +1,5 @@
 import type { FESession } from "@/lib/auth-client";
-import { Alert, Button, InputError, Textarea } from "frontend-common/components/ui";
+import { Alert, Button, Textarea } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";

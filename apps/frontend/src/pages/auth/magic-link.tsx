@@ -4,7 +4,7 @@ import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
-import { Alert, Button, Input, InputError, Label } from "frontend-common/components/ui";
+import { Alert, Button, Input, Label } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
