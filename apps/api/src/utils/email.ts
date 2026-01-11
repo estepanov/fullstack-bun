@@ -9,6 +9,21 @@ type EmailTemplateOptions = {
   actionUrl: string;
   footer: string;
   accentColor: string;
+  securityFooter?: EmailSecurityFooter;
+};
+
+type OtpEmailTemplateOptions = {
+  title: string;
+  intro: string;
+  otp: string;
+  footer: string;
+  accentColor: string;
+  securityFooter?: EmailSecurityFooter;
+};
+
+type EmailSecurityFooter = {
+  text: string;
+  html: string;
 };
 
 const formatSubject = (title: string) => `${APP_NAME} | ${title}`;
@@ -19,6 +34,7 @@ const renderEmailText = ({
   actionText,
   actionUrl,
   footer,
+  securityFooter,
 }: EmailTemplateOptions) => `${APP_NAME}
 
 ${title}
@@ -28,6 +44,7 @@ ${intro}
 ${actionText}: ${actionUrl}
 
 ${footer}
+${securityFooter?.text ? `\n${securityFooter.text}` : ""}
 `;
 
 const renderEmailTemplate = ({
@@ -37,6 +54,7 @@ const renderEmailTemplate = ({
   actionUrl,
   footer,
   accentColor,
+  securityFooter,
 }: EmailTemplateOptions) => `
   <!DOCTYPE html>
   <html>
@@ -58,6 +76,64 @@ const renderEmailTemplate = ({
         <p style="color: #666; font-size: 14px;">If the button doesn't work, copy and paste this link into your browser:</p>
         <p style="word-break: break-all; color: ${accentColor}; font-size: 12px;">${actionUrl}</p>
         <p style="color: #999; font-size: 12px; margin-top: 30px;">${footer}</p>
+        ${
+          securityFooter
+            ? `<div style="margin-top: 16px; font-size: 12px; color: #666;">${securityFooter.html}</div>`
+            : ""
+        }
+      </div>
+    </body>
+  </html>
+`;
+
+const renderOtpEmailText = ({
+  title,
+  intro,
+  otp,
+  footer,
+  securityFooter,
+}: OtpEmailTemplateOptions) => `${APP_NAME}
+
+${title}
+
+${intro}
+
+Code: ${otp}
+
+${footer}
+${securityFooter?.text ? `\n${securityFooter.text}` : ""}
+`;
+
+const renderOtpEmailTemplate = ({
+  title,
+  intro,
+  otp,
+  footer,
+  accentColor,
+  securityFooter,
+}: OtpEmailTemplateOptions) => `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+      <h1 style="color: #444; margin-bottom: 20px;">${APP_NAME}</h1>
+      <div style="background-color: #f4f4f4; padding: 20px; border-radius: 10px;">
+        <h2 style="color: #444; margin-bottom: 20px;">${title}</h2>
+        <p>${intro}</p>
+        <div style="text-align: center; margin: 24px 0;">
+          <div style="display: inline-block; background-color: ${accentColor}; color: white; padding: 12px 24px; border-radius: 6px; font-size: 20px; letter-spacing: 2px;">
+            ${otp}
+          </div>
+        </div>
+        <p style="color: #999; font-size: 12px; margin-top: 24px;">${footer}</p>
+        ${
+          securityFooter
+            ? `<div style="margin-top: 16px; font-size: 12px; color: #666;">${securityFooter.html}</div>`
+            : ""
+        }
       </div>
     </body>
   </html>
@@ -111,6 +187,7 @@ const createTransporter = () => {
 export async function sendVerificationEmail(
   email: string,
   verificationUrl: string,
+  securityFooter?: EmailSecurityFooter,
 ): Promise<void> {
   const actionUrl = mapEmailActionUrl(verificationUrl);
   const transporter = createTransporter();
@@ -140,6 +217,7 @@ export async function sendVerificationEmail(
         footer:
           "If you didn't sign up for this account, you can safely ignore this email.",
         accentColor: "#007bff",
+        securityFooter,
       }),
       html: renderEmailTemplate({
         title: "Verify Your Email",
@@ -150,6 +228,7 @@ export async function sendVerificationEmail(
         footer:
           "If you didn't sign up for this account, you can safely ignore this email.",
         accentColor: "#007bff",
+        securityFooter,
       }),
     });
 
@@ -170,6 +249,7 @@ export async function sendVerificationEmail(
 export async function sendMagicLinkEmail(
   email: string,
   magicLinkUrl: string,
+  securityFooter?: EmailSecurityFooter,
 ): Promise<void> {
   const actionUrl = mapEmailActionUrl(magicLinkUrl);
   const transporter = createTransporter();
@@ -198,6 +278,7 @@ export async function sendMagicLinkEmail(
         actionUrl,
         footer: "If you didn't request this email, you can safely ignore it.",
         accentColor: "#0f766e",
+        securityFooter,
       }),
       html: renderEmailTemplate({
         title: "Your Magic Link",
@@ -207,6 +288,7 @@ export async function sendMagicLinkEmail(
         actionUrl,
         footer: "If you didn't request this email, you can safely ignore it.",
         accentColor: "#0f766e",
+        securityFooter,
       }),
     });
 
@@ -226,6 +308,7 @@ export async function sendMagicLinkEmail(
 export async function sendResetPasswordEmail(
   email: string,
   resetPasswordUrl: string,
+  securityFooter?: EmailSecurityFooter,
 ): Promise<void> {
   const actionUrl = mapEmailActionUrl(resetPasswordUrl);
   const transporter = createTransporter();
@@ -252,8 +335,10 @@ export async function sendResetPasswordEmail(
           "We received a request to reset your password. Click the link below to continue.",
         actionText: "Reset Password",
         actionUrl,
-        footer: "If you didn't request a password reset, you can safely ignore this email.",
+        footer:
+          "If you didn't request a password reset, you can safely ignore this email.",
         accentColor: "#dc2626",
+        securityFooter,
       }),
       html: renderEmailTemplate({
         title: "Reset Your Password",
@@ -261,8 +346,10 @@ export async function sendResetPasswordEmail(
           "We received a request to reset your password. Click the button below to continue.",
         actionText: "Reset Password",
         actionUrl,
-        footer: "If you didn't request a password reset, you can safely ignore this email.",
+        footer:
+          "If you didn't request a password reset, you can safely ignore this email.",
         accentColor: "#dc2626",
+        securityFooter,
       }),
     });
 
@@ -271,6 +358,94 @@ export async function sendResetPasswordEmail(
     console.error("Failed to send reset password email:", error);
     if (isDevelopmentEnv()) {
       console.log(`\n🔒 Reset Password URL for ${email}:\n${actionUrl}\n`);
+    }
+    throw error;
+  }
+}
+
+type OtpEmailType = "sign-in" | "email-verification" | "forget-password";
+
+type OtpCopyItem = {
+  subject: string;
+  title: string;
+  intro: string;
+  footer: string;
+  accentColor: string;
+};
+
+const OTP_COPY: Record<OtpEmailType, OtpCopyItem> = {
+  "sign-in": {
+    subject: "Sign-in code",
+    title: "Your Sign-In Code",
+    intro: "Use the code below to sign in. This code will expire shortly.",
+    footer: "If you didn't request this email, you can safely ignore it.",
+    accentColor: "#0f766e",
+  },
+  "email-verification": {
+    subject: "Verify your email",
+    title: "Verify Your Email",
+    intro: "Use the code below to verify your email address.",
+    footer: "If you didn't sign up for this account, you can safely ignore this email.",
+    accentColor: "#007bff",
+  },
+  "forget-password": {
+    subject: "Reset your password",
+    title: "Reset Your Password",
+    intro: "Use the code below to reset your password.",
+    footer: "If you didn't request a password reset, you can safely ignore this email.",
+    accentColor: "#dc2626",
+  },
+};
+
+export async function sendOtpEmail(
+  email: string,
+  otp: string,
+  type: OtpEmailType,
+  securityFooter?: EmailSecurityFooter,
+): Promise<void> {
+  const transporter = createTransporter();
+
+  if (!transporter) {
+    console.error(
+      "Cannot send OTP email: SMTP not configured. Please set SMTP_* environment variables.",
+    );
+    if (isDevelopmentEnv()) {
+      console.log(`\n🔐 OTP for ${email}: ${otp}\n`);
+    }
+    return;
+  }
+
+  const smtpFrom = env.SMTP_FROM;
+  const copy = OTP_COPY[type];
+
+  try {
+    await transporter.sendMail({
+      from: smtpFrom,
+      to: email,
+      subject: formatSubject(copy.subject),
+      text: renderOtpEmailText({
+        title: copy.title,
+        intro: copy.intro,
+        otp,
+        footer: copy.footer,
+        accentColor: copy.accentColor,
+        securityFooter,
+      }),
+      html: renderOtpEmailTemplate({
+        title: copy.title,
+        intro: copy.intro,
+        otp,
+        footer: copy.footer,
+        accentColor: copy.accentColor,
+        securityFooter,
+      }),
+    });
+
+    console.log(`✅ OTP email sent to ${email}`);
+  } catch (error) {
+    console.error("Failed to send OTP email:", error);
+    if (isDevelopmentEnv()) {
+      console.log(`\n🔐 OTP for ${email}: ${otp}\n`);
     }
     throw error;
   }
