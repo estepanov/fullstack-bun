@@ -27,6 +27,21 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
     message: string;
   }>({ checking: false, available: null, message: "" });
 
+  const isUsernameTakenError = (error: unknown, message: string) => {
+    if (!error && !message) return false;
+    if (typeof error === "object" && error !== null && "code" in error) {
+      const code = (error as { code?: string }).code?.toUpperCase() || "";
+      if (
+        code.includes("USERNAME") &&
+        (code.includes("TAKEN") || code.includes("EXIST"))
+      ) {
+        return true;
+      }
+    }
+    const normalized = message.toLowerCase();
+    return normalized.includes("username") && normalized.includes("taken");
+  };
+
   const form = useForm({
     defaultValues: {
       displayUsername: displayUsername ?? "",
@@ -47,22 +62,42 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
       // Check if availability check failed
       if (availabilityState.available === false) {
         setSubmitError(availabilityState.message || t("complete_profile.username_taken"));
-        setAvailabilityState({ checking: false, available: null, message: "" });
         return;
       }
 
       try {
         const response = await authClient.updateUser({ displayUsername: trimmed });
         if (response.error) {
-          throw new Error(
-            parseErrorMessage(response.error, t("dashboard.username_save_error")),
+          const message = parseErrorMessage(
+            response.error,
+            t("dashboard.username_save_error"),
           );
+          setSubmitError(message);
+          if (isUsernameTakenError(response.error, message)) {
+            setAvailabilityState({
+              checking: false,
+              available: false,
+              message: t("complete_profile.username_taken"),
+            });
+          } else {
+            setAvailabilityState({ checking: false, available: null, message: "" });
+          }
+          return;
         }
         await onUpdated();
         setEditing(false);
       } catch (error) {
-        setSubmitError(parseErrorMessage(error, t("dashboard.username_save_error")));
-        setAvailabilityState({ checking: false, available: null, message: "" });
+        const message = parseErrorMessage(error, t("dashboard.username_save_error"));
+        setSubmitError(message);
+        if (isUsernameTakenError(error, message)) {
+          setAvailabilityState({
+            checking: false,
+            available: false,
+            message: t("complete_profile.username_taken"),
+          });
+        } else {
+          setAvailabilityState({ checking: false, available: null, message: "" });
+        }
       }
     },
   });
@@ -157,6 +192,18 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              const currentValue = form.state.values.displayUsername.trim();
+              const currentUsername = (displayUsername ?? "").trim();
+              if (
+                currentValue &&
+                currentValue !== currentUsername &&
+                availabilityState.available === false
+              ) {
+                setSubmitError(
+                  availabilityState.message || t("complete_profile.username_taken"),
+                );
+                return;
+              }
               form.handleSubmit();
             }}
           >
@@ -170,7 +217,10 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
                       type="text"
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => {
+                        setSubmitError("");
+                        field.handleChange(e.target.value);
+                      }}
                       minLength={USERNAME_CONFIG.minLength}
                       maxLength={USERNAME_CONFIG.maxLength}
                       pattern={USERNAME_CONFIG.pattern.source}
