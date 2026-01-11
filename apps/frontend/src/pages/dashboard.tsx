@@ -9,7 +9,7 @@ import { useGetUserProfileQuery } from "@/hooks/api/useGetUserProfileQuery";
 import { signOut, useSession } from "@/lib/auth-client";
 import { getExtendedUser } from "@/types/user";
 import { getSessionUserRole } from "frontend-common/auth";
-import { Button } from "frontend-common/components/ui";
+import { Alert, AlertDescription, Button } from "frontend-common/components/ui";
 import { useTranslation } from "react-i18next";
 
 function DashboardContent() {
@@ -64,11 +64,9 @@ function DashboardContent() {
             </div>
           </DashboardCard>
 
-          <div className="rounded-2xl border border-border/70 bg-primary/10 p-4">
-            <p className="text-sm font-medium text-primary">
-              {t("dashboard.protected_notice")}
-            </p>
-          </div>
+          <Alert variant="info" size="sm">
+            <AlertDescription>{t("dashboard.protected_notice")}</AlertDescription>
+          </Alert>
         </div>
       </div>
     </div>
