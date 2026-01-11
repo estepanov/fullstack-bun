@@ -1,6 +1,6 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { signUp } from "@/lib/auth-client";
-import { Button, Input, Label } from "frontend-common/components/ui";
+import { Alert, Button, Input, InputError, Label } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -57,11 +57,7 @@ export default function RegisterPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
-          {error && (
-            <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
-              <p className="text-sm font-medium text-destructive">{error}</p>
-            </div>
-          )}
+          {error && <Alert variant="destructive">{error}</Alert>}
           <div className="gap-1">
             <Label htmlFor="name">{t("register.name_label")}</Label>
             <Input

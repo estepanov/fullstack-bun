@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button, Input, Label, Textarea } from "frontend-common/components/ui";
+import { Button, Input, InputError, Label, Textarea } from "frontend-common/components/ui";
 
 const meta = {
   title: "UI/Input",
@@ -159,7 +159,7 @@ export const WithError: Story = {
         placeholder="you@example.com"
         aria-invalid="true"
       />
-      <p className="text-sm text-destructive">Please enter a valid email address</p>
+      <InputError>Please enter a valid email address</InputError>
     </div>
   ),
 };

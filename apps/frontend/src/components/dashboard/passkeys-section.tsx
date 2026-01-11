@@ -10,7 +10,7 @@ import { useForm } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
-import { Button, Input, Label } from "../ui";
+import { Alert, Button, Input, Label } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 export function PasskeysSection() {
@@ -155,7 +155,11 @@ export function PasskeysSection() {
         </form>
       )}
 
-      {error && <p className="mt-4 text-sm font-medium text-destructive">{error}</p>}
+      {error && (
+        <Alert variant="destructive" className="mt-4">
+          {error}
+        </Alert>
+      )}
 
       <div className="mt-6 space-y-4">
         {loading ? (

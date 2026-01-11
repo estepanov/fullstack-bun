@@ -2,7 +2,7 @@ import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
 import { useDeleteChatMessageMutation } from "@/hooks/api/useDeleteChatMessageMutation";
 import { useUpdateChatMessageMutation } from "@/hooks/api/useUpdateChatMessageMutation";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Button } from "frontend-common/components/ui";
+import { Alert, Button, InputError } from "frontend-common/components/ui";
 import {
   Dialog,
   DialogContent,
@@ -255,11 +255,7 @@ export const MessageList = ({
 
   return (
     <>
-      {deleteError && (
-        <div className="mb-2 rounded-md border border-destructive/20 bg-destructive/10 p-2 text-sm text-destructive">
-          {deleteError}
-        </div>
-      )}
+      {deleteError && <Alert variant="destructive">{deleteError}</Alert>}
       <div
         ref={parentRef}
         className="h-75 overflow-y-auto rounded-lg bg-muted/20 p-3 shadow-sm dark:bg-muted/20"
@@ -383,11 +379,7 @@ export const MessageList = ({
                 max: MESSAGE_CONFIG.MAX_LENGTH,
               })}
             </div>
-            {editError && (
-              <div className="rounded-md border border-destructive/20 bg-destructive/10 p-2 text-sm text-destructive">
-                {editError}
-              </div>
-            )}
+            {editError && <InputError>{editError}</InputError>}
           </div>
           <DialogFooter className="mt-4">
             <Button
@@ -505,11 +497,7 @@ export const MessageList = ({
                 />
                 <Label htmlFor="delete-messages">{t("ban.delete_messages_label")}</Label>
               </div>
-              {banError && (
-                <div className="rounded-md border border-destructive/20 bg-destructive/10 p-2 text-sm text-destructive">
-                  {banError}
-                </div>
-              )}
+              {banError && <Alert variant="destructive">{banError}</Alert>}
             </div>
           )}
           <DialogFooter className="mt-4">

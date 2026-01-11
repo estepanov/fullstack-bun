@@ -267,7 +267,7 @@ export default function AdminUsersPage() {
                             onClick={() => handleUnban(u.id)}
                             disabled={unbanUser.isPending}
                             size="xs"
-                            variant="ghost"
+                            variant="destructive"
                             className="w-full sm:w-auto"
                           >
                             {t("users.actions.unban")}

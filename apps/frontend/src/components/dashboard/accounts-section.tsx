@@ -8,7 +8,7 @@ import type { AccountRecord } from "@/types/dashboard";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
-import { Button } from "../ui";
+import { Alert, Button, InputError } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 export function AccountsSection() {
@@ -71,7 +71,11 @@ export function AccountsSection() {
           {t("dashboard.accounts_description")}
         </p>
       </div>
-      {error && <p className="mt-4 text-sm font-medium text-destructive">{error}</p>}
+      {error && (
+        <Alert variant="destructive" className="mt-4">
+          {error}
+        </Alert>
+      )}
       <div className="mt-6 space-y-4">
         {loading ? (
           <p className="text-sm text-muted-foreground">

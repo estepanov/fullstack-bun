@@ -8,7 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
-import { Button, Input, Label } from "../ui";
+import { Alert, Button, Input, InputError, Label } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 interface PasswordSectionProps {
@@ -173,13 +173,9 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                       }
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <p
-                        id={errorId}
-                        role="alert"
-                        className="text-xs font-medium text-destructive"
-                      >
+                      <InputError id={errorId} className="text-xs">
                         {field.state.meta.errors[0]?.message}
-                      </p>
+                      </InputError>
                     )}
                     {email && (
                       <p className="text-xs mt-2 text-muted-foreground">
@@ -256,13 +252,9 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                     }
                   />
                   {field.state.meta.errors.length > 0 && (
-                    <p
-                      id={errorId}
-                      role="alert"
-                      className="text-xs font-medium text-destructive"
-                    >
+                    <InputError id={errorId} className="text-xs">
                       {field.state.meta.errors[0]?.message}
-                    </p>
+                    </InputError>
                   )}
                 </div>
               )}
@@ -293,13 +285,9 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                     }
                   />
                   {field.state.meta.errors.length > 0 && (
-                    <p
-                      id={errorId}
-                      role="alert"
-                      className="text-xs font-medium text-destructive"
-                    >
+                    <InputError id={errorId} className="text-xs">
                       {field.state.meta.errors[0]?.message}
-                    </p>
+                    </InputError>
                   )}
                 </div>
               )}
@@ -318,30 +306,22 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                       onChange={(e) => field.handleChange(e.target.checked)}
                       disabled={form.state.isSubmitting}
                     />
-                    <label htmlFor="revoke-other-sessions">
+                    <Label htmlFor="revoke-other-sessions">
                       {t("dashboard.password_revoke_other_sessions_label")}
-                    </label>
+                    </Label>
                   </div>
                 )}
               />
             )}
             {submitError && (
-              <p
-                id={errorId}
-                role="alert"
-                className="text-xs font-medium text-destructive"
-              >
+              <Alert id={errorId} variant="destructive" className="text-xs">
                 {submitError}
-              </p>
+              </Alert>
             )}
             {submitSuccess && (
-              <output
-                id={successId}
-                aria-live="polite"
-                className="text-xs font-medium text-emerald-600"
-              >
+              <Alert id={successId} aria-live="polite" variant="success">
                 {submitSuccess}
-              </output>
+              </Alert>
             )}
             <div className="flex items-center gap-2">
               <Button type="submit" disabled={form.state.isSubmitting} size="xs">

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Label, Textarea } from "frontend-common/components/ui";
+import { InputError, Label, Textarea } from "frontend-common/components/ui";
 
 const meta = {
   title: "UI/Textarea",
@@ -62,7 +62,7 @@ export const TextareaWithError: Story = {
         Message
       </Label>
       <Textarea id="textarea-error" placeholder="Your message..." aria-invalid="true" />
-      <p className="text-sm text-destructive">Message is required</p>
+      <InputError>Message is required</InputError>
     </div>
   ),
 };

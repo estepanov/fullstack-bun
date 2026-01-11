@@ -1,6 +1,7 @@
 import { useBannedUsersQuery } from "@/hooks/api/useBannedUsersQuery";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
 import {
+  Alert,
   Button,
   Label,
   Select,
@@ -173,6 +174,7 @@ export default function AdminBannedUsersPage() {
                           type="button"
                           onClick={() => handleUnban(ban.id)}
                           disabled={unbanUser.isPending}
+                          variant="destructive"
                           size="xs"
                           className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white"
                         >
@@ -293,9 +295,9 @@ export default function AdminBannedUsersPage() {
         )}
 
         {unbanUser.isError && (
-          <div className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+          <Alert variant="destructive" className="mt-4">
             {t("bans.errors.unban_failed")}
-          </div>
+          </Alert>
         )}
       </div>
     </div>

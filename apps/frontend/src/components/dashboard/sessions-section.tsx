@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { useSession } from "@/lib/auth-client";
 import { authClient } from "@/lib/auth-client";
-import { parseErrorMessage, formatDateTime } from "@/lib/dashboard/utils";
-import { Button } from "../ui";
-import { DashboardCard } from "./dashboard-card";
+import { formatDateTime, parseErrorMessage } from "@/lib/dashboard/utils";
 import type { SessionRecord } from "@/types/dashboard";
+import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
+import { Alert, Badge, Button, InputError } from "../ui";
+import { DashboardCard } from "./dashboard-card";
 
 export function SessionsSection() {
   const { t } = useTranslation("auth");
@@ -90,10 +90,16 @@ export function SessionsSection() {
           </Button>
         </div>
       </div>
-      {error && <p className="mt-4 text-sm font-medium text-destructive">{error}</p>}
+      {error && (
+        <Alert variant="destructive" className="mt-4">
+          {error}
+        </Alert>
+      )}
       <div className="mt-6 space-y-4">
         {loading ? (
-          <p className="text-sm text-muted-foreground">{t("dashboard.sessions_loading")}</p>
+          <p className="text-sm text-muted-foreground">
+            {t("dashboard.sessions_loading")}
+          </p>
         ) : sortedSessions.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("dashboard.sessions_empty")}</p>
         ) : (
@@ -105,9 +111,9 @@ export function SessionsSection() {
                 className="rounded-xl border border-border/70 bg-background/80 p-4 shadow-sm relative"
               >
                 {isCurrent && (
-                  <span className="absolute right-4 top-4 inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                  <Badge size="sm" variant="primary" className="absolute right-4 top-4">
                     {t("dashboard.sessions_current_badge")}
-                  </span>
+                  </Badge>
                 )}
                 <div className="grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
                   <div>

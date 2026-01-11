@@ -6,7 +6,7 @@ import { useForm } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { USERNAME_CONFIG } from "shared/config/user-profile";
-import { Button, Input } from "../ui";
+import { Alert, Button, Input, InputError } from "../ui";
 
 interface UsernameEditorProps {
   displayUsername?: string | null;
@@ -206,21 +206,17 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
                       </p>
                     )}
                     {field.state.meta.errors.length > 0 && (
-                      <p
-                        id={errorId}
-                        role="alert"
-                        className="text-xs font-medium text-destructive"
-                      >
+                      <InputError id={errorId} className="text-xs">
                         {field.state.meta.errors[0]?.message}
-                      </p>
+                      </InputError>
                     )}
                   </>
                 )}
               />
               {submitError && (
-                <p role="alert" className="text-xs font-medium text-destructive">
+                <Alert variant="destructive" className="text-xs">
                   {submitError}
-                </p>
+                </Alert>
               )}
               <div className="flex items-center gap-2">
                 <Button

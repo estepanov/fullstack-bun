@@ -1,6 +1,5 @@
 import type { FESession } from "@/lib/auth-client";
-import { Button } from "frontend-common/components/ui";
-import { Textarea } from "frontend-common/components/ui";
+import { Alert, Button, InputError, Textarea } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -147,19 +146,17 @@ export const MessageForm = ({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col space-y-2">
-      {error && (
-        <div className="rounded-md bg-red-50 p-2 text-sm text-red-800">{error}</div>
-      )}
+      {error && <Alert variant="destructive">{error}</Alert>}
       {isThrottled && (
-        <div className="rounded-md bg-amber-50 p-2 text-sm text-amber-900">
+        <Alert variant="info">
           {t("form.throttle_notice", { seconds: throttleSeconds })}
-          <span className="ml-1 text-amber-800">
+          <span className="ml-1">
             {t("form.throttle_hint", {
               limit: throttle?.limit ?? 0,
               windowSeconds: throttleWindowSeconds,
             })}
           </span>
-        </div>
+        </Alert>
       )}
       <div className="flex gap-2">
         <Textarea
