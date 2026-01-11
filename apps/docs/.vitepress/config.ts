@@ -75,7 +75,7 @@ export default defineConfig({
     footer: {
       message: "Released under the MIT License.",
       copyright:
-        'Copyright © 2025 <a href="https://evansstepanov.com/?utm_source=fullstack-bun-docs">Evans Stepanov</a>',
+        'Crafted with love by <a href="https://evansstepanov.com/?utm_source=fullstack-bun-docs">Evans Stepanov</a>',
     },
   },
   ignoreDeadLinks: [

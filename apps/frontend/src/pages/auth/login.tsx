@@ -4,7 +4,14 @@ import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient, signIn, useSession } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
-import { Button, Input, Label, StyledLink } from "frontend-common/components/ui";
+import {
+  Alert,
+  Button,
+  Input,
+  InputDescription,
+  Label,
+  StyledLink,
+} from "frontend-common/components/ui";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -190,11 +197,7 @@ export default function LoginPage() {
         </div>
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-2">
-          {error && (
-            <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
-              <p className="text-sm font-medium text-destructive">{error}</p>
-            </div>
-          )}
+          {error && <Alert variant="destructive">{error}</Alert>}
 
           {passwordsEnabled ? (
             <>
@@ -223,7 +226,7 @@ export default function LoginPage() {
                     autoComplete="current-password webauthn"
                     required
                   />
-                  <div className="mt-2 flex gap-1 items-center text-xs text-muted-foreground">
+                  <InputDescription className="mt-2 flex items-center gap-1">
                     <span>{t("login.forgot_password")}</span>
                     <Button
                       type="button"
@@ -237,17 +240,11 @@ export default function LoginPage() {
                         ? t("login.reset_link_sending")
                         : t("login.reset_link")}
                     </Button>
-                  </div>
+                  </InputDescription>
                   {resetMessage && (
-                    <p
-                      className={`mt-2 text-xs ${
-                        resetStatus === "sent"
-                          ? "text-emerald-600 dark:text-emerald-300"
-                          : "text-destructive"
-                      }`}
-                    >
+                    <Alert variant={resetStatus === "sent" ? "success" : "destructive"}>
                       {resetMessage}
-                    </p>
+                    </Alert>
                   )}
                 </div>
               </div>

@@ -13,6 +13,7 @@
     "test": "bun test"
   },
   "dependencies": {
+    "auth-email-security": "workspace:*",
     "@better-auth/passkey": "^1.4.9",
     "@t3-oss/env-core": "^0.13.10",
     "better-auth": "^1.4.9",

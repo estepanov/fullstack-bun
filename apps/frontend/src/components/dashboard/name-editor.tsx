@@ -5,7 +5,7 @@ import type { UpdateCallback } from "@/types/dashboard";
 import { useForm } from "@tanstack/react-form";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Input } from "../ui";
+import { Alert, Button, Input, InputError } from "../ui";
 
 interface NameEditorProps {
   name?: string | null;
@@ -100,22 +100,14 @@ export function NameEditor({ name, onUpdated }: NameEditorProps) {
                       }
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <p
-                        id={errorId}
-                        role="alert"
-                        className="text-xs font-medium text-destructive"
-                      >
+                      <InputError id={errorId} className="text-xs">
                         {field.state.meta.errors[0]?.message}
-                      </p>
+                      </InputError>
                     )}
                   </>
                 )}
               />
-              {submitError && (
-                <p role="alert" className="text-xs font-medium text-destructive">
-                  {submitError}
-                </p>
-              )}
+              {submitError && <Alert variant="destructive">{submitError}</Alert>}
               <div className="flex items-center gap-2">
                 <Button type="submit" disabled={form.state.isSubmitting} size="xs">
                   {t("dashboard.save_button")}

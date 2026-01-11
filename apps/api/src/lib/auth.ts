@@ -1,10 +1,20 @@
 import { passkey as passkeyPlugin } from "@better-auth/passkey";
+import {
+  formatEmailSecurityFooter,
+  getCloudflareLocation,
+  getRequestIp,
+} from "auth-email-security";
 import { betterAuth } from "better-auth";
 import { emailHarmony } from "better-auth-harmony";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { createFieldAttribute } from "better-auth/db";
-import { admin, lastLoginMethod, username } from "better-auth/plugins";
-import { magicLink } from "better-auth/plugins";
+import {
+  admin,
+  emailOTP,
+  lastLoginMethod,
+  magicLink,
+  username,
+} from "better-auth/plugins";
 import { createAccessControl } from "better-auth/plugins/access";
 import { LoginMethod } from "shared/auth/login-method";
 import { completeProfileSchema } from "shared/auth/user-profile";
@@ -18,6 +28,7 @@ import { account, passkey, session, user, verification } from "../db/schema";
 import { env } from "../env";
 import {
   sendMagicLinkEmail,
+  sendOtpEmail,
   sendResetPasswordEmail,
   sendVerificationEmail,
 } from "../utils/email";
@@ -68,6 +79,19 @@ const plugins = [
     },
   }),
   emailHarmony(),
+  emailOTP({
+    sendVerificationOTP: async ({ email, otp, type }, ctx) => {
+      const ip = getRequestIp(ctx) ?? "Unknown";
+      const location = getCloudflareLocation(ctx);
+      const securityFooter = formatEmailSecurityFooter({
+        ip,
+        location,
+        timestampUtc: new Date().toISOString(),
+      });
+
+      await sendOtpEmail(email, otp, type, securityFooter);
+    },
+  }),
   lastLoginMethod({
     storeInDatabase: true,
     customResolveMethod: (ctx) => {

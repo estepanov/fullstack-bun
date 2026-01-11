@@ -11,15 +11,17 @@ export const labelVariants = cva(
         required: "text-foreground after:content-['*'] after:ml-0.5 after:text-destructive",
       },
       size: {
-        default: "text-sm",
-        xs: "text-xs uppercase tracking-[0.2em] font-semibold",
+        xs: "text-[11px] leading-tight font-semibold uppercase tracking-[0.14em]",
         sm: "text-xs",
+        md: "text-sm",
         lg: "text-base",
+        xl: "text-lg",
+        default: "text-sm",
       },
     },
     defaultVariants: {
       variant: "default",
-      size: "default",
+      size: "md",
     },
   },
 );

@@ -17,7 +17,7 @@ const meta = {
     },
     size: {
       control: 'select',
-      options: ['default', 'xs', 'sm', 'lg', 'icon'],
+      options: ['xs', 'sm', 'md', 'lg', 'xl', 'icon'],
       description: 'The size of the button',
     },
     disabled: {
@@ -93,10 +93,24 @@ export const Small: Story = {
   },
 };
 
+export const Medium: Story = {
+  args: {
+    children: 'Medium',
+    size: 'md',
+  },
+};
+
 export const Large: Story = {
   args: {
     children: 'Large',
     size: 'lg',
+  },
+};
+
+export const ExtraLarge: Story = {
+  args: {
+    children: 'Extra Large',
+    size: 'xl',
   },
 };
 
@@ -162,8 +176,9 @@ export const AllVariants: Story = {
       <div className="flex flex-wrap gap-4 items-center">
         <Button size="xs">Extra Small</Button>
         <Button size="sm">Small</Button>
-        <Button size="default">Default</Button>
+        <Button size="md">Medium</Button>
         <Button size="lg">Large</Button>
+        <Button size="xl">Extra Large</Button>
         <Button size="icon">
           <Mail className="h-4 w-4" />
         </Button>

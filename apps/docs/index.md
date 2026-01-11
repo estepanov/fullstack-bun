@@ -16,6 +16,9 @@ hero:
     - theme: alt
       text: Demo Frontend App
       link: https://frontend.demo.fullstackbun.dev
+    - theme: alt
+      text: Demo Storybook App
+      link: https://storybook.demo.fullstackbun.dev
 
 features:
   - title: React 19 + Vite
@@ -32,6 +35,10 @@ features:
     details: The React Testing Library you love run via Bun's test runner. Oh and we have MSW for mocking APIs/intercepting requests.
   - title: Shadcn
     details: Bring the components you love via the CLI
+  - title: Shared Component Library
+    details: Reusable UI primitives in frontend-common for consistent interfaces.
+  - title: Storybook
+    details: Document and preview shared UI components with a dedicated Storybook app.
   - title: Hono API + Hono client setup
     details: Fullstack type safe hono client and react-query setup
   - title: Zod validation
@@ -93,4 +100,3 @@ Future enhancements we're considering:
 - **Performance Monitoring:** Integration with performance monitoring tools
 - **Rate Limiting:** API rate limiting middleware
 - **File Uploads:** S3-compatible file upload handling
-

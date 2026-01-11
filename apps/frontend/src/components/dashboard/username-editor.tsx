@@ -2,11 +2,11 @@ import { authClient } from "@/lib/auth-client";
 import { usernameSchema } from "@/lib/dashboard/schemas";
 import { parseErrorMessage } from "@/lib/dashboard/utils";
 import type { UpdateCallback } from "@/types/dashboard";
-import { useForm } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { USERNAME_CONFIG } from "shared/config/user-profile";
-import { Button, Input } from "../ui";
+import { Alert, Button, Input, InputDescription, InputError } from "../ui";
 
 interface UsernameEditorProps {
   displayUsername?: string | null;
@@ -26,6 +26,21 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
     available: boolean | null;
     message: string;
   }>({ checking: false, available: null, message: "" });
+
+  const isUsernameTakenError = (error: unknown, message: string) => {
+    if (!error && !message) return false;
+    if (typeof error === "object" && error !== null && "code" in error) {
+      const code = (error as { code?: string }).code?.toUpperCase() || "";
+      if (
+        code.includes("USERNAME") &&
+        (code.includes("TAKEN") || code.includes("EXIST"))
+      ) {
+        return true;
+      }
+    }
+    const normalized = message.toLowerCase();
+    return normalized.includes("username") && normalized.includes("taken");
+  };
 
   const form = useForm({
     defaultValues: {
@@ -47,25 +62,49 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
       // Check if availability check failed
       if (availabilityState.available === false) {
         setSubmitError(availabilityState.message || t("complete_profile.username_taken"));
-        setAvailabilityState({ checking: false, available: null, message: "" });
         return;
       }
 
       try {
         const response = await authClient.updateUser({ displayUsername: trimmed });
         if (response.error) {
-          throw new Error(
-            parseErrorMessage(response.error, t("dashboard.username_save_error")),
+          const message = parseErrorMessage(
+            response.error,
+            t("dashboard.username_save_error"),
           );
+          setSubmitError(message);
+          if (isUsernameTakenError(response.error, message)) {
+            setAvailabilityState({
+              checking: false,
+              available: false,
+              message: t("complete_profile.username_taken"),
+            });
+          } else {
+            setAvailabilityState({ checking: false, available: null, message: "" });
+          }
+          return;
         }
         await onUpdated();
         setEditing(false);
       } catch (error) {
-        setSubmitError(parseErrorMessage(error, t("dashboard.username_save_error")));
-        setAvailabilityState({ checking: false, available: null, message: "" });
+        const message = parseErrorMessage(error, t("dashboard.username_save_error"));
+        setSubmitError(message);
+        if (isUsernameTakenError(error, message)) {
+          setAvailabilityState({
+            checking: false,
+            available: false,
+            message: t("complete_profile.username_taken"),
+          });
+        } else {
+          setAvailabilityState({ checking: false, available: null, message: "" });
+        }
       }
     },
   });
+  const displayUsernameValue = useStore(
+    form.store,
+    (state) => state.values.displayUsername,
+  );
 
   // Reset form when exiting edit mode
   // biome-ignore lint/correctness/useExhaustiveDependencies: consistent refs only care about edit
@@ -81,7 +120,7 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
   useEffect(() => {
     if (!editing) return;
 
-    const currentValue = form.state.values.displayUsername;
+    const currentValue = displayUsernameValue;
     const normalized = currentValue.trim();
     const current = (displayUsername ?? "").trim();
 
@@ -132,16 +171,16 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [displayUsername, editing, form.state.values.displayUsername, t]);
+  }, [displayUsername, editing, displayUsernameValue, t]);
 
   const usernameStatusMessage = useMemo(() => {
     if (!editing) return "";
-    if (!form.state.values.displayUsername) return "";
+    if (!displayUsernameValue) return "";
     if (availabilityState.checking) {
       return t("complete_profile.username_checking");
     }
     return availabilityState.message || t("complete_profile.username_hint");
-  }, [editing, t, availabilityState, form.state.values.displayUsername]);
+  }, [editing, t, availabilityState, displayUsernameValue]);
 
   return (
     <div>
@@ -157,6 +196,18 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
+              const currentValue = form.state.values.displayUsername.trim();
+              const currentUsername = (displayUsername ?? "").trim();
+              if (
+                currentValue &&
+                currentValue !== currentUsername &&
+                availabilityState.available === false
+              ) {
+                setSubmitError(
+                  availabilityState.message || t("complete_profile.username_taken"),
+                );
+                return;
+              }
               form.handleSubmit();
             }}
           >
@@ -170,7 +221,10 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
                       type="text"
                       value={field.state.value}
                       onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
+                      onChange={(e) => {
+                        setSubmitError("");
+                        field.handleChange(e.target.value);
+                      }}
                       minLength={USERNAME_CONFIG.minLength}
                       maxLength={USERNAME_CONFIG.maxLength}
                       pattern={USERNAME_CONFIG.pattern.source}
@@ -188,39 +242,35 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
                       }
                     />
                     {usernameStatusMessage && (
-                      <p
+                      <InputDescription
                         id={statusId}
                         role={availabilityState.checking ? "status" : undefined}
                         aria-live={availabilityState.checking ? "polite" : undefined}
-                        className={`text-xs ${
+                        variant={
                           availabilityState.checking
-                            ? "text-muted-foreground"
+                            ? "default"
                             : availabilityState.available === true
-                              ? "text-emerald-600"
+                              ? "success"
                               : availabilityState.available === false
-                                ? "text-destructive"
-                                : "text-muted-foreground"
-                        }`}
+                                ? "destructive"
+                                : "default"
+                        }
                       >
                         {usernameStatusMessage}
-                      </p>
+                      </InputDescription>
                     )}
                     {field.state.meta.errors.length > 0 && (
-                      <p
-                        id={errorId}
-                        role="alert"
-                        className="text-xs font-medium text-destructive"
-                      >
+                      <InputError id={errorId} className="text-xs">
                         {field.state.meta.errors[0]?.message}
-                      </p>
+                      </InputError>
                     )}
                   </>
                 )}
               />
               {submitError && (
-                <p role="alert" className="text-xs font-medium text-destructive">
+                <Alert variant="destructive" className="text-xs">
                   {submitError}
-                </p>
+                </Alert>
               )}
               <div className="flex items-center gap-2">
                 <Button

@@ -1,6 +1,12 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { resetPassword } from "@/lib/auth-client";
-import { Button, Input, Label } from "frontend-common/components/ui";
+import {
+  Alert,
+  Button,
+  Input,
+  InputDescription,
+  Label,
+} from "frontend-common/components/ui";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router";
@@ -129,11 +135,7 @@ export default function ResetPasswordPage() {
             </div>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-4">
-              {errorMessage && (
-                <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
-                  <p className="text-sm font-medium text-destructive">{errorMessage}</p>
-                </div>
-              )}
+              {errorMessage && <Alert variant="destructive">{errorMessage}</Alert>}
 
               <div className="space-y-2">
                 <div className="gap-1">
@@ -150,9 +152,9 @@ export default function ResetPasswordPage() {
                     minLength={passwordMinLength}
                     className="mt-2 block w-full"
                   />
-                  <p className="mt-2 text-xs text-muted-foreground">
+                  <InputDescription className="mt-2">
                     {t("reset_password.password_hint", { minLength: passwordMinLength })}
-                  </p>
+                  </InputDescription>
                 </div>
 
                 <div className="gap-1">

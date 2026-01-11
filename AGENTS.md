@@ -23,6 +23,13 @@ Always use Context7 MCP when I need library/API documentation, code generation, 
 - Formatting enforced by Biome (2-space indent, 90-char lines, double quotes, organized imports). Always run `bun run format` before pushing.
 - React components: PascalCase filenames; hooks/utilities: camelCase. Keep JSX in `tsx` files; colocate component styles/utilities nearby.
 - API routes and validators should live with their handlers; share types via `packages/shared` to avoid drift.
+- When building or refactoring shared components (especially in `packages/frontend-common`), update or add Storybook stories in `apps/storybook/src` to match the new API and behavior.
+- Some component implementation expectations (example based on `packages/frontend-common/components/ui/button.tsx` and `button.variants.ts`):
+  - Supports `variant`: `default`, `destructive`, `outline`, `secondary`, `ghost`, `link`.
+  - Supports `size`: `default`, `xs`, `sm`, `lg`, `icon`.
+  - Supports `asChild` via Radix `Slot`, so stories should cover both standard and `asChild` rendering when applicable.
+  - Uses `buttonVariants` for styling; story args should align with the defined variants and sizes.
+  - `apps/storybook/src/Button.stories.tsx` should cover core states: variants, sizes, icon-only, icon+text, disabled, and loading.
 
 ## Testing Guidelines
 - Primary runner is `bun test`; frontend uses Happy DOM and Testing Library (`*.test.tsx` under `apps/frontend/test` or next to components).

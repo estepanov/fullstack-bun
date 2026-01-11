@@ -3,7 +3,21 @@ import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
 import { useUpdateUserRoleMutation } from "@/hooks/api/useUpdateUserRoleMutation";
 import { useSession } from "@/lib/auth-client";
-import { Button, Input, Label } from "frontend-common/components/ui";
+import {
+  Badge,
+  Button,
+  Input,
+  Label,
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "frontend-common/components/ui";
+import { CheckIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -80,6 +94,51 @@ export default function AdminUsersPage() {
   const users = data?.users || [];
   const pagination = data?.pagination;
 
+  const EmailStatusBadge = ({
+    verified,
+    size = "sm",
+  }: {
+    verified: boolean;
+    size?: "xs" | "sm";
+  }) => {
+    const label = verified ? t("users.table.verified_yes") : t("users.table.verified_no");
+    const description = verified
+      ? t("users.table.verified_description")
+      : t("users.table.unverified_description");
+
+    return (
+      <Popover>
+        <PopoverTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size={size}
+            className="h-auto w-auto p-0"
+            aria-label={label}
+          >
+            <Badge
+              variant={verified ? "success" : "default"}
+              size={size}
+              className="cursor-help"
+            >
+              {verified ? (
+                <CheckIcon className="h-3.5 w-3.5" aria-hidden />
+              ) : (
+                <XIcon className="h-3.5 w-3.5" aria-hidden />
+              )}
+            </Badge>
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent side="top" align="start" className="w-64">
+          <div className="space-y-1">
+            <div className="text-sm font-semibold text-foreground">{label}</div>
+            <p className="text-sm text-muted-foreground">{description}</p>
+          </div>
+        </PopoverContent>
+      </Popover>
+    );
+  };
+
   return (
     <>
       <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
@@ -115,9 +174,6 @@ export default function AdminUsersPage() {
                     {t("users.table.role_header")}
                   </th>
                   <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {t("users.table.verified_header")}
-                  </th>
-                  <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
                     {t("users.table.status_header")}
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
@@ -136,72 +192,79 @@ export default function AdminUsersPage() {
                     <tr key={u.id}>
                       <td className="px-4 py-4 text-sm text-foreground">
                         <div className="flex items-center gap-2">
-                          <span className="font-medium">{u.name}</span>
-                          {userIsSelf && (
-                            <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2 py-0.5 text-xs font-semibold text-blue-700 dark:text-blue-300">
-                              {t("users.table.you_badge")}
+                          {u.name ? (
+                            <span className="font-medium">{u.name}</span>
+                          ) : (
+                            <span className="text-muted-foreground/70 italic">
+                              {t("users.table.name_not_provided")}
                             </span>
+                          )}
+                          {userIsSelf && (
+                            <Badge variant="info" size="sm">
+                              {t("users.table.you_badge")}
+                            </Badge>
                           )}
                         </div>
                         <div className="mt-1 text-xs text-muted-foreground md:hidden">
-                          {u.email}
+                          <div className="flex items-center gap-2">
+                            <span className="text-foreground">{u.email}</span>
+                            <EmailStatusBadge verified={u.emailVerified} size="xs" />
+                          </div>
                         </div>
                         <div className="mt-2 flex flex-wrap gap-2 lg:hidden">
-                          {u.emailVerified ? (
-                            <span className="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
-                              {t("users.table.verified_yes")}
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
-                              {t("users.table.verified_no")}
-                            </span>
-                          )}
                           {userIsBanned ? (
-                            <span className="inline-flex items-center rounded-full bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
+                            <Badge variant="destructive">
                               {t("users.table.status_banned")}
-                            </span>
+                            </Badge>
                           ) : (
-                            <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                            <Badge variant="success">
                               {t("users.table.status_active")}
-                            </span>
+                            </Badge>
                           )}
                         </div>
                       </td>
                       <td className="hidden md:table-cell px-4 py-4 text-sm text-muted-foreground">
-                        {u.email}
+                        <div className="flex items-center gap-2">
+                          <span>{u.email}</span>
+                          <EmailStatusBadge verified={u.emailVerified} size="xs" />
+                        </div>
                       </td>
                       <td className="px-4 py-4 text-sm">
-                        <select
-                          className="w-full rounded-xl border border-border/70 bg-background/80 px-3 py-2 text-sm text-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20 sm:w-auto"
+                        <Select
                           value={u.role}
                           disabled={updateRole.isPending}
-                          onChange={(e) => {
-                            const parsed = userRoleSchema.safeParse(e.target.value);
+                          onValueChange={(value) => {
+                            const parsed = userRoleSchema.safeParse(value);
                             if (!parsed.success) return;
                             updateRole.mutate({ id: u.id, role: parsed.data });
                           }}
                         >
-                          {Object.values(UserRole).map((role) => (
-                            <option key={role} value={role}>
-                              {role}
-                            </option>
-                          ))}
-                        </select>
-                      </td>
-                      <td className="hidden lg:table-cell px-4 py-4 text-sm text-muted-foreground">
-                        {u.emailVerified
-                          ? t("users.table.verified_yes")
-                          : t("users.table.verified_no")}
+                          <SelectTrigger
+                            className="w-full sm:w-auto"
+                            variant="soft"
+                            size="md"
+                            aria-label={t("users.table.role_header")}
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {Object.values(UserRole).map((role) => (
+                              <SelectItem key={role} value={role}>
+                                {role}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </td>
                       <td className="hidden lg:table-cell px-4 py-4 text-sm">
                         {userIsBanned ? (
-                          <span className="inline-flex items-center rounded-full bg-destructive/10 px-3 py-1 text-xs font-semibold text-destructive">
+                          <Badge variant="destructive">
                             {t("users.table.status_banned")}
-                          </span>
+                          </Badge>
                         ) : (
-                          <span className="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-700 dark:text-emerald-300">
+                          <Badge variant="success">
                             {t("users.table.status_active")}
-                          </span>
+                          </Badge>
                         )}
                       </td>
                       <td className="px-4 py-4 text-sm">
@@ -211,7 +274,7 @@ export default function AdminUsersPage() {
                             onClick={() => handleUnban(u.id)}
                             disabled={unbanUser.isPending}
                             size="xs"
-                            variant="ghost"
+                            variant="destructive"
                             className="w-full sm:w-auto"
                           >
                             {t("users.actions.unban")}
@@ -234,7 +297,7 @@ export default function AdminUsersPage() {
                 })}
                 {users.length === 0 && (
                   <tr>
-                    <td className="px-4 py-6 text-sm text-muted-foreground" colSpan={6}>
+                    <td className="px-4 py-6 text-sm text-muted-foreground" colSpan={5}>
                       {t("users.table.no_users")}
                     </td>
                   </tr>
@@ -265,21 +328,29 @@ export default function AdminUsersPage() {
                     >
                       {t("users.pagination.page_size")}:
                     </Label>
-                    <select
-                      id="page-size"
-                      value={pageSize}
-                      onChange={(e) => {
-                        setPageSize(Number(e.target.value));
+                    <Select
+                      value={String(pageSize)}
+                      onValueChange={(value) => {
+                        setPageSize(Number(value));
                         setCurrentPage(1);
                       }}
-                      className="rounded-lg border border-border/70 bg-background/80 px-3 py-1.5 text-sm text-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                     >
-                      {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
-                        <option key={size} value={size}>
-                          {size}
-                        </option>
-                      ))}
-                    </select>
+                      <SelectTrigger
+                        id="page-size"
+                        variant="subtle"
+                        size="sm"
+                        aria-label={t("users.pagination.page_size")}
+                      >
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
+                          <SelectItem key={size} value={String(size)}>
+                            {size}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
                 {pagination.totalPages > 1 && (

@@ -16,7 +16,7 @@ const meta = {
     },
     size: {
       control: 'select',
-      options: ['default', 'xs', 'sm', 'lg'],
+      options: ['xs', 'sm', 'md', 'lg', 'xl'],
       description: 'The size of the label',
     },
   },
@@ -67,9 +67,23 @@ export const SmallLabel: Story = {
   },
 };
 
+export const MediumLabel: Story = {
+  args: {
+    children: 'Medium Label',
+    size: 'md',
+  },
+};
+
 export const LargeLabel: Story = {
   args: {
     children: 'Large Label',
     size: 'lg',
+  },
+};
+
+export const ExtraLargeLabel: Story = {
+  args: {
+    children: 'Extra Large Label',
+    size: 'xl',
   },
 };

@@ -1,6 +1,28 @@
 import type * as React from "react";
 
+import type { VariantProps } from "class-variance-authority";
+import { cva } from "class-variance-authority";
 import { cn } from "frontend-common/lib";
+
+const inputDescriptionVariants = cva("leading-snug", {
+  variants: {
+    variant: {
+      default: "text-muted-foreground",
+      success: "text-emerald-600 dark:text-emerald-300",
+      destructive: "text-destructive",
+      info: "text-blue-600 dark:text-blue-300",
+    },
+    size: {
+      xs: "text-xs",
+      sm: "text-sm",
+      md: "text-base",
+    },
+  },
+  defaultVariants: {
+    variant: "default",
+    size: "xs",
+  },
+});
 
 function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   const isCheckbox = type === "checkbox";
@@ -20,4 +42,30 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
   );
 }
 
-export { Input };
+function InputDescription({
+  className,
+  variant,
+  size,
+  ...props
+}: React.ComponentProps<"p"> & VariantProps<typeof inputDescriptionVariants>) {
+  return (
+    <p
+      data-slot="input-description"
+      className={cn(inputDescriptionVariants({ variant, size, className }))}
+      {...props}
+    />
+  );
+}
+
+function InputError({ className, role = "alert", ...props }: React.ComponentProps<"p">) {
+  return (
+    <p
+      role={role}
+      data-slot="input-error"
+      className={cn("text-sm font-medium text-destructive", className)}
+      {...props}
+    />
+  );
+}
+
+export { Input, InputDescription, InputError };

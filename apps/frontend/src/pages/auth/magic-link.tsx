@@ -4,7 +4,7 @@ import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
-import { Button, Input, Label } from "frontend-common/components/ui";
+import { Alert, Button, Input, InputError, Label } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
@@ -109,25 +109,15 @@ export default function MagicLinkPage() {
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-2">
           {errorParam && !error && (
-            <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
-              <p className="text-sm font-medium text-destructive">
-                {t("magic_link.error_from_link", { error: errorParam })}
-              </p>
-            </div>
+            <Alert variant={"destructive"}>
+              {t("magic_link.error_from_link", { error: errorParam })}
+            </Alert>
           )}
 
-          {error && (
-            <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-4">
-              <p className="text-sm font-medium text-destructive">{error}</p>
-            </div>
-          )}
+          {error && <Alert variant={"destructive"}>{error}</Alert>}
 
           {sent && (
-            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-4">
-              <p className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
-                {t("magic_link.sent_message", { email })}
-              </p>
-            </div>
+            <Alert variant="success">{t("magic_link.sent_message", { email })}</Alert>
           )}
 
           <div className="flex flex-col gap-2">
@@ -155,9 +145,7 @@ export default function MagicLinkPage() {
             </span>
           </Button>
 
-          {showOrDivider && (
-            <AuthOrDivider />
-          )}
+          {showOrDivider && <AuthOrDivider />}
 
           {githubEnabled && (
             <SocialAuthButton

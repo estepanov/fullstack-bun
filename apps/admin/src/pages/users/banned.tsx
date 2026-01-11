@@ -1,6 +1,15 @@
 import { useBannedUsersQuery } from "@/hooks/api/useBannedUsersQuery";
 import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
-import { Button, Label } from "frontend-common/components/ui";
+import {
+  Alert,
+  Button,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "frontend-common/components/ui";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
@@ -165,6 +174,7 @@ export default function AdminBannedUsersPage() {
                           type="button"
                           onClick={() => handleUnban(ban.id)}
                           disabled={unbanUser.isPending}
+                          variant="destructive"
                           size="xs"
                           className="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-500 text-white"
                         >
@@ -199,21 +209,29 @@ export default function AdminBannedUsersPage() {
                       >
                         {t("bans.pagination.page_size")}:
                       </Label>
-                      <select
-                        id="pageSize"
-                        value={pageSize}
-                        onChange={(e) => {
-                          setPageSize(Number(e.target.value));
+                      <Select
+                        value={String(pageSize)}
+                        onValueChange={(value) => {
+                          setPageSize(Number(value));
                           setCurrentPage(1);
                         }}
-                        className="rounded-lg border border-border/70 bg-background/80 px-3 py-1.5 text-sm text-foreground focus:border-primary/60 focus:outline-none focus:ring-2 focus:ring-primary/20"
                       >
-                        {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
-                          <option key={size} value={size}>
-                            {size}
-                          </option>
-                        ))}
-                      </select>
+                        <SelectTrigger
+                          id="pageSize"
+                          variant="subtle"
+                          size="md"
+                          aria-label={t("bans.pagination.page_size")}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
+                            <SelectItem key={size} value={String(size)}>
+                              {size}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
                   {pagination.totalPages > 1 && (
@@ -277,9 +295,9 @@ export default function AdminBannedUsersPage() {
         )}
 
         {unbanUser.isError && (
-          <div className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
+          <Alert variant="destructive" className="mt-4">
             {t("bans.errors.unban_failed")}
-          </div>
+          </Alert>
         )}
       </div>
     </div>
