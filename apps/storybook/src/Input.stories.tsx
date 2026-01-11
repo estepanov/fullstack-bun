@@ -1,5 +1,12 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Button, Input, InputError, Label, Textarea } from "frontend-common/components/ui";
+import {
+  Button,
+  Input,
+  InputDescription,
+  InputError,
+  Label,
+  Textarea,
+} from "frontend-common/components/ui";
 
 const meta = {
   title: "UI/Input",
@@ -160,6 +167,23 @@ export const WithError: Story = {
         aria-invalid="true"
       />
       <InputError>Please enter a valid email address</InputError>
+    </div>
+  ),
+};
+
+export const WithDescription: Story = {
+  render: () => (
+    <div className="w-87.5 flex flex-col gap-2">
+      <Label htmlFor="input-description" variant="required">
+        Username
+      </Label>
+      <Input type="text" id="input-description" placeholder="hannahp" />
+      <InputDescription>Use 3-16 characters with no spaces.</InputDescription>
+      <InputDescription variant="success">Name available.</InputDescription>
+      <InputDescription variant="destructive">Name already taken.</InputDescription>
+      <InputDescription variant="info" size="sm">
+        We show this publicly on your profile.
+      </InputDescription>
     </div>
   ),
 };

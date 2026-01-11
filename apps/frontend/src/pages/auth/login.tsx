@@ -4,7 +4,14 @@ import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
 import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
 import { authClient, signIn, useSession } from "@/lib/auth-client";
 import { signInWithSocialProvider } from "@/lib/social-auth";
-import { Alert, Button, Input, Label, StyledLink } from "frontend-common/components/ui";
+import {
+  Alert,
+  Button,
+  Input,
+  InputDescription,
+  Label,
+  StyledLink,
+} from "frontend-common/components/ui";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -219,7 +226,7 @@ export default function LoginPage() {
                     autoComplete="current-password webauthn"
                     required
                   />
-                  <div className="mt-2 flex gap-1 items-center text-xs text-muted-foreground">
+                  <InputDescription className="mt-2 flex items-center gap-1">
                     <span>{t("login.forgot_password")}</span>
                     <Button
                       type="button"
@@ -233,7 +240,7 @@ export default function LoginPage() {
                         ? t("login.reset_link_sending")
                         : t("login.reset_link")}
                     </Button>
-                  </div>
+                  </InputDescription>
                   {resetMessage && (
                     <Alert variant={resetStatus === "sent" ? "success" : "destructive"}>
                       {resetMessage}

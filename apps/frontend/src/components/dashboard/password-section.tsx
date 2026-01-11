@@ -8,7 +8,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
-import { Alert, Button, Input, InputError, Label } from "../ui";
+import { Alert, Button, Input, InputDescription, InputError, Label } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 interface PasswordSectionProps {
@@ -178,7 +178,10 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                       </InputError>
                     )}
                     {email && (
-                      <p className="text-xs mt-2 text-muted-foreground">
+                      <InputDescription
+                        variant={sentPasswordResetEmail ? "success" : "default"}
+                        className="mt-2"
+                      >
                         {sentPasswordResetEmail ? (
                           <>
                             <Trans
@@ -222,7 +225,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                             />
                           </>
                         )}
-                      </p>
+                      </InputDescription>
                     )}
                   </div>
                 )}
@@ -259,9 +262,9 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                 </div>
               )}
             />
-            <p className="text-xs text-muted-foreground">
+            <InputDescription>
               {t("dashboard.password_hint", { minLength: passwordMinLength })}
-            </p>
+            </InputDescription>
             <form.Field
               name="confirmPassword"
               children={(field) => (

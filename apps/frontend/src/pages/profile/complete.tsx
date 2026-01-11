@@ -1,7 +1,13 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { authClient, useSession } from "@/lib/auth-client";
 import { getExtendedUser } from "@/types/user";
-import { Alert, Button, Input, InputError, Label } from "frontend-common/components/ui";
+import {
+  Alert,
+  Button,
+  Input,
+  InputDescription,
+  Label,
+} from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useNavigate, useSearchParams } from "react-router";
@@ -183,22 +189,23 @@ export default function CompleteProfilePage() {
                   disabled={isLoading || isSuccess}
                 />
                 {username && (
-                  <p
-                    className={`mt-1 text-xs ${
+                  <InputDescription
+                    className="mt-1"
+                    variant={
                       usernameAvailability.checking
-                        ? "text-muted-foreground"
+                        ? "default"
                         : usernameAvailability.available === true
-                          ? "text-green-600"
+                          ? "success"
                           : usernameAvailability.available === false
-                            ? "text-destructive"
-                            : "text-muted-foreground"
-                    }`}
+                            ? "destructive"
+                            : "default"
+                    }
                   >
                     {usernameAvailability.checking
                       ? t("complete_profile.username_checking")
                       : usernameAvailability.message ||
                         t("complete_profile.username_hint")}
-                  </p>
+                  </InputDescription>
                 )}
               </div>
             )}

@@ -1,6 +1,12 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { signUp } from "@/lib/auth-client";
-import { Alert, Button, Input, InputError, Label } from "frontend-common/components/ui";
+import {
+  Alert,
+  Button,
+  Input,
+  InputDescription,
+  Label,
+} from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router";
@@ -97,9 +103,9 @@ export default function RegisterPage() {
                 minLength={passwordMinLength}
                 className="w-full"
               />
-              <p className="mt-2 text-xs text-muted-foreground">
+              <InputDescription className="mt-2">
                 {t("register.password_hint", { minLength: passwordMinLength })}
-              </p>
+              </InputDescription>
             </div>
           </div>
 

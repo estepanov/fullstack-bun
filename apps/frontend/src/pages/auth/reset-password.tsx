@@ -1,6 +1,12 @@
 import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { resetPassword } from "@/lib/auth-client";
-import { Alert, Button, Input, InputError, Label } from "frontend-common/components/ui";
+import {
+  Alert,
+  Button,
+  Input,
+  InputDescription,
+  Label,
+} from "frontend-common/components/ui";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router";
@@ -146,9 +152,9 @@ export default function ResetPasswordPage() {
                     minLength={passwordMinLength}
                     className="mt-2 block w-full"
                   />
-                  <p className="mt-2 text-xs text-muted-foreground">
+                  <InputDescription className="mt-2">
                     {t("reset_password.password_hint", { minLength: passwordMinLength })}
-                  </p>
+                  </InputDescription>
                 </div>
 
                 <div className="gap-1">
