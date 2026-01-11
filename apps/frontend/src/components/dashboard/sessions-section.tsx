@@ -2,9 +2,10 @@ import { useSession } from "@/lib/auth-client";
 import { authClient } from "@/lib/auth-client";
 import { formatDateTime, parseErrorMessage } from "@/lib/dashboard/utils";
 import type { SessionRecord } from "@/types/dashboard";
+import { RefreshCwIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Badge, Button, InputError } from "../ui";
+import { Alert, Badge, Button } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 export function SessionsSection() {
@@ -68,25 +69,29 @@ export function SessionsSection() {
         <div className="flex flex-wrap items-center gap-2 justify-end">
           <Button
             type="button"
-            onClick={loadSessions}
-            variant="outline"
-            size="xs"
-            disabled={loading}
-          >
-            {loading
-              ? t("dashboard.sessions_refreshing_button")
-              : t("dashboard.sessions_refresh_button")}
-          </Button>
-          <Button
-            type="button"
             onClick={handleRevokeOtherSessions}
             variant="destructive"
-            size="xs"
+            size="sm"
             disabled={revoking}
           >
             {revoking
               ? t("dashboard.sessions_revoking_button")
               : t("dashboard.sessions_revoke_other_button")}
+          </Button>
+          <Button
+            type="button"
+            onClick={loadSessions}
+            variant="ghost"
+            size="sm"
+            disabled={loading}
+            aria-label={
+              loading
+                ? t("dashboard.sessions_refreshing_button")
+                : t("dashboard.sessions_refresh_button")
+            }
+            className={loading ? "animate-spin" : "animate-none"}
+          >
+            <RefreshCwIcon className="w-4 h-4" />
           </Button>
         </div>
       </div>

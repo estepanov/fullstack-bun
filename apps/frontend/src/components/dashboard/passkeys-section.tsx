@@ -7,6 +7,7 @@ import {
 } from "@/lib/dashboard/utils";
 import type { PasskeyRecord } from "@/types/dashboard";
 import { useForm } from "@tanstack/react-form";
+import { RefreshCwIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
@@ -100,7 +101,7 @@ export function PasskeysSection() {
             type="button"
             onClick={() => setShowAddForm((curr) => !curr)}
             variant="outline"
-            size="xs"
+            size="sm"
             disabled={loading}
           >
             {showAddForm ? "Hide new passkey form" : "Add new passkey"}
@@ -108,13 +109,17 @@ export function PasskeysSection() {
           <Button
             type="button"
             onClick={loadPasskeys}
-            variant="outline"
-            size="xs"
+            variant="ghost"
+            size="sm"
             disabled={loading}
+            aria-label={
+              loading
+                ? t("dashboard.passkeys_refreshing_button")
+                : t("dashboard.passkeys_refresh_button")
+            }
+            className={loading ? "animate-spin" : "animate-none"}
           >
-            {loading
-              ? t("dashboard.passkeys_refreshing_button")
-              : t("dashboard.passkeys_refresh_button")}
+            <RefreshCwIcon className="w-4 h-4" />
           </Button>
         </div>
       </div>
