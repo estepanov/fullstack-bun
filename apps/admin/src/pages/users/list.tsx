@@ -109,18 +109,25 @@ export default function AdminUsersPage() {
     return (
       <Popover>
         <PopoverTrigger asChild>
-          <Badge
-            variant={verified ? "success" : "default"}
+          <Button
+            type="button"
+            variant="ghost"
             size={size}
-            className="cursor-help"
+            className="h-auto w-auto p-0"
             aria-label={label}
           >
-            {verified ? (
-              <CheckIcon className="h-3.5 w-3.5" aria-hidden />
-            ) : (
-              <XIcon className="h-3.5 w-3.5" aria-hidden />
-            )}
-          </Badge>
+            <Badge
+              variant={verified ? "success" : "default"}
+              size={size}
+              className="cursor-help"
+            >
+              {verified ? (
+                <CheckIcon className="h-3.5 w-3.5" aria-hidden />
+              ) : (
+                <XIcon className="h-3.5 w-3.5" aria-hidden />
+              )}
+            </Badge>
+          </Button>
         </PopoverTrigger>
         <PopoverContent side="top" align="start" className="w-64">
           <div className="space-y-1">
