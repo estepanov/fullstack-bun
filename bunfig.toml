@@ -1,2 +1,0 @@
-[test]
-preload = ["./apps/frontend/happydom.ts", "./apps/frontend/testing-library.ts"]
