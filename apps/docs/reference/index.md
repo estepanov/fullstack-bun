@@ -10,6 +10,7 @@ Holds reference information on various features and infrastructure.
 
 - [Database (PostgreSQL + Drizzle)](/reference/database.md)
 - [Redis](/reference/redis.md)
+- [Horizontal Scaling](/reference/horizontal-scaling.md)
 - [Docker](/docker.md)
 
 ## Frontend Tooling

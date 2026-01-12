@@ -22,6 +22,16 @@ export const env = createEnv({
     // Redis
     REDIS_URL: z.string().min(4),
 
+    // Horizontal Scaling
+    INSTANCE_ID: z.string().optional(),
+    ENABLE_DISTRIBUTED_CHAT: z
+      .enum(["true", "false"])
+      .default("true")
+      .transform((value) => value === "true"),
+
+    // Metrics Authentication
+    METRICS_API_KEY: z.string().min(32).optional(),
+
     // Better Auth
     BETTER_AUTH_SECRET: z.string().min(32),
     API_BASE_URL: z.string().min(4),
