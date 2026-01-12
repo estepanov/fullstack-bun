@@ -1,6 +1,5 @@
 import type { Redis } from "ioredis";
 import type { ChatMessage } from "shared/interfaces/chat";
-import { ChatWSMessageType } from "shared/interfaces/chat";
 import { appLogger } from "../utils/logger";
 import type { ChatManager } from "./chat-manager";
 import { INSTANCE_ID } from "./instance-id";

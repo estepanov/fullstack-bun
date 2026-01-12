@@ -17,7 +17,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "frontend-common/components/ui";
-import { Input, Label } from "frontend-common/components/ui";
+import { Input } from "frontend-common/components/ui";
 import { Textarea } from "frontend-common/components/ui";
 import { isEmojiOnlyMessage } from "frontend-common/lib";
 import { Ban, MoreVertical, PencilLine, Trash2 } from "lucide-react";

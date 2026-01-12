@@ -468,7 +468,7 @@ export default function AdminUsersPage() {
                         {t("users.ban_dialog.description")}
                       </p>
                       <div className="mt-4">
-                        <Label htmlFor="ban-reason" size="xs">
+                        <Label htmlFor="ban-reason" className="text-xs">
                           {t("users.ban_dialog.reason_label")}
                         </Label>
                         <Input
