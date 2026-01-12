@@ -9,7 +9,8 @@
     "format": "bun run biome format --write ./src",
     "lint": "bun run biome lint ./src",
     "preview": "vite preview",
-    "test": "bun test --preload ./happydom.ts --preload ./testing-library.ts"
+    "test": "bun test --preload ./happydom.ts --preload ./testing-library.ts",
+    "test:coverage": "bun test --coverage --preload ./happydom.ts --preload ./testing-library.ts"
   },
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.6",

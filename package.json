@@ -27,6 +27,7 @@
     "dev": "concurrently --names frontend,admin,api 'bun --filter=frontend dev' 'bun --filter=admin dev' 'bun --filter=api dev'",
     "start": "bun --filter=api start",
     "test": "bun --filter=* run test",
+    "test:coverage": "bun --filter=* run test:coverage",
     "build": "bun --filter=api run build:types && bun --filter=frontend run build && bun --filter=admin run build",
     "format": "bun run --filter=* format",
     "lint": "bun run --filter=* lint",

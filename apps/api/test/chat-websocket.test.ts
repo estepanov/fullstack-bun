@@ -1,17 +1,19 @@
-const ensureTestEnv = () => {
-  process.env.NODE_ENV ||= "test";
-  process.env.PORT ||= "0";
-  process.env.CORS_ALLOWLISTED_ORIGINS ||= "http://localhost:5173";
-  process.env.API_BASE_URL ||= "http://localhost:3001";
-  process.env.FE_BASE_URL ||= "http://localhost:5173";
-  process.env.BETTER_AUTH_SECRET ||= "test-secret-test-secret-test-secret-123";
-  process.env.DATABASE_URL ||= "postgresql://postgres:postgres@127.0.0.1:5432/mydatabase";
-  process.env.REDIS_URL ||= "redis://:redispassword@127.0.0.1:6379";
-};
+import { expect, mock, test } from "bun:test";
+import "./mocks/redis";
+import "./mocks/db";
+import { authMockState } from "./mocks/auth-state";
+import { ensureTestEnv } from "./mocks/env";
 
 ensureTestEnv();
 
-import { expect, mock, test } from "bun:test";
+mock.module("../src/lib/auth", () => ({
+  auth: {
+    api: {
+      getSession: () => Promise.resolve(authMockState.session),
+      setPassword: async () => ({ status: authMockState.setPasswordStatus }),
+    },
+  },
+}));
 
 // Mock external auth dependencies to keep websocket tests isolated and avoid optional plugin resolutions
 mock.module("better-auth", () => ({
@@ -52,12 +54,6 @@ mock.module("better-auth-harmony", () => ({
 }));
 
 mock.module("jose", () => ({}));
-
-// Avoid loading full auth implementation (and heavy crypto deps) during websocket smoke test
-mock.module("../src/lib/auth", () => ({
-  auth: {},
-  ac: {},
-}));
 
 test("chat websocket upgrades successfully", async () => {
   const { default: app } = await import("../src/index");
