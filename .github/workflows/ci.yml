@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  pull_request:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Lint, Build, Test
+    runs-on: ubuntu-latest
+    env:
+      CI: true
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: "latest"
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Setup env files
+        run: bun run setup
+
+      - name: Lint
+        run: |
+          workspaces=(
+            "apps/admin"
+            "apps/api"
+            "apps/docs"
+            "apps/frontend"
+            "apps/storybook"
+            "packages/auth-email-security"
+            "packages/frontend-common"
+            "packages/shared"
+          )
+          for workspace in "${workspaces[@]}"; do
+            pkg="$workspace/package.json"
+            if bun -e "import { readFileSync } from 'fs'; const pkg=JSON.parse(readFileSync('$pkg','utf8')); if (pkg.scripts && pkg.scripts.lint) process.exit(0); process.exit(1);"; then
+              echo "lint: $workspace"
+              (cd "$workspace" && bun run lint)
+            else
+              echo "skip lint: $workspace"
+            fi
+          done
+
+      - name: Build
+        run: |
+          workspaces=(
+            "apps/admin"
+            "apps/api"
+            "apps/docs"
+            "apps/frontend"
+            "apps/storybook"
+            "packages/auth-email-security"
+            "packages/frontend-common"
+            "packages/shared"
+          )
+          for workspace in "${workspaces[@]}"; do
+            pkg="$workspace/package.json"
+            if bun -e "import { readFileSync } from 'fs'; const pkg=JSON.parse(readFileSync('$pkg','utf8')); if (pkg.scripts && pkg.scripts.build) process.exit(0); process.exit(1);"; then
+              echo "build: $workspace"
+              (cd "$workspace" && bun run build)
+            else
+              echo "skip build: $workspace"
+            fi
+          done
+
+      - name: Test
+        run: |
+          workspaces=(
+            "apps/admin"
+            "apps/api"
+            "apps/docs"
+            "apps/frontend"
+            "apps/storybook"
+            "packages/auth-email-security"
+            "packages/frontend-common"
+            "packages/shared"
+          )
+          for workspace in "${workspaces[@]}"; do
+            pkg="$workspace/package.json"
+            if bun -e "import { readFileSync } from 'fs'; const pkg=JSON.parse(readFileSync('$pkg','utf8')); if (pkg.scripts && pkg.scripts.test) process.exit(0); process.exit(1);"; then
+              echo "test: $workspace"
+              (cd "$workspace" && bun run test)
+            else
+              echo "skip test: $workspace"
+            fi
+          done
