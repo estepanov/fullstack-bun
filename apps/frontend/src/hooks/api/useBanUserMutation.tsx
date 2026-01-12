@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@frontend/lib/auth-client";
 import { useDeleteUserMessagesMutation } from "./useDeleteUserMessagesMutation";
 
 export const useBanUserMutation = () => {

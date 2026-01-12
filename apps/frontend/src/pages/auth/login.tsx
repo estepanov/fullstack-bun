@@ -1,15 +1,16 @@
-import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
-import { AuthOrDivider } from "@/components/auth/AuthOrDivider";
-import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
-import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
-import { authClient, signIn, useSession } from "@/lib/auth-client";
-import { signInWithSocialProvider } from "@/lib/social-auth";
+import { AppSurfaceCenter } from "@frontend/components/AppSurfaceCenter";
+import { AuthOrDivider } from "@frontend/components/auth/AuthOrDivider";
+import { LastUsedBadge } from "@frontend/components/auth/LastUsedBadge";
+import { SocialAuthButton } from "@frontend/components/auth/SocialAuthButton";
+import { authClient, signIn, useSession } from "@frontend/lib/auth-client";
+import { signInWithSocialProvider } from "@frontend/lib/social-auth";
 import {
   Alert,
   Button,
+  Field,
+  FieldDescription,
+  FieldLabel,
   Input,
-  InputDescription,
-  Label,
   StyledLink,
 } from "frontend-common/components/ui";
 import { useEffect, useRef, useState } from "react";
@@ -202,8 +203,8 @@ export default function LoginPage() {
           {passwordsEnabled ? (
             <>
               <div className="space-y-2">
-                <div className="gap-1">
-                  <Label htmlFor="email">{t("login.email_label")}</Label>
+                <Field>
+                  <FieldLabel htmlFor="email">{t("login.email_label")}</FieldLabel>
                   <Input
                     id="email"
                     type="email"
@@ -213,10 +214,10 @@ export default function LoginPage() {
                     autoComplete="username webauthn"
                     required
                   />
-                </div>
+                </Field>
 
-                <div className="gap-1">
-                  <Label htmlFor="password">{t("login.password_label")}</Label>
+                <Field>
+                  <FieldLabel htmlFor="password">{t("login.password_label")}</FieldLabel>
                   <Input
                     id="password"
                     type="password"
@@ -226,11 +227,10 @@ export default function LoginPage() {
                     autoComplete="current-password webauthn"
                     required
                   />
-                  <InputDescription className="mt-2 flex items-center gap-1">
+                  <FieldDescription className="flex items-center gap-1">
                     <span>{t("login.forgot_password")}</span>
                     <Button
                       type="button"
-                      size="xs"
                       onClick={handlePasswordReset}
                       disabled={resetStatus === "sending"}
                       variant="link"
@@ -240,13 +240,13 @@ export default function LoginPage() {
                         ? t("login.reset_link_sending")
                         : t("login.reset_link")}
                     </Button>
-                  </InputDescription>
+                  </FieldDescription>
                   {resetMessage && (
                     <Alert variant={resetStatus === "sent" ? "success" : "destructive"}>
                       {resetMessage}
                     </Alert>
                   )}
-                </div>
+                </Field>
               </div>
 
               <Button

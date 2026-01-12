@@ -18,7 +18,6 @@ COPY apps/frontend/package.json ./apps/frontend/
 COPY apps/frontend/tsconfig*.json ./apps/frontend/
 COPY apps/frontend/vite.config.ts ./apps/frontend/
 COPY apps/frontend/react-router.config.ts ./apps/frontend/
-COPY apps/frontend/components.json ./apps/frontend/
 COPY apps/frontend/bunfig.toml ./apps/frontend/
 # Copy entire API directory (needed for workspace dependencies and TypeScript config)
 COPY apps/api ./apps/api
@@ -40,7 +39,6 @@ COPY --chown=bunapp:bunapp apps/frontend/package.json ./apps/frontend/
 COPY --chown=bunapp:bunapp apps/frontend/tsconfig*.json ./apps/frontend/
 COPY --chown=bunapp:bunapp apps/frontend/vite.config.ts ./apps/frontend/
 COPY --chown=bunapp:bunapp apps/frontend/react-router.config.ts ./apps/frontend/
-COPY --chown=bunapp:bunapp apps/frontend/components.json ./apps/frontend/
 COPY --chown=bunapp:bunapp apps/frontend/bunfig.toml ./apps/frontend/
 # Copy source code
 COPY --chown=bunapp:bunapp apps/frontend ./apps/frontend

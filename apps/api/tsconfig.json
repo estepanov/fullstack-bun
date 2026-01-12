@@ -13,6 +13,10 @@
     "outDir": "./dist",
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.tsbuildinfo",
     "module": "ESNext",
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "paths": {
+      "@api/*": ["./*"]
+    }
   }
 }

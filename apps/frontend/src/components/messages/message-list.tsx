@@ -1,8 +1,8 @@
-import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
-import { useDeleteChatMessageMutation } from "@/hooks/api/useDeleteChatMessageMutation";
-import { useUpdateChatMessageMutation } from "@/hooks/api/useUpdateChatMessageMutation";
+import { useBanUserMutation } from "@frontend/hooks/api/useBanUserMutation";
+import { useDeleteChatMessageMutation } from "@frontend/hooks/api/useDeleteChatMessageMutation";
+import { useUpdateChatMessageMutation } from "@frontend/hooks/api/useUpdateChatMessageMutation";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Alert, Button, InputError } from "frontend-common/components/ui";
+import { Alert, Button, InputError, Field, FieldLabel } from "frontend-common/components/ui";
 import {
   Dialog,
   DialogContent,
@@ -476,10 +476,10 @@ export const MessageList = ({
               <div className="rounded-md bg-muted px-3 py-2">
                 <p className="text-sm font-medium">{userToBan.name}</p>
               </div>
-              <div>
-                <Label htmlFor="ban-reason" className="block mb-1">
+              <Field>
+                <FieldLabel htmlFor="ban-reason">
                   {t("ban.reason_label")}
-                </Label>
+                </FieldLabel>
                 <Input
                   id="ban-reason"
                   type="text"
@@ -487,16 +487,16 @@ export const MessageList = ({
                   onChange={(e) => setBanReason(e.target.value)}
                   placeholder={t("ban.reason_placeholder")}
                 />
-              </div>
-              <div className="flex items-center space-x-2">
+              </Field>
+              <Field orientation="horizontal">
                 <Input
                   type="checkbox"
                   id="delete-messages"
                   checked={deleteMessages}
                   onChange={(e) => setDeleteMessages(e.target.checked)}
                 />
-                <Label htmlFor="delete-messages">{t("ban.delete_messages_label")}</Label>
-              </div>
+                <FieldLabel htmlFor="delete-messages" className="font-normal">{t("ban.delete_messages_label")}</FieldLabel>
+              </Field>
               {banError && <Alert variant="destructive">{banError}</Alert>}
             </div>
           )}

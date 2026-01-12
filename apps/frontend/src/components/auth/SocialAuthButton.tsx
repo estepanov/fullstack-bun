@@ -1,4 +1,4 @@
-import { Button } from "../ui";
+import { Button } from "frontend-common/components/ui";
 import { LastUsedBadge } from "./LastUsedBadge";
 
 type SocialAuthButtonProps = {

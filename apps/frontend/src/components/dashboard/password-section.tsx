@@ -1,14 +1,22 @@
-import { GET_USER_PROFILE_QUERY_KEY } from "@/hooks/api/query-key";
-import { apiClient } from "@/lib/api-client";
-import { authClient } from "@/lib/auth-client";
-import { createPasswordSchema } from "@/lib/dashboard/schemas";
-import { parseErrorMessage } from "@/lib/dashboard/utils";
+import { GET_USER_PROFILE_QUERY_KEY } from "@frontend/hooks/api/query-key";
+import { apiClient } from "@frontend/lib/api-client";
+import { authClient } from "@frontend/lib/auth-client";
+import { createPasswordSchema } from "@frontend/lib/dashboard/schemas";
+import { parseErrorMessage } from "@frontend/lib/dashboard/utils";
 import { useForm } from "@tanstack/react-form";
 import { useQueryClient } from "@tanstack/react-query";
+import {
+  Alert,
+  Button,
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  Input,
+} from "frontend-common/components/ui";
 import { useEffect, useMemo, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
-import { Alert, Button, Input, InputDescription, InputError, Label } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 interface PasswordSectionProps {
@@ -152,10 +160,10 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
               <form.Field
                 name="currentPassword"
                 children={(field) => (
-                  <div>
-                    <Label htmlFor={currentPasswordId}>
+                  <Field>
+                    <FieldLabel htmlFor={currentPasswordId}>
                       {t("dashboard.password_current_label")}
-                    </Label>
+                    </FieldLabel>
                     <Input
                       id={currentPasswordId}
                       name="current-password"
@@ -164,7 +172,6 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                       onBlur={field.handleBlur}
                       onChange={(e) => field.handleChange(e.target.value)}
                       placeholder={t("dashboard.password_current_placeholder")}
-                      className="mt-2 block w-full"
                       disabled={form.state.isSubmitting}
                       required
                       aria-invalid={field.state.meta.errors.length > 0}
@@ -173,15 +180,12 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                       }
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <InputError id={errorId} className="text-xs">
+                      <FieldError id={errorId}>
                         {field.state.meta.errors[0]?.message}
-                      </InputError>
+                      </FieldError>
                     )}
                     {email && (
-                      <InputDescription
-                        variant={sentPasswordResetEmail ? "success" : "default"}
-                        className="mt-2"
-                      >
+                      <FieldDescription>
                         {sentPasswordResetEmail ? (
                           <>
                             <Trans
@@ -217,7 +221,6 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                                       }
                                     }}
                                     variant="link"
-                                    size="xs"
                                     className="font-semibold p-0"
                                   />
                                 ),
@@ -225,9 +228,9 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                             />
                           </>
                         )}
-                      </InputDescription>
+                      </FieldDescription>
                     )}
-                  </div>
+                  </Field>
                 )}
               />
             )}
@@ -235,10 +238,10 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
             <form.Field
               name="newPassword"
               children={(field) => (
-                <div>
-                  <Label htmlFor={newPasswordId}>
+                <Field>
+                  <FieldLabel htmlFor={newPasswordId}>
                     {t("dashboard.password_new_label")}
-                  </Label>
+                  </FieldLabel>
                   <Input
                     id={newPasswordId}
                     name="new-password"
@@ -247,31 +250,30 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder={t("dashboard.password_new_placeholder")}
-                    className="mt-2 block w-full"
                     disabled={form.state.isSubmitting}
                     aria-invalid={field.state.meta.errors.length > 0}
                     aria-describedby={
                       field.state.meta.errors.length > 0 ? errorId : undefined
                     }
                   />
+                  <FieldDescription>
+                    {t("dashboard.password_hint", { minLength: passwordMinLength })}
+                  </FieldDescription>
                   {field.state.meta.errors.length > 0 && (
-                    <InputError id={errorId} className="text-xs">
+                    <FieldError id={errorId}>
                       {field.state.meta.errors[0]?.message}
-                    </InputError>
+                    </FieldError>
                   )}
-                </div>
+                </Field>
               )}
             />
-            <InputDescription>
-              {t("dashboard.password_hint", { minLength: passwordMinLength })}
-            </InputDescription>
             <form.Field
               name="confirmPassword"
               children={(field) => (
-                <div>
-                  <Label htmlFor={confirmPasswordId}>
+                <Field>
+                  <FieldLabel htmlFor={confirmPasswordId}>
                     {t("dashboard.password_confirm_label")}
-                  </Label>
+                  </FieldLabel>
                   <Input
                     id={confirmPasswordId}
                     name="confirm-new-password"
@@ -280,7 +282,6 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder={t("dashboard.password_confirm_placeholder")}
-                    className="mt-2 block w-full"
                     disabled={form.state.isSubmitting}
                     aria-invalid={field.state.meta.errors.length > 0}
                     aria-describedby={
@@ -288,11 +289,11 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                     }
                   />
                   {field.state.meta.errors.length > 0 && (
-                    <InputError id={errorId} className="text-xs">
+                    <FieldError id={errorId}>
                       {field.state.meta.errors[0]?.message}
-                    </InputError>
+                    </FieldError>
                   )}
-                </div>
+                </Field>
               )}
             />
 
@@ -300,7 +301,7 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
               <form.Field
                 name="revokeOtherSessions"
                 children={(field) => (
-                  <div className="flex items-center gap-2 text-sm text-foreground">
+                  <Field orientation="horizontal">
                     <Input
                       id="revoke-other-sessions"
                       name="revoke-other-sessions"
@@ -309,10 +310,10 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                       onChange={(e) => field.handleChange(e.target.checked)}
                       disabled={form.state.isSubmitting}
                     />
-                    <Label htmlFor="revoke-other-sessions">
+                    <FieldLabel htmlFor="revoke-other-sessions" className="font-normal">
                       {t("dashboard.password_revoke_other_sessions_label")}
-                    </Label>
-                  </div>
+                    </FieldLabel>
+                  </Field>
                 )}
               />
             )}

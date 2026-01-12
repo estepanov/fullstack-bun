@@ -1,5 +1,5 @@
-import { MessagesContainer } from "@/components/messages/messages-container";
-import { useChatWebSocket } from "@/hooks/api/useChatWebSocket";
+import { MessagesContainer } from "@frontend/components/messages/messages-container";
+import { useChatWebSocket } from "@frontend/hooks/api/useChatWebSocket";
 import { Container } from "frontend-common/components/ui";
 import { Trans, useTranslation } from "react-i18next";
 

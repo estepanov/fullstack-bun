@@ -1,11 +1,11 @@
-import { authClient } from "@/lib/auth-client";
-import { nameSchema } from "@/lib/dashboard/schemas";
-import { parseErrorMessage } from "@/lib/dashboard/utils";
-import type { UpdateCallback } from "@/types/dashboard";
+import { authClient } from "@frontend/lib/auth-client";
+import { nameSchema } from "@frontend/lib/dashboard/schemas";
+import { parseErrorMessage } from "@frontend/lib/dashboard/utils";
+import type { UpdateCallback } from "@frontend/types/dashboard";
 import { useForm } from "@tanstack/react-form";
+import { Alert, Button, Field, FieldError, Input } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Button, Input, InputError } from "../ui";
 
 interface NameEditorProps {
   name?: string | null;
@@ -81,7 +81,7 @@ export function NameEditor({ name, onUpdated }: NameEditorProps) {
               <form.Field
                 name="name"
                 children={(field) => (
-                  <>
+                  <Field>
                     <Input
                       id={inputId}
                       type="text"
@@ -91,7 +91,6 @@ export function NameEditor({ name, onUpdated }: NameEditorProps) {
                         setSubmitError("");
                         field.handleChange(e.target.value);
                       }}
-                      className="block w-full"
                       disabled={form.state.isSubmitting}
                       aria-invalid={field.state.meta.errors.length > 0}
                       aria-labelledby={labelId}
@@ -100,11 +99,11 @@ export function NameEditor({ name, onUpdated }: NameEditorProps) {
                       }
                     />
                     {field.state.meta.errors.length > 0 && (
-                      <InputError id={errorId} className="text-xs">
+                      <FieldError id={errorId}>
                         {field.state.meta.errors[0]?.message}
-                      </InputError>
+                      </FieldError>
                     )}
-                  </>
+                  </Field>
                 )}
               />
               {submitError && <Alert variant="destructive">{submitError}</Alert>}

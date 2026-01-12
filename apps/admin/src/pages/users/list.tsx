@@ -1,8 +1,8 @@
-import { useAdminUsersQuery } from "@/hooks/api/useAdminUsersQuery";
-import { useBanUserMutation } from "@/hooks/api/useBanUserMutation";
-import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
-import { useUpdateUserRoleMutation } from "@/hooks/api/useUpdateUserRoleMutation";
-import { useSession } from "@/lib/auth-client";
+import { useAdminUsersQuery } from "@admin/hooks/api/useAdminUsersQuery";
+import { useBanUserMutation } from "@admin/hooks/api/useBanUserMutation";
+import { useUnbanUserMutation } from "@admin/hooks/api/useUnbanUserMutation";
+import { useUpdateUserRoleMutation } from "@admin/hooks/api/useUpdateUserRoleMutation";
+import { useSession } from "@admin/lib/auth-client";
 import {
   Badge,
   Button,

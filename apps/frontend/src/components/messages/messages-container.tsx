@@ -1,5 +1,5 @@
-import type { UseChatWebSocketReturn } from "@/hooks/api/useChatWebSocket";
-import { useSession } from "@/lib/auth-client";
+import type { UseChatWebSocketReturn } from "@frontend/hooks/api/useChatWebSocket";
+import { useSession } from "@frontend/lib/auth-client";
 import { isAdminSession } from "frontend-common/auth";
 import { Card } from "frontend-common/components/ui";
 import { useTranslation } from "react-i18next";

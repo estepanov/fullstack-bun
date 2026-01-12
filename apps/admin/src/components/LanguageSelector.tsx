@@ -1,4 +1,4 @@
-import { LANGUAGES, type Language } from "@/app.config";
+import { LANGUAGES, type Language } from "@admin/app.config";
 import {
   Button,
   DropdownMenu,

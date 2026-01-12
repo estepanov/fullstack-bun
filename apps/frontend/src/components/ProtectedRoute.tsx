@@ -1,5 +1,5 @@
-import { useSession } from "@/lib/auth-client";
-import { getExtendedUser } from "@/types/user";
+import { useSession } from "@frontend/lib/auth-client";
+import { getExtendedUser } from "@frontend/types/user";
 import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Navigate, useLocation } from "react-router";
@@ -29,7 +29,7 @@ interface ProtectedRouteProps {
  */
 export function ProtectedRoute({
   children,
-  requireCompleteProfile = true
+  requireCompleteProfile = true,
 }: ProtectedRouteProps) {
   const { data: session, isPending } = useSession();
   const { t } = useTranslation("auth");

@@ -1,7 +1,7 @@
-import { verifyEmail } from "@/lib/auth-client";
+import { AppSurfaceCenter } from "@frontend/components/AppSurfaceCenter";
+import { verifyEmail } from "@frontend/lib/auth-client";
 import { Button } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
-import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
 

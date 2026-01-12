@@ -1,4 +1,4 @@
-import { signIn } from "@/lib/auth-client";
+import { signIn } from "@frontend/lib/auth-client";
 
 const getSocialRedirectUrls = (origin: string) => ({
   callbackURL: `${origin}/dashboard`,

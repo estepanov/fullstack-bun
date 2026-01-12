@@ -1,4 +1,4 @@
-import { signOut, useSession } from "@/lib/auth-client";
+import { signOut, useSession } from "@frontend/lib/auth-client";
 import { isAdminSession } from "frontend-common/auth";
 import { Button, Container } from "frontend-common/components/ui";
 import { Popover, PopoverContent, PopoverTrigger } from "frontend-common/components/ui";

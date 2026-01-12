@@ -1,14 +1,14 @@
-import { authClient } from "@/lib/auth-client";
+import { authClient } from "@frontend/lib/auth-client";
 import {
   formatDateTime,
   formatProviderLabel,
   parseErrorMessage,
-} from "@/lib/dashboard/utils";
-import type { AccountRecord } from "@/types/dashboard";
+} from "@frontend/lib/dashboard/utils";
+import type { AccountRecord } from "@frontend/types/dashboard";
+import { Alert, Button } from "frontend-common/components/ui";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
-import { Alert, Button } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 export function AccountsSection() {

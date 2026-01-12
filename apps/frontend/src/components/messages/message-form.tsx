@@ -1,4 +1,4 @@
-import type { FESession } from "@/lib/auth-client";
+import type { FESession } from "@frontend/lib/auth-client";
 import { Alert, Button, Textarea } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";

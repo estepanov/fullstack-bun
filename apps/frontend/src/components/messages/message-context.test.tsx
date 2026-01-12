@@ -1,5 +1,5 @@
 import { describe, expect, mock, test } from "bun:test";
-import { render, screen } from "@test/rtl";
+import { render, screen } from "@frontend-test/rtl";
 import userEvent from "@testing-library/user-event";
 import { MessageScrollProvider, useMesageScrollContext } from "./message-context";
 

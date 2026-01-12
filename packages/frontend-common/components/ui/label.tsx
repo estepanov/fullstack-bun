@@ -1,20 +1,22 @@
-import type { VariantProps } from "class-variance-authority";
-import { cn } from "frontend-common/lib";
+import * as LabelPrimitive from "@radix-ui/react-label";
 import type * as React from "react";
-import { type LabelVariants, labelVariants } from "./label.variants";
 
-export const Label = ({
+import { cn } from "@frontend-common/lib/utils";
+
+function Label({
   className,
-  variant,
-  size,
   ...props
-}: React.ComponentProps<"label"> & VariantProps<LabelVariants>) => {
+}: React.ComponentProps<typeof LabelPrimitive.Root>) {
   return (
-    // biome-ignore lint/a11y/noLabelWithoutControl: bug our implementation w/ biome?
-    <label
+    <LabelPrimitive.Root
       data-slot="label"
-      className={cn(labelVariants({ variant, size, className }))}
+      className={cn(
+        "flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+        className,
+      )}
       {...props}
     />
   );
-};
+}
+
+export { Label };

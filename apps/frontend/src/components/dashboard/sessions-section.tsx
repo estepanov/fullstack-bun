@@ -1,11 +1,11 @@
-import { useSession } from "@/lib/auth-client";
-import { authClient } from "@/lib/auth-client";
-import { formatDateTime, parseErrorMessage } from "@/lib/dashboard/utils";
-import type { SessionRecord } from "@/types/dashboard";
+import { useSession } from "@frontend/lib/auth-client";
+import { authClient } from "@frontend/lib/auth-client";
+import { formatDateTime, parseErrorMessage } from "@frontend/lib/dashboard/utils";
+import type { SessionRecord } from "@frontend/types/dashboard";
+import { Alert, Badge, Button } from "frontend-common/components/ui";
 import { RefreshCwIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Badge, Button } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 export function SessionsSection() {

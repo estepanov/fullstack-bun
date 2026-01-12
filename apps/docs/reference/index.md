@@ -15,4 +15,5 @@ Holds reference information on various features and infrastructure.
 
 ## Frontend Tooling
 
+- [shadcn/ui](/reference/shadcn.md)
 - [Storybook](/reference/storybook.md)
