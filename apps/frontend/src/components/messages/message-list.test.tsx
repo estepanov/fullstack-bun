@@ -1,3 +1,4 @@
+import "../../../testing-library";
 import { describe, expect, test } from "bun:test";
 import { render, screen } from "@frontend-test/rtl";
 import userEvent from "@testing-library/user-event";

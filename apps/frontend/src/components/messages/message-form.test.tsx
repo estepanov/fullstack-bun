@@ -1,3 +1,4 @@
+import "../../../testing-library";
 import { describe, expect, test } from "bun:test";
 import { postExample } from "@frontend-test/factory/post-example";
 import { server } from "@frontend-test/msw";

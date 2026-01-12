@@ -1,7 +1,13 @@
 import { GlobalRegistrator } from "@happy-dom/global-registrator";
 import { Window } from "happy-dom";
 
-GlobalRegistrator.register();
+const alreadyRegistered = (globalThis as { __happyDomRegistered?: boolean })
+  .__happyDomRegistered;
+
+if (!alreadyRegistered) {
+  GlobalRegistrator.register();
+  (globalThis as { __happyDomRegistered?: boolean }).__happyDomRegistered = true;
+}
 
 if (typeof document === "undefined" || !document.body) {
   const windowInstance = new Window();
