@@ -1,11 +1,11 @@
 import { Hono } from "hono";
 import { setPasswordSchema } from "shared/auth/password";
+import { AUTH_CONFIG } from "shared/config/auth";
 import { auth } from "../lib/auth";
 import { checkUserHasPassword } from "../lib/user-credential";
 import { zodValidator } from "../lib/validator";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
-import { AUTH_CONFIG } from "shared/config/auth";
 
 /**
  * User router - handles user profile operations
@@ -55,10 +55,7 @@ const userRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
     // Return 404 if password authentication is disabled
     if (!AUTH_CONFIG.emailPassword.enabled) {
       logger.warn("Password check attempted but password auth is disabled");
-      return c.json(
-        { error: "Password authentication is not enabled" },
-        404,
-      );
+      return c.json({ error: "Password authentication is not enabled" }, 404);
     }
 
     const user = c.var.user;
@@ -83,10 +80,7 @@ const userRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
     // Return 403 if password authentication is disabled
     if (!AUTH_CONFIG.emailPassword.enabled) {
       logger.warn("Set password attempted but password auth is disabled");
-      return c.json(
-        { error: "Password authentication is not enabled" },
-        403,
-      );
+      return c.json({ error: "Password authentication is not enabled" }, 403);
     }
 
     const user = c.var.user;

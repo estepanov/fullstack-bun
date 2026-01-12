@@ -7,9 +7,7 @@ const CatchAll = () => {
   return (
     <div className="app-surface flex-1 flex flex-col justify-center items-center space-y-4">
       <h1 className="text-2xl font-bold text-center">{t("title")}</h1>
-      <p className="text-muted-foreground text-center">
-        {t("message")}
-      </p>
+      <p className="text-muted-foreground text-center">{t("message")}</p>
       <Link to="/">{t("back_link")}</Link>
     </div>
   );

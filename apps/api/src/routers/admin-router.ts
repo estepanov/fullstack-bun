@@ -1,9 +1,9 @@
 import { count, desc, eq } from "drizzle-orm";
 import { Hono } from "hono";
-import { z } from "zod";
 import { updateUserRoleSchema } from "shared/auth/user-role";
 import { PAGINATION_CONFIG } from "shared/config/pagination";
 import { ChatWSMessageType } from "shared/interfaces/chat";
+import { z } from "zod";
 import { db } from "../db/client";
 import { user } from "../db/schema";
 import { chatManager } from "../lib/chat-manager";
@@ -37,9 +37,7 @@ const adminRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
       logger.info(`Fetching users - page: ${page}, limit: ${limit}`);
 
       // Get total count
-      const [{ value: totalCount }] = await db
-        .select({ value: count() })
-        .from(user);
+      const [{ value: totalCount }] = await db.select({ value: count() }).from(user);
 
       // Get paginated users
       const users = await db

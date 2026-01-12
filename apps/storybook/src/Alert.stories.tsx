@@ -1,33 +1,29 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { AlertCircle, CheckCircle2, Info } from 'lucide-react';
-import {
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from 'frontend-common/components/ui';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Alert, AlertDescription, AlertTitle } from "frontend-common/components/ui";
+import { AlertCircle, CheckCircle2, Info } from "lucide-react";
 
 const meta = {
-  title: 'UI/Alert',
+  title: "UI/Alert",
   component: Alert,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['default', 'primary', 'success', 'destructive', 'info'],
-      description: 'Visual style of the alert',
+      control: "select",
+      options: ["default", "primary", "success", "destructive", "info"],
+      description: "Visual style of the alert",
     },
     size: {
-      control: 'select',
-      options: ['xs', 'sm', 'md', 'lg', 'xl'],
-      description: 'Padding and text sizing',
+      control: "select",
+      options: ["xs", "sm", "md", "lg", "xl"],
+      description: "Padding and text sizing",
     },
   },
   args: {
-    variant: 'default',
-    size: 'md',
+    variant: "default",
+    size: "md",
   },
 } satisfies Meta<typeof Alert>;
 
@@ -49,9 +45,7 @@ export const InfoAlert: Story = {
   render: (args) => (
     <Alert {...args} variant="info" className="max-w-md">
       <AlertTitle>Protected route</AlertTitle>
-      <AlertDescription>
-        Only authenticated users can see this page.
-      </AlertDescription>
+      <AlertDescription>Only authenticated users can see this page.</AlertDescription>
     </Alert>
   ),
 };

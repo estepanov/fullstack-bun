@@ -1,30 +1,30 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Check, AlertTriangle, Info, User } from 'lucide-react';
-import { Badge } from 'frontend-common/components/ui';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Badge } from "frontend-common/components/ui";
+import { AlertTriangle, Check, Info, User } from "lucide-react";
 
 const meta = {
-  title: 'UI/Badge',
+  title: "UI/Badge",
   component: Badge,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['default', 'primary', 'success', 'destructive', 'info'],
-      description: 'Visual style of the badge',
+      control: "select",
+      options: ["default", "primary", "success", "destructive", "info"],
+      description: "Visual style of the badge",
     },
     size: {
-      control: 'select',
-      options: ['xs', 'sm', 'md', 'lg', 'xl'],
-      description: 'Padding and text sizing',
+      control: "select",
+      options: ["xs", "sm", "md", "lg", "xl"],
+      description: "Padding and text sizing",
     },
   },
   args: {
-    children: 'Badge',
-    variant: 'default',
-    size: 'md',
+    children: "Badge",
+    variant: "default",
+    size: "md",
   },
 } satisfies Meta<typeof Badge>;
 
@@ -35,43 +35,43 @@ export const Default: Story = {};
 
 export const Primary: Story = {
   args: {
-    variant: 'primary',
-    children: 'Primary',
+    variant: "primary",
+    children: "Primary",
   },
 };
 
 export const Success: Story = {
   args: {
-    variant: 'success',
-    children: 'Success',
+    variant: "success",
+    children: "Success",
   },
 };
 
 export const Destructive: Story = {
   args: {
-    variant: 'destructive',
-    children: 'Destructive',
+    variant: "destructive",
+    children: "Destructive",
   },
 };
 
 export const InfoBadge: Story = {
   args: {
-    variant: 'info',
-    children: 'Info',
+    variant: "info",
+    children: "Info",
   },
 };
 
 export const Small: Story = {
   args: {
-    size: 'sm',
-    children: 'Small size',
+    size: "sm",
+    children: "Small size",
   },
 };
 
 export const Medium: Story = {
   args: {
-    size: 'md',
-    children: 'Medium size',
+    size: "md",
+    children: "Medium size",
   },
 };
 

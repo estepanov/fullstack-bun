@@ -4,7 +4,7 @@ import { formatDateTime, parseErrorMessage } from "@frontend/lib/dashboard/utils
 import type { SessionRecord } from "@frontend/types/dashboard";
 import { Alert, Badge, Button } from "frontend-common/components/ui";
 import { RefreshCwIcon } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DashboardCard } from "./dashboard-card";
 
@@ -28,7 +28,7 @@ export function SessionsSection() {
     });
   }, [currentSessionId, sessions]);
 
-  const loadSessions = async () => {
+  const loadSessions = useCallback(async () => {
     setLoading(true);
     setError("");
     const response = await authClient.listSessions();
@@ -39,7 +39,7 @@ export function SessionsSection() {
       setSessions((response.data as SessionRecord[]) ?? []);
     }
     setLoading(false);
-  };
+  }, [t]);
 
   const handleRevokeOtherSessions = async () => {
     setRevoking(true);
@@ -55,7 +55,7 @@ export function SessionsSection() {
 
   useEffect(() => {
     void loadSessions();
-  }, []);
+  }, [loadSessions]);
 
   return (
     <DashboardCard>

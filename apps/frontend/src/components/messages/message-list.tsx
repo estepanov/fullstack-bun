@@ -2,7 +2,13 @@ import { useBanUserMutation } from "@frontend/hooks/api/useBanUserMutation";
 import { useDeleteChatMessageMutation } from "@frontend/hooks/api/useDeleteChatMessageMutation";
 import { useUpdateChatMessageMutation } from "@frontend/hooks/api/useUpdateChatMessageMutation";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { Alert, Button, InputError, Field, FieldLabel } from "frontend-common/components/ui";
+import {
+  Alert,
+  Button,
+  Field,
+  FieldLabel,
+  InputError,
+} from "frontend-common/components/ui";
 import {
   Dialog,
   DialogContent,
@@ -477,9 +483,7 @@ export const MessageList = ({
                 <p className="text-sm font-medium">{userToBan.name}</p>
               </div>
               <Field>
-                <FieldLabel htmlFor="ban-reason">
-                  {t("ban.reason_label")}
-                </FieldLabel>
+                <FieldLabel htmlFor="ban-reason">{t("ban.reason_label")}</FieldLabel>
                 <Input
                   id="ban-reason"
                   type="text"
@@ -495,7 +499,9 @@ export const MessageList = ({
                   checked={deleteMessages}
                   onChange={(e) => setDeleteMessages(e.target.checked)}
                 />
-                <FieldLabel htmlFor="delete-messages" className="font-normal">{t("ban.delete_messages_label")}</FieldLabel>
+                <FieldLabel htmlFor="delete-messages" className="font-normal">
+                  {t("ban.delete_messages_label")}
+                </FieldLabel>
               </Field>
               {banError && <Alert variant="destructive">{banError}</Alert>}
             </div>

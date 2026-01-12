@@ -116,27 +116,21 @@ export const WithVerticalLayout: Story = {
     <div className="flex h-[300px] w-[600px] rounded-xl border bg-card shadow-sm">
       <div className="flex-1 p-6">
         <h3 className="text-lg font-semibold">Left Panel</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Content in the left panel
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Content in the left panel</p>
       </div>
 
       <Separator orientation="vertical" />
 
       <div className="flex-1 p-6">
         <h3 className="text-lg font-semibold">Center Panel</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Content in the center panel
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Content in the center panel</p>
       </div>
 
       <Separator orientation="vertical" />
 
       <div className="flex-1 p-6">
         <h3 className="text-lg font-semibold">Right Panel</h3>
-        <p className="mt-2 text-sm text-muted-foreground">
-          Content in the right panel
-        </p>
+        <p className="mt-2 text-sm text-muted-foreground">Content in the right panel</p>
       </div>
     </div>
   ),

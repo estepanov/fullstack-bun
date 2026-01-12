@@ -39,11 +39,7 @@ const config: StorybookConfig = {
       resolve: {
         alias: {
           "frontend-common": join(__dirname, "../../..", "packages/frontend-common"),
-          "@frontend-common": join(
-            __dirname,
-            "../../..",
-            "packages/frontend-common"
-          ),
+          "@frontend-common": join(__dirname, "../../..", "packages/frontend-common"),
         },
       },
     });

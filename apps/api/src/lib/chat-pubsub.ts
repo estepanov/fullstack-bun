@@ -39,13 +39,13 @@ interface PubSubMessage {
  * Metrics for pub/sub operations
  */
 export interface PubSubMetrics {
-	messagesPublished: number;
-	messagesReceived: number;
-	publishFailures: number;
-	averageLatencyMs: number;
-	maxLatencyMs: number;
-	isDegraded: boolean;
-	uptime: number;
+  messagesPublished: number;
+  messagesReceived: number;
+  publishFailures: number;
+  averageLatencyMs: number;
+  maxLatencyMs: number;
+  isDegraded: boolean;
+  uptime: number;
 }
 
 /**
@@ -53,43 +53,43 @@ export interface PubSubMetrics {
  * Allows multiple API instances to broadcast messages to all connected clients.
  */
 export class ChatPubSubManager {
-	private publisher: Redis;
-	private subscriber: Redis;
-	private chatManager: ChatManager;
-	private isStarted = false;
-	private isDegraded = false;
-	private startTime: number = 0;
+  private publisher: Redis;
+  private subscriber: Redis;
+  private chatManager: ChatManager;
+  private isStarted = false;
+  private isDegraded = false;
+  private startTime = 0;
 
-	// Metrics tracking
-	private metrics = {
-		messagesPublished: 0,
-		messagesReceived: 0,
-		publishFailures: 0,
-		latencies: [] as number[],
-		maxLatencyMs: 0,
-	};
+  // Metrics tracking
+  private metrics = {
+    messagesPublished: 0,
+    messagesReceived: 0,
+    publishFailures: 0,
+    latencies: [] as number[],
+    maxLatencyMs: 0,
+  };
 
-	// Message deduplication
-	private recentMessageIds = new Set<string>();
+  // Message deduplication
+  private recentMessageIds = new Set<string>();
 
-	constructor(chatManager: ChatManager) {
-		this.chatManager = chatManager;
-		this.publisher = getRedisPubSubPublisher();
-		this.subscriber = getRedisPubSubSubscriber();
-	}
+  constructor(chatManager: ChatManager) {
+    this.chatManager = chatManager;
+    this.publisher = getRedisPubSubPublisher();
+    this.subscriber = getRedisPubSubSubscriber();
+  }
 
-	/**
-	 * Start the pub/sub manager and subscribe to channels
-	 */
-	async start(): Promise<void> {
-		if (this.isStarted) {
-			appLogger.warn("ChatPubSubManager already started");
-			return;
-		}
+  /**
+   * Start the pub/sub manager and subscribe to channels
+   */
+  async start(): Promise<void> {
+    if (this.isStarted) {
+      appLogger.warn("ChatPubSubManager already started");
+      return;
+    }
 
-		this.startTime = Date.now();
+    this.startTime = Date.now();
 
-		try {
+    try {
       // Set up message handlers
       this.subscriber.on("message", (channel, message) => {
         this.handleMessage(channel, message);
@@ -231,26 +231,23 @@ export class ChatPubSubManager {
     await this.publish(CHANNELS.PRESENCE, pubsubMessage);
   }
 
-	/**
-	 * Internal publish method
-	 */
-	private async publish(
-		channel: string,
-		message: PubSubMessage,
-	): Promise<void> {
-		try {
-			const messageStr = JSON.stringify(message);
-			await this.publisher.publish(channel, messageStr);
-			this.metrics.messagesPublished++;
-		} catch (error) {
-			this.metrics.publishFailures++;
-			appLogger.error(
-				{ error, channel, messageType: message.type },
-				"Failed to publish message",
-			);
-			// Don't throw - allow local operation to continue even if pub/sub fails
-		}
-	}
+  /**
+   * Internal publish method
+   */
+  private async publish(channel: string, message: PubSubMessage): Promise<void> {
+    try {
+      const messageStr = JSON.stringify(message);
+      await this.publisher.publish(channel, messageStr);
+      this.metrics.messagesPublished++;
+    } catch (error) {
+      this.metrics.publishFailures++;
+      appLogger.error(
+        { error, channel, messageType: message.type },
+        "Failed to publish message",
+      );
+      // Don't throw - allow local operation to continue even if pub/sub fails
+    }
+  }
 
   /**
    * Handle incoming pub/sub messages
@@ -274,36 +271,36 @@ export class ChatPubSubManager {
         return;
       }
 
-			// Skip messages from our own instance to avoid echo
-			// (Each instance will broadcast to its own local clients directly)
-			if (parsed.instanceId === INSTANCE_ID) {
-				return;
-			}
+      // Skip messages from our own instance to avoid echo
+      // (Each instance will broadcast to its own local clients directly)
+      if (parsed.instanceId === INSTANCE_ID) {
+        return;
+      }
 
-			// Track received message
-			this.metrics.messagesReceived++;
+      // Track received message
+      this.metrics.messagesReceived++;
 
-			// Calculate latency for monitoring
-			const latency = Date.now() - parsed.timestamp;
+      // Calculate latency for monitoring
+      const latency = Date.now() - parsed.timestamp;
 
-			// Track latency metrics (keep last 100 samples for average)
-			this.metrics.latencies.push(latency);
-			if (this.metrics.latencies.length > 100) {
-				this.metrics.latencies.shift();
-			}
-			if (latency > this.metrics.maxLatencyMs) {
-				this.metrics.maxLatencyMs = latency;
-			}
+      // Track latency metrics (keep last 100 samples for average)
+      this.metrics.latencies.push(latency);
+      if (this.metrics.latencies.length > 100) {
+        this.metrics.latencies.shift();
+      }
+      if (latency > this.metrics.maxLatencyMs) {
+        this.metrics.maxLatencyMs = latency;
+      }
 
-			appLogger.debug(
-				{
-					channel,
-					type: parsed.type,
-					sourceInstance: parsed.instanceId,
-					latencyMs: latency,
-				},
-				"Received pub/sub message",
-			);
+      appLogger.debug(
+        {
+          channel,
+          type: parsed.type,
+          sourceInstance: parsed.instanceId,
+          latencyMs: latency,
+        },
+        "Received pub/sub message",
+      );
 
       // Route to appropriate handler
       switch (channel) {
@@ -324,75 +321,75 @@ export class ChatPubSubManager {
     }
   }
 
-	/**
-	 * Check if message was already processed (deduplication)
-	 * Returns true if this is a duplicate message
-	 */
-	private isDuplicateMessage(messageId: string): boolean {
-		if (this.recentMessageIds.has(messageId)) {
-			return true;
-		}
+  /**
+   * Check if message was already processed (deduplication)
+   * Returns true if this is a duplicate message
+   */
+  private isDuplicateMessage(messageId: string): boolean {
+    if (this.recentMessageIds.has(messageId)) {
+      return true;
+    }
 
-		// Track this message ID
-		this.recentMessageIds.add(messageId);
+    // Track this message ID
+    this.recentMessageIds.add(messageId);
 
-		// Auto-cleanup after 5 seconds
-		setTimeout(() => {
-			this.recentMessageIds.delete(messageId);
-		}, 5000);
+    // Auto-cleanup after 5 seconds
+    setTimeout(() => {
+      this.recentMessageIds.delete(messageId);
+    }, 5000);
 
-		return false;
-	}
+    return false;
+  }
 
-	/**
-	 * Handle broadcast messages (new messages, deletions, updates)
-	 */
-	private handleBroadcastMessage(message: PubSubMessage): void {
-		switch (message.type) {
-			case "new_message": {
-				const chatMessage = message.data as
-					| ChatMessage
-					| { type: string; userId: string; deletedCount: number };
+  /**
+   * Handle broadcast messages (new messages, deletions, updates)
+   */
+  private handleBroadcastMessage(message: PubSubMessage): void {
+    switch (message.type) {
+      case "new_message": {
+        const chatMessage = message.data as
+          | ChatMessage
+          | { type: string; userId: string; deletedCount: number };
 
-				// Deduplicate based on message ID (if available)
-				if ("id" in chatMessage && this.isDuplicateMessage(chatMessage.id)) {
-					appLogger.debug({ messageId: chatMessage.id }, "Skipping duplicate message");
-					return;
-				}
+        // Deduplicate based on message ID (if available)
+        if ("id" in chatMessage && this.isDuplicateMessage(chatMessage.id)) {
+          appLogger.debug({ messageId: chatMessage.id }, "Skipping duplicate message");
+          return;
+        }
 
-				this.chatManager.broadcastLocal(chatMessage);
-				break;
-			}
-			case "message_deleted": {
-				const { messageId } = message.data as { messageId: string };
+        this.chatManager.broadcastLocal(chatMessage);
+        break;
+      }
+      case "message_deleted": {
+        const { messageId } = message.data as { messageId: string };
 
-				// Deduplicate deletion events
-				const dedupKey = `del:${messageId}`;
-				if (this.isDuplicateMessage(dedupKey)) {
-					appLogger.debug({ messageId }, "Skipping duplicate deletion");
-					return;
-				}
+        // Deduplicate deletion events
+        const dedupKey = `del:${messageId}`;
+        if (this.isDuplicateMessage(dedupKey)) {
+          appLogger.debug({ messageId }, "Skipping duplicate deletion");
+          return;
+        }
 
-				this.chatManager.broadcastDeletionLocal(messageId);
-				break;
-			}
-			case "message_updated": {
-				const chatMessage = message.data as ChatMessage;
+        this.chatManager.broadcastDeletionLocal(messageId);
+        break;
+      }
+      case "message_updated": {
+        const chatMessage = message.data as ChatMessage;
 
-				// Deduplicate update events
-				const dedupKey = `upd:${chatMessage.id}`;
-				if (this.isDuplicateMessage(dedupKey)) {
-					appLogger.debug({ messageId: chatMessage.id }, "Skipping duplicate update");
-					return;
-				}
+        // Deduplicate update events
+        const dedupKey = `upd:${chatMessage.id}`;
+        if (this.isDuplicateMessage(dedupKey)) {
+          appLogger.debug({ messageId: chatMessage.id }, "Skipping duplicate update");
+          return;
+        }
 
-				this.chatManager.broadcastUpdateLocal(chatMessage);
-				break;
-			}
-			default:
-				appLogger.warn({ type: message.type }, "Unknown broadcast message type");
-		}
-	}
+        this.chatManager.broadcastUpdateLocal(chatMessage);
+        break;
+      }
+      default:
+        appLogger.warn({ type: message.type }, "Unknown broadcast message type");
+    }
+  }
 
   /**
    * Handle presence update messages
@@ -447,33 +444,33 @@ export class ChatPubSubManager {
     }
   }
 
-	/**
-	 * Check if the pub/sub manager is in degraded mode
-	 */
-	isDegradedMode(): boolean {
-		return this.isDegraded;
-	}
+  /**
+   * Check if the pub/sub manager is in degraded mode
+   */
+  isDegradedMode(): boolean {
+    return this.isDegraded;
+  }
 
-	/**
-	 * Get pub/sub metrics for monitoring and observability
-	 */
-	getMetrics(): PubSubMetrics {
-		const averageLatencyMs =
-			this.metrics.latencies.length > 0
-				? this.metrics.latencies.reduce((a, b) => a + b, 0) /
-					this.metrics.latencies.length
-				: 0;
+  /**
+   * Get pub/sub metrics for monitoring and observability
+   */
+  getMetrics(): PubSubMetrics {
+    const averageLatencyMs =
+      this.metrics.latencies.length > 0
+        ? this.metrics.latencies.reduce((a, b) => a + b, 0) /
+          this.metrics.latencies.length
+        : 0;
 
-		const uptime = this.startTime > 0 ? Date.now() - this.startTime : 0;
+    const uptime = this.startTime > 0 ? Date.now() - this.startTime : 0;
 
-		return {
-			messagesPublished: this.metrics.messagesPublished,
-			messagesReceived: this.metrics.messagesReceived,
-			publishFailures: this.metrics.publishFailures,
-			averageLatencyMs: Math.round(averageLatencyMs * 100) / 100,
-			maxLatencyMs: this.metrics.maxLatencyMs,
-			isDegraded: this.isDegraded,
-			uptime,
-		};
-	}
+    return {
+      messagesPublished: this.metrics.messagesPublished,
+      messagesReceived: this.metrics.messagesReceived,
+      publishFailures: this.metrics.publishFailures,
+      averageLatencyMs: Math.round(averageLatencyMs * 100) / 100,
+      maxLatencyMs: this.metrics.maxLatencyMs,
+      isDegraded: this.isDegraded,
+      uptime,
+    };
+  }
 }
