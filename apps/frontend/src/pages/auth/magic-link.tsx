@@ -100,14 +100,14 @@ export default function MagicLinkPage() {
   return (
     <AppSurfaceCenter>
       <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 shadow-sm shadow-black/5 backdrop-blur">
-        <div className="text-center">
+        <div className="text-center space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight">
             {t("magic_link.title")}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">{t("magic_link.subtitle")}</p>
+          <p className="text-sm text-muted-foreground">{t("magic_link.subtitle")}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-2">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           {errorParam && !error && (
             <Alert variant={"destructive"}>
               {t("magic_link.error_from_link", { error: errorParam })}

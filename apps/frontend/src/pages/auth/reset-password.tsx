@@ -53,20 +53,22 @@ export default function ResetPasswordPage() {
   if (tokenError) {
     return (
       <AppSurfaceCenter>
-        <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-10 text-center shadow-sm shadow-black/5 backdrop-blur">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 text-3xl">
-            ❌
+        <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 text-center shadow-sm shadow-black/5 backdrop-blur">
+          <div className="space-y-4">
+            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 text-3xl">
+              ❌
+            </div>
+            <h1 className="text-3xl font-semibold tracking-tight text-destructive">
+              {t("reset_password.error_title")}
+            </h1>
+            <p className="text-sm text-muted-foreground">{tokenError}</p>
+            <Link
+              to="/auth/login"
+              className="inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40"
+            >
+              {t("reset_password.go_to_login")}
+            </Link>
           </div>
-          <h1 className="mt-6 text-3xl font-semibold tracking-tight text-destructive">
-            {t("reset_password.error_title")}
-          </h1>
-          <p className="mt-2 text-sm text-muted-foreground">{tokenError}</p>
-          <Link
-            to="/auth/login"
-            className="mt-6 inline-flex rounded-full bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/40"
-          >
-            {t("reset_password.go_to_login")}
-          </Link>
         </div>
       </AppSurfaceCenter>
     );
@@ -113,24 +115,24 @@ export default function ResetPasswordPage() {
     <AppSurfaceCenter>
       <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 shadow-sm shadow-black/5 backdrop-blur">
         {status === "success" ? (
-          <div className="text-center">
+          <div className="text-center space-y-4">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-3xl">
               ✅
             </div>
-            <h1 className="mt-6 text-3xl font-semibold tracking-tight text-emerald-700 dark:text-emerald-300">
+            <h1 className="text-3xl font-semibold tracking-tight text-emerald-700 dark:text-emerald-300">
               {t("reset_password.success_title")}
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {t("reset_password.success_message")}
             </p>
           </div>
         ) : (
           <>
-            <div className="text-center">
+            <div className="text-center space-y-2">
               <h1 className="text-3xl font-semibold tracking-tight">
                 {t("reset_password.title")}
               </h1>
-              <p className="mt-2 text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 {t("reset_password.subtitle")}
               </p>
             </div>
@@ -138,7 +140,7 @@ export default function ResetPasswordPage() {
             <form onSubmit={handleSubmit} className="mt-8 space-y-4">
               {errorMessage && <Alert variant="destructive">{errorMessage}</Alert>}
 
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <Field>
                   <FieldLabel htmlFor="new-password">
                     {t("reset_password.password_label")}

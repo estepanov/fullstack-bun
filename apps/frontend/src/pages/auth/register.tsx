@@ -58,12 +58,12 @@ export default function RegisterPage() {
   return (
     <AppSurfaceCenter>
       <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 shadow-sm shadow-black/5 backdrop-blur">
-        <div className="text-center">
+        <div className="text-center space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight">{t("register.title")}</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{t("register.subtitle")}</p>
+          <p className="text-sm text-muted-foreground">{t("register.subtitle")}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           {error && <Alert variant="destructive">{error}</Alert>}
           <Field>
             <FieldLabel htmlFor="name">{t("register.name_label")}</FieldLabel>

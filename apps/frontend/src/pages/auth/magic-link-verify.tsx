@@ -73,52 +73,48 @@ export default function MagicLinkVerifyPage() {
 
   return (
     <AppSurfaceCenter className="flex-1">
-      <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-10 text-center shadow-sm shadow-black/5 backdrop-blur">
+      <div className="w-full max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 text-center shadow-sm shadow-black/5 backdrop-blur">
         {status === "verifying" && (
-          <>
+          <div className="space-y-4">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-3xl">
               ⏳
             </div>
-            <h1 className="mt-6 text-3xl font-semibold tracking-tight">
+            <h1 className="text-3xl font-semibold tracking-tight">
               {t("magic_link_verify.verifying_title")}
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {t("magic_link_verify.verifying_message")}
             </p>
-          </>
+          </div>
         )}
 
         {status === "success" && (
-          <>
+          <div className="space-y-4">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-3xl">
               ✅
             </div>
-            <h1 className="mt-6 text-3xl font-semibold tracking-tight text-emerald-700 dark:text-emerald-300">
+            <h1 className="text-3xl font-semibold tracking-tight text-emerald-700 dark:text-emerald-300">
               {t("magic_link_verify.success_title")}
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               {t("magic_link_verify.success_message")}
             </p>
-          </>
+          </div>
         )}
 
         {status === "error" && (
-          <>
+          <div className="space-y-4">
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-destructive/10 text-3xl">
               ❌
             </div>
-            <h1 className="mt-6 text-3xl font-semibold tracking-tight text-destructive">
+            <h1 className="text-3xl font-semibold tracking-tight text-destructive">
               {t("magic_link_verify.error_title")}
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">{errorMessage}</p>
-            <Button
-              type="button"
-              onClick={() => navigate("/auth/login")}
-              className="mt-6"
-            >
+            <p className="text-sm text-muted-foreground">{errorMessage}</p>
+            <Button type="button" onClick={() => navigate("/auth/login")}>
               {t("magic_link_verify.go_to_login")}
             </Button>
-          </>
+          </div>
         )}
       </div>
     </AppSurfaceCenter>
