@@ -1,4 +1,3 @@
-import "../../testing-library";
 import { afterEach, beforeEach, describe, expect, test } from "bun:test";
 import { waitFor } from "@testing-library/dom";
 import { render, renderHook, screen } from "@testing-library/react";
