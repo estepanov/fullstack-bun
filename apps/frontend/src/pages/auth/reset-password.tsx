@@ -1,11 +1,12 @@
-import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
-import { resetPassword } from "@/lib/auth-client";
+import { AppSurfaceCenter } from "@frontend/components/AppSurfaceCenter";
+import { resetPassword } from "@frontend/lib/auth-client";
 import {
   Alert,
   Button,
+  Field,
+  FieldDescription,
+  FieldLabel,
   Input,
-  InputDescription,
-  Label,
 } from "frontend-common/components/ui";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -138,10 +139,10 @@ export default function ResetPasswordPage() {
               {errorMessage && <Alert variant="destructive">{errorMessage}</Alert>}
 
               <div className="space-y-2">
-                <div className="gap-1">
-                  <Label htmlFor="new-password">
+                <Field>
+                  <FieldLabel htmlFor="new-password">
                     {t("reset_password.password_label")}
-                  </Label>
+                  </FieldLabel>
                   <Input
                     id="new-password"
                     type="password"
@@ -150,17 +151,16 @@ export default function ResetPasswordPage() {
                     placeholder={t("reset_password.password_placeholder")}
                     required
                     minLength={passwordMinLength}
-                    className="mt-2 block w-full"
                   />
-                  <InputDescription className="mt-2">
+                  <FieldDescription>
                     {t("reset_password.password_hint", { minLength: passwordMinLength })}
-                  </InputDescription>
-                </div>
+                  </FieldDescription>
+                </Field>
 
-                <div className="gap-1">
-                  <Label htmlFor="confirm-password">
+                <Field>
+                  <FieldLabel htmlFor="confirm-password">
                     {t("reset_password.confirm_label")}
-                  </Label>
+                  </FieldLabel>
                   <Input
                     id="confirm-password"
                     type="password"
@@ -169,9 +169,8 @@ export default function ResetPasswordPage() {
                     placeholder={t("reset_password.confirm_placeholder")}
                     required
                     minLength={passwordMinLength}
-                    className="mt-2 block w-full"
                   />
-                </div>
+                </Field>
               </div>
 
               <Button type="submit" disabled={status === "submitting"} className="w-full">

@@ -107,6 +107,82 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/mydatabase"
 REDIS_URL="redis://:redispassword@redis:6379"
 ```
 
+### `ENABLE_DISTRIBUTED_CHAT`
+
+**Optional.** Enable horizontal scaling mode for the API. When `true`, multiple API instances can run concurrently and share WebSocket connections via Redis pub/sub.
+
+**Default:** `true` (enabled)
+
+```txt
+ENABLE_DISTRIBUTED_CHAT=true
+```
+
+Set to `false` to run in single-instance mode (useful for local development or debugging):
+
+```txt
+ENABLE_DISTRIBUTED_CHAT=false
+```
+
+::: tip
+For production deployments with multiple replicas, keep this enabled. For local development, you can disable it to simplify setup.
+:::
+
+**See also:** [Horizontal Scaling Guide](/reference/horizontal-scaling) for detailed deployment instructions.
+
+### `INSTANCE_ID`
+
+**Optional.** Custom identifier for this API instance. Used for monitoring and observability in horizontally scaled deployments.
+
+If not set, a unique ID is auto-generated in the format `api-<uuid>`.
+
+```txt
+INSTANCE_ID=api-1
+```
+
+::: tip
+Only relevant when `ENABLE_DISTRIBUTED_CHAT=true`. Setting a custom ID makes it easier to identify instances in metrics and logs.
+:::
+
+### `METRICS_API_KEY`
+
+**Optional but recommended for production.** API key for authenticating access to the `/metrics` endpoint. Minimum 32 characters.
+
+The `/metrics` endpoint exposes sensitive infrastructure information including instance IDs, cluster topology, connected client counts, and system health data. This endpoint is protected by authentication to prevent unauthorized access.
+
+**Authentication methods:**
+1. **Admin session** - Logged-in admin users can access without API key
+2. **API key** - Use `Authorization: Bearer <key>` header (recommended for monitoring tools)
+
+**Generate a secure key:**
+```bash
+# Option 1: OpenSSL (recommended)
+openssl rand -base64 32
+
+# Option 2: UUID
+uuidgen
+```
+
+**Example:**
+```txt
+METRICS_API_KEY="AbCd1234EfGh5678IjKl9012MnOp3456"
+```
+
+**Usage:**
+```bash
+curl -H "Authorization: Bearer YOUR_METRICS_API_KEY" https://api.yourdomain.com/metrics
+```
+
+::: warning Security
+- Never commit this key to version control
+- Store in secrets management (e.g., Doppler, AWS Secrets Manager, etc.)
+- Rotate every 90 days in production
+- If not set, only authenticated admin users can access metrics
+:::
+
+::: tip
+Essential for monitoring tools like Prometheus, Grafana, Datadog, etc. See the [Horizontal Scaling Guide](/reference/horizontal-scaling#metrics-endpoint-security) for more details.
+:::
+
 ### `BETTER_AUTH_SECRET`
 
 **Required.** Secret key for better-auth. Generate with `openssl rand -base64 32`.

@@ -1,5 +1,5 @@
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
+import { Footer } from "@frontend/components/Footer";
+import { Header } from "@frontend/components/Header";
 import { Links, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { APP_NAME } from "./app.config";
 import { RootAppProvider } from "./providers/RootAppProvider";

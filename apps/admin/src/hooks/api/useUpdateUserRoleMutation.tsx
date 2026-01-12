@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api-client";
+import { apiClient } from "@admin/lib/api-client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { InferResponseType } from "hono";
 import type { UserRole } from "shared/auth/user-role";

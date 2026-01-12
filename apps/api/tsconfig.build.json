@@ -11,7 +11,11 @@
     "skipLibCheck": true,
     "module": "esnext",
     "moduleResolution": "bundler",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "baseUrl": ".",
+    "paths": {
+      "@api/*": ["./*"]
+    }
   },
   "include": ["src"]
 }

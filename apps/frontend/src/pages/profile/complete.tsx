@@ -1,12 +1,13 @@
-import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
-import { authClient, useSession } from "@/lib/auth-client";
-import { getExtendedUser } from "@/types/user";
+import { AppSurfaceCenter } from "@frontend/components/AppSurfaceCenter";
+import { authClient, useSession } from "@frontend/lib/auth-client";
+import { getExtendedUser } from "@frontend/types/user";
 import {
   Alert,
   Button,
+  Field,
+  FieldDescription,
+  FieldLabel,
   Input,
-  InputDescription,
-  Label,
 } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -157,8 +158,8 @@ export default function CompleteProfilePage() {
 
           <div className="space-y-2">
             {needsName && (
-              <div className="gap-1">
-                <Label htmlFor="name">{t("complete_profile.name_label")}</Label>
+              <Field>
+                <FieldLabel htmlFor="name">{t("complete_profile.name_label")}</FieldLabel>
                 <Input
                   id="name"
                   type="text"
@@ -166,15 +167,16 @@ export default function CompleteProfilePage() {
                   onChange={(e) => setName(e.target.value)}
                   placeholder={t("complete_profile.name_placeholder")}
                   required
-                  className="mt-2 block w-full"
                   disabled={isLoading || isSuccess}
                 />
-              </div>
+              </Field>
             )}
 
             {needsUsername && (
-              <div className="gap-1">
-                <Label htmlFor="username">{t("complete_profile.username_label")}</Label>
+              <Field>
+                <FieldLabel htmlFor="username">
+                  {t("complete_profile.username_label")}
+                </FieldLabel>
                 <Input
                   id="username"
                   type="text"
@@ -185,29 +187,17 @@ export default function CompleteProfilePage() {
                   minLength={USERNAME_CONFIG.minLength}
                   maxLength={USERNAME_CONFIG.maxLength}
                   required
-                  className="mt-2 block w-full"
                   disabled={isLoading || isSuccess}
                 />
                 {username && (
-                  <InputDescription
-                    className="mt-1"
-                    variant={
-                      usernameAvailability.checking
-                        ? "default"
-                        : usernameAvailability.available === true
-                          ? "success"
-                          : usernameAvailability.available === false
-                            ? "destructive"
-                            : "default"
-                    }
-                  >
+                  <FieldDescription>
                     {usernameAvailability.checking
                       ? t("complete_profile.username_checking")
                       : usernameAvailability.message ||
                         t("complete_profile.username_hint")}
-                  </InputDescription>
+                  </FieldDescription>
                 )}
-              </div>
+              </Field>
             )}
           </div>
 

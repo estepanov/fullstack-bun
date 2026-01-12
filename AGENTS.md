@@ -8,6 +8,8 @@ Always use Context7 MCP when I need library/API documentation, code generation, 
 - `apps/docs`: documentation site; Markdown in `apps/docs/reference` and `apps/docs/get-started`.
 - `packages/shared`: cross-app interfaces and types consumed via workspace dependency `shared`.
 
+`shadcn` related commands should only be run within `packages/frontend-common` where we store shared components. use `shadcn` mcp
+
 ## Build, Test, and Development Commands
 - Always use `bun` and `bunx` instead of `npm` or `yarn` or `pnpm`
 - Install deps once from the repo root: `bun install`.

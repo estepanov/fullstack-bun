@@ -1,4 +1,4 @@
-import { useSession } from "@/lib/auth-client";
+import { useSession } from "@admin/lib/auth-client";
 import { isAdminSession } from "frontend-common/auth";
 import type { ReactNode } from "react";
 import { useEffect } from "react";

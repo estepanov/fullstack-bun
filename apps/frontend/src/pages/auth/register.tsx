@@ -1,11 +1,12 @@
-import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
-import { signUp } from "@/lib/auth-client";
+import { AppSurfaceCenter } from "@frontend/components/AppSurfaceCenter";
+import { signUp } from "@frontend/lib/auth-client";
 import {
   Alert,
   Button,
+  Field,
+  FieldDescription,
+  FieldLabel,
   Input,
-  InputDescription,
-  Label,
 } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -64,8 +65,8 @@ export default function RegisterPage() {
 
         <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
           {error && <Alert variant="destructive">{error}</Alert>}
-          <div className="gap-1">
-            <Label htmlFor="name">{t("register.name_label")}</Label>
+          <Field>
+            <FieldLabel htmlFor="name">{t("register.name_label")}</FieldLabel>
             <Input
               id="name"
               type="text"
@@ -73,12 +74,11 @@ export default function RegisterPage() {
               onChange={(e) => setName(e.target.value)}
               placeholder={t("register.name_placeholder")}
               required
-              className="w-full"
             />
-          </div>
+          </Field>
 
-          <div className="gap-1">
-            <Label htmlFor="email">{t("register.email_label")}</Label>
+          <Field>
+            <FieldLabel htmlFor="email">{t("register.email_label")}</FieldLabel>
             <Input
               id="email"
               type="email"
@@ -86,28 +86,24 @@ export default function RegisterPage() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t("register.email_placeholder")}
               required
-              className="w-full"
             />
-          </div>
+          </Field>
 
-          <div className="gap-1">
-            <Label htmlFor="password">{t("register.password_label")}</Label>
-            <div>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder={t("register.password_placeholder")}
-                required
-                minLength={passwordMinLength}
-                className="w-full"
-              />
-              <InputDescription className="mt-2">
-                {t("register.password_hint", { minLength: passwordMinLength })}
-              </InputDescription>
-            </div>
-          </div>
+          <Field>
+            <FieldLabel htmlFor="password">{t("register.password_label")}</FieldLabel>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={t("register.password_placeholder")}
+              required
+              minLength={passwordMinLength}
+            />
+            <FieldDescription>
+              {t("register.password_hint", { minLength: passwordMinLength })}
+            </FieldDescription>
+          </Field>
 
           <Button type="submit" disabled={isLoading} className="w-full">
             {isLoading ? t("register.submitting_button") : t("register.submit_button")}

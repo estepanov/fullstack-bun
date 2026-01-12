@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api-client";
+import { apiClient } from "@frontend/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
 import type { Example } from "shared/interfaces/example";
 import { EXAMPLE_GET_QUERY_KEY } from "./query-key";

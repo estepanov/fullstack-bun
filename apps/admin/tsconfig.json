@@ -9,8 +9,8 @@
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@locales/*": ["./locales/*"]
+      "@admin/*": ["./src/*"],
+      "@admin-locales/*": ["./locales/*"]
     }
   }
 }

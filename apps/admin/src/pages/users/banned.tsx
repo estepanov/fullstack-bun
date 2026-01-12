@@ -1,5 +1,5 @@
-import { useBannedUsersQuery } from "@/hooks/api/useBannedUsersQuery";
-import { useUnbanUserMutation } from "@/hooks/api/useUnbanUserMutation";
+import { useBannedUsersQuery } from "@admin/hooks/api/useBannedUsersQuery";
+import { useUnbanUserMutation } from "@admin/hooks/api/useUnbanUserMutation";
 import {
   Alert,
   Button,

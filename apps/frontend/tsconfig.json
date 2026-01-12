@@ -1,17 +1,14 @@
 {
   "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ],
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
   "exclude": ["node_modules", "../api"],
   "compilerOptions": {
     "skipLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@test/*": ["./test/*"],
-      "@locales/*": ["./locales/*"]
+      "@frontend/*": ["./src/*"],
+      "@frontend-test/*": ["./test/*"],
+      "@frontend-locales/*": ["./locales/*"]
     }
   }
 }

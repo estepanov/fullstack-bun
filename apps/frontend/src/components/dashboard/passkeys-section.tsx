@@ -1,17 +1,17 @@
-import { authClient } from "@/lib/auth-client";
-import { passkeySchema } from "@/lib/dashboard/schemas";
+import { authClient } from "@frontend/lib/auth-client";
+import { passkeySchema } from "@frontend/lib/dashboard/schemas";
 import {
   formatDateTime,
   formatProviderLabel,
   parseErrorMessage,
-} from "@/lib/dashboard/utils";
-import type { PasskeyRecord } from "@/types/dashboard";
+} from "@frontend/lib/dashboard/utils";
+import type { PasskeyRecord } from "@frontend/types/dashboard";
 import { useForm } from "@tanstack/react-form";
+import { Alert, Button, Field, FieldLabel, Input } from "frontend-common/components/ui";
 import { RefreshCwIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
-import { Alert, Button, Input, Label } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 
 export function PasskeysSection() {
@@ -136,18 +136,20 @@ export function PasskeysSection() {
           <form.Field
             name="name"
             children={(field) => (
-              <Label>
-                {t("dashboard.passkeys_name_label")}
+              <Field>
+                <FieldLabel htmlFor="passkey-name">
+                  {t("dashboard.passkeys_name_label")}
+                </FieldLabel>
                 <Input
+                  id="passkey-name"
                   type="text"
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  className="mt-2 w-full"
                   disabled={form.state.isSubmitting}
                   placeholder={t("dashboard.passkeys_name_placeholder")}
                 />
-              </Label>
+              </Field>
             )}
           />
           <div className="flex flex-col justify-end mb-3">

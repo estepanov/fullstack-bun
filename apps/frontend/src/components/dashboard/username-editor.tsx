@@ -1,12 +1,19 @@
-import { authClient } from "@/lib/auth-client";
-import { usernameSchema } from "@/lib/dashboard/schemas";
-import { parseErrorMessage } from "@/lib/dashboard/utils";
-import type { UpdateCallback } from "@/types/dashboard";
+import { authClient } from "@frontend/lib/auth-client";
+import { usernameSchema } from "@frontend/lib/dashboard/schemas";
+import { parseErrorMessage } from "@frontend/lib/dashboard/utils";
+import type { UpdateCallback } from "@frontend/types/dashboard";
 import { useForm, useStore } from "@tanstack/react-form";
+import {
+  Alert,
+  Button,
+  Field,
+  FieldDescription,
+  FieldError,
+  Input,
+} from "frontend-common/components/ui";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { USERNAME_CONFIG } from "shared/config/user-profile";
-import { Alert, Button, Input, InputDescription, InputError } from "../ui";
 
 interface UsernameEditorProps {
   displayUsername?: string | null;
@@ -215,7 +222,7 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
               <form.Field
                 name="displayUsername"
                 children={(field) => (
-                  <>
+                  <Field>
                     <Input
                       id={inputId}
                       type="text"
@@ -228,7 +235,6 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
                       minLength={USERNAME_CONFIG.minLength}
                       maxLength={USERNAME_CONFIG.maxLength}
                       pattern={USERNAME_CONFIG.pattern.source}
-                      className="block w-full"
                       disabled={form.state.isSubmitting}
                       aria-invalid={field.state.meta.errors.length > 0}
                       aria-labelledby={labelId}
@@ -242,29 +248,20 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
                       }
                     />
                     {usernameStatusMessage && (
-                      <InputDescription
+                      <FieldDescription
                         id={statusId}
                         role={availabilityState.checking ? "status" : undefined}
                         aria-live={availabilityState.checking ? "polite" : undefined}
-                        variant={
-                          availabilityState.checking
-                            ? "default"
-                            : availabilityState.available === true
-                              ? "success"
-                              : availabilityState.available === false
-                                ? "destructive"
-                                : "default"
-                        }
                       >
                         {usernameStatusMessage}
-                      </InputDescription>
+                      </FieldDescription>
                     )}
                     {field.state.meta.errors.length > 0 && (
-                      <InputError id={errorId} className="text-xs">
+                      <FieldError id={errorId}>
                         {field.state.meta.errors[0]?.message}
-                      </InputError>
+                      </FieldError>
                     )}
-                  </>
+                  </Field>
                 )}
               />
               {submitError && (

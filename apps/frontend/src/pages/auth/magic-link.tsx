@@ -1,10 +1,10 @@
-import { AppSurfaceCenter } from "@/components/AppSurfaceCenter";
-import { AuthOrDivider } from "@/components/auth/AuthOrDivider";
-import { LastUsedBadge } from "@/components/auth/LastUsedBadge";
-import { SocialAuthButton } from "@/components/auth/SocialAuthButton";
-import { authClient } from "@/lib/auth-client";
-import { signInWithSocialProvider } from "@/lib/social-auth";
-import { Alert, Button, Input, Label } from "frontend-common/components/ui";
+import { AppSurfaceCenter } from "@frontend/components/AppSurfaceCenter";
+import { AuthOrDivider } from "@frontend/components/auth/AuthOrDivider";
+import { LastUsedBadge } from "@frontend/components/auth/LastUsedBadge";
+import { SocialAuthButton } from "@frontend/components/auth/SocialAuthButton";
+import { authClient } from "@frontend/lib/auth-client";
+import { signInWithSocialProvider } from "@frontend/lib/social-auth";
+import { Alert, Button, Field, FieldLabel, Input } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router";
@@ -120,8 +120,8 @@ export default function MagicLinkPage() {
             <Alert variant="success">{t("magic_link.sent_message", { email })}</Alert>
           )}
 
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="email">{t("magic_link.email_label")}</Label>
+          <Field>
+            <FieldLabel htmlFor="email">{t("magic_link.email_label")}</FieldLabel>
             <Input
               id="email"
               type="email"
@@ -130,9 +130,8 @@ export default function MagicLinkPage() {
               placeholder={t("magic_link.email_placeholder")}
               autoComplete="username webauthn"
               required
-              className="w-full"
             />
-          </div>
+          </Field>
 
           <Button type="submit" disabled={isLoading} className="w-full" variant="default">
             <span className="flex items-center justify-center gap-2">

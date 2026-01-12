@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { render, screen } from "@test/rtl";
+import { render, screen } from "@frontend-test/rtl";
 import userEvent from "@testing-library/user-event";
 import { CHAT_CONFIG } from "shared";
 import type { ChatMessage } from "shared/interfaces/chat";

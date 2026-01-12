@@ -39,6 +39,10 @@ export default defineConfig({
             { text: "Database", link: "/reference/database.html" },
             { text: "Redis", link: "/reference/redis.html" },
             {
+              text: "Horizontal Scaling",
+              link: "/reference/horizontal-scaling.html",
+            },
+            {
               text: "Environment Variables",
               link: "/reference/environment-variables.html",
             },

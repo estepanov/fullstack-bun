@@ -14,7 +14,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedIndexedAccess": true
+    "noUncheckedIndexedAccess": true,
+    "baseUrl": ".",
+    "paths": {
+      "@admin/*": ["./src/*"],
+      "@admin-locales/*": ["./locales/*"]
+    }
   },
   "include": ["vite.config.ts", "react-router.config.ts"]
 }

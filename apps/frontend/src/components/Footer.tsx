@@ -1,5 +1,4 @@
-import { Container } from "frontend-common/components/ui";
-import { ModeToggle } from "@/components/ui/theme-toggle";
+import { Container, ModeToggle } from "frontend-common/components/ui";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { LanguageSelector } from "./ui/language-selector";

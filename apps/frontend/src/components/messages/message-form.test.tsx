@@ -1,8 +1,8 @@
 import { describe, expect, test } from "bun:test";
-import type { FESession } from "@/lib/auth-client";
-import { postExample } from "@test/factory/post-example";
-import { server } from "@test/msw";
-import { render, screen } from "@test/rtl";
+import { postExample } from "@frontend-test/factory/post-example";
+import { server } from "@frontend-test/msw";
+import { render, screen } from "@frontend-test/rtl";
+import type { FESession } from "@frontend/lib/auth-client";
 import { waitFor } from "@testing-library/dom";
 import { fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";

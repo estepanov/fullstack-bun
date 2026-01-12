@@ -1,4 +1,4 @@
-import { apiClient } from "@/lib/api-client";
+import { apiClient } from "@admin/lib/api-client";
 import { useQuery } from "@tanstack/react-query";
 import { ADMIN_BANS_GET_QUERY_KEY } from "./query-key";
 

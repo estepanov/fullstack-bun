@@ -1,9 +1,9 @@
-import type { UpdateCallback } from "@/types/dashboard";
-import type { ExtendedUser } from "@/types/user";
+import type { UpdateCallback } from "@frontend/types/dashboard";
+import type { ExtendedUser } from "@frontend/types/user";
+import { Badge } from "frontend-common/components/ui";
 import { CheckIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { LoginMethod } from "shared/auth/login-method";
-import { Badge } from "../ui";
 import { DashboardCard } from "./dashboard-card";
 import { NameEditor } from "./name-editor";
 import { UsernameEditor } from "./username-editor";

@@ -1,6 +1,6 @@
-import { APP_NAME } from "@/app.config";
-import { signOut, useSession } from "@/lib/auth-client";
-import { Button } from "frontend-common/components/ui";
+import { APP_NAME } from "@admin/app.config";
+import { signOut, useSession } from "@admin/lib/auth-client";
+import { Button, ModeToggle } from "frontend-common/components/ui";
 import {
   ArrowLeftFromLine,
   LayoutDashboard,
@@ -12,7 +12,6 @@ import {
 import { useTranslation } from "react-i18next";
 import { NavLink } from "react-router";
 import { LanguageSelector } from "./LanguageSelector";
-import { ModeToggle } from "./theme-toggle";
 
 const navItems = [
   { path: "/", icon: LayoutDashboard, labelKey: "navigation.dashboard" },

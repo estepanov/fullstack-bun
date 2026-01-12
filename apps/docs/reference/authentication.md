@@ -150,7 +150,7 @@ const router = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
 Use the `ProtectedRoute` component to wrap pages that require authentication:
 
 ```typescript
-import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ProtectedRoute } from "@frontend/src/components/ProtectedRoute";
 
 export default function DashboardPage() {
   return (
@@ -174,7 +174,7 @@ export default function DashboardPage() {
 ### Get Current Session
 
 ```typescript
-import { useSession } from "@/lib/auth-client";
+import { useSession } from "@frontend/src/lib/auth-client";
 
 export function MyComponent() {
   const { data: session, isPending, error } = useSession();
@@ -197,7 +197,7 @@ export function MyComponent() {
 ### Sign Out
 
 ```typescript
-import { signOut } from "@/lib/auth-client";
+import { signOut } from "@frontend/src/lib/auth-client";
 
 export function LogoutButton() {
   return (
@@ -213,7 +213,7 @@ export function LogoutButton() {
 If you've configured OAuth providers (like GitHub):
 
 ```typescript
-import { signIn } from "@/lib/auth-client";
+import { signIn } from "@frontend/src/lib/auth-client";
 
 export function SocialLogin() {
   const handleGitHubLogin = async () => {

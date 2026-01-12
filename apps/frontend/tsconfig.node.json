@@ -22,10 +22,11 @@
     "noUncheckedSideEffectImports": true,
 
     /* Paths */
+    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@test/*": ["./test/*"],
-      "@locales/*": ["./locales/*"]
+      "@frontend/*": ["./src/*"],
+      "@frontend-test/*": ["./test/*"],
+      "@frontend-locales/*": ["./locales/*"]
     }
   },
   "include": [

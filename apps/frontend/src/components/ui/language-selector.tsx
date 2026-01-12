@@ -1,4 +1,4 @@
-import { LANGUAGES, type Language } from "@/app.config";
+import { LANGUAGES, type Language } from "@frontend/app.config";
 import { Button } from "frontend-common/components/ui";
 import {
   DropdownMenu,
