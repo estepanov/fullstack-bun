@@ -1,10 +1,9 @@
-import { useState } from "react";
-import type { Message } from "frontend-common/lib/chat-types";
-import type { ChatMessage } from "shared";
-import { CHAT_CONFIG, MESSAGE_CONFIG, getMessageSchema } from "shared";
+import { useBanUserMutation } from "@frontend/hooks/api/useBanUserMutation";
+import { useDeleteChatMessageMutation } from "@frontend/hooks/api/useDeleteChatMessageMutation";
+import { useUpdateChatMessageMutation } from "@frontend/hooks/api/useUpdateChatMessageMutation";
 import { MessageBubble } from "frontend-common/components/chat/message-bubble";
-import { isEmojiOnlyMessage } from "frontend-common/lib/emoji";
 import {
+  Alert,
   Button,
   Dialog,
   DialogContent,
@@ -21,13 +20,14 @@ import {
   Input,
   InputError,
   Textarea,
-  Alert,
 } from "frontend-common/components/ui";
+import type { Message } from "frontend-common/lib/chat-types";
+import { isEmojiOnlyMessage } from "frontend-common/lib/emoji";
 import { Ban, MoreVertical, PencilLine, Trash2 } from "lucide-react";
-import { useDeleteChatMessageMutation } from "@frontend/hooks/api/useDeleteChatMessageMutation";
-import { useUpdateChatMessageMutation } from "@frontend/hooks/api/useUpdateChatMessageMutation";
-import { useBanUserMutation } from "@frontend/hooks/api/useBanUserMutation";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import type { ChatMessage } from "shared";
+import { CHAT_CONFIG, MESSAGE_CONFIG, getMessageSchema } from "shared";
 
 interface EnhancedMessageBubbleProps {
   message: Message;
@@ -72,7 +72,9 @@ export const EnhancedMessageBubble = ({
   const renderMessageContent = () => {
     return (
       <div className={`relative ${isOwn ? "items-end" : ""}`}>
-        <div className={`inline-flex gap-2 ${isOwn ? "flex-row-reverse" : "items-start"}`}>
+        <div
+          className={`inline-flex gap-2 ${isOwn ? "flex-row-reverse" : "items-start"}`}
+        >
           {canManage && (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -116,7 +118,10 @@ export const EnhancedMessageBubble = ({
                     variant="destructive"
                     onSelect={() => {
                       setBanError(null);
-                      setUserToBan({ id: chatMessage.userId, name: chatMessage.userName });
+                      setUserToBan({
+                        id: chatMessage.userId,
+                        name: chatMessage.userName,
+                      });
                       setTimeout(() => {
                         setBanDialogOpen(true);
                       }, 100);

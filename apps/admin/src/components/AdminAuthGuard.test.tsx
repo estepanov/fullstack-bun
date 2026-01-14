@@ -1,5 +1,5 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, mock, test } from "bun:test";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/matchers";
 import "@testing-library/jest-dom/vitest";
 import i18next, { type i18n } from "i18next";
@@ -61,26 +61,32 @@ describe("AdminAuthGuard", () => {
       </I18nextProvider>,
     );
 
-    expect(screen.getByText("Loading...")).toBeInTheDocument();
-  });
-
-  test("redirects to login when unauthenticated", async () => {
-    sessionState = { data: null, isPending: false };
-
-    render(
+    const { getAllByText } = render(
       <I18nextProvider i18n={i18nInstance}>
         <AdminAuthGuard>Child</AdminAuthGuard>
       </I18nextProvider>,
     );
 
-    expect(screen.getByText("Redirecting to login...")).toBeInTheDocument();
+    expect(getAllByText("Loading...").length).toBeGreaterThan(0);
+  });
+
+  test("redirects to login when unauthenticated", async () => {
+    sessionState = { data: null, isPending: false };
+
+    const { getByText } = render(
+      <I18nextProvider i18n={i18nInstance}>
+        <AdminAuthGuard>Child</AdminAuthGuard>
+      </I18nextProvider>,
+    );
+
+    expect(getByText("Redirecting to login...")).toBeInTheDocument();
     await waitFor(() => expect(window.location.href).toContain("/auth/login"));
   });
 
   test("renders children when the session belongs to an admin", () => {
     sessionState = { data: { user: { role: "admin" } }, isPending: false };
 
-    render(
+    const { getByText } = render(
       <I18nextProvider i18n={i18nInstance}>
         <AdminAuthGuard>
           <div>Allowed</div>
@@ -88,6 +94,6 @@ describe("AdminAuthGuard", () => {
       </I18nextProvider>,
     );
 
-    expect(screen.getByText("Allowed")).toBeInTheDocument();
+    expect(getByText("Allowed")).toBeInTheDocument();
   });
 });

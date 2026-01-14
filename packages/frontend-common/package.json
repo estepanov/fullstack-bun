@@ -7,6 +7,7 @@
     ".": "./index.ts",
     "./auth": "./auth/index.ts",
     "./api": "./api/index.ts",
+    "./chat": "./chat/index.ts",
     "./hooks": "./hooks/index.ts",
     "./providers": "./providers/index.ts",
     "./providers/theme": "./providers/theme/index.ts",

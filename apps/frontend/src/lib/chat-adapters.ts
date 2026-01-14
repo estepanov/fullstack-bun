@@ -1,9 +1,5 @@
+import type { Conversation, Message, User } from "frontend-common/lib/chat-types";
 import type { ChatMessage } from "shared";
-import type {
-  Conversation,
-  Message,
-  User,
-} from "frontend-common/lib/chat-types";
 
 /**
  * Determines user status based on online counts and user ID
@@ -15,7 +11,10 @@ export function determineUserStatus(
 ): "online" | "offline" | "away" {
   // If we have online counts and there are people online, mark users as online
   // This is a reasonable assumption since we only see messages from active users
-  if (onlineCounts && (onlineCounts.guests + onlineCounts.members + onlineCounts.admins) > 0) {
+  if (
+    onlineCounts &&
+    onlineCounts.guests + onlineCounts.members + onlineCounts.admins > 0
+  ) {
     return "online";
   }
   return "offline";
@@ -46,10 +45,7 @@ export function chatMessageToMessage(
  * Reverse transformation: Message → ChatMessage
  * Used when we need to pass data back to existing mutation hooks
  */
-export function messageToChatMessage(
-  msg: Message,
-  editedAt?: string,
-): ChatMessage {
+export function messageToChatMessage(msg: Message, editedAt?: string): ChatMessage {
   return {
     id: msg.id,
     userId: msg.sender.id,

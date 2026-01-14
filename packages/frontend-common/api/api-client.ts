@@ -1,7 +1,7 @@
 import { hc } from "hono/client";
 import { SessionStore } from "../auth/session-utils";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: hono any server
 export function createApiClient<TAppType = any>(baseURL: string) {
   // @ts-expect-error - hc type constraint is too strict for our generic usage
   const client = hc<TAppType>(baseURL, {
@@ -15,7 +15,7 @@ export function createApiClient<TAppType = any>(baseURL: string) {
     fetch: (input: RequestInfo | URL, init?: RequestInit) => {
       return fetch(input, {
         ...init,
-        credentials: 'include',
+        credentials: "include",
       });
     },
   });
