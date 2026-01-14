@@ -21,6 +21,7 @@ type PubSubMessageType =
   | "new_message"
   | "message_deleted"
   | "message_updated"
+  | "typing_update"
   | "bulk_delete"
   | "disconnect_user"
   | "presence_changed";
@@ -194,6 +195,26 @@ export class ChatPubSubManager {
       instanceId: INSTANCE_ID,
       timestamp: Date.now(),
       data: message,
+    };
+
+    await this.publish(CHANNELS.BROADCAST, pubsubMessage);
+  }
+
+  /**
+   * Publish a typing update to all instances
+   */
+  async publishTyping(data: {
+    userId: string;
+    userName: string;
+    userAvatar: string | null;
+    isTyping: boolean;
+    roomId?: string;
+  }): Promise<void> {
+    const pubsubMessage: PubSubMessage = {
+      type: "typing_update",
+      instanceId: INSTANCE_ID,
+      timestamp: Date.now(),
+      data,
     };
 
     await this.publish(CHANNELS.BROADCAST, pubsubMessage);
@@ -384,6 +405,18 @@ export class ChatPubSubManager {
         }
 
         this.chatManager.broadcastUpdateLocal(chatMessage);
+        break;
+      }
+      case "typing_update": {
+        const typingUpdate = message.data as {
+          userId: string;
+          userName: string;
+          userAvatar: string | null;
+          isTyping: boolean;
+          roomId?: string;
+        };
+
+        this.chatManager.broadcastTypingLocal(typingUpdate);
         break;
       }
       default:

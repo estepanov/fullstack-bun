@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import type { User } from "frontend-common/lib/chat-types";
 import { getChatThrottleRule } from "shared/config/chat";
 import {
   type ChatMessage,
@@ -9,11 +10,14 @@ import {
 export interface UseChatWebSocketReturn {
   messages: ChatMessage[];
   sendMessage: (message: string) => boolean;
+  sendTypingStatus: (isTyping: boolean) => void;
   connectionStatus: "connecting" | "connected" | "disconnected" | "error";
   error: string | null;
   isAuthenticated: boolean;
   profileIncomplete: boolean;
   onlineCounts: { guests: number; members: number; admins: number } | null;
+  typingUsers: Record<string, User[]>;
+  connectedUserId: string | null;
   throttle: {
     remainingMs: number;
     limit: number;
@@ -25,6 +29,7 @@ export interface UseChatWebSocketReturn {
 const WS_URL = `${import.meta.env.VITE_API_BASE_URL.replace(/^http/, "ws")}/chat/ws`;
 const MAX_MESSAGES = 100;
 const GUEST_ID_KEY = "chat_guest_id";
+const TYPING_TIMEOUT_MS = 5000;
 
 const getGuestId = (): string | null => {
   if (typeof window === "undefined") {
@@ -57,6 +62,8 @@ export const useChatWebSocket = ({
     members: number;
     admins: number;
   } | null>(null);
+  const [typingUsers, setTypingUsers] = useState<Record<string, User[]>>({});
+  const [connectedUserId, setConnectedUserId] = useState<string | null>(null);
   const [throttleUntil, setThrottleUntil] = useState<number | null>(null);
   const [throttleMeta, setThrottleMeta] = useState<{
     limit: number;
@@ -77,6 +84,10 @@ export const useChatWebSocket = ({
   const lastSentMessageRef = useRef<string | null>(null);
   const recentMessageTimestampsRef = useRef<number[]>([]);
   const lastRoomIdRef = useRef<string | null>(null);
+  const connectedUserIdRef = useRef<string | null>(null);
+  const typingTimeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(
+    new Map(),
+  );
   const MAX_RECONNECT_ATTEMPTS = 5;
   const throttleRule = getChatThrottleRule(roomId);
   const throttleWindowMs = throttleRule.perSeconds * 1000;
@@ -131,10 +142,85 @@ export const useChatWebSocket = ({
             case ChatWSMessageType.CONNECTED:
               setIsAuthenticated(!!data.userId);
               setProfileIncomplete(!!data.profileIncomplete);
+              connectedUserIdRef.current = data.userId ?? null;
+              setConnectedUserId(data.userId ?? null);
               break;
             case ChatWSMessageType.PRESENCE:
               setOnlineCounts(data.data);
               break;
+
+            case ChatWSMessageType.TYPING_UPDATE: {
+              const typingRoomId = data.data.roomId ?? roomId;
+              if (typingRoomId !== roomId) {
+                break;
+              }
+              if (data.data.userId === connectedUserIdRef.current) {
+                break;
+              }
+
+              const typingKey = `${typingRoomId}:${data.data.userId}`;
+              if (data.data.isTyping) {
+                setTypingUsers((prev) => {
+                  const current = prev[typingRoomId] ?? [];
+                  if (current.some((user) => user.id === data.data.userId)) {
+                    return prev;
+                  }
+                  return {
+                    ...prev,
+                    [typingRoomId]: [
+                      ...current,
+                      {
+                        id: data.data.userId,
+                        name: data.data.userName,
+                        avatar: data.data.userAvatar || undefined,
+                        status: "online",
+                      },
+                    ],
+                  };
+                });
+
+                const existingTimeout = typingTimeoutsRef.current.get(typingKey);
+                if (existingTimeout) {
+                  clearTimeout(existingTimeout);
+                }
+                const timeoutId = setTimeout(() => {
+                  setTypingUsers((prev) => {
+                    const current = prev[typingRoomId] ?? [];
+                    const next = current.filter(
+                      (user) => user.id !== data.data.userId,
+                    );
+                    if (next.length === current.length) {
+                      return prev;
+                    }
+                    return {
+                      ...prev,
+                      [typingRoomId]: next,
+                    };
+                  });
+                  typingTimeoutsRef.current.delete(typingKey);
+                }, TYPING_TIMEOUT_MS);
+                typingTimeoutsRef.current.set(typingKey, timeoutId);
+              } else {
+                setTypingUsers((prev) => {
+                  const current = prev[typingRoomId] ?? [];
+                  const next = current.filter((user) => user.id !== data.data.userId);
+                  if (next.length === current.length) {
+                    return prev;
+                  }
+                  return {
+                    ...prev,
+                    [typingRoomId]: next,
+                  };
+                });
+
+                const existingTimeout = typingTimeoutsRef.current.get(typingKey);
+                if (existingTimeout) {
+                  clearTimeout(existingTimeout);
+                  typingTimeoutsRef.current.delete(typingKey);
+                }
+              }
+              break;
+            }
 
             case ChatWSMessageType.MESSAGE_HISTORY:
               setMessages(data.data);
@@ -226,6 +312,12 @@ export const useChatWebSocket = ({
         setConnectionStatus("disconnected");
         wsRef.current = null;
         setOnlineCounts(null);
+        setTypingUsers({});
+        setConnectedUserId(null);
+        for (const timeout of typingTimeoutsRef.current.values()) {
+          clearTimeout(timeout);
+        }
+        typingTimeoutsRef.current.clear();
         if (heartbeatIntervalRef.current) {
           clearInterval(heartbeatIntervalRef.current);
           heartbeatIntervalRef.current = null;
@@ -301,6 +393,11 @@ export const useChatWebSocket = ({
     setThrottleRestoreMessage(null);
     hasAttemptedRef.current = false;
     setOnlineCounts(null);
+    setTypingUsers({});
+    for (const timeout of typingTimeoutsRef.current.values()) {
+      clearTimeout(timeout);
+    }
+    typingTimeoutsRef.current.clear();
   }, [roomId]);
 
   const disconnect = useCallback(() => {
@@ -321,6 +418,12 @@ export const useChatWebSocket = ({
 
     setConnectionStatus("disconnected");
     setOnlineCounts(null);
+    setTypingUsers({});
+    setConnectedUserId(null);
+    for (const timeout of typingTimeoutsRef.current.values()) {
+      clearTimeout(timeout);
+    }
+    typingTimeoutsRef.current.clear();
   }, []);
 
   const sendMessage = useCallback(
@@ -365,6 +468,23 @@ export const useChatWebSocket = ({
     [throttleRemainingMs, throttleRule.maxMessages, throttleWindowMs],
   );
 
+  const sendTypingStatus = useCallback(
+    (isTyping: boolean) => {
+      if (!wsRef.current || wsRef.current.readyState !== WebSocket.OPEN) {
+        return;
+      }
+
+      const payload = {
+        type: ChatWSMessageType.TYPING_STATUS,
+        isTyping,
+        roomId,
+      };
+
+      wsRef.current.send(JSON.stringify(payload));
+    },
+    [roomId],
+  );
+
   // Connect on mount, disconnect on unmount
   useEffect(() => {
     if (!hasAttemptedRef.current) {
@@ -378,11 +498,14 @@ export const useChatWebSocket = ({
   return {
     messages,
     sendMessage,
+    sendTypingStatus,
     connectionStatus,
     error,
     isAuthenticated,
     profileIncomplete,
     onlineCounts,
+    typingUsers,
+    connectedUserId,
     throttle:
       throttleRemainingMs !== null && throttleMeta
         ? {

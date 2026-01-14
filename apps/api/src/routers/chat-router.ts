@@ -7,6 +7,7 @@ import {
   ChatWSMessageType,
   getSendMessageSchema,
   getUpdateMessageSchema,
+  typingStatusSchema,
 } from "shared/interfaces/chat";
 import { getMissingFields } from "../config/required-fields";
 import { db } from "../db/client";
@@ -35,6 +36,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
       const guestId = c.req.query("guestId");
       let userId: string | null = null;
       let userName: string | null = null;
+      let userAvatar: string | null = null;
       let role: "guest" | "member" | "admin" = "guest";
       const fallbackGuestId = `ws-${Date.now()}-${Math.random().toString(16).slice(2)}`;
       let presenceId = `guest:${guestId ?? fallbackGuestId}`;
@@ -58,6 +60,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
                 .select({
                   id: userTable.id,
                   name: userTable.name,
+                  displayUsername: userTable.displayUsername,
                   image: userTable.image,
                   emailVerified: userTable.emailVerified,
                   role: userTable.role,
@@ -104,7 +107,8 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
               }
 
               userId = userData.id;
-              userName = userData.name || "User";
+              userName = userData.displayUsername || userData.name || "User";
+              userAvatar = userData.image ?? null;
               isVerified = userData.emailVerified;
               const userRole = userData.role as UserRole | undefined;
               isAdminUser = userRole ? isAdmin(userRole) : false;
@@ -121,7 +125,7 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
           }
 
           // Add to connection manager
-          chatManager.addClient({ ws, userId, userName, role, presenceId });
+          chatManager.addClient({ ws, userId, userName, userAvatar, role, presenceId });
 
           // Send connection confirmation
           ws.send(
@@ -157,6 +161,31 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
             const data = JSON.parse(rawMessage);
             if (data?.type === ChatWSMessageType.PING) {
               chatManager.touchClient(ws);
+              return;
+            }
+            if (data?.type === ChatWSMessageType.TYPING_STATUS) {
+              const parsedTyping = typingStatusSchema.safeParse(data);
+              if (!parsedTyping.success) {
+                return;
+              }
+
+              chatManager.touchClient(ws);
+
+              if (!userId || !userName) {
+                return;
+              }
+
+              // Allow typing indicators for all authenticated users
+              // (verification/profile checks are only enforced for sending messages)
+              // Use roomId from payload, fallback to connection roomId
+              const typingRoomId = parsedTyping.data.roomId ?? roomId;
+              chatManager.broadcastTyping({
+                userId,
+                userName,
+                userAvatar,
+                isTyping: parsedTyping.data.isTyping,
+                roomId: typingRoomId,
+              });
               return;
             }
             const parsed = getSendMessageSchema({
@@ -306,7 +335,14 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
         onClose(_evt, ws: WSContext) {
           const logger = c.get("logger");
           logger.info(`WebSocket closed: userId=${userId}`);
-          chatManager.removeClient({ ws, userId, userName, role, presenceId });
+          chatManager.removeClient({
+            ws,
+            userId,
+            userName,
+            userAvatar,
+            role,
+            presenceId,
+          });
         },
 
         onError(evt, _ws: WSContext) {

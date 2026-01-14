@@ -6,6 +6,7 @@ export enum ChatWSMessageType {
   // Client -> Server
   SEND_MESSAGE = "send_message",
   PING = "ping",
+  TYPING_STATUS = "typing_status",
 
   // Server -> Client
   NEW_MESSAGE = "new_message",
@@ -17,6 +18,7 @@ export enum ChatWSMessageType {
   ERROR = "error",
   CONNECTED = "connected",
   PRESENCE = "presence",
+  TYPING_UPDATE = "typing_update",
 }
 
 const htmlTagRegex = /<\s*\/?\s*[a-z][^>]*>/i;
@@ -66,6 +68,15 @@ export const pingMessageSchema = z.object({
 });
 
 export type PingMessagePayload = z.infer<typeof pingMessageSchema>;
+
+// Client -> Server: Typing status
+export const typingStatusSchema = z.object({
+  type: z.literal(ChatWSMessageType.TYPING_STATUS),
+  isTyping: z.boolean(),
+  roomId: z.string().optional(),
+});
+
+export type TypingStatusPayload = z.infer<typeof typingStatusSchema>;
 
 // REST API: Update message
 export const getUpdateMessageSchema = (options?: { allowNewlines?: boolean }) =>
@@ -172,10 +183,26 @@ export const presenceMessageSchema = z.object({
 
 export type PresenceMessagePayload = z.infer<typeof presenceMessageSchema>;
 
+// Server -> Client: Typing updates
+export const typingUpdateSchema = z.object({
+  type: z.literal(ChatWSMessageType.TYPING_UPDATE),
+  data: z.object({
+    userId: z.string(),
+    userName: z.string(),
+    userAvatar: z.string().nullable(),
+    isTyping: z.boolean(),
+    roomId: z.string().optional(),
+  }),
+  trace: wsTraceSchema.optional(),
+});
+
+export type TypingUpdatePayload = z.infer<typeof typingUpdateSchema>;
+
 // Union type for all WebSocket messages
 export type ChatWSMessage =
   | SendMessagePayload
   | PingMessagePayload
+  | TypingStatusPayload
   | NewMessagePayload
   | MessageHistoryPayload
   | MessageDeletedPayload
@@ -184,4 +211,5 @@ export type ChatWSMessage =
   | ThrottledMessagePayload
   | ErrorMessagePayload
   | ConnectedMessagePayload
-  | PresenceMessagePayload;
+  | PresenceMessagePayload
+  | TypingUpdatePayload;

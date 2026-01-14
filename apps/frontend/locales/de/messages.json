@@ -38,6 +38,31 @@
     "delete": "Nachricht löschen",
     "ban_user": "Benutzer sperren"
   },
+  "chat_header": {
+    "back_button": "Zurück zu Unterhaltungen",
+    "more_options": "Weitere Optionen",
+    "online": "Online",
+    "offline": "Offline",
+    "members": "{{count}} Mitglieder",
+    "members_online": "{{count}} Mitglieder, {{online}} online"
+  },
+  "chat_layout": {
+    "empty_title": "Wähle eine Unterhaltung",
+    "empty_subtitle": "Wähle aus deinen bestehenden Unterhaltungen oder starte eine neue"
+  },
+  "conversation_item": {
+    "time_now": "jetzt",
+    "minutes": "{{count}}m",
+    "hours": "{{count}}h",
+    "days": "{{count}}t",
+    "you_prefix": "Du: "
+  },
+  "conversation_list": {
+    "title": "Nachrichten",
+    "new_button_label": "Neue Unterhaltung",
+    "search_placeholder": "Unterhaltungen suchen...",
+    "empty": "Keine Unterhaltungen gefunden"
+  },
   "edit": {
     "title": "Nachricht bearbeiten",
     "description": "Aktualisiere die Nachricht für alle im Chat.",
@@ -74,5 +99,22 @@
     "delete_failed": "Nachricht konnte nicht gelöscht werden. Bitte erneut versuchen.",
     "update_failed": "Nachricht konnte nicht aktualisiert werden. Bitte erneut versuchen.",
     "ban_failed": "Benutzer konnte nicht gesperrt werden. Bitte erneut versuchen."
+  },
+  "message_input": {
+    "placeholder": "Nachricht schreiben...",
+    "attach_file": "Datei anhängen",
+    "add_emoji": "Emoji hinzufügen",
+    "send_message": "Nachricht senden"
+  },
+  "message_list": {
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "empty_title": "Starte das Gespräch",
+    "empty_subtitle": "Stelle eine Frage oder teile ein Update, um das Gespräch zu beginnen."
+  },
+  "typing": {
+    "single": "{{name}} tippt",
+    "two": "{{first}} und {{second}} tippen",
+    "many": "{{name}} und {{count}} weitere tippen"
   }
 }

@@ -38,6 +38,31 @@
     "delete": "Supprimer le message",
     "ban_user": "Bannir l'utilisateur"
   },
+  "chat_header": {
+    "back_button": "Retour aux conversations",
+    "more_options": "Plus d'options",
+    "online": "En ligne",
+    "offline": "Hors ligne",
+    "members": "{{count}} membres",
+    "members_online": "{{count}} membres, {{online}} en ligne"
+  },
+  "chat_layout": {
+    "empty_title": "Sélectionnez une conversation",
+    "empty_subtitle": "Choisissez parmi vos conversations existantes ou commencez-en une nouvelle"
+  },
+  "conversation_item": {
+    "time_now": "maintenant",
+    "minutes": "{{count}} min",
+    "hours": "{{count}} h",
+    "days": "{{count}} j",
+    "you_prefix": "Vous : "
+  },
+  "conversation_list": {
+    "title": "Messages",
+    "new_button_label": "Nouvelle conversation",
+    "search_placeholder": "Rechercher des conversations...",
+    "empty": "Aucune conversation trouvée"
+  },
   "edit": {
     "title": "Modifier le message",
     "description": "Mettez à jour le message pour tout le monde dans le chat.",
@@ -74,5 +99,22 @@
     "delete_failed": "Impossible de supprimer le message. Réessayez.",
     "update_failed": "Impossible de modifier le message. Réessayez.",
     "ban_failed": "Impossible de bannir l'utilisateur. Réessayez."
+  },
+  "message_input": {
+    "placeholder": "Tapez un message...",
+    "attach_file": "Joindre un fichier",
+    "add_emoji": "Ajouter un emoji",
+    "send_message": "Envoyer le message"
+  },
+  "message_list": {
+    "today": "Aujourd'hui",
+    "yesterday": "Hier",
+    "empty_title": "Lancez la conversation",
+    "empty_subtitle": "Posez une question ou partagez une mise à jour pour lancer l'échange."
+  },
+  "typing": {
+    "single": "{{name}} écrit",
+    "two": "{{first}} et {{second}} écrivent",
+    "many": "{{name}} et {{count}} autres écrivent"
   }
 }
