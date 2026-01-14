@@ -1,9 +1,10 @@
-import { useEffect, useRef } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
+import { TypingIndicator } from "frontend-common/components/chat/typing-indicator";
 import type { Message, User } from "frontend-common/lib/chat-types";
+import { useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import type { ChatMessage } from "shared";
 import { EnhancedMessageBubble } from "./EnhancedMessageBubble";
-import { TypingIndicator } from "frontend-common/components/chat/typing-indicator";
 
 interface EnhancedMessageListProps {
   messages: Message[];
@@ -22,6 +23,7 @@ export const EnhancedMessageList = ({
   typingUsers = [],
   className,
 }: EnhancedMessageListProps) => {
+  const { t } = useTranslation("messages");
   const parentRef = useRef<HTMLDivElement>(null);
   const wasAtBottom = useRef(true);
 
@@ -48,6 +50,7 @@ export const EnhancedMessageList = ({
   }, []);
 
   // Auto-scroll to bottom on new messages if already at bottom
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We intentionally trigger on messages.length and typingUsers.length changes
   useEffect(() => {
     if (wasAtBottom.current && parentRef.current) {
       parentRef.current.scrollTop = parentRef.current.scrollHeight;
@@ -57,7 +60,7 @@ export const EnhancedMessageList = ({
   if (messages.length === 0) {
     return (
       <div className="flex h-75 items-center justify-center text-muted-foreground">
-        <p>No messages yet. Be the first to say something!</p>
+        <p>{t("list.empty")}</p>
       </div>
     );
   }

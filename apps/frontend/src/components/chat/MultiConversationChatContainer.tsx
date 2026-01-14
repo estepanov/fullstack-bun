@@ -77,7 +77,7 @@ export const MultiConversationChatContainer = ({
         <ConversationList
           conversations={conversations}
           activeConversationId={activeConversationId}
-          currentUserId={currentUserId}
+          currentUserId={currentUserId || ""}
           onSelectConversation={handleSelectConversation}
           onNewConversation={handleNewConversation}
         />
@@ -90,7 +90,7 @@ export const MultiConversationChatContainer = ({
             conversation={activeConversation}
             messages={activeMessages}
             chatMessages={chatMessages} // Pass original messages for admin ops
-            currentUserId={currentUserId}
+            currentUserId={currentUserId || ""}
             isAdmin={isAdmin}
             onSendMessage={handleSendMessage}
             onTypingStatus={sendTypingStatus}

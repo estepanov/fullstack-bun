@@ -26,7 +26,7 @@ export interface UseChatWebSocketReturn {
   } | null;
 }
 
-const WS_URL = `${import.meta.env.VITE_API_BASE_URL.replace(/^http/, "ws")}/chat/ws`;
+const WS_URL = `${(import.meta.env.VITE_API_BASE_URL || "").replace(/^http/, "ws")}/chat/ws`;
 const MAX_MESSAGES = 100;
 const GUEST_ID_KEY = "chat_guest_id";
 const TYPING_TIMEOUT_MS = 5000;
@@ -287,6 +287,11 @@ export const useChatWebSocket = ({
             case ChatWSMessageType.PING:
               // Client-to-server message type, should not be received
               console.warn("Received unexpected PING from server");
+              break;
+
+            case ChatWSMessageType.TYPING_STATUS:
+              // Client-to-server message type, should not be received
+              console.warn("Received unexpected TYPING_STATUS from server");
               break;
 
             default: {

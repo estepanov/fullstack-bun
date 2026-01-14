@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom/matchers";
 import "@testing-library/jest-dom/vitest";
 import i18next, { type i18n } from "i18next";
-import type { ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 
 process.env.VITE_FRONTEND_URL ??= "http://frontend.example.com";

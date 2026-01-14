@@ -1,7 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, mock, test } from "bun:test";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { renderHook, waitFor } from "@testing-library/react";
-import type { ReactNode } from "react";
+import type { JSX, ReactNode } from "react";
 
 type AdminUsersGetArgs = {
   query: {
@@ -23,7 +23,19 @@ const createResponse = (data: unknown, ok = true): MockResponse => ({
 const mockApiClient = {
   admin: {
     users: {
-      $get: async (_args: AdminUsersGetArgs) => createResponse({ users: [] }),
+      $get: async (_args: AdminUsersGetArgs) =>
+        createResponse({
+          success: true,
+          users: [],
+          pagination: {
+            page: 1,
+            limit: 10,
+            totalCount: 0,
+            totalPages: 0,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+        }),
     },
   },
 };
@@ -60,18 +72,44 @@ afterEach(() => {
 
 describe("useAdminUsersQuery", () => {
   test("uses default pagination values and returns data", async () => {
-    let receivedArgs: AdminUsersGetArgs | null = null;
+    let receivedArgs: AdminUsersGetArgs | null = null as AdminUsersGetArgs | null;
     mockApiClient.admin.users.$get = async (args: AdminUsersGetArgs) => {
       receivedArgs = args;
-      return createResponse({ users: [{ id: "1" }] });
+      return createResponse({
+        success: true,
+        users: [
+          {
+            id: "1",
+            name: "Test User",
+            email: "test@example.com",
+            emailVerified: true,
+            image: null,
+            role: "member",
+            banned: false,
+            banReason: null,
+            createdAt: "2024-01-01T00:00:00.000Z",
+            updatedAt: "2024-01-01T00:00:00.000Z",
+          },
+        ],
+        pagination: {
+          page: 1,
+          limit: 10,
+          totalCount: 1,
+          totalPages: 1,
+          hasNextPage: false,
+          hasPreviousPage: false,
+        },
+      });
     };
 
     const { result } = renderHook(() => useAdminUsersQuery(), { wrapper });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(result.current.data).toEqual({ users: [{ id: "1" }] });
-    expect(receivedArgs).toEqual({
+    expect(result.current.data?.users).toHaveLength(1);
+    expect(result.current.data?.users[0].id).toBe("1");
+    expect(receivedArgs).not.toBeNull();
+    expect(receivedArgs).toMatchObject({
       query: { page: "1", limit: "10" },
     });
   });
