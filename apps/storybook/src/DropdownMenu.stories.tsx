@@ -1,45 +1,45 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from "@storybook/react";
 import {
+  Button,
   DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuSub,
-  DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-  DropdownMenuGroup,
-  Button,
-} from 'frontend-common/components/ui';
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
+} from "frontend-common/components/ui";
 import {
-  User,
-  Settings,
-  LogOut,
-  Plus,
-  UserPlus,
-  Mail,
-  MessageSquare,
-  PlusCircle,
-  Github,
-  LifeBuoy,
   Cloud,
   CreditCard,
+  Github,
   Keyboard,
-} from 'lucide-react';
-import React from 'react';
+  LifeBuoy,
+  LogOut,
+  Mail,
+  MessageSquare,
+  Plus,
+  PlusCircle,
+  Settings,
+  User,
+  UserPlus,
+} from "lucide-react";
+import React from "react";
 
 const meta = {
-  title: 'UI/DropdownMenu',
+  title: "UI/DropdownMenu",
   component: DropdownMenu,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 } satisfies Meta<typeof DropdownMenu>;
 
 export default meta;
@@ -118,7 +118,10 @@ export const WithCheckboxes: Story = {
         <DropdownMenuContent className="w-56">
           <DropdownMenuLabel>Appearance</DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>
+          <DropdownMenuCheckboxItem
+            checked={showStatusBar}
+            onCheckedChange={setShowStatusBar}
+          >
             Status Bar
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem
@@ -138,7 +141,7 @@ export const WithCheckboxes: Story = {
 
 export const WithRadioGroup: Story = {
   render: () => {
-    const [position, setPosition] = React.useState('bottom');
+    const [position, setPosition] = React.useState("bottom");
 
     return (
       <DropdownMenu>
@@ -242,7 +245,7 @@ export const ComplexMenu: Story = {
   render: () => {
     const [showStatusBar, setShowStatusBar] = React.useState(true);
     const [showPanel, setShowPanel] = React.useState(false);
-    const [position, setPosition] = React.useState('bottom');
+    const [position, setPosition] = React.useState("bottom");
 
     return (
       <DropdownMenu>
@@ -271,7 +274,10 @@ export const ComplexMenu: Story = {
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuLabel>View</DropdownMenuLabel>
-          <DropdownMenuCheckboxItem checked={showStatusBar} onCheckedChange={setShowStatusBar}>
+          <DropdownMenuCheckboxItem
+            checked={showStatusBar}
+            onCheckedChange={setShowStatusBar}
+          >
             Status Bar
           </DropdownMenuCheckboxItem>
           <DropdownMenuCheckboxItem checked={showPanel} onCheckedChange={setShowPanel}>

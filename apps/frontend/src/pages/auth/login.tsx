@@ -192,17 +192,17 @@ export default function LoginPage() {
   return (
     <AppSurfaceCenter>
       <div className="w-full flex-1 max-w-md rounded-3xl border border-border/70 bg-card/90 p-8 shadow-sm shadow-black/5 backdrop-blur">
-        <div className="text-center">
+        <div className="text-center space-y-2">
           <h1 className="text-3xl font-semibold tracking-tight">{t("login.title")}</h1>
-          <p className="mt-2 text-sm text-muted-foreground">{t("login.subtitle")}</p>
+          <p className="text-sm text-muted-foreground">{t("login.subtitle")}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="mt-8 space-y-2">
+        <form onSubmit={handleSubmit} className="mt-8 space-y-4">
           {error && <Alert variant="destructive">{error}</Alert>}
 
           {passwordsEnabled ? (
             <>
-              <div className="space-y-2">
+              <div className="space-y-4">
                 <Field>
                   <FieldLabel htmlFor="email">{t("login.email_label")}</FieldLabel>
                   <Input
@@ -263,7 +263,7 @@ export default function LoginPage() {
                 </span>
               </Button>
 
-              {showAltDivider && <AuthOrDivider className="my-4" />}
+              {showAltDivider && <AuthOrDivider />}
             </>
           ) : null}
 
@@ -313,7 +313,7 @@ export default function LoginPage() {
           )}
 
           {passwordsEnabled && (
-            <div className="mt-4 pt-4 border-t border-border/50 text-center flex flex-col gap-2">
+            <div className="mt-6 pt-6 border-t border-border/50 text-center flex flex-col gap-2">
               <p className="text-sm text-muted-foreground">{t("login.no_account")}</p>
               <StyledLink className="w-full" variant="secondary" to="/auth/register">
                 {t("login.sign_up_link")}

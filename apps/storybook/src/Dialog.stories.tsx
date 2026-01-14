@@ -1,26 +1,26 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from "@storybook/react";
 import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogFooter,
-  DialogTitle,
-  DialogDescription,
-  DialogClose,
   Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
   Input,
   Label,
-} from 'frontend-common/components/ui';
-import { AlertTriangle, Info } from 'lucide-react';
+} from "frontend-common/components/ui";
+import { AlertTriangle, Info } from "lucide-react";
 
 const meta = {
-  title: 'UI/Dialog',
+  title: "UI/Dialog",
   component: Dialog,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 } satisfies Meta<typeof Dialog>;
 
 export default meta;
@@ -36,7 +36,8 @@ export const Default: Story = {
         <DialogHeader>
           <DialogTitle>Dialog Title</DialogTitle>
           <DialogDescription>
-            This is a description of what this dialog does. It provides context to the user.
+            This is a description of what this dialog does. It provides context to the
+            user.
           </DialogDescription>
         </DialogHeader>
         <div className="py-4">
@@ -110,8 +111,8 @@ export const AlertDialog: Story = {
             <DialogTitle>Are you absolutely sure?</DialogTitle>
           </div>
           <DialogDescription>
-            This action cannot be undone. This will permanently delete your account and remove
-            your data from our servers.
+            This action cannot be undone. This will permanently delete your account and
+            remove your data from our servers.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="pt-4">
@@ -170,15 +171,15 @@ export const LongContent: Story = {
           <section>
             <h3 className="font-semibold mb-2">1. Introduction</h3>
             <p className="text-muted-foreground">
-              Welcome to our service. By accessing or using our service, you agree to be bound by
-              these Terms of Service and all applicable laws and regulations.
+              Welcome to our service. By accessing or using our service, you agree to be
+              bound by these Terms of Service and all applicable laws and regulations.
             </p>
           </section>
           <section>
             <h3 className="font-semibold mb-2">2. Use License</h3>
             <p className="text-muted-foreground">
-              Permission is granted to temporarily download one copy of the materials on our
-              service for personal, non-commercial transitory viewing only.
+              Permission is granted to temporarily download one copy of the materials on
+              our service for personal, non-commercial transitory viewing only.
             </p>
           </section>
           <section>
@@ -192,15 +193,15 @@ export const LongContent: Story = {
           <section>
             <h3 className="font-semibold mb-2">4. Limitations</h3>
             <p className="text-muted-foreground">
-              In no event shall we or our suppliers be liable for any damages arising out of the
-              use or inability to use our service.
+              In no event shall we or our suppliers be liable for any damages arising out
+              of the use or inability to use our service.
             </p>
           </section>
           <section>
             <h3 className="font-semibold mb-2">5. Privacy</h3>
             <p className="text-muted-foreground">
-              Your use of our service is also governed by our Privacy Policy. Please review our
-              Privacy Policy to understand our practices.
+              Your use of our service is also governed by our Privacy Policy. Please
+              review our Privacy Policy to understand our practices.
             </p>
           </section>
         </div>
@@ -226,7 +227,9 @@ export const NoDescription: Story = {
           <DialogTitle>Quick Action</DialogTitle>
         </DialogHeader>
         <div className="py-4">
-          <p className="text-sm">This dialog has no description, just a title and content.</p>
+          <p className="text-sm">
+            This dialog has no description, just a title and content.
+          </p>
         </div>
         <DialogFooter>
           <DialogClose asChild>

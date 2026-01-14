@@ -1,14 +1,17 @@
 # Repository Guidelines
 Always use Context7 MCP when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
 
+## Import Instructions
+- When working on a feature use `bun run lint` , `bun run format` or `bun run biome format` to enure formatting, and run `bun test --coverage` to ensure your tests all pass after all changes.
+- When writing tests check for suffucient test coverage via `bun test --coverage`
+
 ## Project Structure & Module Organization
 - Monorepo managed by Bun workspaces; app code lives in `apps/`, shared libraries in `packages/`.
 - `apps/frontend`: React 19 + Vite + Tailwind 4; routes in `src/routes`, UI primitives in `src/components`, tests in `test`, static assets in `public`.
 - `apps/api`: Hono API with Drizzle; handlers and schemas in `src`, database config in `drizzle/`, type build output in `dist/`.
 - `apps/docs`: documentation site; Markdown in `apps/docs/reference` and `apps/docs/get-started`.
 - `packages/shared`: cross-app interfaces and types consumed via workspace dependency `shared`.
-
-`shadcn` related commands should only be run within `packages/frontend-common` where we store shared components. use `shadcn` mcp
+- `packages/frontend-common`: react components for frontend and admin apps. `shadcn` related commands should only be run within `packages/frontend-common` where we store shared components. use `shadcn` mcp.
 
 ## Build, Test, and Development Commands
 - Always use `bun` and `bunx` instead of `npm` or `yarn` or `pnpm`

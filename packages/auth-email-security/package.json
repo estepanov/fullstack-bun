@@ -13,6 +13,7 @@
     "typescript": "^5.0.0"
   },
   "scripts": {
-    "test": "bun test"
+    "test": "bun test",
+    "test:coverage": "bun test --coverage"
   }
 }

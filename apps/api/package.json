@@ -10,7 +10,8 @@
     "db:studio": "drizzle-kit studio",
     "format": "bun run biome format --write ./src",
     "lint": "bun run biome lint ./src",
-    "test": "bun test"
+    "test": "bun test",
+    "test:coverage": "bun test --coverage"
   },
   "dependencies": {
     "auth-email-security": "workspace:*",

@@ -1,10 +1,10 @@
 import { ProtectedRoute } from "@frontend/components/ProtectedRoute";
+import { AccountsSection } from "@frontend/components/dashboard/accounts-section";
 import { DashboardCard } from "@frontend/components/dashboard/dashboard-card";
-import { UserInfoSection } from "@frontend/components/dashboard/user-info-section";
+import { PasskeysSection } from "@frontend/components/dashboard/passkeys-section";
 import { PasswordSection } from "@frontend/components/dashboard/password-section";
 import { SessionsSection } from "@frontend/components/dashboard/sessions-section";
-import { PasskeysSection } from "@frontend/components/dashboard/passkeys-section";
-import { AccountsSection } from "@frontend/components/dashboard/accounts-section";
+import { UserInfoSection } from "@frontend/components/dashboard/user-info-section";
 import { useGetUserProfileQuery } from "@frontend/hooks/api/useGetUserProfileQuery";
 import { signOut, useSession } from "@frontend/lib/auth-client";
 import { getExtendedUser } from "@frontend/types/user";
@@ -37,11 +37,7 @@ function DashboardContent() {
             <p className="mt-2 text-muted-foreground">{t("dashboard.welcome")}</p>
           </DashboardCard>
 
-          <UserInfoSection
-            user={user}
-            role={role}
-            onUpdated={handleProfileRefresh}
-          />
+          <UserInfoSection user={user} role={role} onUpdated={handleProfileRefresh} />
 
           <PasswordSection
             email={userProfile?.email}
@@ -54,11 +50,7 @@ function DashboardContent() {
           <DashboardCard>
             <h2 className="text-xl font-semibold">{t("dashboard.actions_title")}</h2>
             <div className="mt-4">
-              <Button
-                type="button"
-                onClick={() => signOut()}
-                variant="destructive"
-              >
+              <Button type="button" onClick={() => signOut()} variant="destructive">
                 {t("dashboard.sign_out_button")}
               </Button>
             </div>

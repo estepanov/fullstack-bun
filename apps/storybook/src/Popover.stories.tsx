@@ -1,21 +1,21 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from "@storybook/react";
 import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
   Button,
   Input,
   Label,
-} from 'frontend-common/components/ui';
-import { Settings, HelpCircle, Calendar, Plus } from 'lucide-react';
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "frontend-common/components/ui";
+import { Calendar, HelpCircle, Plus, Settings } from "lucide-react";
 
 const meta = {
-  title: 'UI/Popover',
+  title: "UI/Popover",
   component: Popover,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
 } satisfies Meta<typeof Popover>;
 
 export default meta;
@@ -30,7 +30,9 @@ export const Default: Story = {
       <PopoverContent>
         <div className="space-y-2">
           <h4 className="font-medium leading-none">Dimensions</h4>
-          <p className="text-sm text-muted-foreground">Set the dimensions for the layer.</p>
+          <p className="text-sm text-muted-foreground">
+            Set the dimensions for the layer.
+          </p>
         </div>
       </PopoverContent>
     </Popover>
@@ -47,7 +49,9 @@ export const WithForm: Story = {
         <div className="space-y-4">
           <div className="space-y-2">
             <h4 className="font-medium leading-none">Dimensions</h4>
-            <p className="text-sm text-muted-foreground">Set the dimensions for the layer.</p>
+            <p className="text-sm text-muted-foreground">
+              Set the dimensions for the layer.
+            </p>
           </div>
           <div className="grid gap-4">
             <div className="grid grid-cols-3 items-center gap-4">
@@ -151,11 +155,13 @@ export const DatePicker: Story = {
           <div className="space-y-4">
             <div className="space-y-2">
               <h4 className="font-medium leading-none">Select Date</h4>
-              <p className="text-sm text-muted-foreground">Choose a date from the calendar.</p>
+              <p className="text-sm text-muted-foreground">
+                Choose a date from the calendar.
+              </p>
             </div>
             <div className="grid gap-2">
               <div className="grid grid-cols-7 gap-2">
-                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map((day) => (
+                {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
                   <div
                     key={day}
                     className="text-center text-sm font-medium text-muted-foreground"
@@ -169,13 +175,13 @@ export const DatePicker: Story = {
                   const day = i - 2;
                   return (
                     <Button
-                      key={i}
-                      variant={day === 15 ? 'default' : 'ghost'}
+                      key={`day-${day}`}
+                      variant={day === 15 ? "default" : "ghost"}
                       size="sm"
                       className="h-8 w-8 p-0"
                       disabled={day < 1 || day > 31}
                     >
-                      {day > 0 && day <= 31 ? day : ''}
+                      {day > 0 && day <= 31 ? day : ""}
                     </Button>
                   );
                 })}

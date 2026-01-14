@@ -126,9 +126,7 @@ export const FieldSetExample: Story = {
     <div className="w-[500px]">
       <FieldSet>
         <FieldLegend>Personal Information</FieldLegend>
-        <FieldDescription>
-          Update your personal details below.
-        </FieldDescription>
+        <FieldDescription>Update your personal details below.</FieldDescription>
         <FieldGroup>
           <Field>
             <FieldLabel htmlFor="first-name">First Name</FieldLabel>

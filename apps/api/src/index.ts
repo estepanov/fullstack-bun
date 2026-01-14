@@ -33,30 +33,30 @@ let chatPubSubManager: ChatPubSubManager | null = null;
 
 // Initialize horizontal scaling if enabled
 if (env.ENABLE_DISTRIBUTED_CHAT) {
-	appLogger.info("Distributed chat mode enabled - initializing pub/sub");
+  appLogger.info("Distributed chat mode enabled - initializing pub/sub");
 
-	// Initialize presence service
-	chatManager.setPresenceService(chatPresenceService);
+  // Initialize presence service
+  chatManager.setPresenceService(chatPresenceService);
 
-	// Initialize pub/sub manager
-	chatPubSubManager = new ChatPubSubManager(chatManager);
-	chatManager.setPubSubManager(chatPubSubManager);
+  // Initialize pub/sub manager
+  chatPubSubManager = new ChatPubSubManager(chatManager);
+  chatManager.setPubSubManager(chatPubSubManager);
 
-	// Start pub/sub manager
-	chatPubSubManager.start().catch((error) => {
-		appLogger.error({ error }, "Failed to start ChatPubSubManager");
-		process.exit(1);
-	});
+  // Start pub/sub manager
+  chatPubSubManager.start().catch((error) => {
+    appLogger.error({ error }, "Failed to start ChatPubSubManager");
+    process.exit(1);
+  });
 
-	// Start instance heartbeat
-	instanceHeartbeat
-		.start(() => chatManager.getClientCount())
-		.catch((error) => {
-			appLogger.error({ error }, "Failed to start instance heartbeat");
-			process.exit(1);
-		});
+  // Start instance heartbeat
+  instanceHeartbeat
+    .start(() => chatManager.getClientCount())
+    .catch((error) => {
+      appLogger.error({ error }, "Failed to start instance heartbeat");
+      process.exit(1);
+    });
 } else {
-	appLogger.info("Single-instance chat mode (distributed mode disabled)");
+  appLogger.info("Single-instance chat mode (distributed mode disabled)");
 }
 
 const app = new Hono();

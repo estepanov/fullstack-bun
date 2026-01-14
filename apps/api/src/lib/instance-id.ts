@@ -11,5 +11,4 @@ import { env } from "../env";
  * In Kubernetes/container environments, you can set INSTANCE_ID to the pod name
  * for better observability.
  */
-export const INSTANCE_ID =
-	env.INSTANCE_ID || `api-${crypto.randomUUID()}`;
+export const INSTANCE_ID = env.INSTANCE_ID || `api-${crypto.randomUUID()}`;

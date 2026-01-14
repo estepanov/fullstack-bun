@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authClient } from "@admin/lib/auth-client";
-import { ADMIN_USERS_GET_QUERY_KEY, ADMIN_BANS_GET_QUERY_KEY } from "./query-key";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ADMIN_BANS_GET_QUERY_KEY, ADMIN_USERS_GET_QUERY_KEY } from "./query-key";
 import { useDeleteUserMessagesMutation } from "./useDeleteUserMessagesMutation";
 
 export const useBanUserMutation = () => {
@@ -11,11 +11,11 @@ export const useBanUserMutation = () => {
     mutationFn: async ({
       id,
       reason,
-      deleteMessages: shouldDeleteMessages
+      deleteMessages: shouldDeleteMessages,
     }: {
       id: string;
       reason?: string;
-      deleteMessages?: boolean
+      deleteMessages?: boolean;
     }) => {
       // First, ban the user via better-auth plugin
       const { data, error } = await authClient.admin.banUser({

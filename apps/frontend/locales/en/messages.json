@@ -38,6 +38,31 @@
     "delete": "Delete message",
     "ban_user": "Ban user"
   },
+  "chat_header": {
+    "back_button": "Back to conversations",
+    "more_options": "More options",
+    "online": "Online",
+    "offline": "Offline",
+    "members": "{{count}} members",
+    "members_online": "{{count}} members, {{online}} online"
+  },
+  "chat_layout": {
+    "empty_title": "Select a conversation",
+    "empty_subtitle": "Choose from your existing conversations or start a new one"
+  },
+  "conversation_item": {
+    "time_now": "now",
+    "minutes": "{{count}}m",
+    "hours": "{{count}}h",
+    "days": "{{count}}d",
+    "you_prefix": "You: "
+  },
+  "conversation_list": {
+    "title": "Messages",
+    "new_button_label": "New conversation",
+    "search_placeholder": "Search conversations...",
+    "empty": "No conversations found"
+  },
   "edit": {
     "title": "Edit message",
     "description": "Update the message for everyone in the chat.",
@@ -74,5 +99,22 @@
     "delete_failed": "Failed to delete message. Try again.",
     "update_failed": "Failed to update message. Try again.",
     "ban_failed": "Failed to ban user. Try again."
+  },
+  "message_input": {
+    "placeholder": "Type a message...",
+    "attach_file": "Attach file",
+    "add_emoji": "Add emoji",
+    "send_message": "Send message"
+  },
+  "message_list": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "empty_title": "Start the conversation",
+    "empty_subtitle": "Ask a question or share an update to get things going."
+  },
+  "typing": {
+    "single": "{{name}} is typing",
+    "two": "{{first}} and {{second}} are typing",
+    "many": "{{name}} and {{count}} others are typing"
   }
 }

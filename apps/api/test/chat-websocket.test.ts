@@ -1,19 +1,59 @@
-const ensureTestEnv = () => {
-  process.env.NODE_ENV ||= "test";
-  process.env.PORT ||= "0";
-  process.env.CORS_ALLOWLISTED_ORIGINS ||= "http://localhost:5173";
-  process.env.API_BASE_URL ||= "http://localhost:3001";
-  process.env.FE_BASE_URL ||= "http://localhost:5173";
-  process.env.BETTER_AUTH_SECRET ||=
-    "test-secret-test-secret-test-secret-123";
-  process.env.DATABASE_URL ||=
-    "postgresql://postgres:postgres@127.0.0.1:5432/mydatabase";
-  process.env.REDIS_URL ||= "redis://:redispassword@127.0.0.1:6379";
-};
+import { expect, mock, test } from "bun:test";
+import "./mocks/redis";
+import "./mocks/db";
+import { authMockState } from "./mocks/auth-state";
+import { ensureTestEnv } from "./mocks/env";
 
 ensureTestEnv();
 
-import { expect, test } from "bun:test";
+mock.module("../src/lib/auth", () => ({
+  auth: {
+    api: {
+      getSession: () => Promise.resolve(authMockState.session),
+      setPassword: async () => ({ status: authMockState.setPasswordStatus }),
+    },
+  },
+}));
+
+// Mock external auth dependencies to keep websocket tests isolated and avoid optional plugin resolutions
+mock.module("better-auth", () => ({
+  betterAuth: () => ({
+    auth: {},
+    handlers: {},
+  }),
+}));
+
+mock.module("better-auth/plugins", () => ({
+  admin: () => ({}),
+  emailOTP: () => ({}),
+  lastLoginMethod: () => ({}),
+  magicLink: () => ({}),
+  username: () => ({}),
+}));
+
+mock.module("better-auth/plugins/access", () => ({
+  createAccessControl: () => ({
+    newRole: () => ({}),
+  }),
+}));
+
+mock.module("@better-auth/passkey", () => ({
+  passkey: () => ({}),
+}));
+
+mock.module("better-auth/adapters/drizzle", () => ({
+  drizzleAdapter: () => ({}),
+}));
+
+mock.module("better-auth/db", () => ({
+  createFieldAttribute: () => ({}),
+}));
+
+mock.module("better-auth-harmony", () => ({
+  emailHarmony: () => ({}),
+}));
+
+mock.module("jose", () => ({}));
 
 test("chat websocket upgrades successfully", async () => {
   const { default: app } = await import("../src/index");
@@ -26,7 +66,8 @@ test("chat websocket upgrades successfully", async () => {
       port: 0,
     });
   } catch (error) {
-    const code = error && typeof error === "object" ? (error as { code?: string }).code : undefined;
+    const code =
+      error && typeof error === "object" ? (error as { code?: string }).code : undefined;
     if (code === "EPERM" || code === "EADDRINUSE") {
       return;
     }

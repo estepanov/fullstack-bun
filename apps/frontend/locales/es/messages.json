@@ -38,6 +38,31 @@
     "delete": "Eliminar mensaje",
     "ban_user": "Banear usuario"
   },
+  "chat_header": {
+    "back_button": "Volver a las conversaciones",
+    "more_options": "Más opciones",
+    "online": "En línea",
+    "offline": "Desconectado",
+    "members": "{{count}} miembros",
+    "members_online": "{{count}} miembros, {{online}} en línea"
+  },
+  "chat_layout": {
+    "empty_title": "Selecciona una conversación",
+    "empty_subtitle": "Elige entre tus conversaciones existentes o inicia una nueva"
+  },
+  "conversation_item": {
+    "time_now": "ahora",
+    "minutes": "{{count}}m",
+    "hours": "{{count}}h",
+    "days": "{{count}}d",
+    "you_prefix": "Tú: "
+  },
+  "conversation_list": {
+    "title": "Mensajes",
+    "new_button_label": "Nueva conversación",
+    "search_placeholder": "Buscar conversaciones...",
+    "empty": "No se encontraron conversaciones"
+  },
   "edit": {
     "title": "Editar mensaje",
     "description": "Actualiza el mensaje para todos en el chat.",
@@ -74,5 +99,22 @@
     "delete_failed": "No se pudo eliminar el mensaje. Inténtalo de nuevo.",
     "update_failed": "No se pudo actualizar el mensaje. Inténtalo de nuevo.",
     "ban_failed": "No se pudo banear al usuario. Inténtalo de nuevo."
+  },
+  "message_input": {
+    "placeholder": "Escribe un mensaje...",
+    "attach_file": "Adjuntar archivo",
+    "add_emoji": "Agregar emoji",
+    "send_message": "Enviar mensaje"
+  },
+  "message_list": {
+    "today": "Hoy",
+    "yesterday": "Ayer",
+    "empty_title": "Inicia la conversación",
+    "empty_subtitle": "Haz una pregunta o comparte una novedad para romper el hielo."
+  },
+  "typing": {
+    "single": "{{name}} está escribiendo",
+    "two": "{{first}} y {{second}} están escribiendo",
+    "many": "{{name}} y {{count}} más están escribiendo"
   }
 }

@@ -1,36 +1,36 @@
-import type { Meta, StoryObj } from '@storybook/react';
-import { Button } from 'frontend-common/components/ui';
-import { Mail, Loader2, ChevronRight } from 'lucide-react';
+import type { Meta, StoryObj } from "@storybook/react";
+import { Button } from "frontend-common/components/ui";
+import { ChevronRight, Loader2, Mail } from "lucide-react";
 
 const meta = {
-  title: 'UI/Button',
+  title: "UI/Button",
   component: Button,
   parameters: {
-    layout: 'centered',
+    layout: "centered",
   },
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: 'select',
-      options: ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link'],
-      description: 'The visual style variant of the button',
+      control: "select",
+      options: ["default", "destructive", "outline", "secondary", "ghost", "link"],
+      description: "The visual style variant of the button",
     },
     size: {
-      control: 'select',
-      options: ['xs', 'sm', 'md', 'lg', 'xl', 'icon'],
-      description: 'The size of the button',
+      control: "select",
+      options: ["xs", "sm", "md", "lg", "xl", "icon"],
+      description: "The size of the button",
     },
     disabled: {
-      control: 'boolean',
-      description: 'Whether the button is disabled',
+      control: "boolean",
+      description: "Whether the button is disabled",
     },
     asChild: {
-      control: 'boolean',
-      description: 'Render as a child component using Radix Slot',
+      control: "boolean",
+      description: "Render as a child component using Radix Slot",
     },
   },
   args: {
-    onClick: () => console.log('Button clicked'),
+    onClick: () => console.log("Button clicked"),
   },
 } satisfies Meta<typeof Button>;
 
@@ -39,84 +39,84 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    children: 'Button',
-    variant: 'default',
+    children: "Button",
+    variant: "default",
   },
 };
 
 export const Destructive: Story = {
   args: {
-    children: 'Delete',
-    variant: 'destructive',
+    children: "Delete",
+    variant: "destructive",
   },
 };
 
 export const Outline: Story = {
   args: {
-    children: 'Outline',
-    variant: 'outline',
+    children: "Outline",
+    variant: "outline",
   },
 };
 
 export const Secondary: Story = {
   args: {
-    children: 'Secondary',
-    variant: 'secondary',
+    children: "Secondary",
+    variant: "secondary",
   },
 };
 
 export const Ghost: Story = {
   args: {
-    children: 'Ghost',
-    variant: 'ghost',
+    children: "Ghost",
+    variant: "ghost",
   },
 };
 
 export const Link: Story = {
   args: {
-    children: 'Link',
-    variant: 'link',
+    children: "Link",
+    variant: "link",
   },
 };
 
 export const ExtraSmall: Story = {
   args: {
-    children: 'Extra Small',
-    size: 'xs',
+    children: "Extra Small",
+    size: "xs",
   },
 };
 
 export const Small: Story = {
   args: {
-    children: 'Small',
-    size: 'sm',
+    children: "Small",
+    size: "sm",
   },
 };
 
 export const Medium: Story = {
   args: {
-    children: 'Medium',
-    size: 'md',
+    children: "Medium",
+    size: "md",
   },
 };
 
 export const Large: Story = {
   args: {
-    children: 'Large',
-    size: 'lg',
+    children: "Large",
+    size: "lg",
   },
 };
 
 export const ExtraLarge: Story = {
   args: {
-    children: 'Extra Large',
-    size: 'xl',
+    children: "Extra Large",
+    size: "xl",
   },
 };
 
 export const Icon: Story = {
   args: {
-    size: 'icon',
+    size: "icon",
     children: <Mail className="h-4 w-4" />,
   },
 };
@@ -157,7 +157,7 @@ export const Loading: Story = {
 
 export const Disabled: Story = {
   args: {
-    children: 'Disabled',
+    children: "Disabled",
     disabled: true,
   },
 };

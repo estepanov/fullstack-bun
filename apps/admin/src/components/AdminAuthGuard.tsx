@@ -4,16 +4,17 @@ import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
+const loginUrl = `${import.meta.env.VITE_FRONTEND_URL}/auth/login`;
+
 export const AdminAuthGuard = ({ children }: { children: ReactNode }) => {
   const { data: session, isPending } = useSession();
   const { t } = useTranslation("admin");
-  const loginUrl = `${import.meta.env.VITE_FRONTEND_URL}/auth/login`;
 
   useEffect(() => {
     if (!isPending && !session && typeof window !== "undefined") {
       window.location.href = loginUrl;
     }
-  }, [isPending, loginUrl, session]);
+  }, [isPending, session]);
 
   if (isPending) {
     return (

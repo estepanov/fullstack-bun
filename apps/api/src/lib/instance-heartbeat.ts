@@ -1,5 +1,4 @@
 import { appLogger } from "../utils/logger";
-import { chatPresenceService } from "./chat-presence";
 import { INSTANCE_ID } from "./instance-id";
 import { redis } from "./redis";
 

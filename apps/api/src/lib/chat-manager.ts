@@ -13,6 +13,7 @@ interface ConnectedClient {
   ws: WSContext;
   userId: string | null;
   userName: string | null;
+  userAvatar: string | null;
   role: ClientRole;
   presenceId: string;
   lastSeenAt: number;
@@ -87,6 +88,16 @@ export class ChatManager {
   }
 
   removeClient(client: Omit<ConnectedClient, "lastSeenAt">) {
+    const existing = this.clients.get(client.ws);
+    if (existing?.userId && existing.userName) {
+      this.broadcastTyping({
+        userId: existing.userId,
+        userName: existing.userName,
+        userAvatar: existing.userAvatar ?? null,
+        isTyping: false,
+      });
+    }
+
     this.clients.delete(client.ws);
 
     // Remove from shared presence tracking if enabled
@@ -250,6 +261,54 @@ export class ChatManager {
     appLogger.debug(
       { instanceId: this.instanceId, sent, failed },
       "Broadcast update locally",
+    );
+  }
+
+  broadcastTyping(data: {
+    userId: string;
+    userName: string;
+    userAvatar: string | null;
+    isTyping: boolean;
+    roomId?: string;
+  }) {
+    if (env.ENABLE_DISTRIBUTED_CHAT && this.pubsubManager) {
+      this.pubsubManager.publishTyping(data);
+      this.broadcastTypingLocal(data);
+      return;
+    }
+
+    this.broadcastTypingLocal(data);
+  }
+
+  broadcastTypingLocal(data: {
+    userId: string;
+    userName: string;
+    userAvatar: string | null;
+    isTyping: boolean;
+    roomId?: string;
+  }) {
+    const payload = {
+      type: ChatWSMessageType.TYPING_UPDATE,
+      data,
+    };
+
+    const messageStr = JSON.stringify(payload);
+    let sent = 0;
+    let failed = 0;
+
+    for (const client of this.clients.values()) {
+      try {
+        client.ws.send(messageStr);
+        sent++;
+      } catch (error) {
+        appLogger.error({ error }, "Failed to send typing update to client");
+        failed++;
+      }
+    }
+
+    appLogger.debug(
+      { instanceId: this.instanceId, sent, failed },
+      "Broadcast typing update locally",
     );
   }
 

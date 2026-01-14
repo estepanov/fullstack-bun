@@ -6,7 +6,7 @@ import {
 } from "@frontend/lib/dashboard/utils";
 import type { AccountRecord } from "@frontend/types/dashboard";
 import { Alert, Button } from "frontend-common/components/ui";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
 import { DashboardCard } from "./dashboard-card";
@@ -31,7 +31,7 @@ export function AccountsSection() {
       });
   }, [accounts]);
 
-  const loadAccounts = async () => {
+  const loadAccounts = useCallback(async () => {
     setLoading(true);
     setError("");
     const response = await authClient.listAccounts();
@@ -42,7 +42,7 @@ export function AccountsSection() {
       setAccounts((response.data as AccountRecord[]) ?? []);
     }
     setLoading(false);
-  };
+  }, [t]);
 
   const handleUnlink = async (account: AccountRecord) => {
     setUnlinkingId(account.id);
@@ -61,7 +61,7 @@ export function AccountsSection() {
 
   useEffect(() => {
     void loadAccounts();
-  }, []);
+  }, [loadAccounts]);
 
   return (
     <DashboardCard>
