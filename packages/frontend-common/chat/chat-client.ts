@@ -65,7 +65,7 @@ export function createChatClientInstance(config: ChatClientConfig): ChatClient {
 
       ws = new WebSocket(url.toString());
 
-      ws.onopen = (event) => {
+      ws.onopen = () => {
         console.log("WebSocket connected");
         config.onOpen?.();
       };

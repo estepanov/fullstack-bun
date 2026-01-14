@@ -436,7 +436,7 @@ export const useChatWebSocket = ({
       recentMessageTimestampsRef.current.push(now);
       lastSentMessageRef.current = message;
 
-      const payload = {
+      const payload: ChatWSMessage = {
         type: ChatWSMessageType.SEND_MESSAGE,
         message: message.trim(),
       };
@@ -453,7 +453,7 @@ export const useChatWebSocket = ({
         return;
       }
 
-      const payload = {
+      const payload: ChatWSMessage = {
         type: ChatWSMessageType.TYPING_STATUS,
         isTyping,
         roomId,
