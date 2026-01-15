@@ -1,6 +1,5 @@
-import { Container, ModeToggle } from "frontend-common/components/ui";
+import { Container, ModeToggle, StyledLink } from "frontend-common/components/ui";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
 import { LanguageSelector } from "./ui/language-selector";
 
 export const Footer = () => {
@@ -12,7 +11,9 @@ export const Footer = () => {
           <ModeToggle />
           <LanguageSelector />
         </div>
-        <Link to="/more">{t("links.second_page")}</Link>
+        <StyledLink to="/more" variant="muted">
+          {t("links.second_page")}
+        </StyledLink>
       </Container>
     </footer>
   );

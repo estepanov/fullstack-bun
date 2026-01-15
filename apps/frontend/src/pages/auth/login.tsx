@@ -314,10 +314,10 @@ export default function LoginPage() {
 
           {passwordsEnabled && (
             <div className="mt-6 pt-6 border-t border-border/50 text-center flex flex-col gap-2">
-              <p className="text-sm text-muted-foreground">{t("login.no_account")}</p>
-              <StyledLink className="w-full" variant="secondary" to="/auth/register">
-                {t("login.sign_up_link")}
-              </StyledLink>
+              <p className="text-sm text-muted-foreground">
+                {t("login.no_account")}&nbsp;
+                <StyledLink to="/auth/register">{t("login.sign_up_link")}</StyledLink>
+              </p>
             </div>
           )}
         </form>
