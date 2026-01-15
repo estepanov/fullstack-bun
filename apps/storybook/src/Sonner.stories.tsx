@@ -124,7 +124,7 @@ export const CustomDuration: Story = {
   ),
 };
 
-export const Promise: Story = {
+export const PromiseToast: Story = {
   render: () => (
     <Button
       onClick={() => {
