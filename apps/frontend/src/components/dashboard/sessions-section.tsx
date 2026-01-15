@@ -6,6 +6,7 @@ import { Alert, Badge, Button } from "frontend-common/components/ui";
 import { RefreshCwIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 import { DashboardCard } from "./dashboard-card";
 
 export function SessionsSection() {
@@ -42,15 +43,22 @@ export function SessionsSection() {
   }, [t]);
 
   const handleRevokeOtherSessions = async () => {
-    setRevoking(true);
-    setError("");
-    const response = await authClient.revokeOtherSessions();
-    if (response.error) {
-      setError(parseErrorMessage(response.error, t("dashboard.sessions_revoke_error")));
-    } else {
-      await loadSessions();
+    const toastId = toast.loading(t("dashboard.sessions_revoking_button"));
+    try {
+      setRevoking(true);
+      setError("");
+      const response = await authClient.revokeOtherSessions();
+      if (response.error) {
+        setError(parseErrorMessage(response.error, t("dashboard.sessions_revoke_error")));
+      } else {
+        await loadSessions();
+      }
+      toast.success(t("dashboard.sessions_revoke_success"), { id: toastId });
+    } catch (error) {
+      toast.error(t("dashboard.sessions_revoke_error"), { id: toastId });
+    } finally {
+      setRevoking(false);
     }
-    setRevoking(false);
   };
 
   useEffect(() => {

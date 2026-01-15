@@ -12,6 +12,7 @@ import { RefreshCwIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { AUTH_CONFIG } from "shared/config/auth";
+import { toast } from "sonner";
 import { DashboardCard } from "./dashboard-card";
 
 export function PasskeysSection() {
@@ -67,15 +68,23 @@ export function PasskeysSection() {
   };
 
   const handleDeletePasskey = async (passkeyId: string) => {
-    setDeletingId(passkeyId);
-    setError("");
-    const response = await authClient.passkey.deletePasskey({ id: passkeyId });
-    if (response.error) {
-      setError(parseErrorMessage(response.error, t("dashboard.passkeys_delete_error")));
-    } else {
-      await loadPasskeys();
+    const toastId = toast.loading(t("dashboard.passkeys_deleting_button"));
+    try {
+      setDeletingId(passkeyId);
+      setError("");
+      const response = await authClient.passkey.deletePasskey({ id: passkeyId });
+      if (response.error) {
+        setError(parseErrorMessage(response.error, t("dashboard.passkeys_delete_error")));
+      } else {
+        await loadPasskeys();
+      }
+      setDeletingId(null);
+      toast.success(t("dashboard.passkeys_delete_success"), { id: toastId });
+    } catch (error) {
+      toast.error(t("dashboard.passkeys_delete_error"), { id: toastId });
+    } finally {
+      setDeletingId(null);
     }
-    setDeletingId(null);
   };
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: only call once on mount

@@ -6,6 +6,7 @@ import { useForm } from "@tanstack/react-form";
 import { Alert, Button, Field, FieldError, Input } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 interface NameEditorProps {
   name?: string | null;
@@ -46,6 +47,7 @@ export function NameEditor({ name, onUpdated }: NameEditorProps) {
         }
         await onUpdated();
         setEditing(false);
+        toast.success(t("dashboard.name_save_success"));
       } catch (error) {
         setSubmitError(parseErrorMessage(error, t("dashboard.name_save_error")));
       }
