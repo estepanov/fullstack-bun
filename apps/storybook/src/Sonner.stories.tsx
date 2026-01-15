@@ -37,7 +37,7 @@ export const Success: Story = {
   ),
 };
 
-export const Error: Story = {
+export const ErrorToast: Story = {
   render: () => (
     <Button variant="destructive" onClick={() => toast.error("Failed to save changes")}>
       Show Error
