@@ -1,5 +1,6 @@
 import { Footer } from "@frontend/components/Footer";
 import { Header } from "@frontend/components/Header";
+import { Toaster } from "frontend-common/components/ui/sonner";
 import { Links, Outlet, Scripts, ScrollRestoration } from "react-router";
 import { APP_NAME } from "./app.config";
 import { RootAppProvider } from "./providers/RootAppProvider";
@@ -18,6 +19,7 @@ export default function Root() {
           <Header />
           <Outlet />
           <Footer />
+          <Toaster />
         </RootAppProvider>
         <ScrollRestoration />
         <Scripts />

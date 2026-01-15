@@ -35,5 +35,6 @@
     "types/matchers.d.ts",
     "happydom.ts",
     "testing-library.ts"
-  ]
+  ],
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"]
 }
