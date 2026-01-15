@@ -23,6 +23,20 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { UserRole, userRoleSchema } from "shared/auth/user-role";
 import { PAGINATION_CONFIG } from "shared/config/pagination";
+import { toast } from "sonner";
+
+type AdminUserListItem = {
+  id: string;
+  name: string;
+  email: string;
+  emailVerified: boolean;
+  image: string | null;
+  role: string;
+  banned: boolean;
+  banReason: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export default function AdminUsersPage() {
   const { data: session } = useSession();
@@ -37,36 +51,68 @@ export default function AdminUsersPage() {
   const unbanUser = useUnbanUserMutation();
   const { t } = useTranslation("admin");
   const [banDialogOpen, setBanDialogOpen] = useState(false);
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<AdminUserListItem | null>(null);
   const [banReason, setBanReason] = useState("");
   const [deleteMessages, setDeleteMessages] = useState(false);
 
-  const handleBanClick = (userId: string) => {
-    setSelectedUserId(userId);
+  const handleBanClick = (user: AdminUserListItem) => {
+    setSelectedUser(user);
     setBanDialogOpen(true);
   };
 
   const handleBanConfirm = () => {
-    if (!selectedUserId) return;
+    if (!selectedUser) return;
     banUser.mutate(
       {
-        id: selectedUserId,
+        id: selectedUser.id,
         reason: banReason || undefined,
         deleteMessages,
       },
       {
         onSuccess: () => {
           setBanDialogOpen(false);
-          setSelectedUserId(null);
+          setSelectedUser(null);
           setBanReason("");
           setDeleteMessages(false);
+          toast.success(
+            t("users.ban_success", {
+              user: selectedUser.email,
+            }),
+          );
+        },
+        onError(error) {
+          console.error(error);
+          toast.error(
+            t("users.ban_error", {
+              user: selectedUser.email,
+            }),
+          );
         },
       },
     );
   };
 
-  const handleUnban = (userId: string) => {
-    unbanUser.mutate({ id: userId });
+  const handleUnban = (user: AdminUserListItem) => {
+    unbanUser.mutate(
+      { id: user.id },
+      {
+        onSuccess: () => {
+          toast.success(
+            t("users.unban_success", {
+              user: user.email,
+            }),
+          );
+        },
+        onError(error) {
+          console.error(error);
+          toast.error(
+            t("users.unban_error", {
+              user: user.email,
+            }),
+          );
+        },
+      },
+    );
   };
 
   if (isPending) {
@@ -91,7 +137,7 @@ export default function AdminUsersPage() {
 
   const isBannedUser = (user: { banned?: boolean | null }) => Boolean(user.banned);
 
-  const users = data?.users || [];
+  const users = (data?.users ?? []) as AdminUserListItem[];
   const pagination = data?.pagination;
 
   const EmailStatusBadge = ({
@@ -236,7 +282,28 @@ export default function AdminUsersPage() {
                           onValueChange={(value) => {
                             const parsed = userRoleSchema.safeParse(value);
                             if (!parsed.success) return;
-                            updateRole.mutate({ id: u.id, role: parsed.data });
+                            updateRole.mutate(
+                              { id: u.id, role: parsed.data },
+                              {
+                                onSuccess(_, variables) {
+                                  toast.success(
+                                    t("users.update_role_success", {
+                                      role: variables.role,
+                                      user: u.email,
+                                    }),
+                                  );
+                                },
+                                onError(error, variables) {
+                                  console.error(error);
+                                  toast.error(
+                                    t("users.update_role_error", {
+                                      user: u.email,
+                                      role: variables.role,
+                                    }),
+                                  );
+                                },
+                              },
+                            );
                           }}
                         >
                           <SelectTrigger
@@ -271,7 +338,7 @@ export default function AdminUsersPage() {
                         {userIsBanned ? (
                           <Button
                             type="button"
-                            onClick={() => handleUnban(u.id)}
+                            onClick={() => handleUnban(u)}
                             disabled={unbanUser.isPending}
                             size="xs"
                             variant="destructive"
@@ -282,7 +349,7 @@ export default function AdminUsersPage() {
                         ) : banBlocked ? null : (
                           <Button
                             type="button"
-                            onClick={() => handleBanClick(u.id)}
+                            onClick={() => handleBanClick(u)}
                             disabled={banUser.isPending}
                             variant="destructive"
                             size="xs"
@@ -410,18 +477,6 @@ export default function AdminUsersPage() {
                   </div>
                 )}
               </div>
-            </div>
-          )}
-
-          {updateRole.isError && (
-            <div className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-              {t("users.update_role_error")}
-            </div>
-          )}
-
-          {banUser.isError && (
-            <div className="mt-4 rounded-2xl border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
-              {t("users.ban_error")}
             </div>
           )}
         </div>

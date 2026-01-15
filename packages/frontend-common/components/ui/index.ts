@@ -17,3 +17,4 @@ export * from "./separator";
 export * from "./styled-link";
 export * from "./textarea";
 export * from "./theme-toggle";
+export * from "./sonner";

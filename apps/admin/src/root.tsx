@@ -1,3 +1,4 @@
+import { Toaster } from "frontend-common/components/ui/sonner";
 import { Links, Meta, Scripts, ScrollRestoration } from "react-router";
 import { AdminAuthGuard } from "./components/AdminAuthGuard";
 import { AdminLayout } from "./components/AdminLayout";
@@ -17,6 +18,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         {children}
         <ScrollRestoration />
         <Scripts />
+        <Toaster />
       </body>
     </html>
   );
