@@ -19,7 +19,7 @@ export default function Root() {
           <Header />
           <Outlet />
           <Footer />
-          <Toaster />
+          <Toaster richColors />
         </RootAppProvider>
         <ScrollRestoration />
         <Scripts />
