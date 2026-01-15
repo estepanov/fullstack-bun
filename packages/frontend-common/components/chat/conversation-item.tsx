@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui";
-import { UserAvatar } from "./user-avatar";
+import { UserAvatar } from "../ui/user-avatar";
 
 interface ConversationItemProps {
   conversation: Conversation;
@@ -44,8 +44,7 @@ export function ConversationItem({
   const canManage = !!lastMessage && (isAdmin || isOwn);
   const canBan = !!lastMessage && isAdmin && !isOwn;
   const hasMenu =
-    canManage &&
-    (onEditMessage || onDeleteMessage || (canBan && onBanUser));
+    canManage && (onEditMessage || onDeleteMessage || (canBan && onBanUser));
 
   const formatLastMessageTime = (date: Date): string => {
     const now = new Date();

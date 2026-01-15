@@ -1,6 +1,6 @@
 import type { User } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui";
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 
 interface UserAvatarProps {
   user?: User | null;

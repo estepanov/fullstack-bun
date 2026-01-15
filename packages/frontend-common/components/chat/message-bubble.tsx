@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui";
-import { UserAvatar } from "./user-avatar";
+import { UserAvatar } from "../ui/user-avatar";
 
 interface MessageBubbleProps {
   message: Message;
