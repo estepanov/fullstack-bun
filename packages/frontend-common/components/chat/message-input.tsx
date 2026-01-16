@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { MESSAGE_CONFIG } from "shared/config/chat";
 import { cn } from "../../lib/utils";
 import { Button, Field, FieldContent, FieldDescription, Textarea } from "../ui";
+import { EmojiPickerPopover } from "../ui/emoji-picker-popover";
 
 interface MessageInputProps {
   onSend?: (message: string) => void;
@@ -45,7 +46,10 @@ export function MessageInput({
   return (
     <form
       onSubmit={handleSubmit}
-      className={cn("flex items-end gap-2 p-4 border-t border-border bg-card", className)}
+      className={cn(
+        "flex items-end gap-2 p-4 border-t border-border bg-card",
+        className,
+      )}
     >
       <Field className="w-full">
         <FieldContent className="relative">
@@ -93,16 +97,28 @@ export function MessageInput({
               }
             }}
           />
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="absolute right-2 top-1.5 h-8 w-8 text-muted-foreground hover:text-foreground"
-            disabled={disabled}
+          <EmojiPickerPopover
+            side="top"
+            onEmojiSelect={(emoji) => {
+              setValue(value + emoji);
+            }}
           >
-            <Smile className="h-5 w-5" />
-            <span className="sr-only">{t("message_input.add_emoji")}</span>
-          </Button>
+            <div className="absolute right-2 bottom-1.5">
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className={cn(
+                  "rounded-full bg-background h-8 w-8 text-muted-foreground hover:text-foreground hover:bg-accent transition-all ease-in-out duration-150 opacity-80 hover:opacity-100",
+                  disabled ? "opacity-50 cursor-not-allowed" : "",
+                )}
+                disabled={disabled}
+              >
+                <Smile className="h-5 w-5" />
+                <span className="sr-only">{t("message_input.add_emoji")}</span>
+              </Button>
+            </div>
+          </EmojiPickerPopover>
         </FieldContent>
         <FieldDescription>
           {t("form.character_count", {

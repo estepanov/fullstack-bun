@@ -120,11 +120,11 @@ export function ConversationItem({
               {lastMessage.content}
             </p>
           )}
-          {conversation.unreadCount && conversation.unreadCount > 0 && (
+          {conversation?.unreadCount && conversation.unreadCount > 0 ? (
             <span className="shrink-0 flex items-center justify-center h-5 min-w-5 px-1.5 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
               {conversation.unreadCount > 99 ? "99+" : conversation.unreadCount}
             </span>
-          )}
+          ) : null}
         </div>
       </div>
       {hasMenu && lastMessage && (
