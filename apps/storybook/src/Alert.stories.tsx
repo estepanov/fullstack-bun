@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Alert, AlertDescription, AlertTitle } from "frontend-common/components/ui";
-import { AlertCircle, CheckCircle2, Info } from "lucide-react";
+import { AlertCircle, AlertTriangle, CheckCircle2, Info } from "lucide-react";
 
 const meta = {
   title: "UI/Alert",
@@ -12,7 +12,7 @@ const meta = {
   argTypes: {
     variant: {
       control: "select",
-      options: ["default", "primary", "success", "destructive", "info"],
+      options: ["default", "primary", "success", "destructive", "info", "warning"],
       description: "Visual style of the alert",
     },
     size: {
@@ -55,6 +55,17 @@ export const Success: Story = {
     <Alert {...args} variant="success" className="max-w-md">
       <AlertTitle>Profile updated</AlertTitle>
       <AlertDescription>Your changes are live across your account.</AlertDescription>
+    </Alert>
+  ),
+};
+
+export const Warning: Story = {
+  render: (args) => (
+    <Alert {...args} variant="warning" className="max-w-md">
+      <AlertTitle>Storage limit approaching</AlertTitle>
+      <AlertDescription>
+        You've used 85% of your storage. Consider upgrading your plan.
+      </AlertDescription>
     </Alert>
   ),
 };
@@ -112,6 +123,15 @@ export const AllVariants: Story = {
           <div className="grid gap-1">
             <AlertTitle>Success</AlertTitle>
             <AlertDescription>Everything completed successfully.</AlertDescription>
+          </div>
+        </div>
+      </Alert>
+      <Alert variant="warning">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="mt-0.5 size-4" />
+          <div className="grid gap-1">
+            <AlertTitle>Warning</AlertTitle>
+            <AlertDescription>Proceed with caution or review details.</AlertDescription>
           </div>
         </div>
       </Alert>

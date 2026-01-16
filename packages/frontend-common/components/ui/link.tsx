@@ -1,12 +1,5 @@
-import { cn } from "frontend-common/lib";
-import { Link as RouterLink } from "react-router";
+import { StyledLink } from "./styled-link";
 
-export const Link = ({ to, ...props }: React.ComponentProps<typeof RouterLink>) => {
-  return (
-    <RouterLink
-      to={to}
-      className={cn(["text-primary underline-offset-4 underline"])}
-      {...props}
-    />
-  );
+export const Link = ({ ...props }: React.ComponentProps<typeof StyledLink>) => {
+  return <StyledLink {...props} />;
 };

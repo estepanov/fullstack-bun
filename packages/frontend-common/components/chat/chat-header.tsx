@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import type { Conversation } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui";
-import { UserAvatar } from "./user-avatar";
+import { UserAvatar } from "../ui/user-avatar";
 
 interface ChatHeaderProps {
   conversation: Conversation;

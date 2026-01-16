@@ -18,6 +18,9 @@ const ThemeColors = () => {
         variable: "var(--accent)",
         foreground: "var(--accent-foreground)",
       },
+      { name: "Success", variable: "var(--success)", foreground: "white" },
+      { name: "Info", variable: "var(--info)", foreground: "white" },
+      { name: "Warning", variable: "var(--warning)", foreground: "white" },
       { name: "Destructive", variable: "var(--destructive)", foreground: "white" },
     ],
     Base: [
@@ -169,6 +172,82 @@ const ThemeColors = () => {
             </blockquote>
             <p className="text-sm text-muted-foreground">italic border-l-2 pl-6</p>
           </div>
+        </div>
+      </div>
+
+      <div>
+        <h2 className="mb-6 text-2xl font-bold">Background Color Variants</h2>
+        <p className="mb-4 text-sm text-muted-foreground">
+          Subtle background variants for alerts, notifications, and highlighted sections.
+          Each includes the appropriate foreground and border colors for accessibility.
+        </p>
+        <div className="grid gap-4">
+          {[
+            {
+              name: "Muted Background",
+              bg: "var(--muted-background)",
+              fg: "var(--muted-foreground)",
+              border: "var(--border)",
+              useCase: "Subtle highlights, disabled states, or secondary information",
+            },
+            {
+              name: "Accent Background",
+              bg: "var(--accent-background)",
+              fg: "var(--accent-foreground)",
+              border: "var(--accent)",
+              useCase: "Featured content, special sections, or call-to-action areas",
+            },
+            {
+              name: "Success Background",
+              bg: "var(--success-background)",
+              fg: "var(--success)",
+              border: "var(--success-border)",
+              useCase: "Success messages, completed states, or positive confirmations",
+            },
+            {
+              name: "Info Background",
+              bg: "var(--info-background)",
+              fg: "var(--info)",
+              border: "var(--info-border)",
+              useCase: "Informational alerts, tips, or helpful guidance",
+            },
+            {
+              name: "Warning Background",
+              bg: "var(--warning-background)",
+              fg: "var(--warning)",
+              border: "var(--warning-border)",
+              useCase: "Warning messages, caution areas, or items requiring attention",
+            },
+            {
+              name: "Destructive Background",
+              bg: "var(--destructive-background)",
+              fg: "var(--destructive)",
+              border: "var(--destructive-border)",
+              useCase: "Error messages, dangerous actions, or critical alerts",
+            },
+          ].map((variant) => (
+            <div key={variant.name} className="space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-medium">{variant.name}</span>
+                <code className="text-[10px] text-muted-foreground">{variant.bg}</code>
+              </div>
+              <div
+                className="rounded-lg border p-4"
+                style={{
+                  backgroundColor: variant.bg,
+                  borderColor: variant.border,
+                }}
+              >
+                <p className="text-sm font-medium" style={{ color: variant.fg }}>
+                  {variant.useCase}
+                </p>
+                <p className="mt-1 text-xs opacity-80" style={{ color: variant.fg }}>
+                  This demonstrates the background color with its complementary foreground
+                  and border colors for optimal contrast and readability.
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

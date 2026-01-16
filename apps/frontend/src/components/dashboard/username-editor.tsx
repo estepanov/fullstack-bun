@@ -14,6 +14,7 @@ import {
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { USERNAME_CONFIG } from "shared/config/user-profile";
+import { toast } from "sonner";
 
 interface UsernameEditorProps {
   displayUsername?: string | null;
@@ -93,6 +94,7 @@ export function UsernameEditor({ displayUsername, onUpdated }: UsernameEditorPro
         }
         await onUpdated();
         setEditing(false);
+        toast.success(t("dashboard.username_save_success"));
       } catch (error) {
         const message = parseErrorMessage(error, t("dashboard.username_save_error"));
         setSubmitError(message);

@@ -1,7 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { Link, StyledLink } from "frontend-common/components/ui";
 import { ArrowRight, ExternalLink, Home } from "lucide-react";
-import { MemoryRouter } from "react-router";
+import type { ReactNode } from "react";
+import { MemoryRouter, useInRouterContext } from "react-router";
+
+const RouterDecorator = ({ children }: { children: ReactNode }) => {
+  const alreadyInRouter = useInRouterContext();
+  if (alreadyInRouter) {
+    return <>{children}</>;
+  }
+
+  return <MemoryRouter>{children}</MemoryRouter>;
+};
 
 // Link Stories
 const linkMeta = {
@@ -9,9 +19,9 @@ const linkMeta = {
   component: Link,
   decorators: [
     (Story) => (
-      <MemoryRouter>
+      <RouterDecorator>
         <Story />
-      </MemoryRouter>
+      </RouterDecorator>
     ),
   ],
   parameters: {
@@ -61,26 +71,34 @@ export const LinkWithIcon: LinkStory = {
 export const styledLinkMeta = {
   title: "UI/StyledLink",
   component: StyledLink,
-  decorators: [
-    (Story) => (
-      <MemoryRouter>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
   parameters: {
     layout: "centered",
   },
   tags: ["autodocs"],
   argTypes: {
+    children: {
+      control: "text",
+      description: "The content of the link",
+    },
     variant: {
       control: "select",
-      options: ["default", "destructive", "outline", "secondary", "ghost", "link"],
-      description: "The visual style variant",
+      options: [
+        "default",
+        "destructive",
+        "muted",
+        "subtle",
+        "default-button",
+        "destructive-button",
+        "outline-button",
+        "secondary-button",
+        "ghost-button",
+      ],
+      description:
+        "The visual style variant (link styles have no padding, button styles have full button appearance)",
     },
     size: {
       control: "select",
-      options: ["default", "xs", "sm", "lg", "icon"],
+      options: ["default", "xs", "sm", "md", "lg", "xl"],
       description: "The size of the link",
     },
     external: {
@@ -100,35 +118,19 @@ export const DefaultStyledLink: StyledLinkStory = {
   },
 };
 
-export const OutlineStyledLink: StyledLinkStory = {
-  args: {
-    to: "/settings",
-    children: "Settings",
-    variant: "outline",
-  },
-};
-
-export const SecondaryStyledLink: StyledLinkStory = {
-  args: {
-    to: "/profile",
-    children: "View Profile",
-    variant: "secondary",
-  },
-};
-
-export const GhostStyledLink: StyledLinkStory = {
-  args: {
-    to: "/help",
-    children: "Help",
-    variant: "ghost",
-  },
-};
-
-export const LinkVariant: StyledLinkStory = {
+export const MutedStyledLink: StyledLinkStory = {
   args: {
     to: "/about",
     children: "About Us",
-    variant: "link",
+    variant: "muted",
+  },
+};
+
+export const SubtleStyledLink: StyledLinkStory = {
+  args: {
+    to: "/learn-more",
+    children: "Learn More",
+    variant: "subtle",
   },
 };
 
@@ -137,6 +139,46 @@ export const DestructiveStyledLink: StyledLinkStory = {
     to: "/delete",
     children: "Delete Account",
     variant: "destructive",
+  },
+};
+
+export const DefaultButtonLink: StyledLinkStory = {
+  args: {
+    to: "/dashboard",
+    children: "Go to Dashboard",
+    variant: "default-button",
+  },
+};
+
+export const OutlineButtonLink: StyledLinkStory = {
+  args: {
+    to: "/settings",
+    children: "Settings",
+    variant: "outline-button",
+  },
+};
+
+export const SecondaryButtonLink: StyledLinkStory = {
+  args: {
+    to: "/profile",
+    children: "View Profile",
+    variant: "secondary-button",
+  },
+};
+
+export const GhostButtonLink: StyledLinkStory = {
+  args: {
+    to: "/help",
+    children: "Help",
+    variant: "ghost-button",
+  },
+};
+
+export const DestructiveButtonLink: StyledLinkStory = {
+  args: {
+    to: "/delete",
+    children: "Delete Account",
+    variant: "destructive-button",
   },
 };
 
@@ -164,9 +206,35 @@ export const ExtraSmallStyledLink: StyledLinkStory = {
   },
 };
 
+export const LinksInText: StyledLinkStory = {
+  render: () => (
+    <div className="max-w-md space-y-4">
+      <p className="text-sm">
+        This is a paragraph with a <StyledLink to="/terms">default link</StyledLink> and
+        a&nbsp;
+        <StyledLink to="/delete" variant="destructive">
+          destructive link
+        </StyledLink>
+        &nbsp; embedded within the text. Notice how they flow inline without padding.
+      </p>
+      <p className="text-sm">
+        You can also use{" "}
+        <StyledLink to="/muted" variant="muted">
+          muted links
+        </StyledLink>{" "}
+        or&nbsp;
+        <StyledLink to="/subtle" variant="subtle">
+          subtle links
+        </StyledLink>{" "}
+        for less emphasis.
+      </p>
+    </div>
+  ),
+};
+
 export const StyledLinkWithIcon: StyledLinkStory = {
   render: () => (
-    <StyledLink to="/home">
+    <StyledLink to="/home" variant="default-button">
       <Home className="h-4 w-4" />
       Go Home
     </StyledLink>
@@ -175,7 +243,7 @@ export const StyledLinkWithIcon: StyledLinkStory = {
 
 export const StyledLinkWithRightIcon: StyledLinkStory = {
   render: () => (
-    <StyledLink to="/next" variant="outline">
+    <StyledLink to="/next" variant="outline-button">
       Continue
       <ArrowRight className="h-4 w-4" />
     </StyledLink>
@@ -187,7 +255,7 @@ export const ExternalStyledLink: StyledLinkStory = {
     href: "https://github.com",
     external: true,
     children: "Visit GitHub",
-    variant: "outline",
+    variant: "outline-button",
     target: "_blank",
     rel: "noopener noreferrer",
   },
@@ -198,7 +266,7 @@ export const ExternalStyledLinkWithIcon: StyledLinkStory = {
     <StyledLink
       href="https://example.com"
       external
-      variant="secondary"
+      variant="secondary-button"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -210,38 +278,89 @@ export const ExternalStyledLinkWithIcon: StyledLinkStory = {
 
 export const AllVariants: StyledLinkStory = {
   render: () => (
-    <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap gap-4">
-        <StyledLink to="/default" variant="default">
-          Default
-        </StyledLink>
-        <StyledLink to="/destructive" variant="destructive">
-          Destructive
-        </StyledLink>
-        <StyledLink to="/outline" variant="outline">
-          Outline
-        </StyledLink>
-        <StyledLink to="/secondary" variant="secondary">
-          Secondary
-        </StyledLink>
-        <StyledLink to="/ghost" variant="ghost">
-          Ghost
-        </StyledLink>
-        <StyledLink to="/link" variant="link">
-          Link
-        </StyledLink>
+    <div className="flex flex-col gap-8">
+      <div>
+        <h3 className="text-sm font-semibold mb-3 text-muted-foreground">
+          Link Variants (inline, no padding)
+        </h3>
+        <div className="flex flex-wrap gap-4 items-center">
+          <StyledLink to="/default" variant="default">
+            Default
+          </StyledLink>
+          <StyledLink to="/destructive" variant="destructive">
+            Destructive
+          </StyledLink>
+          <StyledLink to="/muted" variant="muted">
+            Muted
+          </StyledLink>
+          <StyledLink to="/subtle" variant="subtle">
+            Subtle
+          </StyledLink>
+        </div>
       </div>
-      <div className="flex flex-wrap gap-4 items-center">
-        <StyledLink to="/xs" size="xs">
-          Extra Small
-        </StyledLink>
-        <StyledLink to="/sm" size="sm">
-          Small
-        </StyledLink>
-        <StyledLink to="/default">Default</StyledLink>
-        <StyledLink to="/lg" size="lg">
-          Large
-        </StyledLink>
+      <div>
+        <h3 className="text-sm font-semibold mb-3 text-muted-foreground">
+          Button Variants (full button appearance)
+        </h3>
+        <div className="flex flex-wrap gap-4">
+          <StyledLink to="/default" variant="default-button">
+            Default
+          </StyledLink>
+          <StyledLink to="/destructive" variant="destructive-button">
+            Destructive
+          </StyledLink>
+          <StyledLink to="/outline" variant="outline-button">
+            Outline
+          </StyledLink>
+          <StyledLink to="/secondary" variant="secondary-button">
+            Secondary
+          </StyledLink>
+          <StyledLink to="/ghost" variant="ghost-button">
+            Ghost
+          </StyledLink>
+        </div>
+      </div>
+      <div>
+        <h3 className="text-sm font-semibold mb-3 text-muted-foreground">
+          Sizes (button variants)
+        </h3>
+        <div className="flex flex-wrap gap-4 items-center">
+          <StyledLink to="/xs" variant="default-button" size="xs">
+            Extra Small
+          </StyledLink>
+          <StyledLink to="/sm" variant="default-button" size="sm">
+            Small
+          </StyledLink>
+          <StyledLink to="/default" variant="default-button" size="md">
+            Medium
+          </StyledLink>
+          <StyledLink to="/lg" variant="default-button" size="lg">
+            Large
+          </StyledLink>
+          <StyledLink to="/xl" variant="default-button" size="xl">
+            Extra Large
+          </StyledLink>
+        </div>
+      </div>
+      <div>
+        <h3 className="text-sm font-semibold mb-3 text-muted-foreground">
+          Sizes (link variants - text size only)
+        </h3>
+        <div className="flex flex-wrap gap-4 items-center">
+          <StyledLink to="/xs" size="xs">
+            Extra Small
+          </StyledLink>
+          <StyledLink to="/sm" size="sm">
+            Small
+          </StyledLink>
+          <StyledLink to="/default">Medium</StyledLink>
+          <StyledLink to="/lg" size="lg">
+            Large
+          </StyledLink>
+          <StyledLink to="/xl" size="xl">
+            Extra Large
+          </StyledLink>
+        </div>
       </div>
     </div>
   ),
@@ -255,14 +374,24 @@ export const CallToAction: StyledLinkStory = {
         Join thousands of developers already building with our platform.
       </p>
       <div className="flex gap-4">
-        <StyledLink to="/signup" size="lg">
+        <StyledLink to="/signup" variant="default-button" size="lg">
           Sign Up Free
           <ArrowRight className="h-4 w-4" />
         </StyledLink>
-        <StyledLink to="/demo" variant="outline" size="lg">
+        <StyledLink to="/demo" variant="outline-button" size="lg">
           Watch Demo
         </StyledLink>
       </div>
+      <p className="text-xs text-muted-foreground">
+        By signing up, you agree to our{" "}
+        <StyledLink to="/terms" variant="muted">
+          Terms of Service
+        </StyledLink>{" "}
+        and{" "}
+        <StyledLink to="/privacy" variant="muted">
+          Privacy Policy
+        </StyledLink>
+      </p>
     </div>
   ),
 };

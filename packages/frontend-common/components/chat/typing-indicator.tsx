@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import type { User } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
-import { UserAvatar } from "./user-avatar";
+import { UserAvatar } from "../ui/user-avatar";
 
 interface TypingIndicatorProps {
   users: User[];

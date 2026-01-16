@@ -5,10 +5,10 @@ export const alertVariants = cva("relative rounded-2xl border shadow-sm grid gap
     variant: {
       default: "bg-card text-card-foreground border-border/70",
       primary: "bg-primary/10 text-primary border-primary/30",
-      success:
-        "bg-emerald-500/10 text-emerald-800 border-emerald-500/30 dark:text-emerald-200",
-      destructive: "bg-destructive/10 text-destructive border-destructive/30",
-      info: "bg-blue-500/10 text-blue-800 border-blue-500/30 dark:text-blue-200",
+      success: "bg-success-background text-success-foreground border-success-border",
+      destructive: "bg-destructive-background text-destructive border-destructive-border",
+      info: "bg-info-background text-info-foreground border-info-border",
+      warning: "bg-warning-background text-warning-foreground border-warning-border",
     },
     size: {
       xs: "px-3 py-2 text-xs",
