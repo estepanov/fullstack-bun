@@ -91,7 +91,6 @@ Future enhancements we're considering:
 
 - **E2E Testing:** Playwright test suite for end-to-end testing
 - **Advanced Auth Features:**
-  - Email OTP support (passwordless login)
   - SMS OTP support for two-factor authentication
   - Additional OAuth providers (Google, Discord, etc.)
 - **CI/CD Pipeline:**

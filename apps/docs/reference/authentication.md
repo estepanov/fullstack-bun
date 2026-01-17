@@ -12,7 +12,11 @@ This project uses [better-auth](https://www.better-auth.com/) for authentication
 - **Session Management** with automatic token refresh
 - **Type-Safe** client and server with end-to-end TypeScript support
 - **Password Reset Flow** for forgotten passwords
+- **Passkey (WebAuthn) Support** for passwordless authentication
+- **Magic Link** for email-based passwordless login
+- **Email OTP** for one-time password authentication
 - **Social Login** (GitHub, Google, etc.) - optional
+- **Admin Features** including user roles, bans, and impersonation
 - **Built-in Security** with battle-tested best practices
 
 ## Authentication Flow
@@ -236,6 +240,292 @@ export function SocialLogin() {
     </button>
   );
 }
+```
+
+## Passkey Authentication (WebAuthn)
+
+Passkeys provide a secure, passwordless authentication method using biometrics or security keys. This feature is enabled by default.
+
+### What are Passkeys?
+
+Passkeys use **WebAuthn** (Web Authentication API) to enable users to sign in using:
+- Fingerprint sensors
+- Face recognition
+- Hardware security keys (YubiKey, etc.)
+- Platform authenticators (Touch ID, Windows Hello, etc.)
+
+### Configuration
+
+Passkeys are enabled by default in `packages/shared/config/auth.ts`:
+
+```typescript
+passkey: {
+  enabled: true,
+}
+```
+
+To disable passkeys, set `enabled: false` and restart the API.
+
+### Registering a Passkey
+
+Users can register a passkey after signing up or from their account settings:
+
+```typescript
+import { passkey } from "@frontend/src/lib/auth-client";
+
+export function RegisterPasskey() {
+  const handleRegisterPasskey = async () => {
+    try {
+      await passkey.addPasskey({
+        name: "My Security Key", // Optional: name for the passkey
+      });
+
+      toast.success("Passkey registered successfully!");
+    } catch (error) {
+      console.error("Passkey registration failed:", error);
+      toast.error("Failed to register passkey");
+    }
+  };
+
+  return (
+    <button onClick={handleRegisterPasskey}>
+      Add Passkey
+    </button>
+  );
+}
+```
+
+### Signing In with Passkey
+
+```typescript
+import { signIn } from "@frontend/src/lib/auth-client";
+
+export function PasskeyLogin() {
+  const handlePasskeyLogin = async () => {
+    try {
+      await signIn.passkey();
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Passkey login failed:", error);
+      toast.error("Failed to sign in with passkey");
+    }
+  };
+
+  return (
+    <button onClick={handlePasskeyLogin}>
+      Sign in with Passkey
+    </button>
+  );
+}
+```
+
+### Listing User's Passkeys
+
+```typescript
+import { passkey } from "@frontend/src/lib/auth-client";
+
+export function PasskeyList() {
+  const { data: passkeys } = useQuery({
+    queryKey: ["passkeys"],
+    queryFn: async () => {
+      const response = await passkey.listPasskeys();
+      return response.data;
+    },
+  });
+
+  return (
+    <ul>
+      {passkeys?.map((pk) => (
+        <li key={pk.id}>
+          {pk.name || "Unnamed Passkey"} - Created: {new Date(pk.createdAt).toLocaleDateString()}
+        </li>
+      ))}
+    </ul>
+  );
+}
+```
+
+### Browser Support
+
+Passkeys are supported in:
+- Chrome/Edge 67+
+- Safari 13+
+- Firefox 60+
+- All modern mobile browsers
+
+The API automatically handles browser compatibility checks.
+
+## Magic Link Authentication
+
+Magic links allow users to sign in by clicking a link sent to their email - no password required.
+
+### Configuration
+
+Magic links are enabled by default in `packages/shared/config/auth.ts`:
+
+```typescript
+magicLink: {
+  enabled: true,
+}
+```
+
+### SMTP Setup
+
+Magic links require SMTP configuration (same as email verification):
+
+```txt
+SMTP_HOST="smtp.gmail.com"
+SMTP_PORT="587"
+SMTP_USER="your-email@gmail.com"
+SMTP_PASSWORD="your-app-password"
+SMTP_FROM="Fullstack Bun <noreply@example.com>"
+```
+
+### Requesting a Magic Link
+
+```typescript
+import { signIn } from "@frontend/src/lib/auth-client";
+
+export function MagicLinkLogin() {
+  const [email, setEmail] = useState("");
+  const [sent, setSent] = useState(false);
+
+  const handleSendMagicLink = async () => {
+    try {
+      await signIn.magicLink({
+        email,
+        callbackURL: "/dashboard",
+      });
+
+      setSent(true);
+      toast.success("Magic link sent! Check your email.");
+    } catch (error) {
+      console.error("Failed to send magic link:", error);
+      toast.error("Failed to send magic link");
+    }
+  };
+
+  return sent ? (
+    <div>Check your email for the magic link!</div>
+  ) : (
+    <form onSubmit={(e) => { e.preventDefault(); handleSendMagicLink(); }}>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Enter your email"
+      />
+      <button type="submit">Send Magic Link</button>
+    </form>
+  );
+}
+```
+
+### Development Mode
+
+If SMTP is not configured, the magic link URL will be logged to the console:
+
+```
+📧 Magic Link for user@example.com:
+http://localhost:5173/auth/magic-link/verify?token=abc123...
+```
+
+## Email OTP (One-Time Password)
+
+Email OTP sends a temporary code to the user's email for authentication.
+
+### How It Works
+
+1. User enters their email
+2. System sends a 6-digit OTP code via email
+3. User enters the code to complete authentication
+4. Code expires after a set time period
+
+### Requesting an OTP
+
+```typescript
+import { signIn } from "@frontend/src/lib/auth-client";
+
+export function EmailOTPLogin() {
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+  const [step, setStep] = useState<"email" | "otp">("email");
+
+  const handleRequestOTP = async () => {
+    try {
+      await signIn.emailOtp({
+        email,
+      });
+
+      setStep("otp");
+      toast.success("OTP sent to your email!");
+    } catch (error) {
+      console.error("Failed to send OTP:", error);
+      toast.error("Failed to send OTP");
+    }
+  };
+
+  const handleVerifyOTP = async () => {
+    try {
+      await signIn.emailOtp({
+        email,
+        otp,
+      });
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Invalid OTP:", error);
+      toast.error("Invalid or expired OTP");
+    }
+  };
+
+  return step === "email" ? (
+    <form onSubmit={(e) => { e.preventDefault(); handleRequestOTP(); }}>
+      <input
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="Enter your email"
+      />
+      <button type="submit">Send OTP</button>
+    </form>
+  ) : (
+    <form onSubmit={(e) => { e.preventDefault(); handleVerifyOTP(); }}>
+      <input
+        type="text"
+        value={otp}
+        onChange={(e) => setOtp(e.target.value)}
+        placeholder="Enter 6-digit code"
+        maxLength={6}
+      />
+      <button type="submit">Verify</button>
+    </form>
+  );
+}
+```
+
+### Security Features
+
+The email OTP implementation includes:
+- **IP tracking** - Shows the IP address in the email for security
+- **Location tracking** - Shows approximate location (if available)
+- **Timestamp** - Shows when the OTP was requested
+- **Expiration** - OTP codes expire after a set time period
+
+### Email Template
+
+OTP emails include security information:
+
+```
+Your verification code: 123456
+
+Security Information:
+IP Address: 192.168.1.1
+Location: San Francisco, CA, US
+Time: 2024-01-15T10:30:00Z
+
+If you didn't request this code, please ignore this email.
 ```
 
 ## Email Verification

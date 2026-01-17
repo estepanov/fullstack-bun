@@ -6,6 +6,11 @@ layout: doc
 
 Holds reference information on various features and infrastructure.
 
+## Authentication & Authorization
+
+- [Authentication](/reference/authentication.md) - Email/password, passkeys, magic links, email OTP, social login
+- [Admin Features](/reference/admin.md) - User management, roles, bans, impersonation
+
 ## Infrastructure
 
 - [Database (PostgreSQL + Drizzle)](/reference/database.md)
