@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { PAGINATION_CONFIG } from "shared/config/pagination";
+import { toast } from "sonner";
 
 export default function AdminBannedUsersPage() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,8 +26,23 @@ export default function AdminBannedUsersPage() {
   const unbanUser = useUnbanUserMutation();
   const { t, i18n } = useTranslation("admin");
 
-  const handleUnban = (userId: string) => {
-    unbanUser.mutate({ id: userId });
+  const handleUnban = (ban: { id: string; email: string }) => {
+    unbanUser.mutate(
+      { id: ban.id },
+      {
+        onSuccess: () => {
+          toast.success(t("users.unban_success"), {
+            description: t("users.unban_success_description", { user: ban.email }),
+          });
+        },
+        onError(error) {
+          console.error(error);
+          toast.error(t("users.unban_error"), {
+            description: t("users.unban_error_description", { user: ban.email }),
+          });
+        },
+      },
+    );
   };
 
   if (isPending) {
@@ -172,7 +188,7 @@ export default function AdminBannedUsersPage() {
                       <td className="px-4 py-3 text-sm">
                         <Button
                           type="button"
-                          onClick={() => handleUnban(ban.id)}
+                          onClick={() => handleUnban({ id: ban.id, email: ban.email })}
                           disabled={unbanUser.isPending}
                           variant="destructive"
                           size="xs"

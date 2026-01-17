@@ -20,8 +20,10 @@
     "description": "Manage user roles. Changes take effect immediately.",
     "loading": "Loading…",
     "load_error": "Failed to load users.",
-    "update_role_success": "{{user}} role updated to {{role}}.",
-    "update_role_error": "failed to update {{user}} role to {{role}}.",
+    "update_role_success": "Role updated",
+    "update_role_success_description": "Updated {{user}} to {{role}}.",
+    "update_role_error": "Failed to update role.",
+    "update_role_error_description": "Could not change {{user}} to {{role}}.",
     "link": {
       "view_banned": "View Banned Users"
     },
@@ -57,10 +59,14 @@
       "confirming_button": "Banning...",
       "cancel_button": "Cancel"
     },
-    "ban_error": "Failed to ban user {{user}}.",
-    "ban_success": "User {{user}} banned successfully.",
-    "unban_success": "User {{user}} unbanned successfully.",
-    "unban_error": "Failed to unban user {{user}}.",
+    "ban_success": "User banned",
+    "ban_success_description": "Banned {{user}}.",
+    "ban_error": "Failed to ban user",
+    "ban_error_description": "Could not ban {{user}}.",
+    "unban_success": "User unbanned",
+    "unban_success_description": "Unbanned {{user}}.",
+    "unban_error": "Failed to unban user",
+    "unban_error_description": "Could not unban {{user}}.",
     "pagination": {
       "showing": "Showing {{start}}-{{end}} of {{total}} users",
       "page_size": "Per page",

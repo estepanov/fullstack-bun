@@ -74,19 +74,19 @@ export default function AdminUsersPage() {
           setSelectedUser(null);
           setBanReason("");
           setDeleteMessages(false);
-          toast.success(
-            t("users.ban_success", {
+          toast.success(t("users.ban_success"), {
+            description: t("users.ban_success_description", {
               user: selectedUser.email,
             }),
-          );
+          });
         },
         onError(error) {
           console.error(error);
-          toast.error(
-            t("users.ban_error", {
+          toast.error(t("users.ban_error"), {
+            description: t("users.ban_error_description", {
               user: selectedUser.email,
             }),
-          );
+          });
         },
       },
     );
@@ -97,19 +97,19 @@ export default function AdminUsersPage() {
       { id: user.id },
       {
         onSuccess: () => {
-          toast.success(
-            t("users.unban_success", {
+          toast.success(t("users.unban_success"), {
+            description: t("users.unban_success_description", {
               user: user.email,
             }),
-          );
+          });
         },
         onError(error) {
           console.error(error);
-          toast.error(
-            t("users.unban_error", {
+          toast.error(t("users.unban_error"), {
+            description: t("users.unban_error_description", {
               user: user.email,
             }),
-          );
+          });
         },
       },
     );
@@ -286,21 +286,27 @@ export default function AdminUsersPage() {
                               { id: u.id, role: parsed.data },
                               {
                                 onSuccess(_, variables) {
-                                  toast.success(
-                                    t("users.update_role_success", {
-                                      role: variables.role,
-                                      user: u.email,
-                                    }),
-                                  );
+                                  toast.success(t("users.update_role_success"), {
+                                    description: t(
+                                      "users.update_role_success_description",
+                                      {
+                                        user: u.email,
+                                        role: variables.role,
+                                      },
+                                    ),
+                                  });
                                 },
                                 onError(error, variables) {
                                   console.error(error);
-                                  toast.error(
-                                    t("users.update_role_error", {
-                                      user: u.email,
-                                      role: variables.role,
-                                    }),
-                                  );
+                                  toast.error(t("users.update_role_error"), {
+                                    description: t(
+                                      "users.update_role_error_description",
+                                      {
+                                        user: u.email,
+                                        role: variables.role,
+                                      },
+                                    ),
+                                  });
                                 },
                               },
                             );
