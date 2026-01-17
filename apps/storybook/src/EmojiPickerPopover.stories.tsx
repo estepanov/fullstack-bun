@@ -1,12 +1,16 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { EmojiPickerPopover } from "frontend-common/components/ui/emoji-picker-popover";
 import { Button } from "frontend-common/components/ui/button";
+import { EmojiPickerPopover } from "frontend-common/components/ui/emoji-picker-popover";
 import { SmileIcon } from "lucide-react";
 import { useState } from "react";
 
 const meta = {
   title: "UI/EmojiPickerPopover",
   component: EmojiPickerPopover,
+  args: {
+    onEmojiSelect: () => {},
+    children: null,
+  },
   parameters: {
     layout: "centered",
   },
@@ -145,7 +149,7 @@ export const InMessageInput: Story = {
 
 export const MultipleEmojiSelection: Story = {
   render: () => {
-    const [emojis, setEmojis] = useState<string[]>([]);
+    const [emojis, setEmojis] = useState<Array<{ id: string; value: string }>>([]);
 
     return (
       <div className="w-full max-w-md space-y-4">
@@ -153,7 +157,7 @@ export const MultipleEmojiSelection: Story = {
           <p className="text-sm text-muted-foreground mb-2">Selected emojis:</p>
           <div className="text-2xl space-x-1">
             {emojis.length > 0 ? (
-              emojis.map((emoji, idx) => <span key={idx}>{emoji}</span>)
+              emojis.map((emoji) => <span key={emoji.id}>{emoji.value}</span>)
             ) : (
               <span className="text-sm text-muted-foreground">
                 Click the button to add emojis
@@ -162,6 +166,7 @@ export const MultipleEmojiSelection: Story = {
           </div>
           {emojis.length > 0 && (
             <button
+              type="button"
               onClick={() => setEmojis([])}
               className="mt-2 text-xs text-muted-foreground hover:text-foreground underline"
             >
@@ -169,7 +174,19 @@ export const MultipleEmojiSelection: Story = {
             </button>
           )}
         </div>
-        <EmojiPickerPopover onEmojiSelect={(emoji) => setEmojis((prev) => [...prev, emoji])}>
+        <EmojiPickerPopover
+          onEmojiSelect={(emoji) =>
+            setEmojis((prev) => [
+              ...prev,
+              {
+                id: crypto.randomUUID
+                  ? crypto.randomUUID()
+                  : `${Date.now()}-${Math.random().toString(16).slice(2)}`,
+                value: emoji,
+              },
+            ])
+          }
+        >
           <Button variant="outline">
             <SmileIcon className="size-4 mr-2" />
             Add Emoji ({emojis.length})
@@ -187,7 +204,10 @@ export const WithCustomTrigger: Story = {
     return (
       <div className="space-y-4">
         <EmojiPickerPopover onEmojiSelect={setSelectedEmoji}>
-          <button className="group flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-accent transition-colors">
+          <button
+            type="button"
+            className="group flex items-center gap-2 px-4 py-2 border rounded-lg hover:bg-accent transition-colors"
+          >
             <span className="text-2xl">{selectedEmoji}</span>
             <span className="text-sm text-muted-foreground group-hover:text-foreground">
               Click to change

@@ -9,7 +9,7 @@ import {
 import { LoaderIcon, SearchIcon } from "lucide-react";
 import type * as React from "react";
 
-import { cn } from "@frontend-common/lib/utils";
+import { cn } from "../../lib/utils";
 
 function EmojiPicker({
   className,
@@ -54,11 +54,7 @@ function EmojiPickerRow({ children, ...props }: EmojiPickerListRowProps) {
   );
 }
 
-function EmojiPickerEmoji({
-  emoji,
-  className,
-  ...props
-}: EmojiPickerListEmojiProps) {
+function EmojiPickerEmoji({ emoji, className, ...props }: EmojiPickerListEmojiProps) {
   return (
     <button
       {...props}
@@ -165,9 +161,4 @@ function EmojiPickerFooter({
   );
 }
 
-export {
-  EmojiPicker,
-  EmojiPickerSearch,
-  EmojiPickerContent,
-  EmojiPickerFooter,
-};
+export { EmojiPicker, EmojiPickerSearch, EmojiPickerContent, EmojiPickerFooter };

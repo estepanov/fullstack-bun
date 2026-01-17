@@ -121,7 +121,9 @@ export const Large: Story = {
 
 export const InteractiveDemo: Story = {
   render: () => {
-    const [selectedEmojis, setSelectedEmojis] = useState<string[]>([]);
+    const [selectedEmojis, setSelectedEmojis] = useState<
+      Array<{ id: string; emoji: string }>
+    >([]);
 
     return (
       <div className="space-y-4">
@@ -129,7 +131,7 @@ export const InteractiveDemo: Story = {
           <p className="text-sm text-muted-foreground mb-2">Your emoji collection:</p>
           <div className="text-2xl space-x-1">
             {selectedEmojis.length > 0 ? (
-              selectedEmojis.map((emoji, idx) => <span key={idx}>{emoji}</span>)
+              selectedEmojis.map(({ id, emoji }) => <span key={id}>{emoji}</span>)
             ) : (
               <span className="text-sm text-muted-foreground">
                 Click emojis below to add them
@@ -138,6 +140,7 @@ export const InteractiveDemo: Story = {
           </div>
           {selectedEmojis.length > 0 && (
             <button
+              type="button"
               onClick={() => setSelectedEmojis([])}
               className="mt-2 text-xs text-muted-foreground hover:text-foreground underline"
             >
@@ -147,7 +150,16 @@ export const InteractiveDemo: Story = {
         </div>
         <EmojiPicker
           onEmojiSelect={({ emoji }) => {
-            setSelectedEmojis((prev) => [...prev, emoji]);
+            setSelectedEmojis((prev) => [
+              ...prev,
+              {
+                id:
+                  typeof crypto.randomUUID === "function"
+                    ? crypto.randomUUID()
+                    : `${emoji}-${Date.now()}-${prev.length}`,
+                emoji,
+              },
+            ]);
           }}
           className="h-[342px] w-[338px]"
         >
