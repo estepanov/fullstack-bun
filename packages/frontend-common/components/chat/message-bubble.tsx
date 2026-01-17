@@ -1,4 +1,11 @@
-import { Ban, Check, CheckCheck, MoreVertical, PencilLine, Trash2 } from "lucide-react";
+import {
+  Ban,
+  Check,
+  CheckCheck,
+  MoreVertical,
+  PencilLine,
+  Trash2,
+} from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { Message } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
@@ -25,6 +32,41 @@ interface MessageBubbleProps {
 
 function formatTime(date: Date): string {
   return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+}
+
+const MAX_CONSECUTIVE_EMOJI = 4;
+
+function isEmojiOnly(text: string): boolean {
+  // Remove all whitespace for counting
+  const trimmed = text.trim();
+
+  if (!trimmed) {
+    return false;
+  }
+
+  // Regex to match complete emoji sequences including:
+  // - ZWJ sequences (like 😶‍🌫️, 👨‍👩‍👧‍👦)
+  // - Skin tone modifiers (👍🏽)
+  // - Variation selectors (️)
+  // - Regional indicators (flags 🇺🇸)
+  // This matches a single emoji followed by optional modifiers and ZWJ sequences
+  const emojiRegex =
+    /\p{Emoji}(?:\p{Emoji_Modifier}|\uFE0F|\u200D\p{Emoji}(?:\p{Emoji_Modifier}|\uFE0F)?)*/gu;
+
+  // Extract all emojis
+  const emojis = trimmed.match(emojiRegex);
+
+  // Check if the text contains only emojis (no other characters)
+  // and has 4 or fewer emojis
+  if (!emojis || emojis.length === 0 || emojis.length > MAX_CONSECUTIVE_EMOJI) {
+    return false;
+  }
+
+  // Join all matched emojis and compare to trimmed text
+  // If they're equal, the text contains only emojis
+  const allEmojis = emojis.join("");
+
+  return allEmojis === trimmed;
 }
 
 function MessageStatus({ status }: { status?: Message["status"] }) {
@@ -68,7 +110,12 @@ export function MessageBubble({
       {showAvatar && !isOwn && (
         <UserAvatar user={message.sender} size="sm" className="mt-1 shrink-0" />
       )}
-      <div className={cn("flex flex-col gap-1", isOwn ? "items-end" : "items-start")}>
+      <div
+        className={cn(
+          "flex flex-col gap-1",
+          isOwn ? "items-end" : "items-start",
+        )}
+      >
         {!isOwn && (
           <span className="text-xs font-medium text-muted-foreground px-1">
             {message.sender.name}
@@ -76,7 +123,8 @@ export function MessageBubble({
         )}
         <div
           className={cn(
-            "px-4 py-2.5 rounded-2xl text-sm leading-relaxed",
+            "px-4 py-2.5 rounded-2xl leading-relaxed",
+            isEmojiOnly(message.content) ? "text-2xl" : "text-sm",
             isOwn
               ? "bg-primary text-primary-foreground rounded-br-md"
               : "bg-card border border-border rounded-bl-md",
