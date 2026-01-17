@@ -20,7 +20,10 @@
     "description": "Gestiona los roles de usuario. Los cambios se aplican de inmediato.",
     "loading": "Cargando...",
     "load_error": "No se pudieron cargar los usuarios.",
+    "update_role_success": "Rol actualizado",
+    "update_role_success_description": "{{user}} ahora tiene el rol {{role}}.",
     "update_role_error": "No se pudo actualizar el rol.",
+    "update_role_error_description": "No se pudo cambiar a {{user}} al rol {{role}}.",
     "link": {
       "view_banned": "Ver usuarios bloqueados"
     },
@@ -56,7 +59,14 @@
       "confirming_button": "Bloqueando...",
       "cancel_button": "Cancelar"
     },
-    "ban_error": "No se pudo bloquear al usuario",
+    "ban_success": "Usuario bloqueado",
+    "ban_success_description": "Usuario {{user}} bloqueado correctamente.",
+    "ban_error": "No se pudo bloquear",
+    "ban_error_description": "No se pudo bloquear al usuario {{user}}.",
+    "unban_success": "Usuario desbloqueado",
+    "unban_success_description": "Usuario {{user}} desbloqueado correctamente.",
+    "unban_error": "No se pudo desbloquear",
+    "unban_error_description": "No se pudo desbloquear al usuario {{user}}.",
     "pagination": {
       "showing": "Mostrando {{start}}-{{end}} de {{total}} usuarios",
       "page_size": "Por página",

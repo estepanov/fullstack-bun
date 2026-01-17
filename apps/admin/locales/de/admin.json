@@ -20,7 +20,10 @@
     "description": "Benutzerrollen verwalten. Änderungen werden sofort wirksam.",
     "loading": "Wird geladen...",
     "load_error": "Benutzer konnten nicht geladen werden.",
+    "update_role_success": "Rolle aktualisiert",
+    "update_role_success_description": "{{user}} hat jetzt die Rolle {{role}}.",
     "update_role_error": "Rolle konnte nicht aktualisiert werden.",
+    "update_role_error_description": "Die Rolle von {{user}} konnte nicht auf {{role}} geändert werden.",
     "link": {
       "view_banned": "Gesperrte Benutzer anzeigen"
     },
@@ -56,7 +59,14 @@
       "confirming_button": "Sperren...",
       "cancel_button": "Abbrechen"
     },
-    "ban_error": "Benutzer konnte nicht gesperrt werden",
+    "ban_success": "Benutzer gesperrt",
+    "ban_success_description": "Benutzer {{user}} wurde gesperrt.",
+    "ban_error": "Sperren fehlgeschlagen",
+    "ban_error_description": "Benutzer {{user}} konnte nicht gesperrt werden.",
+    "unban_success": "Benutzer entsperrt",
+    "unban_success_description": "Benutzer {{user}} wurde entsperrt.",
+    "unban_error": "Entsperren fehlgeschlagen",
+    "unban_error_description": "Benutzer {{user}} konnte nicht entsperrt werden.",
     "pagination": {
       "showing": "Zeige {{start}}-{{end}} von {{total}} Benutzern",
       "page_size": "Pro Seite",

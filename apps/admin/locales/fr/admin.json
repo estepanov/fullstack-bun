@@ -20,7 +20,10 @@
     "description": "Gérez les rôles des utilisateurs. Les changements prennent effet immédiatement.",
     "loading": "Chargement...",
     "load_error": "Échec du chargement des utilisateurs.",
+    "update_role_success": "Rôle mis à jour",
+    "update_role_success_description": "{{user}} a maintenant le rôle {{role}}.",
     "update_role_error": "Échec de la mise à jour du rôle.",
+    "update_role_error_description": "Impossible de passer {{user}} au rôle {{role}}.",
     "link": {
       "view_banned": "Voir les utilisateurs bannis"
     },
@@ -56,7 +59,14 @@
       "confirming_button": "Bannissement...",
       "cancel_button": "Annuler"
     },
-    "ban_error": "Impossible de bannir l'utilisateur",
+    "ban_success": "Utilisateur banni",
+    "ban_success_description": "Utilisateur {{user}} banni avec succès.",
+    "ban_error": "Échec du bannissement",
+    "ban_error_description": "Impossible de bannir l'utilisateur {{user}}.",
+    "unban_success": "Utilisateur débanni",
+    "unban_success_description": "Utilisateur {{user}} débanni avec succès.",
+    "unban_error": "Échec du débannissement",
+    "unban_error_description": "Impossible de débannir l'utilisateur {{user}}.",
     "pagination": {
       "showing": "Affichage de {{start}}-{{end}} sur {{total}} utilisateurs",
       "page_size": "Par page",
