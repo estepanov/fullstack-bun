@@ -35,7 +35,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.3.11",
     "@types/bun": "latest",
     "@types/ioredis": "^5.0.0",
     "@types/nodemailer": "^7.0.4",

@@ -52,7 +52,7 @@
     "zod": "^4.2.1"
   },
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.3.11",
     "@happy-dom/global-registrator": "^17.4.4",
     "@react-router/dev": "^7.10.1",
     "@tailwindcss/postcss": "^4.1.18",
