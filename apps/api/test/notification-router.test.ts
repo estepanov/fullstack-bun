@@ -32,119 +32,8 @@ const adminUser = {
 
 const session = { id: "session-1" };
 
-// Mock notification service
-const mockNotificationService = {
-  getNotifications: mock((userId: string, query: unknown) =>
-    Promise.resolve({
-      notifications: [
-        {
-          id: "notif-1",
-          userId,
-          type: NotificationType.MESSAGE,
-          title: "Test Notification",
-          content: "Test content",
-          metadata: {},
-          read: false,
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-        },
-      ],
-      pagination: {
-        page: 1,
-        limit: 10,
-        totalCount: 1,
-        totalPages: 1,
-        hasNextPage: false,
-        hasPreviousPage: false,
-      },
-    }),
-  ),
-  getUnreadCount: mock(() => Promise.resolve(3)),
-  createNotification: mock((request: unknown) =>
-    Promise.resolve({
-      id: "new-notif",
-      userId: "user-1",
-      type: NotificationType.MESSAGE,
-      title: "New Notification",
-      content: "New content",
-      metadata: {},
-      read: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }),
-  ),
-  getNotificationById: mock((id: string) =>
-    Promise.resolve(
-      id === "existing-notif"
-        ? {
-            id: "existing-notif",
-            userId: "user-1",
-            type: NotificationType.MESSAGE,
-            title: "Existing",
-            content: "Existing content",
-            metadata: {},
-            read: false,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-          }
-        : null,
-    ),
-  ),
-  markNotificationRead: mock((id: string, read: boolean) =>
-    Promise.resolve({
-      id,
-      userId: "user-1",
-      type: NotificationType.MESSAGE,
-      title: "Updated",
-      content: "Updated content",
-      metadata: {},
-      read,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }),
-  ),
-  markAllRead: mock(() => Promise.resolve(5)),
-  deleteNotification: mock((id: string) =>
-    Promise.resolve({
-      id,
-      userId: "user-1",
-      type: NotificationType.MESSAGE,
-      title: "Deleted",
-      content: "Deleted content",
-      metadata: {},
-      read: false,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }),
-  ),
-  deleteAllNotifications: mock(() => Promise.resolve(10)),
-  getOrCreatePreferences: mock(() =>
-    Promise.resolve({
-      id: "pref-1",
-      userId: "user-1",
-      emailEnabled: true,
-      pushEnabled: false,
-      emailTypes: [NotificationType.FRIEND_REQUEST],
-      pushTypes: [NotificationType.MESSAGE],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }),
-  ),
-  updatePreferences: mock(() =>
-    Promise.resolve({
-      id: "pref-1",
-      userId: "user-1",
-      emailEnabled: false,
-      pushEnabled: true,
-      emailTypes: [],
-      pushTypes: [NotificationType.MESSAGE, NotificationType.MENTION],
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    }),
-  ),
-  registerDeliveryStrategy: mock(() => {}),
-  setUnreadCountBroadcast: mock(() => {}),
-};
+// Note: We use the real notification service with mocked DB/Redis underneath
+// This avoids mock pollution that affects other test files
 
 // Mock notification SSE manager
 const mockNotificationSSEManager = {
@@ -156,9 +45,11 @@ const mockNotificationSSEManager = {
   touchUser: mock(() => {}),
 };
 
-mock.module("../src/lib/notification-service", () => ({
-  notificationService: mockNotificationService,
-}));
+// Don't mock the notification service - use the real service with mocked DB/Redis
+// to avoid test pollution across test files
+// mock.module("../src/lib/notification-service", () => ({
+//   notificationService: mockNotificationService,
+// }));
 
 mock.module("../src/lib/notification-sse-manager", () => ({
   notificationSSEManager: mockNotificationSSEManager,
@@ -239,6 +130,27 @@ describe("notificationRouter", () => {
     test("returns unread count for authenticated user", async () => {
       authMockState.session = { user, session };
 
+      // Create some unread notifications
+      const { notificationService } = await import("../src/lib/notification-service");
+      await notificationService.createNotification({
+        userId: "user-1",
+        type: NotificationType.MESSAGE,
+        title: "Test 1",
+        content: "Content 1",
+      });
+      await notificationService.createNotification({
+        userId: "user-1",
+        type: NotificationType.MESSAGE,
+        title: "Test 2",
+        content: "Content 2",
+      });
+      await notificationService.createNotification({
+        userId: "user-1",
+        type: NotificationType.MESSAGE,
+        title: "Test 3",
+        content: "Content 3",
+      });
+
       const app = await buildApp();
       const res = await app.request("/notification/unread-count");
 
@@ -278,7 +190,9 @@ describe("notificationRouter", () => {
       const data = await res.json();
       expect(data.success).toBe(true);
       expect(data.notification).toBeDefined();
-      expect(mockNotificationService.createNotification).toHaveBeenCalled();
+      // Using real service now, so check the actual notification properties
+      expect(data.notification.userId).toBe("user-2");
+      expect(data.notification.title).toBe("New Notification");
     });
 
     test("returns 403 when not admin", async () => {
@@ -320,8 +234,17 @@ describe("notificationRouter", () => {
     test("marks notification as read", async () => {
       authMockState.session = { user, session };
 
+      // Create a notification first
+      const { notificationService } = await import("../src/lib/notification-service");
+      const notification = await notificationService.createNotification({
+        userId: "user-1",
+        type: NotificationType.MESSAGE,
+        title: "Test",
+        content: "Test content",
+      });
+
       const app = await buildApp();
-      const res = await app.request("/notification/existing-notif/read", {
+      const res = await app.request(`/notification/${notification.id}/read`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ read: true }),
@@ -366,6 +289,17 @@ describe("notificationRouter", () => {
     test("marks all notifications as read", async () => {
       authMockState.session = { user, session };
 
+      // Create 5 unread notifications
+      const { notificationService } = await import("../src/lib/notification-service");
+      for (let i = 0; i < 5; i++) {
+        await notificationService.createNotification({
+          userId: "user-1",
+          type: NotificationType.MESSAGE,
+          title: `Test ${i}`,
+          content: `Content ${i}`,
+        });
+      }
+
       const app = await buildApp();
       const res = await app.request("/notification/mark-all-read", {
         method: "PATCH",
@@ -397,15 +331,24 @@ describe("notificationRouter", () => {
     test("deletes notification", async () => {
       authMockState.session = { user, session };
 
+      // Create a notification first
+      const { notificationService } = await import("../src/lib/notification-service");
+      const notification = await notificationService.createNotification({
+        userId: "user-1",
+        type: NotificationType.MESSAGE,
+        title: "Test",
+        content: "Test content",
+      });
+
       const app = await buildApp();
-      const res = await app.request("/notification/existing-notif", {
+      const res = await app.request(`/notification/${notification.id}`, {
         method: "DELETE",
       });
 
       expect(res.status).toBe(200);
       const data = await res.json();
       expect(data.success).toBe(true);
-      expect(data.notificationId).toBe("existing-notif");
+      expect(data.notificationId).toBe(notification.id);
       expect(mockNotificationSSEManager.broadcastNotificationDeletion).toHaveBeenCalled();
       expect(mockNotificationSSEManager.broadcastUnreadCountChange).toHaveBeenCalled();
     });
@@ -436,6 +379,17 @@ describe("notificationRouter", () => {
   describe("DELETE /notification/delete-all", () => {
     test("deletes all user notifications", async () => {
       authMockState.session = { user, session };
+
+      // Create 10 notifications
+      const { notificationService } = await import("../src/lib/notification-service");
+      for (let i = 0; i < 10; i++) {
+        await notificationService.createNotification({
+          userId: "user-1",
+          type: NotificationType.MESSAGE,
+          title: `Test ${i}`,
+          content: `Content ${i}`,
+        });
+      }
 
       const app = await buildApp();
       const res = await app.request("/notification/delete-all", {
