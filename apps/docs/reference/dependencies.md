@@ -6,7 +6,7 @@ layout: doc
 
 You can find all heavily used dependencies we rely on here, along with the major version we are currently using, and a link to the tools documentation
 
-## Frontend
+## Frontend & Admin-Frontend
 
 | Dependency                                                    | Maj. Version  |
 | ------------------------------------------------------------- | ------------- |
@@ -20,7 +20,7 @@ You can find all heavily used dependencies we rely on here, along with the major
 | [Pino](https://getpino.io)                                    | 9             |
 | [i18next](https://www.i18next.com)                            | 25            |
 | [react-i18next](https://react.i18next.com)                    | 15            |
-| [biomejs](https://biomejs.dev)                                | 1             |
+| [biomejs](https://biomejs.dev)                                | 2             |
 
 
 ## API
@@ -31,5 +31,5 @@ You can find all heavily used dependencies we rely on here, along with the major
 | [Zod](https://zod.dev)                                        | 3             |
 | [Pino](https://getpino.io)                                    | 9             |
 | [UUID](https://github.com/uuidjs/uuid)                        | 11            |
-| [biomejs](https://biomejs.dev)                                | 1             |
+| [biomejs](https://biomejs.dev)                                | 2             |
 
