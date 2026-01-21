@@ -10,8 +10,8 @@
     "db:studio": "drizzle-kit studio",
     "format": "bun run biome format --write ./src",
     "lint": "bun run biome lint ./src",
-    "test": "bun test",
-    "test:coverage": "bun test --coverage"
+    "test": "bun test --preload ./test/mocks/env.ts --preload ./test/mocks/redis.ts --preload ./test/mocks/db.ts",
+    "test:coverage": "bun test --coverage --preload ./test/mocks/env.ts --preload ./test/mocks/redis.ts --preload ./test/mocks/db.ts"
   },
   "dependencies": {
     "@better-auth/passkey": "^1.4.9",
