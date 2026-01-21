@@ -4,6 +4,14 @@
   "mobile_nav_icon_label": "Basculer la navigation",
   "nav_links": {
     "second_page": "Deuxième page",
-    "sign_in": "Se connecter"
+    "sign_in": "Se connecter",
+    "dashboard": "Tableau de bord",
+    "admin": "Administration"
+  },
+  "user_menu": {
+    "open_label": "Ouvrir le menu utilisateur",
+    "sign_out": "Se déconnecter",
+    "fallback_name": "votre compte",
+    "avatar_alt": "Avatar utilisateur pour {{name}}"
   }
 }

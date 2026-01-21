@@ -147,6 +147,7 @@ const mockNotificationSSEManager = {
   broadcastNewNotification: mock(() => {}),
   broadcastNotificationUpdate: mock(() => {}),
   broadcastNotificationDeletion: mock(() => {}),
+  broadcastNotificationsCleared: mock(() => {}),
   broadcastUnreadCountChange: mock(() => {}),
   touchUser: mock(() => {}),
 };
@@ -433,6 +434,9 @@ describe("notificationRouter", () => {
       const data = await res.json();
       expect(data.success).toBe(true);
       expect(data.deletedCount).toBe(10);
+      expect(
+        mockNotificationSSEManager.broadcastNotificationsCleared,
+      ).toHaveBeenCalledWith("user-1", 10);
       expect(mockNotificationSSEManager.broadcastUnreadCountChange).toHaveBeenCalledWith(
         "user-1",
         0,

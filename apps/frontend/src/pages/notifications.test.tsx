@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, mock, test } from "bun:test";
 
 import { render, screen, waitFor } from "@testing-library/react";
 import { http, HttpResponse } from "msw";
@@ -6,8 +6,23 @@ import type { ReactNode } from "react";
 import { MemoryRouter } from "react-router";
 import { type Notification, NotificationType } from "shared/interfaces/notification";
 import { server } from "../../test/msw";
-import { RootAppProvider } from "../providers/RootAppProvider";
-import { NotificationsPageContent } from "./notifications";
+
+const mockUseNotifications = () => ({
+  notifications: [],
+  unreadCount: 0,
+  connectionStatus: "connected" as const,
+  error: null,
+});
+
+mock.module("../providers/NotificationProvider", () => ({
+  NotificationProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+  useNotifications: mockUseNotifications,
+}));
+
+mock.module("@frontend/providers/NotificationProvider", () => ({
+  NotificationProvider: ({ children }: { children: ReactNode }) => <>{children}</>,
+  useNotifications: mockUseNotifications,
+}));
 
 const createNotification = (overrides: Partial<Notification> = {}): Notification => ({
   id: "notification-1",
@@ -22,15 +37,30 @@ const createNotification = (overrides: Partial<Notification> = {}): Notification
   ...overrides,
 });
 
-const renderWithProviders = (ui: ReactNode, initialEntries = ["/notifications"]) =>
-  render(
+const loadNotificationsPage = async () => {
+  const [{ RootAppProvider }, { NotificationsPageContent }] = await Promise.all([
+    import("../providers/RootAppProvider"),
+    import("./notifications"),
+  ]);
+
+  return { RootAppProvider, NotificationsPageContent };
+};
+
+const renderWithProviders = async (
+  ui: ReactNode,
+  initialEntries = ["/notifications"],
+) => {
+  const { RootAppProvider } = await loadNotificationsPage();
+  return render(
     <MemoryRouter initialEntries={initialEntries}>
       <RootAppProvider>{ui}</RootAppProvider>
     </MemoryRouter>,
   );
+};
 
 describe("NotificationsPage", () => {
   test("renders notifications returned by the API", async () => {
+    const { NotificationsPageContent } = await loadNotificationsPage();
     const notifications = [
       createNotification(),
       createNotification({
@@ -66,13 +96,14 @@ describe("NotificationsPage", () => {
       }),
     );
 
-    renderWithProviders(<NotificationsPageContent />);
+    await renderWithProviders(<NotificationsPageContent />);
 
     expect(await screen.findByText("Security alert")).not.toBeNull();
     expect(await screen.findByText("Weekly digest")).not.toBeNull();
   });
 
   test("filters results using search params", async () => {
+    const { NotificationsPageContent } = await loadNotificationsPage();
     const notifications = [
       createNotification(),
       createNotification({
@@ -109,7 +140,7 @@ describe("NotificationsPage", () => {
       }),
     );
 
-    renderWithProviders(<NotificationsPageContent />, ["/notifications?q=alert"]);
+    await renderWithProviders(<NotificationsPageContent />, ["/notifications?q=alert"]);
 
     await waitFor(() => {
       expect(screen.getByText("Security alert")).not.toBeNull();
