@@ -17,6 +17,9 @@ hero:
       text: Demo Frontend App
       link: https://frontend.demo.fullstackbun.dev
     - theme: alt
+      text: Demo Admin App
+      link: https://admin-mock.demo.fullstackbun.dev
+    - theme: alt
       text: Demo Storybook App
       link: https://storybook.demo.fullstackbun.dev
 
