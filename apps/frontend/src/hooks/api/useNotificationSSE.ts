@@ -60,29 +60,18 @@ export const useNotificationSSE = (): UseNotificationSSEReturn => {
             console.log("[SSE] CONNECTED event - unreadCount:", data.unreadCount);
             setUnreadCount(data.unreadCount || 0);
 
-            // Only refetch notifications if:
-            // 1. We haven't fetched yet (shouldn't happen, but safety check)
-            // 2. We've been disconnected for more than 30 seconds (might have missed events)
-            const now = Date.now();
-            const timeSinceDisconnect =
-              lastDisconnectTimeRef.current > 0 ? now - lastDisconnectTimeRef.current : 0;
+            // Refetch notifications on any reconnection to avoid missed events.
             const shouldRefetch =
-              !hasInitiallyFetchedRef.current ||
-              (lastDisconnectTimeRef.current > 0 && timeSinceDisconnect > 30000);
+              !hasInitiallyFetchedRef.current || lastDisconnectTimeRef.current > 0;
 
             if (shouldRefetch) {
-              console.log(
-                "[SSE] Refetching notifications (time since disconnect:",
-                timeSinceDisconnect,
-                "ms)",
-              );
-              fetchInitialNotifications();
+              console.log("[SSE] Refetching notifications after reconnect");
+              void fetchInitialNotifications().finally(() => {
+                lastDisconnectTimeRef.current = 0;
+              });
             } else {
-              console.log(
-                "[SSE] Skipping refetch - quick reconnect (",
-                timeSinceDisconnect,
-                "ms)",
-              );
+              lastDisconnectTimeRef.current = 0;
+              console.log("[SSE] Skipping refetch - no reconnect detected");
             }
             break;
           }
@@ -114,6 +103,11 @@ export const useNotificationSSE = (): UseNotificationSSEReturn => {
             setNotifications((prev) =>
               prev.filter((notif) => notif.id !== data.notificationId),
             );
+            break;
+
+          case NotificationSSEEventType.NOTIFICATIONS_CLEARED:
+            setNotifications([]);
+            setUnreadCount(0);
             break;
 
           case NotificationSSEEventType.UNREAD_COUNT_CHANGED:
@@ -176,6 +170,10 @@ export const useNotificationSSE = (): UseNotificationSSEReturn => {
         },
         onError: (event: Event) => {
           console.error("Notification SSE error:", event);
+          if (!isManualCloseRef.current) {
+            lastDisconnectTimeRef.current = Date.now();
+            setConnectionStatus("error");
+          }
           // EventSource will automatically attempt to reconnect
           // We don't need to manage reconnection logic manually
         },

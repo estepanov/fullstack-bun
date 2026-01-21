@@ -19,6 +19,7 @@ type PubSubMessageType =
   | "new_notification"
   | "notification_updated"
   | "notification_deleted"
+  | "notifications_cleared"
   | "unread_count_changed";
 
 /**
@@ -184,6 +185,20 @@ export class NotificationPubSubManager {
       instanceId: INSTANCE_ID,
       timestamp: Date.now(),
       data: { userId, unreadCount },
+    };
+
+    await this.publish(CHANNELS.NOTIFICATIONS, pubsubMessage);
+  }
+
+  /**
+   * Publish notifications cleared to all instances
+   */
+  async publishNotificationsCleared(userId: string, deletedCount: number): Promise<void> {
+    const pubsubMessage: PubSubMessage = {
+      type: "notifications_cleared",
+      instanceId: INSTANCE_ID,
+      timestamp: Date.now(),
+      data: { userId, deletedCount },
     };
 
     await this.publish(CHANNELS.NOTIFICATIONS, pubsubMessage);
@@ -358,6 +373,23 @@ export class NotificationPubSubManager {
         }
 
         this.notificationManager.broadcastUnreadCountChangeLocal(userId, unreadCount);
+        break;
+      }
+
+      case "notifications_cleared": {
+        const { userId, deletedCount } = message.data as {
+          userId: string;
+          deletedCount: number;
+        };
+
+        // Deduplicate clear events (use timestamp-based key)
+        const dedupKey = `clear:${userId}:${message.timestamp}`;
+        if (this.isDuplicateMessage(dedupKey)) {
+          appLogger.debug({ userId }, "Skipping duplicate notifications cleared");
+          return;
+        }
+
+        this.notificationManager.broadcastNotificationsClearedLocal(userId, deletedCount);
         break;
       }
 

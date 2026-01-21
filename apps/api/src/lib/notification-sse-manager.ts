@@ -294,6 +294,34 @@ export class NotificationSSEManager {
   }
 
   /**
+   * Broadcast notifications cleared to user
+   */
+  broadcastNotificationsCleared(userId: string, deletedCount: number) {
+    // Use pub/sub for cross-instance broadcasting if enabled
+    if (env.ENABLE_DISTRIBUTED_CHAT && this.pubsubManager) {
+      this.pubsubManager.publishNotificationsCleared(userId, deletedCount);
+      // Also broadcast locally
+      this.broadcastNotificationsClearedLocal(userId, deletedCount);
+    } else {
+      // Fallback to local-only broadcast
+      this.broadcastNotificationsClearedLocal(userId, deletedCount);
+    }
+  }
+
+  /**
+   * Broadcast notifications cleared to local SSE clients only
+   * Called by pub/sub handler for cross-instance messages
+   */
+  broadcastNotificationsClearedLocal(userId: string, deletedCount: number) {
+    const payload = {
+      type: NotificationSSEEventType.NOTIFICATIONS_CLEARED,
+      deletedCount,
+    };
+
+    this.sendToUser(userId, NotificationSSEEventType.NOTIFICATIONS_CLEARED, payload);
+  }
+
+  /**
    * Broadcast unread count change to user
    */
   broadcastUnreadCountChange(userId: string, unreadCount: number) {

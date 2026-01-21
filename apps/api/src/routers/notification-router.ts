@@ -272,6 +272,9 @@ export const notificationRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareE
     try {
       const deletedCount = await notificationService.deleteAllNotifications(userId);
 
+      // Broadcast notifications cleared
+      notificationSSEManager.broadcastNotificationsCleared(userId, deletedCount);
+
       // Broadcast unread count change (now 0)
       notificationSSEManager.broadcastUnreadCountChange(userId, 0);
 

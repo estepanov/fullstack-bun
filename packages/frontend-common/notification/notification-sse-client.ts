@@ -64,6 +64,7 @@ export function createNotificationSSEClient(
       "new_notification",
       "notification_updated",
       "notification_deleted",
+      "notifications_cleared",
       "unread_count_changed",
       "keep_alive",
       "error",

@@ -217,6 +217,7 @@ export enum NotificationSSEEventType {
   NEW_NOTIFICATION = "new_notification",
   NOTIFICATION_UPDATED = "notification_updated",
   NOTIFICATION_DELETED = "notification_deleted",
+  NOTIFICATIONS_CLEARED = "notifications_cleared",
   UNREAD_COUNT_CHANGED = "unread_count_changed",
   KEEP_ALIVE = "keep_alive",
   ERROR = "error",
@@ -249,6 +250,11 @@ export const sseNotificationDeletedEventSchema = z.object({
   notificationId: z.string(),
 });
 
+export const sseNotificationsClearedEventSchema = z.object({
+  type: z.literal(NotificationSSEEventType.NOTIFICATIONS_CLEARED),
+  deletedCount: z.number(),
+});
+
 export const sseUnreadCountChangedEventSchema = z.object({
   type: z.literal(NotificationSSEEventType.UNREAD_COUNT_CHANGED),
   unreadCount: z.number(),
@@ -272,6 +278,9 @@ export type SSENotificationUpdatedEvent = z.infer<
 export type SSENotificationDeletedEvent = z.infer<
   typeof sseNotificationDeletedEventSchema
 >;
+export type SSENotificationsClearedEvent = z.infer<
+  typeof sseNotificationsClearedEventSchema
+>;
 export type SSEUnreadCountChangedEvent = z.infer<typeof sseUnreadCountChangedEventSchema>;
 export type SSEKeepAliveEvent = z.infer<typeof sseKeepAliveEventSchema>;
 export type SSEErrorEvent = z.infer<typeof sseErrorEventSchema>;
@@ -284,6 +293,7 @@ export type SSENotificationEvent =
   | SSENewNotificationEvent
   | SSENotificationUpdatedEvent
   | SSENotificationDeletedEvent
+  | SSENotificationsClearedEvent
   | SSEUnreadCountChangedEvent
   | SSEKeepAliveEvent
   | SSEErrorEvent;
