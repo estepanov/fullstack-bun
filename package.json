@@ -46,5 +46,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
   },
-  "trustedDependencies": ["@biomejs/biome", "esbuild", "msw"]
+  "trustedDependencies": ["@biomejs/biome", "esbuild", "msw"],
+  "msw": {
+    "workerDirectory": ["apps/admin/public"]
+  }
 }

@@ -307,6 +307,14 @@ VITE_API_BASE_URL="http://localhost:3001"
 VITE_FRONTEND_URL="http://localhost:5173"
 ```
 
+### `VITE_ADMIN_DEMO`
+
+**Optional.** Enables the _public_ admin demo mode/build with MSW + mocked auth/data. You likely will never need this.
+
+```txt
+VITE_ADMIN_DEMO="true"
+```
+
 ### `NODE_ENV`
 
 In local development `development` and for all static builds it should be `production`

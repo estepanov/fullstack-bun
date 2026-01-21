@@ -1,3 +1,4 @@
+import { PageContainer } from "@admin/components/PageContainer";
 import { useAdminSendNotificationMutation } from "@admin/hooks/api/useAdminSendNotificationMutation";
 import { useAdminUserSearchQuery } from "@admin/hooks/api/useAdminUserSearchQuery";
 import { type FormValidateOrFn, useForm } from "@tanstack/react-form";
@@ -342,7 +343,7 @@ export default function AdminSendNotificationsPage() {
   const selectedScope = form.state.values.targetScope;
 
   return (
-    <div className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-10">
+    <PageContainer className="space-y-6">
       <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
         <h1 className="text-3xl font-semibold tracking-tight text-foreground">
           {t("notifications.title")}
@@ -999,6 +1000,6 @@ export default function AdminSendNotificationsPage() {
           )}
         </Card>
       </form>
-    </div>
+    </PageContainer>
   );
 }

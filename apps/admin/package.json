@@ -5,10 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "react-router dev --force",
+    "dev:demo": "VITE_ADMIN_DEMO=true react-router dev --force",
     "build": "tsc -b && react-router build",
+    "build:demo": "VITE_ADMIN_DEMO=true bun run build",
     "format": "bun run biome format --write ./src",
     "lint": "bun run biome lint ./src",
     "preview": "vite preview",
+    "serve:demo": "bunx --bun serve ./build/client -l 4175",
     "test": "bun test --preload ../frontend/happydom.ts --preload ../frontend/testing-library.ts",
     "test:coverage": "bun test --coverage --preload ../frontend/happydom.ts --preload ../frontend/testing-library.ts"
   },
@@ -37,7 +40,8 @@
     "tailwindcss": "^4.1.18",
     "vite-tsconfig-paths": "^5.1.4",
     "zod": "^4.2.1",
-    "isbot": "^5"
+    "isbot": "^5",
+    "msw": "2.3.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
@@ -47,5 +51,8 @@
     "@types/react-dom": "^19.2.3",
     "typescript": "~5.7.2",
     "vite": "^6.2.0"
+  },
+  "msw": {
+    "workerDirectory": "./public"
   }
 }

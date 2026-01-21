@@ -1,8 +1,57 @@
 import { createAuthClientInstance } from "frontend-common/auth";
+import { demoSession, isDemoMode } from "./demo";
 
-export const authClient = createAuthClientInstance(
+const liveAuthClient = createAuthClientInstance(
   import.meta.env.VITE_API_BASE_URL || "http://localhost:3001",
 );
+
+const demoAuthClient = {
+  useSession: () => ({
+    data: demoSession,
+    isPending: false,
+    error: null,
+  }),
+  signIn: {
+    email: async () => ({
+      data: demoSession,
+      error: null,
+    }),
+  },
+  signUp: {
+    email: async () => ({
+      data: demoSession,
+      error: null,
+    }),
+  },
+  signOut: async () => ({
+    data: null,
+    error: null,
+  }),
+  resetPassword: async () => ({
+    data: null,
+    error: null,
+  }),
+  verifyEmail: async () => ({
+    data: null,
+    error: null,
+  }),
+  sendVerificationEmail: async () => ({
+    data: null,
+    error: null,
+  }),
+  admin: {
+    banUser: async () => ({
+      data: { success: true },
+      error: null,
+    }),
+    unbanUser: async () => ({
+      data: { success: true },
+      error: null,
+    }),
+  },
+} as unknown as typeof liveAuthClient;
+
+export const authClient = isDemoMode ? demoAuthClient : liveAuthClient;
 
 // Export hooks for easy use throughout the app
 export const {

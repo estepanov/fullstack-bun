@@ -3,12 +3,15 @@ import { useState } from "react";
 import { Outlet } from "react-router";
 import { AdminHeader } from "./AdminHeader";
 import { AdminSidebar } from "./AdminSidebar";
+import { DemoWelcomeModal } from "./DemoWelcomeModal";
+import { isDemoMode } from "@admin/lib/demo";
 
 export const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <div className="flex lg:flex-row flex-col min-h-dvh">
+      {isDemoMode ? <DemoWelcomeModal /> : null}
       <AdminSidebar className="hidden lg:flex" />
       {sidebarOpen && (
         <div className="fixed inset-0 z-40 lg:hidden">

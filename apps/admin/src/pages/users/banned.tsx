@@ -1,3 +1,4 @@
+import { PageContainer } from "@admin/components/PageContainer";
 import { useBannedUsersQuery } from "@admin/hooks/api/useBannedUsersQuery";
 import { useUnbanUserMutation } from "@admin/hooks/api/useUnbanUserMutation";
 import {
@@ -69,7 +70,7 @@ export default function AdminBannedUsersPage() {
   const pagination = data?.pagination;
 
   return (
-    <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
+    <PageContainer>
       <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -316,6 +317,6 @@ export default function AdminBannedUsersPage() {
           </Alert>
         )}
       </div>
-    </div>
+    </PageContainer>
   );
 }

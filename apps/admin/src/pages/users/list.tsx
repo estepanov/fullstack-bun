@@ -1,3 +1,4 @@
+import { PageContainer } from "@admin/components/PageContainer";
 import { useAdminUsersQuery } from "@admin/hooks/api/useAdminUsersQuery";
 import { useBanUserMutation } from "@admin/hooks/api/useBanUserMutation";
 import { useUnbanUserMutation } from "@admin/hooks/api/useUnbanUserMutation";
@@ -200,168 +201,91 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <>
-      <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
-        <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight text-foreground">
-                {t("users.title")}
-              </h1>
-              <p className="mt-2 text-sm text-muted-foreground">
-                {t("users.description")}
-              </p>
-            </div>
-            <Link
-              to="/users/banned"
-              className="w-full rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 sm:w-auto"
-            >
-              {t("users.link.view_banned")}
-            </Link>
+    <PageContainer>
+      <div className="rounded-2xl border border-border/70 bg-card/90 p-6 shadow-sm shadow-black/5 backdrop-blur">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+              {t("users.title")}
+            </h1>
+            <p className="mt-2 text-sm text-muted-foreground">{t("users.description")}</p>
           </div>
+          <Link
+            to="/users/banned"
+            className="w-full rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 sm:w-auto"
+          >
+            {t("users.link.view_banned")}
+          </Link>
+        </div>
 
-          <div className="mt-6 rounded-2xl border border-border/70 bg-muted/20 p-4">
-            <Label htmlFor="user-search" className="text-sm text-muted-foreground">
-              {t("users.search.label")}
-            </Label>
-            <div className="mt-2">
-              <Input
-                id="user-search"
-                placeholder={t("users.search.placeholder")}
-                value={searchInput}
-                onChange={(event) => setSearchInput(event.target.value)}
-              />
-            </div>
+        <div className="mt-6 rounded-2xl border border-border/70 bg-muted/20 p-4">
+          <Label htmlFor="user-search" className="text-sm text-muted-foreground">
+            {t("users.search.label")}
+          </Label>
+          <div className="mt-2">
+            <Input
+              id="user-search"
+              placeholder={t("users.search.placeholder")}
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+            />
           </div>
+        </div>
 
-          <div className="mt-6 overflow-x-auto">
-            <table className="min-w-full divide-y divide-border/70">
-              <thead className="bg-muted/70">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {t("users.table.user_header")}
-                  </th>
-                  <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {t("users.table.email_header")}
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {t("users.table.role_header")}
-                  </th>
-                  <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {t("users.table.status_header")}
-                  </th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-                    {t("users.table.actions_header")}
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border/70 bg-card/80">
-                {displayedUsers.map((u) => {
-                  const userIsBanned = isBannedUser(u);
-                  const userIsAdmin = u.role === UserRole.ADMIN;
-                  const userIsSelf = session?.user?.id === u.id;
-                  const banBlocked = userIsAdmin || userIsSelf;
+        <div className="mt-6 overflow-x-auto">
+          <table className="min-w-full divide-y divide-border/70">
+            <thead className="bg-muted/70">
+              <tr>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {t("users.table.user_header")}
+                </th>
+                <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {t("users.table.email_header")}
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {t("users.table.role_header")}
+                </th>
+                <th className="hidden lg:table-cell px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {t("users.table.status_header")}
+                </th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                  {t("users.table.actions_header")}
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/70 bg-card/80">
+              {displayedUsers.map((u) => {
+                const userIsBanned = isBannedUser(u);
+                const userIsAdmin = u.role === UserRole.ADMIN;
+                const userIsSelf = session?.user?.id === u.id;
+                const banBlocked = userIsAdmin || userIsSelf;
 
-                  return (
-                    <tr key={u.id} id={`user-row-${u.id}`}>
-                      <td className="px-4 py-4 text-sm text-foreground">
+                return (
+                  <tr key={u.id} id={`user-row-${u.id}`}>
+                    <td className="px-4 py-4 text-sm text-foreground">
+                      <div className="flex items-center gap-2">
+                        {u.name ? (
+                          <span className="font-medium">{u.name}</span>
+                        ) : (
+                          <span className="text-muted-foreground/70 italic">
+                            {t("users.table.name_not_provided")}
+                          </span>
+                        )}
+                        {userIsSelf && (
+                          <Badge variant="info" size="sm">
+                            {t("users.table.you_badge")}
+                          </Badge>
+                        )}
+                      </div>
+                      <div className="mt-1 text-xs text-muted-foreground md:hidden">
                         <div className="flex items-center gap-2">
-                          {u.name ? (
-                            <span className="font-medium">{u.name}</span>
-                          ) : (
-                            <span className="text-muted-foreground/70 italic">
-                              {t("users.table.name_not_provided")}
-                            </span>
-                          )}
-                          {userIsSelf && (
-                            <Badge variant="info" size="sm">
-                              {t("users.table.you_badge")}
-                            </Badge>
-                          )}
-                        </div>
-                        <div className="mt-1 text-xs text-muted-foreground md:hidden">
-                          <div className="flex items-center gap-2">
-                            <span className="text-foreground">{u.email}</span>
-                            {typeof u.emailVerified === "boolean" && (
-                              <EmailStatusBadge verified={u.emailVerified} size="xs" />
-                            )}
-                          </div>
-                        </div>
-                        <div className="mt-2 flex flex-wrap gap-2 lg:hidden">
-                          {userIsBanned ? (
-                            <Badge variant="destructive">
-                              {t("users.table.status_banned")}
-                            </Badge>
-                          ) : (
-                            <Badge variant="success">
-                              {t("users.table.status_active")}
-                            </Badge>
-                          )}
-                        </div>
-                      </td>
-                      <td className="hidden md:table-cell px-4 py-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2">
-                          <span>{u.email}</span>
+                          <span className="text-foreground">{u.email}</span>
                           {typeof u.emailVerified === "boolean" && (
                             <EmailStatusBadge verified={u.emailVerified} size="xs" />
                           )}
                         </div>
-                      </td>
-                      <td className="px-4 py-4 text-sm">
-                        <Select
-                          value={u.role}
-                          disabled={updateRole.isPending}
-                          onValueChange={(value) => {
-                            const parsed = userRoleSchema.safeParse(value);
-                            if (!parsed.success) return;
-                            updateRole.mutate(
-                              { id: u.id, role: parsed.data },
-                              {
-                                onSuccess(_, variables) {
-                                  toast.success(t("users.update_role_success"), {
-                                    description: t(
-                                      "users.update_role_success_description",
-                                      {
-                                        user: u.email,
-                                        role: variables.role,
-                                      },
-                                    ),
-                                  });
-                                },
-                                onError(error, variables) {
-                                  console.error(error);
-                                  toast.error(t("users.update_role_error"), {
-                                    description: t(
-                                      "users.update_role_error_description",
-                                      {
-                                        user: u.email,
-                                        role: variables.role,
-                                      },
-                                    ),
-                                  });
-                                },
-                              },
-                            );
-                          }}
-                        >
-                          <SelectTrigger
-                            className="w-full sm:w-auto"
-                            variant="soft"
-                            size="md"
-                            aria-label={t("users.table.role_header")}
-                          >
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {Object.values(UserRole).map((role) => (
-                              <SelectItem key={role} value={role}>
-                                {role}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </td>
-                      <td className="hidden lg:table-cell px-4 py-4 text-sm">
+                      </div>
+                      <div className="mt-2 flex flex-wrap gap-2 lg:hidden">
                         {userIsBanned ? (
                           <Badge variant="destructive">
                             {t("users.table.status_banned")}
@@ -371,161 +295,229 @@ export default function AdminUsersPage() {
                             {t("users.table.status_active")}
                           </Badge>
                         )}
-                      </td>
-                      <td className="px-4 py-4 text-sm">
-                        {userIsBanned ? (
-                          <Button
-                            type="button"
-                            onClick={() => handleUnban(u)}
-                            disabled={unbanUser.isPending}
-                            size="xs"
-                            variant="destructive"
-                            className="w-full sm:w-auto"
-                          >
-                            {t("users.actions.unban")}
-                          </Button>
-                        ) : banBlocked ? null : (
-                          <Button
-                            type="button"
-                            onClick={() => handleBanClick(u)}
-                            disabled={banUser.isPending}
-                            variant="destructive"
-                            size="xs"
-                            className="w-full sm:w-auto"
-                          >
-                            {t("users.actions.ban_user")}
-                          </Button>
+                      </div>
+                    </td>
+                    <td className="hidden md:table-cell px-4 py-4 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <span>{u.email}</span>
+                        {typeof u.emailVerified === "boolean" && (
+                          <EmailStatusBadge verified={u.emailVerified} size="xs" />
                         )}
-                      </td>
-                    </tr>
-                  );
-                })}
-                {isFetching && searchQueryEnabled ? (
-                  <tr>
-                    <td className="px-4 py-6 text-sm text-muted-foreground" colSpan={5}>
-                      {t("users.search.loading")}
+                      </div>
                     </td>
-                  </tr>
-                ) : displayedUsers.length === 0 ? (
-                  <tr>
-                    <td className="px-4 py-6 text-sm text-muted-foreground" colSpan={5}>
-                      {searchQueryEnabled
-                        ? t("users.search.empty")
-                        : t("users.table.no_users")}
-                    </td>
-                  </tr>
-                ) : null}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination Controls */}
-          {pagination && (
-            <div className="mt-6 border-t border-border/70 pt-4">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="text-sm text-muted-foreground">
-                    {t("users.pagination.showing", {
-                      start: (pagination.page - 1) * pagination.limit + 1,
-                      end: Math.min(
-                        pagination.page * pagination.limit,
-                        pagination.totalCount,
-                      ),
-                      total: pagination.totalCount,
-                    })}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Label
-                      htmlFor="page-size"
-                      className="text-sm text-muted-foreground whitespace-nowrap"
-                    >
-                      {t("users.pagination.page_size")}:
-                    </Label>
-                    <Select
-                      value={String(pageSize)}
-                      onValueChange={(value) => {
-                        setPageSize(Number(value));
-                        setCurrentPage(1);
-                      }}
-                    >
-                      <SelectTrigger
-                        id="page-size"
-                        variant="subtle"
-                        size="sm"
-                        aria-label={t("users.pagination.page_size")}
+                    <td className="px-4 py-4 text-sm">
+                      <Select
+                        value={u.role}
+                        disabled={updateRole.isPending}
+                        onValueChange={(value) => {
+                          const parsed = userRoleSchema.safeParse(value);
+                          if (!parsed.success) return;
+                          updateRole.mutate(
+                            { id: u.id, role: parsed.data },
+                            {
+                              onSuccess(_, variables) {
+                                toast.success(t("users.update_role_success"), {
+                                  description: t(
+                                    "users.update_role_success_description",
+                                    {
+                                      user: u.email,
+                                      role: variables.role,
+                                    },
+                                  ),
+                                });
+                              },
+                              onError(error, variables) {
+                                console.error(error);
+                                toast.error(t("users.update_role_error"), {
+                                  description: t("users.update_role_error_description", {
+                                    user: u.email,
+                                    role: variables.role,
+                                  }),
+                                });
+                              },
+                            },
+                          );
+                        }}
                       >
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
-                          <SelectItem key={size} value={String(size)}>
-                            {size}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                {pagination.totalPages > 1 && (
-                  <div className="flex items-center gap-2">
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                      disabled={!pagination.hasPreviousPage || isPending}
-                    >
-                      {t("users.pagination.previous")}
-                    </Button>
-                    <div className="flex items-center gap-1">
-                      {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
-                        .filter((page) => {
-                          // Show first page, last page, current page, and pages around current
-                          return (
-                            page === 1 ||
-                            page === pagination.totalPages ||
-                            Math.abs(page - pagination.page) <= 1
-                          );
-                        })
-                        .map((page, idx, arr) => {
-                          // Add ellipsis if there's a gap
-                          const showEllipsisBefore = idx > 0 && page - arr[idx - 1] > 1;
-                          return (
-                            <div key={page} className="flex items-center gap-1">
-                              {showEllipsisBefore && (
-                                <span className="px-2 text-muted-foreground">...</span>
-                              )}
-                              <Button
-                                type="button"
-                                variant={page === pagination.page ? "default" : "ghost"}
-                                size="sm"
-                                onClick={() => setCurrentPage(page)}
-                                disabled={isPending}
-                                className="min-w-10"
-                              >
-                                {page}
-                              </Button>
-                            </div>
-                          );
-                        })}
-                    </div>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))
-                      }
-                      disabled={!pagination.hasNextPage || isPending}
-                    >
-                      {t("users.pagination.next")}
-                    </Button>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
+                        <SelectTrigger
+                          className="w-full sm:w-auto"
+                          variant="soft"
+                          size="md"
+                          aria-label={t("users.table.role_header")}
+                        >
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Object.values(UserRole).map((role) => (
+                            <SelectItem key={role} value={role}>
+                              {role}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </td>
+                    <td className="hidden lg:table-cell px-4 py-4 text-sm">
+                      {userIsBanned ? (
+                        <Badge variant="destructive">
+                          {t("users.table.status_banned")}
+                        </Badge>
+                      ) : (
+                        <Badge variant="success">{t("users.table.status_active")}</Badge>
+                      )}
+                    </td>
+                    <td className="px-4 py-4 text-sm">
+                      {userIsBanned ? (
+                        <Button
+                          type="button"
+                          onClick={() => handleUnban(u)}
+                          disabled={unbanUser.isPending}
+                          size="xs"
+                          variant="destructive"
+                          className="w-full sm:w-auto"
+                        >
+                          {t("users.actions.unban")}
+                        </Button>
+                      ) : banBlocked ? null : (
+                        <Button
+                          type="button"
+                          onClick={() => handleBanClick(u)}
+                          disabled={banUser.isPending}
+                          variant="destructive"
+                          size="xs"
+                          className="w-full sm:w-auto"
+                        >
+                          {t("users.actions.ban_user")}
+                        </Button>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
+              {isFetching && searchQueryEnabled ? (
+                <tr>
+                  <td className="px-4 py-6 text-sm text-muted-foreground" colSpan={5}>
+                    {t("users.search.loading")}
+                  </td>
+                </tr>
+              ) : displayedUsers.length === 0 ? (
+                <tr>
+                  <td className="px-4 py-6 text-sm text-muted-foreground" colSpan={5}>
+                    {searchQueryEnabled
+                      ? t("users.search.empty")
+                      : t("users.table.no_users")}
+                  </td>
+                </tr>
+              ) : null}
+            </tbody>
+          </table>
         </div>
+
+        {/* Pagination Controls */}
+        {pagination && (
+          <div className="mt-6 border-t border-border/70 pt-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <div className="text-sm text-muted-foreground">
+                  {t("users.pagination.showing", {
+                    start: (pagination.page - 1) * pagination.limit + 1,
+                    end: Math.min(
+                      pagination.page * pagination.limit,
+                      pagination.totalCount,
+                    ),
+                    total: pagination.totalCount,
+                  })}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Label
+                    htmlFor="page-size"
+                    className="text-sm text-muted-foreground whitespace-nowrap"
+                  >
+                    {t("users.pagination.page_size")}:
+                  </Label>
+                  <Select
+                    value={String(pageSize)}
+                    onValueChange={(value) => {
+                      setPageSize(Number(value));
+                      setCurrentPage(1);
+                    }}
+                  >
+                    <SelectTrigger
+                      id="page-size"
+                      variant="subtle"
+                      size="sm"
+                      aria-label={t("users.pagination.page_size")}
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {PAGINATION_CONFIG.pageSizeOptions.map((size) => (
+                        <SelectItem key={size} value={String(size)}>
+                          {size}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              {pagination.totalPages > 1 && (
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={!pagination.hasPreviousPage || isPending}
+                  >
+                    {t("users.pagination.previous")}
+                  </Button>
+                  <div className="flex items-center gap-1">
+                    {Array.from({ length: pagination.totalPages }, (_, i) => i + 1)
+                      .filter((page) => {
+                        // Show first page, last page, current page, and pages around current
+                        return (
+                          page === 1 ||
+                          page === pagination.totalPages ||
+                          Math.abs(page - pagination.page) <= 1
+                        );
+                      })
+                      .map((page, idx, arr) => {
+                        // Add ellipsis if there's a gap
+                        const showEllipsisBefore = idx > 0 && page - arr[idx - 1] > 1;
+                        return (
+                          <div key={page} className="flex items-center gap-1">
+                            {showEllipsisBefore && (
+                              <span className="px-2 text-muted-foreground">...</span>
+                            )}
+                            <Button
+                              type="button"
+                              variant={page === pagination.page ? "default" : "ghost"}
+                              size="sm"
+                              onClick={() => setCurrentPage(page)}
+                              disabled={isPending}
+                              className="min-w-10"
+                            >
+                              {page}
+                            </Button>
+                          </div>
+                        );
+                      })}
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))
+                    }
+                    disabled={!pagination.hasNextPage || isPending}
+                  >
+                    {t("users.pagination.next")}
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Ban Confirmation Dialog */}
@@ -623,6 +615,6 @@ export default function AdminUsersPage() {
           </div>
         </div>
       )}
-    </>
+    </PageContainer>
   );
 }
