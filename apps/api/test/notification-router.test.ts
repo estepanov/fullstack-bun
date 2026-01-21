@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
+import "./mocks/redis";
+import "./mocks/db";
 import { Hono } from "hono";
 import { NotificationType } from "shared/interfaces/notification";
 import type { LoggerMiddlewareEnv } from "../src/middlewares/logger";

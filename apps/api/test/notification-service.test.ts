@@ -1,4 +1,6 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, mock, test } from "bun:test";
+import "./mocks/redis";
+import "./mocks/db";
 import { eq } from "drizzle-orm";
 import { NotificationActionType, NotificationType } from "shared/interfaces/notification";
 import { clearDbStores } from "./mocks/db";
