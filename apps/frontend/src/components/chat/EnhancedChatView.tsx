@@ -53,6 +53,16 @@ export const EnhancedChatView = ({
   className,
 }: EnhancedChatViewProps) => {
   const { t } = useTranslation("messages");
+  const chatHeaderCopy = {
+    backButtonLabel: t("chat_header.back_button"),
+    moreOptionsLabel: t("chat_header.more_options"),
+    onlineLabel: t("chat_header.online"),
+    offlineLabel: t("chat_header.offline"),
+    membersLabel: (count: number) => t("chat_header.members", { count }),
+    membersOnlineLabel: (count: number, online: number) =>
+      t("chat_header.members_online", { count, online }),
+    groupFallbackName: t("chat_header.group_fallback_name"),
+  };
   const hasMessages = messages.length > 0;
   const isLoading = connectionStatus === "connecting" && !hasMessages;
   const isEmpty = connectionStatus === "connected" && !hasMessages && !error;
@@ -63,6 +73,7 @@ export const EnhancedChatView = ({
       <ChatHeader
         conversation={conversation}
         currentUserId={currentUserId}
+        copy={chatHeaderCopy}
         onBack={onBack}
       />
 

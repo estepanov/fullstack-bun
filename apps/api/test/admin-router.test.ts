@@ -25,31 +25,43 @@ const state = {
 dbMockState.totalCount = 2;
 dbMockState.bannedCount = 1;
 dbMockState.users = [
-    {
-      id: "user-1",
-      name: "Alex",
-      email: "alex@example.com",
-      emailVerified: true,
-      image: null,
-      role: "user",
-      banned: false,
-      banReason: null,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ];
+  {
+    id: "user-1",
+    name: "Alex",
+    email: "alex@example.com",
+    emailVerified: true,
+    image: null,
+    role: "user",
+    banned: false,
+    banReason: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+  {
+    id: "admin-2",
+    name: "Morgan",
+    email: "morgan@example.com",
+    emailVerified: true,
+    image: null,
+    role: "admin",
+    banned: false,
+    banReason: null,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
 dbMockState.bannedUsers = [
-    {
-      id: "user-2",
-      name: "Taylor",
-      email: "taylor@example.com",
-      image: null,
-      banned: true,
-      banReason: "abuse",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ];
+  {
+    id: "user-2",
+    name: "Taylor",
+    email: "taylor@example.com",
+    image: null,
+    banned: true,
+    banReason: "abuse",
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
+];
 dbMockState.updatedUser = {
   id: "user-1",
   name: "Alex",
@@ -113,7 +125,7 @@ describe("adminRouter", () => {
 
     expect(data.success).toBe(true);
     expect(data.users.length).toBe(dbMockState.users.length);
-    expect(data.pagination.totalCount).toBe(dbMockState.totalCount);
+    expect(data.pagination.totalCount).toBe(dbMockState.users.length);
   });
 
   test("lists banned users", async () => {
@@ -199,6 +211,87 @@ describe("adminRouter", () => {
     });
 
     expect(res.status).toBe(404);
+  });
+
+  test("searches users by name or email", async () => {
+    authMockState.session = {
+      user: {
+        id: "admin-1",
+        name: "Admin",
+        username: "admin",
+        email: "admin@example.com",
+        emailVerified: true,
+        role: "admin",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      session: { id: "session-1" },
+    };
+
+    const app = await buildApp();
+    const res = await app.request("/admin/users/search?q=alex&limit=10");
+
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.success).toBe(true);
+    expect(data.users.length).toBe(1);
+    expect(data.users[0].email).toBe("alex@example.com");
+  });
+
+  test("sends notifications to multiple users", async () => {
+    authMockState.session = {
+      user: {
+        id: "admin-1",
+        name: "Admin",
+        username: "admin",
+        email: "admin@example.com",
+        emailVerified: true,
+        role: "admin",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      },
+      session: { id: "session-1" },
+    };
+
+    const { notificationService } = await import("../src/lib/notification-service");
+    const createSpy = spyOn(notificationService, "createNotification").mockImplementation(
+      async (request) =>
+        ({
+          id: `notification-${request.userId}`,
+          userId: request.userId,
+          type: "announcement",
+          title: "Test",
+          content: "Test content",
+          metadata: {},
+          read: false,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        }) as never,
+    );
+
+    const app = await buildApp();
+    const res = await app.request("/admin/notifications/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        target: {
+          scope: "users",
+          identifiers: ["alex@example.com", "morgan@example.com"],
+        },
+        notification: {
+          type: "announcement",
+          title: "Hello",
+          content: "Testing",
+        },
+      }),
+    });
+
+    expect(res.status).toBe(200);
+    const data = await res.json();
+    expect(data.success).toBe(true);
+    expect(data.targetCount).toBe(2);
+    expect(data.createdCount).toBe(2);
+    createSpy.mockRestore();
   });
 
   test("deletes all messages for a user", async () => {

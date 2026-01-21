@@ -1,23 +1,21 @@
-import { useTranslation } from "react-i18next";
 import type { User } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
 import { UserAvatar } from "../ui/user-avatar";
 
+export interface TypingIndicatorCopy {
+  typingText: (users: User[]) => string;
+}
+
 interface TypingIndicatorProps {
   users: User[];
+  copy: TypingIndicatorCopy;
   className?: string;
 }
 
-export function TypingIndicator({ users, className }: TypingIndicatorProps) {
-  const { t } = useTranslation("messages");
+export function TypingIndicator({ users, copy, className }: TypingIndicatorProps) {
   if (users.length === 0) return null;
 
-  const typingText =
-    users.length === 1
-      ? t("typing.single", { name: users[0].name })
-      : users.length === 2
-        ? t("typing.two", { first: users[0].name, second: users[1].name })
-        : t("typing.many", { name: users[0].name, count: users.length - 1 });
+  const typingText = copy.typingText(users);
 
   return (
     <div className={cn("flex items-center gap-2.5", className)}>

@@ -33,6 +33,7 @@ const initPromise = i18nInstance
       "header",
       "landing_page",
       "messages",
+      "notifications",
       "second_page",
     ],
     preload: ["en"], // Always preload English as fallback

@@ -1,5 +1,4 @@
 import { Ban, MoreVertical, PencilLine, Trash2 } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import type { Conversation, Message, User } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
 import {
@@ -11,8 +10,22 @@ import {
 } from "../ui";
 import { UserAvatar } from "../ui/user-avatar";
 
+export interface ConversationItemCopy {
+  timeNowLabel: string;
+  minutesLabel: (count: number) => string;
+  hoursLabel: (count: number) => string;
+  daysLabel: (count: number) => string;
+  youPrefix: string;
+  menuLabel: string;
+  editLabel: string;
+  deleteLabel: string;
+  banUserLabel: string;
+  formatUnreadCount: (count: number) => string;
+}
+
 interface ConversationItemProps {
   conversation: Conversation;
+  copy: ConversationItemCopy;
   isActive?: boolean;
   currentUserId: string;
   isAdmin?: boolean;
@@ -25,6 +38,7 @@ interface ConversationItemProps {
 
 export function ConversationItem({
   conversation,
+  copy,
   isActive = false,
   currentUserId,
   isAdmin = false,
@@ -34,7 +48,6 @@ export function ConversationItem({
   onBanUser,
   className,
 }: ConversationItemProps) {
-  const { t } = useTranslation("messages");
   const otherParticipants = conversation.participants.filter(
     (p) => p.id !== currentUserId,
   );
@@ -53,10 +66,10 @@ export function ConversationItem({
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return t("conversation_item.time_now");
-    if (minutes < 60) return t("conversation_item.minutes", { count: minutes });
-    if (hours < 24) return t("conversation_item.hours", { count: hours });
-    if (days < 7) return t("conversation_item.days", { count: days });
+    if (minutes < 1) return copy.timeNowLabel;
+    if (minutes < 60) return copy.minutesLabel(minutes);
+    if (hours < 24) return copy.hoursLabel(hours);
+    if (days < 7) return copy.daysLabel(days);
     return date.toLocaleDateString([], { month: "short", day: "numeric" });
   };
 
@@ -114,7 +127,7 @@ export function ConversationItem({
             <p className="text-sm text-muted-foreground truncate">
               {lastMessage.sender.id === currentUserId && (
                 <span className="text-foreground/70">
-                  {t("conversation_item.you_prefix")}
+                  {copy.youPrefix}
                 </span>
               )}
               {lastMessage.content}
@@ -122,7 +135,7 @@ export function ConversationItem({
           )}
           {conversation?.unreadCount && conversation.unreadCount > 0 ? (
             <span className="shrink-0 flex items-center justify-center h-5 min-w-5 px-1.5 text-xs font-semibold bg-primary text-primary-foreground rounded-full">
-              {conversation.unreadCount > 99 ? "99+" : conversation.unreadCount}
+              {copy.formatUnreadCount(conversation.unreadCount)}
             </span>
           ) : null}
         </div>
@@ -135,7 +148,7 @@ export function ConversationItem({
               variant="ghost"
               size="icon"
               className="h-7 w-7 shrink-0"
-              aria-label={t("actions.menu_label")}
+              aria-label={copy.menuLabel}
               onClick={(event) => event.stopPropagation()}
             >
               <MoreVertical className="h-4 w-4" />
@@ -150,7 +163,7 @@ export function ConversationItem({
                 }}
               >
                 <PencilLine className="h-4 w-4" />
-                {t("actions.edit")}
+                {copy.editLabel}
               </DropdownMenuItem>
             )}
             {onDeleteMessage && (
@@ -162,7 +175,7 @@ export function ConversationItem({
                 }}
               >
                 <Trash2 className="h-4 w-4" />
-                {t("actions.delete")}
+                {copy.deleteLabel}
               </DropdownMenuItem>
             )}
             {canBan && onBanUser && (
@@ -174,7 +187,7 @@ export function ConversationItem({
                 }}
               >
                 <Ban className="h-4 w-4" />
-                {t("actions.ban_user")}
+                {copy.banUserLabel}
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>

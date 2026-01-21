@@ -44,18 +44,23 @@
     "online": "En ligne",
     "offline": "Hors ligne",
     "members": "{{count}} membres",
-    "members_online": "{{count}} membres, {{online}} en ligne"
+    "members_online": "{{count}} membres, {{online}} en ligne",
+    "group_fallback_name": "Salon"
   },
   "chat_layout": {
     "empty_title": "Sélectionnez une conversation",
     "empty_subtitle": "Choisissez parmi vos conversations existantes ou commencez-en une nouvelle"
+  },
+  "chat_view": {
+    "login_required": "Connectez-vous pour envoyer des messages"
   },
   "conversation_item": {
     "time_now": "maintenant",
     "minutes": "{{count}} min",
     "hours": "{{count}} h",
     "days": "{{count}} j",
-    "you_prefix": "Vous : "
+    "you_prefix": "Vous : ",
+    "unread_overflow": "99+"
   },
   "conversation_list": {
     "title": "Messages",

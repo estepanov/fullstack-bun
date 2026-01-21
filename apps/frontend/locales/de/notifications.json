@@ -1,0 +1,104 @@
+{
+  "preferences": {
+    "title": "Notification Preferences",
+    "description": "Configure how you want to receive notifications.",
+    "loading": "Loading preferences...",
+    "email": {
+      "label": "Email Notifications",
+      "description": "Receive notifications via email when you're offline.",
+      "types_title": "Receive emails for:"
+    },
+    "push": {
+      "label": "Push Notifications",
+      "description": "Receive push notifications in your browser.",
+      "types_title": "Receive push notifications for:"
+    },
+    "actions": {
+      "save": "Save preferences",
+      "saving": "Saving..."
+    },
+    "status": {
+      "success": "Preferences saved successfully!",
+      "error": "Failed to save preferences. Please try again."
+    },
+    "types": {
+      "system": "System",
+      "message": "Messages",
+      "friend_request": "Friend Requests",
+      "mention": "Mentions",
+      "announcement": "Announcements",
+      "warning": "Warnings",
+      "success": "Success",
+      "info": "Information"
+    }
+  },
+  "page": {
+    "title": "Notifications",
+    "description": "Review, search, and manage everything that needs your attention.",
+    "updating": "Updating…",
+    "notifications_count": "{{count}} notification",
+    "notifications_count_plural": "{{count}} notifications",
+    "search": {
+      "label": "Search",
+      "placeholder": "Search notifications by title or content",
+      "clear": "Clear search"
+    },
+    "filters": {
+      "status": {
+        "label": "Status",
+        "all": "All",
+        "unread": "Unread",
+        "read": "Read"
+      },
+      "type": {
+        "label": "Type",
+        "all_types": "All Types"
+      }
+    },
+    "actions": {
+      "mark_all_read": "Mark all read",
+      "delete_all": "Delete all",
+      "reset_filters": "Reset filters"
+    },
+    "loading": "Loading notifications…",
+    "empty": {
+      "no_notifications": "No notifications yet",
+      "no_matching": "No matching notifications",
+      "description_empty": "We'll surface new updates here as they arrive.",
+      "description_filtered": "Try adjusting your search or filter settings."
+    },
+    "pagination": {
+      "page_of": "Page {{page}} of {{total}}",
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "delete_dialog": {
+      "title": "Delete all notifications?",
+      "description": "This action cannot be undone. All notifications will be permanently deleted.",
+      "cancel": "Cancel",
+      "confirm": "Delete all"
+    }
+  },
+  "panel": {
+    "title": "Notifications",
+    "empty": {
+      "heading": "No notifications yet",
+      "description": "We'll notify you when something new happens"
+    },
+    "actions": {
+      "markAllRead": "Mark all as read",
+      "deleteAll": "Delete all",
+      "viewAll": "View all notifications"
+    },
+    "dialog": {
+      "title": "Delete all notifications?",
+      "description": "This action cannot be undone. All notifications will be permanently deleted.",
+      "cancel": "Cancel",
+      "confirm": "Delete"
+    }
+  },
+  "toast": {
+    "view_details": "View details",
+    "no_actions": "No actions available."
+  }
+}

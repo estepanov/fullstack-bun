@@ -2,8 +2,8 @@
 Always use Context7 MCP when I need library/API documentation, code generation, setup or configuration steps without me having to explicitly ask.
 
 ## Import Instructions
-- When working on a feature use `bun run lint` , `bun run format` or `bun run biome format` to enure formatting, and run `bun test --coverage` to ensure your tests all pass after all changes.
-- When writing tests check for suffucient test coverage via `bun test --coverage`
+- When working on a feature use `bun run lint` , `bun run format` or `bun run biome format` to enure formatting, and run `bun run test --coverage` to ensure your tests all pass after all changes.
+- When writing tests check for suffucient test coverage via `bun run test --coverage`
 
 ## Project Structure & Module Organization
 - Monorepo managed by Bun workspaces; app code lives in `apps/`, shared libraries in `packages/`.

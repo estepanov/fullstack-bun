@@ -16,7 +16,7 @@ i18n
     fallbackLng: "en",
     supportedLngs: ["en", "de", "es", "fr"],
     defaultNS: "common",
-    ns: ["common", "admin", "color_mode_toggle"],
+    ns: ["common", "admin", "color_mode_toggle", "notifications"],
     interpolation: {
       escapeValue: false,
     },

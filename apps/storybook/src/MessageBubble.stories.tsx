@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { MessageBubble } from "frontend-common/components/chat/message-bubble";
+import type { MessageBubbleCopy } from "frontend-common/components/chat/message-bubble";
 import type { Message, User } from "frontend-common/lib/chat-types";
 
 const meta = {
@@ -71,12 +72,20 @@ const longMessage: Message = {
   status: "read",
 };
 
+const messageBubbleCopy: MessageBubbleCopy = {
+  menuLabel: "Message actions",
+  editLabel: "Edit message",
+  deleteLabel: "Delete message",
+  banUserLabel: "Ban user",
+};
+
 export const Default: Story = {
   args: {
     message: message,
     isOwn: false,
     showAvatar: true,
     showTimestamp: true,
+    copy: messageBubbleCopy,
   },
 };
 
@@ -86,6 +95,7 @@ export const OwnMessage: Story = {
     isOwn: true,
     showAvatar: true,
     showTimestamp: true,
+    copy: messageBubbleCopy,
   },
 };
 
@@ -95,6 +105,7 @@ export const WithoutAvatar: Story = {
     isOwn: false,
     showAvatar: false,
     showTimestamp: true,
+    copy: messageBubbleCopy,
   },
 };
 
@@ -104,6 +115,7 @@ export const WithoutTimestamp: Story = {
     isOwn: false,
     showAvatar: true,
     showTimestamp: false,
+    copy: messageBubbleCopy,
   },
 };
 
@@ -116,6 +128,7 @@ export const SendingStatus: Story = {
     isOwn: true,
     showAvatar: true,
     showTimestamp: true,
+    copy: messageBubbleCopy,
   },
 };
 
@@ -128,6 +141,7 @@ export const SentStatus: Story = {
     isOwn: true,
     showAvatar: true,
     showTimestamp: true,
+    copy: messageBubbleCopy,
   },
 };
 
@@ -140,6 +154,7 @@ export const DeliveredStatus: Story = {
     isOwn: true,
     showAvatar: true,
     showTimestamp: true,
+    copy: messageBubbleCopy,
   },
 };
 
@@ -152,6 +167,7 @@ export const ReadStatus: Story = {
     isOwn: true,
     showAvatar: true,
     showTimestamp: true,
+    copy: messageBubbleCopy,
   },
 };
 
@@ -161,6 +177,7 @@ export const LongMessage: Story = {
     isOwn: false,
     showAvatar: true,
     showTimestamp: true,
+    copy: messageBubbleCopy,
   },
 };
 
@@ -172,6 +189,7 @@ export const WithActions: Story = {
     showTimestamp: true,
     onEditMessage: (msg) => console.log("Edit message:", msg),
     onDeleteMessage: (msg) => console.log("Delete message:", msg),
+    copy: messageBubbleCopy,
   },
 };
 
@@ -185,6 +203,7 @@ export const AdminActions: Story = {
     onEditMessage: (msg) => console.log("Edit message:", msg),
     onDeleteMessage: (msg) => console.log("Delete message:", msg),
     onBanUser: (user) => console.log("Ban user:", user),
+    copy: messageBubbleCopy,
   },
 };
 
@@ -194,6 +213,7 @@ export const Conversation: Story = {
     isOwn: false,
     showAvatar: true,
     showTimestamp: true,
+    copy: messageBubbleCopy,
   },
   render: (args) => (
     <div className="flex flex-col gap-4 w-full max-w-2xl p-4">

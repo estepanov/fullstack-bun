@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { MessageInput } from "frontend-common/components/chat/message-input";
+import type { MessageInputCopy } from "frontend-common/components/chat/message-input";
 import { useState } from "react";
 
 const meta = {
@@ -31,10 +32,18 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const defaultCopy: MessageInputCopy = {
+  placeholder: "Type a message...",
+  addEmojiLabel: "Add emoji",
+  sendMessageLabel: "Send message",
+  characterCountLabel: ({ count, max }) => `${count}/${max} characters`,
+};
+
 export const Default: Story = {
   args: {
     onSend: (message) => console.log("Send message:", message),
     onTypingStatus: (isTyping) => console.log("Typing status:", isTyping),
+    copy: defaultCopy,
   },
 };
 
@@ -42,6 +51,7 @@ export const WithPlaceholder: Story = {
   args: {
     onSend: (message) => console.log("Send message:", message),
     placeholder: "Type your message here...",
+    copy: defaultCopy,
   },
 };
 
@@ -49,6 +59,7 @@ export const Disabled: Story = {
   args: {
     onSend: (message) => console.log("Send message:", message),
     disabled: true,
+    copy: defaultCopy,
   },
 };
 
@@ -67,6 +78,7 @@ export const WithTypingIndicator: Story = {
             setIsTyping(false);
           }}
           onTypingStatus={setIsTyping}
+          copy={defaultCopy}
         />
       </div>
     );
@@ -110,6 +122,7 @@ export const InChatContext: Story = {
               },
             ]);
           }}
+          copy={defaultCopy}
         />
       </div>
     );

@@ -1,8 +1,9 @@
-import { describe, expect, mock, test } from "bun:test";
+import { afterEach, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
 import { AUTH_CONFIG } from "shared/config/auth";
 import type { LoggerMiddlewareEnv } from "../src/middlewares/logger";
 import { authMockState } from "./mocks/auth-state";
+import { dbMockState } from "./mocks/db";
 import { ensureTestEnv } from "./mocks/env";
 import { testLogger } from "./mocks/logger";
 
@@ -31,13 +32,19 @@ const user = {
 
 const session = { id: "session-1" };
 
-let hasPassword = false;
+const resetAuthConfig = () => {
+  AUTH_CONFIG.emailPassword.enabled = true;
+};
 
-mock.module("../src/lib/user-credential", () => ({
-  checkUserHasPassword: async () => hasPassword,
-}));
+const resetDbState = () => {
+  dbMockState.hasCredentialAccount = false;
+};
 
 describe("userRouter", () => {
+  afterEach(() => {
+    resetAuthConfig();
+    resetDbState();
+  });
   const buildApp = async () => {
     const { userRouter } = await import("../src/routers/user-router");
     const app = new Hono<LoggerMiddlewareEnv>();
@@ -52,7 +59,7 @@ describe("userRouter", () => {
   };
 
   test("returns current user profile with password flag", async () => {
-    hasPassword = true;
+    dbMockState.hasCredentialAccount = true;
     AUTH_CONFIG.emailPassword.enabled = true;
     authMockState.session = { user, session };
 
@@ -66,7 +73,7 @@ describe("userRouter", () => {
   });
 
   test("returns 404 when password auth is disabled", async () => {
-    hasPassword = false;
+    dbMockState.hasCredentialAccount = false;
     AUTH_CONFIG.emailPassword.enabled = false;
     authMockState.session = { user, session };
 
@@ -79,7 +86,7 @@ describe("userRouter", () => {
   });
 
   test("returns password status when enabled", async () => {
-    hasPassword = false;
+    dbMockState.hasCredentialAccount = false;
     AUTH_CONFIG.emailPassword.enabled = true;
     authMockState.session = { user, session };
 
@@ -92,6 +99,7 @@ describe("userRouter", () => {
   });
 
   test("blocks set-password when auth disabled", async () => {
+    dbMockState.hasCredentialAccount = false;
     AUTH_CONFIG.emailPassword.enabled = false;
     authMockState.session = { user, session };
 
@@ -106,7 +114,7 @@ describe("userRouter", () => {
   });
 
   test("returns 400 when user already has a password", async () => {
-    hasPassword = true;
+    dbMockState.hasCredentialAccount = true;
     AUTH_CONFIG.emailPassword.enabled = true;
     authMockState.session = { user, session };
 
@@ -123,7 +131,7 @@ describe("userRouter", () => {
   });
 
   test("returns 400 when set password fails", async () => {
-    hasPassword = false;
+    dbMockState.hasCredentialAccount = false;
     authMockState.setPasswordStatus = false;
     AUTH_CONFIG.emailPassword.enabled = true;
     authMockState.session = { user, session };
@@ -141,7 +149,7 @@ describe("userRouter", () => {
   });
 
   test("sets password successfully", async () => {
-    hasPassword = false;
+    dbMockState.hasCredentialAccount = false;
     authMockState.setPasswordStatus = true;
     AUTH_CONFIG.emailPassword.enabled = true;
     authMockState.session = { user, session };

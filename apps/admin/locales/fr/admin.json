@@ -10,10 +10,79 @@
   },
   "navigation": {
     "dashboard": "Tableau de bord",
+    "notifications": "Notifications",
     "users": "Utilisateurs",
     "banned_users": "Utilisateurs bannis",
     "frontend_app": "Retour à l'application",
     "settings": "Paramètres"
+  },
+  "notifications": {
+    "title": "Send Notifications",
+    "description": "Send a custom notification to one user, many users, or everyone.",
+    "send_success": "Notifications sent",
+    "send_success_description": "Delivered {{created}} of {{total}} notifications.",
+    "send_error": "Failed to send notifications.",
+    "recipients": {
+      "title": "Recipients",
+      "description": "Choose who should receive this notification.",
+      "scope_label": "Send to",
+      "scope_user": "Single user",
+      "scope_users": "Multiple users",
+      "scope_all": "All users",
+      "single_label": "User id or email",
+      "single_placeholder": "user_123 or name@example.com",
+      "multiple_label": "User ids or emails",
+      "multiple_placeholder": "one@example.com\nuser_456\nuser_789",
+      "multiple_helper": "Separate entries with a new line or comma. Limit 10,000.",
+      "confirm_all": "I understand this will notify all non-banned users.",
+      "search_label": "Search users",
+      "search_placeholder": "Search by name or email",
+      "search_loading": "Searching users...",
+      "search_empty": "No matching users.",
+      "unknown_name": "Unknown user",
+      "add": "Add",
+      "added": "Ajouté"
+    },
+    "message": {
+      "title": "Message",
+      "description": "Define the content of the notification.",
+      "type": "Type",
+      "title_label": "Title",
+      "content": "Content"
+    },
+    "metadata": {
+      "title": "Metadata",
+      "description": "Optional attributes such as priority, expiration, and custom data.",
+      "priority": "Priority",
+      "expires_at": "Expires at",
+      "action_group_variant": "Action group variant",
+      "data_json": "Metadata JSON",
+      "data_json_placeholder": "{\"source\":\"admin\"}",
+      "none": "None"
+    },
+    "actions": {
+      "title": "Actions",
+      "description": "Add optional action buttons.",
+      "add": "Add action",
+      "empty": "No actions yet.",
+      "action_label": "Action {{index}}",
+      "action_id": "Action id",
+      "label": "Label",
+      "url": "URL",
+      "variant": "Variant",
+      "open_in_new_tab": "Open in new tab",
+      "remove": "Remove action"
+    },
+    "delivery": {
+      "title": "Delivery",
+      "description": "Choose how the notification should be delivered.",
+      "immediate": "Deliver immediately",
+      "strategies": "Delivery strategies"
+    },
+    "submit_summary": "Ready to send?",
+    "submit_helper": "Make sure recipients and content are correct before sending.",
+    "submit": "Send notification",
+    "submit_loading": "Sending..."
   },
   "users": {
     "title": "Utilisateurs",
@@ -26,6 +95,14 @@
     "update_role_error_description": "Impossible de passer {{user}} au rôle {{role}}.",
     "link": {
       "view_banned": "Voir les utilisateurs bannis"
+    },
+    "search": {
+      "label": "Rechercher des utilisateurs",
+      "placeholder": "Rechercher par nom ou e-mail...",
+      "loading": "Recherche...",
+      "empty": "Aucun utilisateur trouvé.",
+      "select": "Sélectionner",
+      "selected": "Sélectionné"
     },
     "table": {
       "user_header": "Utilisateur",

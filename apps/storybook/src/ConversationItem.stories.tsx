@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { ConversationItem } from "frontend-common/components/chat/conversation-item";
+import type { ConversationItemCopy } from "frontend-common/components/chat/conversation-item";
 import type { Conversation, Message, User } from "frontend-common/lib/chat-types";
 
 const meta = {
@@ -113,11 +114,25 @@ const emptyConversation: Conversation = {
   isGroup: false,
 };
 
+const conversationItemCopy: ConversationItemCopy = {
+  timeNowLabel: "now",
+  minutesLabel: (count) => `${count}m`,
+  hoursLabel: (count) => `${count}h`,
+  daysLabel: (count) => `${count}d`,
+  youPrefix: "You: ",
+  menuLabel: "Message actions",
+  editLabel: "Edit message",
+  deleteLabel: "Delete message",
+  banUserLabel: "Ban user",
+  formatUnreadCount: (count) => (count > 99 ? "99+" : String(count)),
+};
+
 export const Default: Story = {
   args: {
     conversation: oneOnOneConversation,
     currentUserId: "me",
     onClick: () => console.log("Conversation clicked"),
+    copy: conversationItemCopy,
   },
 };
 
@@ -127,6 +142,7 @@ export const Active: Story = {
     currentUserId: "me",
     isActive: true,
     onClick: () => console.log("Conversation clicked"),
+    copy: conversationItemCopy,
   },
 };
 
@@ -135,6 +151,7 @@ export const NoUnreadMessages: Story = {
     conversation: oneOnOneConversationNoUnread,
     currentUserId: "me",
     onClick: () => console.log("Conversation clicked"),
+    copy: conversationItemCopy,
   },
 };
 
@@ -143,6 +160,7 @@ export const GroupChat: Story = {
     conversation: groupConversation,
     currentUserId: "me",
     onClick: () => console.log("Conversation clicked"),
+    copy: conversationItemCopy,
   },
 };
 
@@ -151,6 +169,7 @@ export const EmptyConversation: Story = {
     conversation: emptyConversation,
     currentUserId: "me",
     onClick: () => console.log("Conversation clicked"),
+    copy: conversationItemCopy,
   },
 };
 
@@ -162,6 +181,7 @@ export const HighUnreadCount: Story = {
     },
     currentUserId: "me",
     onClick: () => console.log("Conversation clicked"),
+    copy: conversationItemCopy,
   },
 };
 
@@ -172,6 +192,7 @@ export const WithActions: Story = {
     onClick: () => console.log("Conversation clicked"),
     onEditMessage: (msg, conv) => console.log("Edit message:", msg, "in", conv),
     onDeleteMessage: (msg, conv) => console.log("Delete message:", msg, "in", conv),
+    copy: conversationItemCopy,
   },
 };
 
@@ -184,6 +205,7 @@ export const AdminWithBanAction: Story = {
     onEditMessage: (msg, conv) => console.log("Edit message:", msg, "in", conv),
     onDeleteMessage: (msg, conv) => console.log("Delete message:", msg, "in", conv),
     onBanUser: (user, conv) => console.log("Ban user:", user, "from", conv),
+    copy: conversationItemCopy,
   },
 };
 
@@ -195,21 +217,25 @@ export const ConversationList: Story = {
         currentUserId="me"
         isActive={true}
         onClick={() => console.log("Clicked conversation 1")}
+        copy={conversationItemCopy}
       />
       <ConversationItem
         conversation={groupConversation}
         currentUserId="me"
         onClick={() => console.log("Clicked conversation 2")}
+        copy={conversationItemCopy}
       />
       <ConversationItem
         conversation={oneOnOneConversationNoUnread}
         currentUserId="me"
         onClick={() => console.log("Clicked conversation 3")}
+        copy={conversationItemCopy}
       />
       <ConversationItem
         conversation={emptyConversation}
         currentUserId="me"
         onClick={() => console.log("Clicked conversation 4")}
+        copy={conversationItemCopy}
       />
     </div>
   ),

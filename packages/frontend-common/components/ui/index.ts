@@ -3,6 +3,7 @@ export * from "./avatar";
 export * from "./user-avatar";
 export * from "./badge";
 export * from "./button";
+export * from "./button-group";
 export * from "./card";
 export * from "./container";
 export * from "./dialog";

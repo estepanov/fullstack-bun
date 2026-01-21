@@ -18,7 +18,7 @@ import {
   SelectValue,
 } from "frontend-common/components/ui";
 import { CheckIcon, XIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router";
 import { UserRole, userRoleSchema } from "shared/auth/user-role";
@@ -42,10 +42,6 @@ export default function AdminUsersPage() {
   const { data: session } = useSession();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGINATION_CONFIG.defaultPageSize);
-  const { data, isPending, error } = useAdminUsersQuery({
-    page: currentPage,
-    limit: pageSize,
-  });
   const updateRole = useUpdateUserRoleMutation();
   const banUser = useBanUserMutation();
   const unbanUser = useUnbanUserMutation();
@@ -54,6 +50,23 @@ export default function AdminUsersPage() {
   const [selectedUser, setSelectedUser] = useState<AdminUserListItem | null>(null);
   const [banReason, setBanReason] = useState("");
   const [deleteMessages, setDeleteMessages] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const searchQueryEnabled = debouncedSearchQuery.trim().length >= 2;
+  const { data, isPending, isFetching, error } = useAdminUsersQuery({
+    page: currentPage,
+    limit: pageSize,
+    query: searchQueryEnabled ? debouncedSearchQuery : undefined,
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchInput);
+      setCurrentPage(1);
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const handleBanClick = (user: AdminUserListItem) => {
     setSelectedUser(user);
@@ -115,7 +128,13 @@ export default function AdminUsersPage() {
     );
   };
 
-  if (isPending) {
+  const isBannedUser = (user: { banned?: boolean | null }) => Boolean(user.banned);
+
+  const users = (data?.users ?? []) as AdminUserListItem[];
+  const pagination = data?.pagination;
+  const displayedUsers = users;
+
+  if (isPending && users.length === 0) {
     return (
       <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
         <div className="rounded-2xl border border-border/70 bg-card/90 p-6 text-sm text-muted-foreground shadow-sm shadow-black/5 backdrop-blur">
@@ -125,7 +144,7 @@ export default function AdminUsersPage() {
     );
   }
 
-  if (error) {
+  if (error && users.length === 0) {
     return (
       <div className="mx-auto max-w-6xl w-full h-full px-4 py-10 sm:px-6 lg:px-8">
         <div className="rounded-2xl border border-destructive/30 bg-destructive/10 p-6 text-sm text-destructive shadow-sm shadow-black/5 backdrop-blur">
@@ -134,11 +153,6 @@ export default function AdminUsersPage() {
       </div>
     );
   }
-
-  const isBannedUser = (user: { banned?: boolean | null }) => Boolean(user.banned);
-
-  const users = (data?.users ?? []) as AdminUserListItem[];
-  const pagination = data?.pagination;
 
   const EmailStatusBadge = ({
     verified,
@@ -206,6 +220,20 @@ export default function AdminUsersPage() {
             </Link>
           </div>
 
+          <div className="mt-6 rounded-2xl border border-border/70 bg-muted/20 p-4">
+            <Label htmlFor="user-search" className="text-sm text-muted-foreground">
+              {t("users.search.label")}
+            </Label>
+            <div className="mt-2">
+              <Input
+                id="user-search"
+                placeholder={t("users.search.placeholder")}
+                value={searchInput}
+                onChange={(event) => setSearchInput(event.target.value)}
+              />
+            </div>
+          </div>
+
           <div className="mt-6 overflow-x-auto">
             <table className="min-w-full divide-y divide-border/70">
               <thead className="bg-muted/70">
@@ -228,14 +256,14 @@ export default function AdminUsersPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/70 bg-card/80">
-                {users.map((u) => {
+                {displayedUsers.map((u) => {
                   const userIsBanned = isBannedUser(u);
                   const userIsAdmin = u.role === UserRole.ADMIN;
                   const userIsSelf = session?.user?.id === u.id;
                   const banBlocked = userIsAdmin || userIsSelf;
 
                   return (
-                    <tr key={u.id}>
+                    <tr key={u.id} id={`user-row-${u.id}`}>
                       <td className="px-4 py-4 text-sm text-foreground">
                         <div className="flex items-center gap-2">
                           {u.name ? (
@@ -254,7 +282,9 @@ export default function AdminUsersPage() {
                         <div className="mt-1 text-xs text-muted-foreground md:hidden">
                           <div className="flex items-center gap-2">
                             <span className="text-foreground">{u.email}</span>
-                            <EmailStatusBadge verified={u.emailVerified} size="xs" />
+                            {typeof u.emailVerified === "boolean" && (
+                              <EmailStatusBadge verified={u.emailVerified} size="xs" />
+                            )}
                           </div>
                         </div>
                         <div className="mt-2 flex flex-wrap gap-2 lg:hidden">
@@ -272,7 +302,9 @@ export default function AdminUsersPage() {
                       <td className="hidden md:table-cell px-4 py-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2">
                           <span>{u.email}</span>
-                          <EmailStatusBadge verified={u.emailVerified} size="xs" />
+                          {typeof u.emailVerified === "boolean" && (
+                            <EmailStatusBadge verified={u.emailVerified} size="xs" />
+                          )}
                         </div>
                       </td>
                       <td className="px-4 py-4 text-sm">
@@ -368,13 +400,21 @@ export default function AdminUsersPage() {
                     </tr>
                   );
                 })}
-                {users.length === 0 && (
+                {isFetching && searchQueryEnabled ? (
                   <tr>
                     <td className="px-4 py-6 text-sm text-muted-foreground" colSpan={5}>
-                      {t("users.table.no_users")}
+                      {t("users.search.loading")}
                     </td>
                   </tr>
-                )}
+                ) : displayedUsers.length === 0 ? (
+                  <tr>
+                    <td className="px-4 py-6 text-sm text-muted-foreground" colSpan={5}>
+                      {searchQueryEnabled
+                        ? t("users.search.empty")
+                        : t("users.table.no_users")}
+                    </td>
+                  </tr>
+                ) : null}
               </tbody>
             </table>
           </div>

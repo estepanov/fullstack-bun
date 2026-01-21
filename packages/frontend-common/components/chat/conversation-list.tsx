@@ -2,17 +2,25 @@
 
 import { Plus, Search } from "lucide-react";
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import type { Conversation, Message, User } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui";
 import { Input } from "../ui";
-import { ConversationItem } from "./conversation-item";
+import { ConversationItem, type ConversationItemCopy } from "./conversation-item";
+
+export interface ConversationListCopy {
+  title: string;
+  newButtonLabel: string;
+  searchPlaceholder: string;
+  emptyLabel: string;
+  itemCopy: ConversationItemCopy;
+}
 
 interface ConversationListProps {
   conversations: Conversation[];
   activeConversationId?: string;
   currentUserId: string;
+  copy: ConversationListCopy;
   isAdmin?: boolean;
   onSelectConversation?: (conversation: Conversation) => void;
   onNewConversation?: () => void;
@@ -26,12 +34,12 @@ export function ConversationList({
   conversations,
   activeConversationId,
   currentUserId,
+  copy,
   isAdmin = false,
   onSelectConversation,
   onNewConversation,
   className,
 }: ConversationListProps) {
-  const { t } = useTranslation("messages");
   const [search, setSearch] = useState("");
 
   const filteredConversations = conversations.filter((conv) => {
@@ -51,7 +59,7 @@ export function ConversationList({
       <div className="p-4 border-b border-sidebar-border">
         <div className={cn("flex items-center justify-between", currentUserId && "mb-4")}>
           <h2 className="text-xl font-bold text-sidebar-foreground">
-            {t("conversation_list.title")}
+            {copy.title}
           </h2>
           {currentUserId && (
             <Button
@@ -61,7 +69,7 @@ export function ConversationList({
               className="text-sidebar-foreground"
             >
               <Plus className="h-5 w-5" />
-              <span className="sr-only">{t("conversation_list.new_button_label")}</span>
+              <span className="sr-only">{copy.newButtonLabel}</span>
             </Button>
           )}
         </div>
@@ -71,7 +79,7 @@ export function ConversationList({
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder={t("conversation_list.search_placeholder")}
+              placeholder={copy.searchPlaceholder}
               className="pl-9 bg-sidebar-accent border-0"
             />
           </div>
@@ -80,13 +88,14 @@ export function ConversationList({
       <div className="flex-1 overflow-y-auto p-2 space-y-1">
         {filteredConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-32 text-muted-foreground">
-            <p className="text-sm">{t("conversation_list.empty")}</p>
+            <p className="text-sm">{copy.emptyLabel}</p>
           </div>
         ) : (
           filteredConversations.map((conversation) => (
             <ConversationItem
               key={conversation.id}
               conversation={conversation}
+              copy={copy.itemCopy}
               isActive={conversation.id === activeConversationId}
               currentUserId={currentUserId}
               isAdmin={isAdmin}

@@ -1,0 +1,35 @@
+{
+  "preferences": {
+    "title": "Notification Preferences",
+    "description": "Configure how you want to receive notifications.",
+    "loading": "Loading preferences...",
+    "email": {
+      "label": "Email Notifications",
+      "description": "Receive notifications via email when you're offline.",
+      "types_title": "Receive emails for:"
+    },
+    "push": {
+      "label": "Push Notifications",
+      "description": "Receive push notifications in your browser.",
+      "types_title": "Receive push notifications for:"
+    },
+    "actions": {
+      "save": "Save preferences",
+      "saving": "Saving..."
+    },
+    "status": {
+      "success": "Preferences saved successfully!",
+      "error": "Failed to save preferences. Please try again."
+    },
+    "types": {
+      "system": "System",
+      "message": "Messages",
+      "friend_request": "Friend Requests",
+      "mention": "Mentions",
+      "announcement": "Announcements",
+      "warning": "Warnings",
+      "success": "Success",
+      "info": "Information"
+    }
+  }
+}

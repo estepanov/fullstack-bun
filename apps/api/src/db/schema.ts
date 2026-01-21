@@ -102,10 +102,12 @@ export const passkey = pgTable(
   (table) => [index("passkey_userId_idx").on(table.userId)],
 );
 
-export const userRelations = relations(user, ({ many }) => ({
+export const userRelations = relations(user, ({ many, one }) => ({
   sessions: many(session),
   accounts: many(account),
   passkeys: many(passkey),
+  notifications: many(notification),
+  notificationPreferences: one(notificationPreferences),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -128,3 +130,67 @@ export const passkeyRelations = relations(passkey, ({ one }) => ({
     references: [user.id],
   }),
 }));
+
+export const notification = pgTable(
+  "notification",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    type: text("type").notNull(),
+    title: text("title").notNull(),
+    content: text("content").notNull(),
+    metadata: text("metadata").notNull().default("{}"),
+    read: boolean("read").default(false).notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("notification_user_id_idx").on(table.userId),
+    index("notification_user_id_read_idx").on(table.userId, table.read),
+    index("notification_user_id_created_at_idx").on(table.userId, table.createdAt),
+    index("notification_type_idx").on(table.type),
+  ],
+);
+
+export const notificationPreferences = pgTable(
+  "notification_preferences",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .unique()
+      .references(() => user.id, { onDelete: "cascade" }),
+    emailEnabled: boolean("email_enabled").default(true).notNull(),
+    pushEnabled: boolean("push_enabled").default(false).notNull(),
+    emailTypes: text("email_types").notNull().default("[]"), // JSON array of notification types to email
+    pushTypes: text("push_types").notNull().default("[]"), // JSON array of notification types to push
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => /* @__PURE__ */ new Date())
+      .notNull(),
+  },
+  (table) => [index("notification_preferences_user_id_idx").on(table.userId)],
+);
+
+export const notificationRelations = relations(notification, ({ one }) => ({
+  user: one(user, {
+    fields: [notification.userId],
+    references: [user.id],
+  }),
+}));
+
+export const notificationPreferencesRelations = relations(
+  notificationPreferences,
+  ({ one }) => ({
+    user: one(user, {
+      fields: [notificationPreferences.userId],
+      references: [user.id],
+    }),
+  }),
+);

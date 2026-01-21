@@ -8,6 +8,7 @@
     "./auth": "./auth/index.ts",
     "./api": "./api/index.ts",
     "./chat": "./chat/index.ts",
+    "./notification": "./notification/index.ts",
     "./hooks": "./hooks/index.ts",
     "./providers": "./providers/index.ts",
     "./providers/theme": "./providers/theme/index.ts",

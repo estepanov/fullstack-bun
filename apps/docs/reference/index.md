@@ -6,6 +6,10 @@ layout: doc
 
 Holds reference information on various features and infrastructure.
 
+## E2E Features
+
+- [Notifications](/reference/notifications.md)
+
 ## Infrastructure
 
 - [Database (PostgreSQL + Drizzle)](/reference/database.md)

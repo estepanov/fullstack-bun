@@ -19,6 +19,7 @@ import { chatService } from "../lib/chat-service";
 import { checkChatThrottle } from "../lib/chat-throttle";
 import { zodValidator } from "../lib/validator";
 import { decodeWsMessage } from "../lib/ws-message";
+import { withWebSocketOriginGuard } from "../lib/ws-origin";
 import { type AuthMiddlewareEnv, authMiddleware } from "../middlewares/auth";
 import { checkProfileComplete } from "../middlewares/check-profile-complete";
 import type { LoggerMiddlewareEnv } from "../middlewares/logger";
@@ -27,57 +28,241 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
   // WebSocket endpoint
   .get(
     "/ws",
-    upgradeWebSocket((c) => {
-      const trace = () => ({
-        requestId: c.get("requestId"),
-        sessionId: c.get("sessionId"),
-      });
-      const roomId = c.req.query("room") ?? "global";
-      const guestId = c.req.query("guestId");
-      let userId: string | null = null;
-      let userName: string | null = null;
-      let userAvatar: string | null = null;
-      let role: "guest" | "member" | "admin" = "guest";
-      const fallbackGuestId = `ws-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-      let presenceId = `guest:${guestId ?? fallbackGuestId}`;
-      let isVerified = false;
-      let isAdminUser = false;
-      let hasIncompleteProfile = false;
+    withWebSocketOriginGuard(
+      upgradeWebSocket((c) => {
+        const trace = () => ({
+          requestId: c.get("requestId"),
+          sessionId: c.get("sessionId"),
+        });
+        const roomId = c.req.query("room") ?? "global";
+        const guestId = c.req.query("guestId");
+        let userId: string | null = null;
+        let userName: string | null = null;
+        let userAvatar: string | null = null;
+        let role: "guest" | "member" | "admin" = "guest";
+        const fallbackGuestId = `ws-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+        let presenceId = `guest:${guestId ?? fallbackGuestId}`;
+        let isVerified = false;
+        let isAdminUser = false;
+        let hasIncompleteProfile = false;
 
-      return {
-        async onOpen(_evt, ws: WSContext) {
-          const logger = c.get("logger");
+        return {
+          async onOpen(_evt, ws: WSContext) {
+            const logger = c.get("logger");
 
-          // Authenticate via session cookie in upgrade request
-          try {
-            const session = await auth.api.getSession({
-              headers: c.req.raw.headers,
-            });
+            // Authenticate via session cookie in upgrade request
+            try {
+              const session = await auth.api.getSession({
+                headers: c.req.raw.headers,
+              });
 
-            if (session) {
-              // Fetch full user data
+              if (session) {
+                // Fetch full user data
+                const userData = await db
+                  .select({
+                    id: userTable.id,
+                    name: userTable.name,
+                    displayUsername: userTable.displayUsername,
+                    image: userTable.image,
+                    emailVerified: userTable.emailVerified,
+                    role: userTable.role,
+                  })
+                  .from(userTable)
+                  .where(eq(userTable.id, session.user.id))
+                  .limit(1)
+                  .then((rows) => rows[0]);
+
+                if (!userData) {
+                  ws.close(1011, "User not found");
+                  logger.error(`User not found: userId=${session.user.id}`);
+                  return;
+                }
+
+                // Check if user is banned
+                const banStatus = await checkUserBan(userData.id);
+                if (banStatus.banned) {
+                  const banMessage = banStatus.reason
+                    ? `Your account has been banned. Reason: ${banStatus.reason}`
+                    : "Your account has been banned";
+
+                  ws.send(
+                    JSON.stringify({
+                      type: ChatWSMessageType.ERROR,
+                      error: banMessage,
+                      trace: trace(),
+                    }),
+                  );
+                  ws.close(1008, "User is banned");
+                  logger.info(
+                    `Banned user attempted WebSocket connection: userId=${userData.id}`,
+                  );
+                  return;
+                }
+
+                // Check if profile is complete
+                const missingFields = getMissingFields(session.user);
+                if (missingFields.length > 0) {
+                  hasIncompleteProfile = true;
+                  logger.info(
+                    `User with incomplete profile connected: userId=${userData.id}, missing=${missingFields.join(", ")}`,
+                  );
+                }
+
+                userId = userData.id;
+                userName = userData.displayUsername || userData.name || "User";
+                userAvatar = userData.image ?? null;
+                isVerified = userData.emailVerified;
+                const userRole = userData.role as UserRole | undefined;
+                isAdminUser = userRole ? isAdmin(userRole) : false;
+                role = isAdminUser ? "admin" : "member";
+                presenceId = userId;
+                logger.info(
+                  `WebSocket opened: userId=${userId}, verified=${isVerified}, incompleteProfile=${hasIncompleteProfile}`,
+                );
+              } else {
+                logger.info("WebSocket opened: unauthenticated user");
+              }
+            } catch (error) {
+              logger.error("WebSocket auth error:", error);
+            }
+
+            // Add to connection manager
+            chatManager.addClient({ ws, userId, userName, userAvatar, role, presenceId });
+
+            // Send connection confirmation
+            ws.send(
+              JSON.stringify({
+                type: ChatWSMessageType.CONNECTED,
+                userId,
+                profileIncomplete: hasIncompleteProfile,
+                trace: trace(),
+              }),
+            );
+
+            // Send message history
+            try {
+              const history = await chatService.getMessageHistory(100);
+              ws.send(
+                JSON.stringify({
+                  type: ChatWSMessageType.MESSAGE_HISTORY,
+                  data: history,
+                  trace: trace(),
+                }),
+              );
+            } catch (error) {
+              logger.error("Failed to load message history:", error);
+            }
+          },
+
+          async onMessage(evt, ws: WSContext) {
+            const logger = c.get("logger");
+
+            try {
+              const rawMessage = await decodeWsMessage(evt.data);
+              // Parse incoming message
+              const data = JSON.parse(rawMessage);
+              if (data?.type === ChatWSMessageType.PING) {
+                chatManager.touchClient(ws);
+                return;
+              }
+              if (data?.type === ChatWSMessageType.TYPING_STATUS) {
+                const parsedTyping = typingStatusSchema.safeParse(data);
+                if (!parsedTyping.success) {
+                  return;
+                }
+
+                chatManager.touchClient(ws);
+
+                if (!userId || !userName) {
+                  return;
+                }
+
+                // Allow typing indicators for all authenticated users
+                // (verification/profile checks are only enforced for sending messages)
+                // Use roomId from payload, fallback to connection roomId
+                const typingRoomId = parsedTyping.data.roomId ?? roomId;
+                chatManager.broadcastTyping({
+                  userId,
+                  userName,
+                  userAvatar,
+                  isTyping: parsedTyping.data.isTyping,
+                  roomId: typingRoomId,
+                });
+                return;
+              }
+              const parsed = getSendMessageSchema({
+                allowNewlines: isAdminUser,
+              }).safeParse(data);
+
+              if (!parsed.success) {
+                const issueMessages = new Set(
+                  parsed.error.issues.map((issue) => issue.message),
+                );
+                const errorMessage = issueMessages.has("Message must be a single line")
+                  ? "Messages must be a single line"
+                  : issueMessages.has("Message cannot contain HTML tags")
+                    ? "Message cannot contain HTML tags"
+                    : "Invalid message format";
+                ws.send(
+                  JSON.stringify({
+                    type: ChatWSMessageType.ERROR,
+                    error: errorMessage,
+                    trace: trace(),
+                  }),
+                );
+                return;
+              }
+
+              chatManager.touchClient(ws);
+
+              // Check authentication
+              if (!userId) {
+                ws.send(
+                  JSON.stringify({
+                    type: ChatWSMessageType.ERROR,
+                    error: "You must be logged in to send messages",
+                    trace: trace(),
+                  }),
+                );
+                return;
+              }
+
+              // Check email verification
+              if (!isVerified) {
+                ws.send(
+                  JSON.stringify({
+                    type: ChatWSMessageType.ERROR,
+                    error: "Please verify your email before sending messages",
+                    trace: trace(),
+                  }),
+                );
+                return;
+              }
+
+              // Fetch fresh user data (in case name/avatar changed)
               const userData = await db
                 .select({
-                  id: userTable.id,
-                  name: userTable.name,
                   displayUsername: userTable.displayUsername,
                   image: userTable.image,
-                  emailVerified: userTable.emailVerified,
-                  role: userTable.role,
                 })
                 .from(userTable)
-                .where(eq(userTable.id, session.user.id))
+                .where(eq(userTable.id, userId))
                 .limit(1)
                 .then((rows) => rows[0]);
 
               if (!userData) {
-                ws.close(1011, "User not found");
-                logger.error(`User not found: userId=${session.user.id}`);
+                ws.send(
+                  JSON.stringify({
+                    type: ChatWSMessageType.ERROR,
+                    error: "User not found",
+                    trace: trace(),
+                  }),
+                );
                 return;
               }
 
-              // Check if user is banned
-              const banStatus = await checkUserBan(userData.id);
+              // Check if user was banned since connection opened
+              const banStatus = await checkUserBan(userId);
               if (banStatus.banned) {
                 const banMessage = banStatus.reason
                   ? `Your account has been banned. Reason: ${banStatus.reason}`
@@ -91,266 +276,84 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
                   }),
                 );
                 ws.close(1008, "User is banned");
-                logger.info(
-                  `Banned user attempted WebSocket connection: userId=${userData.id}`,
+                return;
+              }
+
+              const throttle = await checkChatThrottle({ userId, roomId });
+              if (!throttle.allowed) {
+                ws.send(
+                  JSON.stringify({
+                    type: ChatWSMessageType.THROTTLED,
+                    retryAfterMs: throttle.retryAfterMs,
+                    limit: throttle.limit,
+                    windowMs: throttle.windowMs,
+                    roomId,
+                    trace: trace(),
+                  }),
                 );
                 return;
               }
 
-              // Check if profile is complete
-              const missingFields = getMissingFields(session.user);
-              if (missingFields.length > 0) {
+              if (!userData.displayUsername) {
                 hasIncompleteProfile = true;
-                logger.info(
-                  `User with incomplete profile connected: userId=${userData.id}, missing=${missingFields.join(", ")}`,
+              }
+
+              if (hasIncompleteProfile) {
+                ws.send(
+                  JSON.stringify({
+                    type: ChatWSMessageType.ERROR,
+                    error: "Please complete your profile before sending messages",
+                    profileIncomplete: true,
+                    trace: trace(),
+                  }),
                 );
-              }
-
-              userId = userData.id;
-              userName = userData.displayUsername || userData.name || "User";
-              userAvatar = userData.image ?? null;
-              isVerified = userData.emailVerified;
-              const userRole = userData.role as UserRole | undefined;
-              isAdminUser = userRole ? isAdmin(userRole) : false;
-              role = isAdminUser ? "admin" : "member";
-              presenceId = userId;
-              logger.info(
-                `WebSocket opened: userId=${userId}, verified=${isVerified}, incompleteProfile=${hasIncompleteProfile}`,
-              );
-            } else {
-              logger.info("WebSocket opened: unauthenticated user");
-            }
-          } catch (error) {
-            logger.error("WebSocket auth error:", error);
-          }
-
-          // Add to connection manager
-          chatManager.addClient({ ws, userId, userName, userAvatar, role, presenceId });
-
-          // Send connection confirmation
-          ws.send(
-            JSON.stringify({
-              type: ChatWSMessageType.CONNECTED,
-              userId,
-              profileIncomplete: hasIncompleteProfile,
-              trace: trace(),
-            }),
-          );
-
-          // Send message history
-          try {
-            const history = await chatService.getMessageHistory(100);
-            ws.send(
-              JSON.stringify({
-                type: ChatWSMessageType.MESSAGE_HISTORY,
-                data: history,
-                trace: trace(),
-              }),
-            );
-          } catch (error) {
-            logger.error("Failed to load message history:", error);
-          }
-        },
-
-        async onMessage(evt, ws: WSContext) {
-          const logger = c.get("logger");
-
-          try {
-            const rawMessage = await decodeWsMessage(evt.data);
-            // Parse incoming message
-            const data = JSON.parse(rawMessage);
-            if (data?.type === ChatWSMessageType.PING) {
-              chatManager.touchClient(ws);
-              return;
-            }
-            if (data?.type === ChatWSMessageType.TYPING_STATUS) {
-              const parsedTyping = typingStatusSchema.safeParse(data);
-              if (!parsedTyping.success) {
                 return;
               }
 
-              chatManager.touchClient(ws);
-
-              if (!userId || !userName) {
-                return;
-              }
-
-              // Allow typing indicators for all authenticated users
-              // (verification/profile checks are only enforced for sending messages)
-              // Use roomId from payload, fallback to connection roomId
-              const typingRoomId = parsedTyping.data.roomId ?? roomId;
-              chatManager.broadcastTyping({
+              // Store message in Redis
+              const chatMessage = await chatService.addMessage({
                 userId,
-                userName,
-                userAvatar,
-                isTyping: parsedTyping.data.isTyping,
-                roomId: typingRoomId,
+                userName: userData.displayUsername as string,
+                userAvatar: userData.image,
+                message: parsed.data.message,
               });
-              return;
-            }
-            const parsed = getSendMessageSchema({
-              allowNewlines: isAdminUser,
-            }).safeParse(data);
 
-            if (!parsed.success) {
-              const issueMessages = new Set(
-                parsed.error.issues.map((issue) => issue.message),
-              );
-              const errorMessage = issueMessages.has("Message must be a single line")
-                ? "Messages must be a single line"
-                : issueMessages.has("Message cannot contain HTML tags")
-                  ? "Message cannot contain HTML tags"
-                  : "Invalid message format";
+              // Broadcast to all connected clients
+              chatManager.broadcast(chatMessage);
+
+              logger.info(`Message sent: userId=${userId}, messageId=${chatMessage.id}`);
+            } catch (error) {
+              logger.error({ err: error }, "WebSocket message error");
               ws.send(
                 JSON.stringify({
                   type: ChatWSMessageType.ERROR,
-                  error: errorMessage,
+                  error: "Failed to send message",
                   trace: trace(),
                 }),
               );
-              return;
             }
+          },
 
-            chatManager.touchClient(ws);
-
-            // Check authentication
-            if (!userId) {
-              ws.send(
-                JSON.stringify({
-                  type: ChatWSMessageType.ERROR,
-                  error: "You must be logged in to send messages",
-                  trace: trace(),
-                }),
-              );
-              return;
-            }
-
-            // Check email verification
-            if (!isVerified) {
-              ws.send(
-                JSON.stringify({
-                  type: ChatWSMessageType.ERROR,
-                  error: "Please verify your email before sending messages",
-                  trace: trace(),
-                }),
-              );
-              return;
-            }
-
-            // Fetch fresh user data (in case name/avatar changed)
-            const userData = await db
-              .select({
-                displayUsername: userTable.displayUsername,
-                image: userTable.image,
-              })
-              .from(userTable)
-              .where(eq(userTable.id, userId))
-              .limit(1)
-              .then((rows) => rows[0]);
-
-            if (!userData) {
-              ws.send(
-                JSON.stringify({
-                  type: ChatWSMessageType.ERROR,
-                  error: "User not found",
-                  trace: trace(),
-                }),
-              );
-              return;
-            }
-
-            // Check if user was banned since connection opened
-            const banStatus = await checkUserBan(userId);
-            if (banStatus.banned) {
-              const banMessage = banStatus.reason
-                ? `Your account has been banned. Reason: ${banStatus.reason}`
-                : "Your account has been banned";
-
-              ws.send(
-                JSON.stringify({
-                  type: ChatWSMessageType.ERROR,
-                  error: banMessage,
-                  trace: trace(),
-                }),
-              );
-              ws.close(1008, "User is banned");
-              return;
-            }
-
-            const throttle = await checkChatThrottle({ userId, roomId });
-            if (!throttle.allowed) {
-              ws.send(
-                JSON.stringify({
-                  type: ChatWSMessageType.THROTTLED,
-                  retryAfterMs: throttle.retryAfterMs,
-                  limit: throttle.limit,
-                  windowMs: throttle.windowMs,
-                  roomId,
-                  trace: trace(),
-                }),
-              );
-              return;
-            }
-
-            if (!userData.displayUsername) {
-              hasIncompleteProfile = true;
-            }
-
-            if (hasIncompleteProfile) {
-              ws.send(
-                JSON.stringify({
-                  type: ChatWSMessageType.ERROR,
-                  error: "Please complete your profile before sending messages",
-                  profileIncomplete: true,
-                  trace: trace(),
-                }),
-              );
-              return;
-            }
-
-            // Store message in Redis
-            const chatMessage = await chatService.addMessage({
+          onClose(_evt, ws: WSContext) {
+            const logger = c.get("logger");
+            logger.info(`WebSocket closed: userId=${userId}`);
+            chatManager.removeClient({
+              ws,
               userId,
-              userName: userData.displayUsername as string,
-              userAvatar: userData.image,
-              message: parsed.data.message,
+              userName,
+              userAvatar,
+              role,
+              presenceId,
             });
+          },
 
-            // Broadcast to all connected clients
-            chatManager.broadcast(chatMessage);
-
-            logger.info(`Message sent: userId=${userId}, messageId=${chatMessage.id}`);
-          } catch (error) {
-            logger.error({ err: error }, "WebSocket message error");
-            ws.send(
-              JSON.stringify({
-                type: ChatWSMessageType.ERROR,
-                error: "Failed to send message",
-                trace: trace(),
-              }),
-            );
-          }
-        },
-
-        onClose(_evt, ws: WSContext) {
-          const logger = c.get("logger");
-          logger.info(`WebSocket closed: userId=${userId}`);
-          chatManager.removeClient({
-            ws,
-            userId,
-            userName,
-            userAvatar,
-            role,
-            presenceId,
-          });
-        },
-
-        onError(evt, _ws: WSContext) {
-          const logger = c.get("logger");
-          logger.error("WebSocket error:", evt);
-        },
-      };
-    }),
+          onError(evt, _ws: WSContext) {
+            const logger = c.get("logger");
+            logger.error("WebSocket error:", evt);
+          },
+        };
+      }),
+    ),
   )
 
   // REST endpoint for initial message load (optional fallback)
