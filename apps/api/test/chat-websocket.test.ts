@@ -77,7 +77,11 @@ test("chat websocket upgrades successfully", async () => {
   const wsUrl = `ws://localhost:${server.port}/chat/ws`;
 
   await new Promise<void>((resolve, reject) => {
-    const ws = new WebSocket(wsUrl);
+    const ws = new WebSocket(wsUrl, {
+      headers: {
+        Origin: "http://localhost:5173",
+      },
+    });
     const timeout = setTimeout(() => {
       ws.close();
       reject(new Error("WebSocket upgrade timed out"));

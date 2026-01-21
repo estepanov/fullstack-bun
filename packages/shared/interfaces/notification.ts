@@ -57,7 +57,7 @@ export type NotificationPriority = z.infer<typeof notificationPrioritySchema>;
 export const notificationMetadataSchema = z.object({
   actions: z.array(notificationActionSchema).optional(),
   actionGroupVariant: notificationActionVariantSchema.optional(),
-  data: z.record(z.unknown()).optional(),
+  data: z.record(z.string(), z.unknown()).optional(),
   expiresAt: z.string().datetime().optional(),
   priority: notificationPrioritySchema.optional(),
 });
@@ -150,37 +150,37 @@ export const connectedMessageSchema = z.object({
   type: z.literal(NotificationWSMessageType.CONNECTED),
   userId: z.string().nullable(),
   unreadCount: z.number(),
-  trace: z.record(z.unknown()).optional(),
+  trace: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const newNotificationMessageSchema = z.object({
   type: z.literal(NotificationWSMessageType.NEW_NOTIFICATION),
   notification: notificationSchema,
-  trace: z.record(z.unknown()).optional(),
+  trace: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const notificationUpdatedMessageSchema = z.object({
   type: z.literal(NotificationWSMessageType.NOTIFICATION_UPDATED),
   notification: notificationSchema,
-  trace: z.record(z.unknown()).optional(),
+  trace: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const notificationDeletedMessageSchema = z.object({
   type: z.literal(NotificationWSMessageType.NOTIFICATION_DELETED),
   notificationId: z.string(),
-  trace: z.record(z.unknown()).optional(),
+  trace: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const unreadCountChangedMessageSchema = z.object({
   type: z.literal(NotificationWSMessageType.UNREAD_COUNT_CHANGED),
   unreadCount: z.number(),
-  trace: z.record(z.unknown()).optional(),
+  trace: z.record(z.string(), z.unknown()).optional(),
 });
 
 export const errorMessageSchema = z.object({
   type: z.literal(NotificationWSMessageType.ERROR),
   error: z.string(),
-  trace: z.record(z.unknown()).optional(),
+  trace: z.record(z.string(), z.unknown()).optional(),
 });
 
 export type SubscribeMessage = z.infer<typeof subscribeMessageSchema>;
