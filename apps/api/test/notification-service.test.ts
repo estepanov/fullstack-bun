@@ -1,6 +1,7 @@
 import { afterEach, beforeAll, beforeEach, describe, expect, mock, test } from "bun:test";
 import { eq } from "drizzle-orm";
 import { NotificationActionType, NotificationType } from "shared/interfaces/notification";
+import { clearDbStores } from "./mocks/db";
 import { ensureTestEnv } from "./mocks/env";
 import { clearRedisStores } from "./mocks/redis";
 
@@ -49,6 +50,12 @@ describe("NotificationService", () => {
     }
   });
 
+  beforeEach(() => {
+    // Ensure clean state before each test
+    clearRedisStores();
+    clearDbStores();
+  });
+
   afterEach(async () => {
     // Clean up notifications and preferences after each test
     const { db } = await import("../src/db/client");
@@ -62,6 +69,7 @@ describe("NotificationService", () => {
     }
 
     clearRedisStores();
+    clearDbStores();
   });
 
   describe("createNotification", () => {

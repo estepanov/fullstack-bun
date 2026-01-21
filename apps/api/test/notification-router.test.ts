@@ -1,10 +1,12 @@
-import { afterEach, describe, expect, mock, test } from "bun:test";
+import { afterEach, beforeEach, describe, expect, mock, test } from "bun:test";
 import { Hono } from "hono";
 import { NotificationType } from "shared/interfaces/notification";
 import type { LoggerMiddlewareEnv } from "../src/middlewares/logger";
 import { authMockState } from "./mocks/auth-state";
+import { clearDbStores } from "./mocks/db";
 import { ensureTestEnv } from "./mocks/env";
 import { testLogger } from "./mocks/logger";
+import { clearRedisStores } from "./mocks/redis";
 
 ensureTestEnv();
 
@@ -169,8 +171,16 @@ mock.module("../src/lib/auth", () => ({
 }));
 
 describe("notificationRouter", () => {
+  beforeEach(() => {
+    // Ensure clean state before each test
+    clearRedisStores();
+    clearDbStores();
+  });
+
   afterEach(() => {
     authMockState.session = null;
+    clearRedisStores();
+    clearDbStores();
   });
 
   const buildApp = async () => {

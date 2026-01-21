@@ -1,5 +1,13 @@
 {
-  "exclude": ["node_modules", "../frontend", "dist"],
+  "exclude": [
+    "node_modules",
+    "../frontend",
+    "dist",
+    "**/*.test.ts",
+    "**/*.test.tsx",
+    "**/*.spec.ts",
+    "**/*.spec.tsx"
+  ],
   "compilerOptions": {
     "target": "ES2020",
     "skipLibCheck": true,

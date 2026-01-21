@@ -117,6 +117,13 @@ const notificationStore: NotificationRow[] = [];
 const notificationPreferencesStore: NotificationPreferencesRow[] = [];
 const userStore: Array<Record<string, unknown>> = [];
 
+// Helper to clear all DB stores
+export const clearDbStores = () => {
+  notificationStore.length = 0;
+  notificationPreferencesStore.length = 0;
+  userStore.length = 0;
+};
+
 const getTableName = (table: unknown) => tableNameMap.get(table);
 
 const matchesClause = (row: Record<string, unknown>, clause?: FilterClause): boolean => {
