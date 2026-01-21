@@ -5,6 +5,7 @@
   "compilerOptions": {
     "skipLibCheck": true,
     "baseUrl": ".",
+    "jsx": "react-jsx",
     "paths": {
       "@frontend/*": ["./src/*"],
       "@frontend-test/*": ["./test/*"],

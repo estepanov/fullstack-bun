@@ -1,10 +1,11 @@
 import { APP_NAME } from "@admin/app.config";
 import { signOut, useSession } from "@admin/lib/auth-client";
-import { Button, ModeToggle } from "frontend-common/components/ui";
+import { Button, ModeToggle, type ModeToggleCopy } from "frontend-common/components/ui";
 import {
   ArrowLeftFromLine,
   LayoutDashboard,
   LogOut,
+  Megaphone,
   ShieldBan,
   Users,
   X,
@@ -15,6 +16,7 @@ import { LanguageSelector } from "./LanguageSelector";
 
 const navItems = [
   { path: "/", icon: LayoutDashboard, labelKey: "navigation.dashboard" },
+  { path: "/notifications", icon: Megaphone, labelKey: "navigation.notifications" },
   {
     path: "/users",
     icon: Users,
@@ -43,8 +45,18 @@ export const AdminSidebar = ({
   showCloseButton = false,
 }: AdminSidebarProps) => {
   const { t } = useTranslation("admin");
+  const { t: tColorMode } = useTranslation("color_mode_toggle");
   const { data: session } = useSession();
   const frontendUrl = import.meta.env.VITE_FRONTEND_URL;
+  const modeToggleCopy: ModeToggleCopy = {
+    label: tColorMode("label"),
+    currentModeLabel: tColorMode("current_mode"),
+    options: {
+      light: tColorMode("options.light"),
+      dark: tColorMode("options.dark"),
+      system: tColorMode("options.system"),
+    },
+  };
 
   return (
     <div
@@ -60,7 +72,7 @@ export const AdminSidebar = ({
             variant="outline"
             size="icon"
             className="lg:hidden"
-            aria-label={t("navigation.close_menu", "Close navigation")}
+            aria-label={t("navigation.close_menu")}
           >
             <X className="h-4 w-4" />
           </Button>
@@ -116,7 +128,7 @@ export const AdminSidebar = ({
           </div>
           <div className="flex items-center gap-2">
             <LanguageSelector />
-            <ModeToggle />
+            <ModeToggle copy={modeToggleCopy} />
           </div>
         </div>
         <Button asChild variant="outline" size="sm" className="w-full">
@@ -126,7 +138,7 @@ export const AdminSidebar = ({
             className="flex items-center gap-2"
           >
             <ArrowLeftFromLine className="h-4 w-4" />
-            {t("navigation.frontend_app", "Back to App")}
+            {t("navigation.frontend_app")}
           </a>
         </Button>
         <Button
@@ -139,7 +151,7 @@ export const AdminSidebar = ({
           className="w-full flex items-center gap-2"
         >
           <LogOut className="h-4 w-4" />
-          {t("sign_out", "Sign Out")}
+          {t("sign_out")}
         </Button>
       </div>
     </div>

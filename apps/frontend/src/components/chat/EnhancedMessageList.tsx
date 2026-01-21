@@ -24,6 +24,17 @@ export const EnhancedMessageList = ({
   className,
 }: EnhancedMessageListProps) => {
   const { t } = useTranslation("messages");
+  const typingCopy = {
+    typingText: (users: User[]) =>
+      users.length === 1
+        ? t("typing.single", { name: users[0].name })
+        : users.length === 2
+          ? t("typing.two", {
+              first: users[0].name,
+              second: users[1].name,
+            })
+          : t("typing.many", { name: users[0].name, count: users.length - 1 }),
+  };
   const parentRef = useRef<HTMLDivElement>(null);
   const wasAtBottom = useRef(true);
 
@@ -120,7 +131,7 @@ export const EnhancedMessageList = ({
       {/* Typing indicator at bottom */}
       {typingUsers.length > 0 && (
         <div className="mt-2">
-          <TypingIndicator users={typingUsers} />
+          <TypingIndicator users={typingUsers} copy={typingCopy} />
         </div>
       )}
     </div>

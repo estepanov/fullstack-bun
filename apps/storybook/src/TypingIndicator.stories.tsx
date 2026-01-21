@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { TypingIndicator } from "frontend-common/components/chat/typing-indicator";
+import type { TypingIndicatorCopy } from "frontend-common/components/chat/typing-indicator";
 import type { User } from "frontend-common/lib/chat-types";
 
 const meta = {
@@ -42,39 +43,53 @@ const david: User = {
   status: "online",
 };
 
+const typingCopy: TypingIndicatorCopy = {
+  typingText: (users) => {
+    if (users.length === 1) return `${users[0]?.name} is typing`;
+    if (users.length === 2) return `${users[0]?.name} and ${users[1]?.name} are typing`;
+    return `${users[0]?.name} and ${users.length - 1} others are typing`;
+  },
+};
+
 export const SingleUser: Story = {
   args: {
     users: [alice],
+    copy: typingCopy,
   },
 };
 
 export const TwoUsers: Story = {
   args: {
     users: [alice, bob],
+    copy: typingCopy,
   },
 };
 
 export const ThreeUsers: Story = {
   args: {
     users: [alice, bob, charlie],
+    copy: typingCopy,
   },
 };
 
 export const ManyUsers: Story = {
   args: {
     users: [alice, bob, charlie, david],
+    copy: typingCopy,
   },
 };
 
 export const NoUsers: Story = {
   args: {
     users: [],
+    copy: typingCopy,
   },
 };
 
 export const InChatContext: Story = {
   args: {
     users: [alice],
+    copy: typingCopy,
   },
   render: (args) => (
     <div className="flex flex-col gap-4 w-full max-w-2xl p-4 bg-background rounded-lg border">
@@ -88,7 +103,7 @@ export const InChatContext: Story = {
           </div>
         </div>
       </div>
-      <TypingIndicator users={args.users} />
+      <TypingIndicator users={args.users} copy={typingCopy} />
     </div>
   ),
 };

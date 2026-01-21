@@ -6,7 +6,6 @@ import {
   PencilLine,
   Trash2,
 } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import type { Message } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
 import {
@@ -18,8 +17,16 @@ import {
 } from "../ui";
 import { UserAvatar } from "../ui/user-avatar";
 
+export interface MessageBubbleCopy {
+  menuLabel: string;
+  editLabel: string;
+  deleteLabel: string;
+  banUserLabel: string;
+}
+
 interface MessageBubbleProps {
   message: Message;
+  copy: MessageBubbleCopy;
   isOwn?: boolean;
   isAdmin?: boolean;
   showAvatar?: boolean;
@@ -84,6 +91,7 @@ function MessageStatus({ status }: { status?: Message["status"] }) {
 
 export function MessageBubble({
   message,
+  copy,
   isOwn = false,
   isAdmin = false,
   showAvatar = true,
@@ -93,7 +101,6 @@ export function MessageBubble({
   onBanUser,
   className,
 }: MessageBubbleProps) {
-  const { t } = useTranslation("messages");
   const canManage = isAdmin || isOwn;
   const canBan = isAdmin && !isOwn;
   const hasMenu =
@@ -150,7 +157,7 @@ export function MessageBubble({
                 variant="ghost"
                 size="icon"
                 className="h-6 w-6"
-                aria-label={t("actions.menu_label")}
+                aria-label={copy.menuLabel}
               >
                 <MoreVertical className="h-4 w-4" />
               </Button>
@@ -159,7 +166,7 @@ export function MessageBubble({
               {onEditMessage && (
                 <DropdownMenuItem onSelect={() => onEditMessage(message)}>
                   <PencilLine className="h-4 w-4" />
-                  {t("actions.edit")}
+                  {copy.editLabel}
                 </DropdownMenuItem>
               )}
               {onDeleteMessage && (
@@ -168,7 +175,7 @@ export function MessageBubble({
                   onSelect={() => onDeleteMessage(message)}
                 >
                   <Trash2 className="h-4 w-4" />
-                  {t("actions.delete")}
+                  {copy.deleteLabel}
                 </DropdownMenuItem>
               )}
               {canBan && onBanUser && (
@@ -177,7 +184,7 @@ export function MessageBubble({
                   onSelect={() => onBanUser(message.sender)}
                 >
                   <Ban className="h-4 w-4" />
-                  {t("actions.ban_user")}
+                  {copy.banUserLabel}
                 </DropdownMenuItem>
               )}
             </DropdownMenuContent>

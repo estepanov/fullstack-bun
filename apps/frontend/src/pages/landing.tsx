@@ -70,6 +70,80 @@ const LandingPage = () => {
       value: onlineCounts?.admins ?? "-",
     },
   ];
+  const messageBubbleCopy = {
+    menuLabel: tMessages("actions.menu_label"),
+    editLabel: tMessages("actions.edit"),
+    deleteLabel: tMessages("actions.delete"),
+    banUserLabel: tMessages("actions.ban_user"),
+  };
+  const messageListCopy = {
+    emptyTitle: tMessages("message_list.empty_title"),
+    emptySubtitle: tMessages("message_list.empty_subtitle"),
+    todayLabel: tMessages("message_list.today"),
+    yesterdayLabel: tMessages("message_list.yesterday"),
+    typingText: (users: User[]) =>
+      users.length === 1
+        ? tMessages("typing.single", { name: users[0].name })
+        : users.length === 2
+          ? tMessages("typing.two", {
+              first: users[0].name,
+              second: users[1].name,
+            })
+          : tMessages("typing.many", { name: users[0].name, count: users.length - 1 }),
+  };
+  const messageInputCopy = {
+    placeholder: tMessages("message_input.placeholder"),
+    addEmojiLabel: tMessages("message_input.add_emoji"),
+    sendMessageLabel: tMessages("message_input.send_message"),
+    characterCountLabel: ({
+      count,
+      max,
+    }: {
+      count: number;
+      max: number;
+    }) => tMessages("form.character_count", { count, max }),
+  };
+  const chatHeaderCopy = {
+    backButtonLabel: tMessages("chat_header.back_button"),
+    moreOptionsLabel: tMessages("chat_header.more_options"),
+    onlineLabel: tMessages("chat_header.online"),
+    offlineLabel: tMessages("chat_header.offline"),
+    membersLabel: (count: number) => tMessages("chat_header.members", { count }),
+    membersOnlineLabel: (count: number, online: number) =>
+      tMessages("chat_header.members_online", { count, online }),
+    groupFallbackName: tMessages("chat_header.group_fallback_name"),
+  };
+  const conversationItemCopy = {
+    timeNowLabel: tMessages("conversation_item.time_now"),
+    minutesLabel: (count: number) => tMessages("conversation_item.minutes", { count }),
+    hoursLabel: (count: number) => tMessages("conversation_item.hours", { count }),
+    daysLabel: (count: number) => tMessages("conversation_item.days", { count }),
+    youPrefix: tMessages("conversation_item.you_prefix"),
+    menuLabel: tMessages("actions.menu_label"),
+    editLabel: tMessages("actions.edit"),
+    deleteLabel: tMessages("actions.delete"),
+    banUserLabel: tMessages("actions.ban_user"),
+    formatUnreadCount: (count: number) =>
+      count > 99 ? tMessages("conversation_item.unread_overflow") : String(count),
+  };
+  const chatLayoutCopy = {
+    emptyTitle: tMessages("chat_layout.empty_title"),
+    emptySubtitle: tMessages("chat_layout.empty_subtitle"),
+    conversationList: {
+      title: tMessages("conversation_list.title"),
+      newButtonLabel: tMessages("conversation_list.new_button_label"),
+      searchPlaceholder: tMessages("conversation_list.search_placeholder"),
+      emptyLabel: tMessages("conversation_list.empty"),
+      itemCopy: conversationItemCopy,
+    },
+    chatView: {
+      header: chatHeaderCopy,
+      messageList: messageListCopy,
+      messageBubble: messageBubbleCopy,
+      messageInput: messageInputCopy,
+      unauthenticatedContent: tMessages("chat_view.login_required"),
+    },
+  };
 
   return (
     <div className="app-surface flex-1">
@@ -111,6 +185,7 @@ const LandingPage = () => {
           conversations={conversations}
           messages={messagesByConversation}
           currentUserId={currentUserId}
+          copy={chatLayoutCopy}
           typingUsers={typingUsersByConversation}
           isAdmin={isAdmin}
           onSendMessage={(_conversationId, message) => {

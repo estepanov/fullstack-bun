@@ -52,9 +52,6 @@ services:
       - ./apps/api/tsconfig.json:/app/apps/api/tsconfig.json:ro
       - ./apps/api/tsconfig.build.json:/app/apps/api/tsconfig.build.json:ro
       - ./packages:/app/packages
-      # Use named volumes to persist node_modules from build
-      - api_node_modules:/app/node_modules
-      - api_app_node_modules:/app/apps/api/node_modules
     depends_on:
       postgres:
         condition: service_healthy
@@ -132,5 +129,3 @@ services:
 
 volumes:
   db-data:
-  api_node_modules:
-  api_app_node_modules:

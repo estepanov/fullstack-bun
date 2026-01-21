@@ -35,6 +35,7 @@ describe("checkBannedMiddleware", () => {
   test("returns 403 when user is banned", async () => {
     dbMockState.userRows = [
       {
+        id: "user-1",
         banned: true,
         banReason: "spamming",
         banExpires: null,
@@ -62,6 +63,7 @@ describe("checkBannedMiddleware", () => {
   test("passes when ban expired", async () => {
     dbMockState.userRows = [
       {
+        id: "user-1",
         banned: true,
         banReason: null,
         banExpires: new Date(Date.now() - 1000),

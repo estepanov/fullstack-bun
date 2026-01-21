@@ -35,3 +35,37 @@ if (typeof document === "undefined" || !document.body) {
   // @ts-expect-error
   globalThis.KeyboardEvent = windowInstance.KeyboardEvent;
 }
+
+if (typeof globalThis.EventSource === "undefined") {
+  class TestEventSource {
+    static OPEN = 1;
+    static CLOSED = 2;
+
+    readyState = TestEventSource.OPEN;
+    url: string;
+    withCredentials = false;
+    private listeners = new Map<string, Set<(event: Event) => void>>();
+
+    constructor(url: string, options?: { withCredentials?: boolean }) {
+      this.url = url;
+      this.withCredentials = options?.withCredentials ?? false;
+    }
+
+    addEventListener(type: string, listener: (event: Event) => void) {
+      const existing = this.listeners.get(type) ?? new Set();
+      existing.add(listener);
+      this.listeners.set(type, existing);
+    }
+
+    removeEventListener(type: string, listener: (event: Event) => void) {
+      this.listeners.get(type)?.delete(listener);
+    }
+
+    close() {
+      this.readyState = TestEventSource.CLOSED;
+    }
+  }
+
+  // @ts-expect-error
+  globalThis.EventSource = TestEventSource;
+}

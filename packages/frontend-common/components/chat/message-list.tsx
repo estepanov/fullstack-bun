@@ -2,21 +2,30 @@
 
 import { MessageSquarePlus } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import type { Message, User } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
-import { MessageBubble } from "./message-bubble";
+import { MessageBubble, type MessageBubbleCopy } from "./message-bubble";
 import { TypingIndicator } from "./typing-indicator";
+import type { TypingIndicatorCopy } from "./typing-indicator";
 
 interface MessageListProps {
   messages: Message[];
   currentUserId: string;
+  copy: MessageListCopy;
+  messageBubbleCopy: MessageBubbleCopy;
   typingUsers?: User[];
   isAdmin?: boolean;
   onEditMessage?: (message: Message) => void;
   onDeleteMessage?: (message: Message) => void;
   onBanUser?: (user: Message["sender"]) => void;
   className?: string;
+}
+
+export interface MessageListCopy extends TypingIndicatorCopy {
+  emptyTitle: string;
+  emptySubtitle: string;
+  todayLabel: string;
+  yesterdayLabel: string;
 }
 
 function formatDateDivider(
@@ -40,6 +49,8 @@ function formatDateDivider(
 export function MessageList({
   messages,
   currentUserId,
+  copy,
+  messageBubbleCopy,
   typingUsers = [],
   isAdmin = false,
   onEditMessage,
@@ -47,7 +58,6 @@ export function MessageList({
   onBanUser,
   className,
 }: MessageListProps) {
-  const { t } = useTranslation("messages");
   const bottomRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -68,14 +78,12 @@ export function MessageList({
               <MessageSquarePlus className="h-6 w-6 text-primary" aria-hidden />
             </div>
             <div className="space-y-1">
-              <p className="text-base font-semibold text-foreground">
-                {t("message_list.empty_title")}
-              </p>
-              <p className="text-sm">{t("message_list.empty_subtitle")}</p>
+              <p className="text-base font-semibold text-foreground">{copy.emptyTitle}</p>
+              <p className="text-sm">{copy.emptySubtitle}</p>
             </div>
           </div>
         </div>
-        {typingUsers.length > 0 && <TypingIndicator users={typingUsers} />}
+        {typingUsers.length > 0 && <TypingIndicator users={typingUsers} copy={copy} />}
         <div ref={bottomRef} />
       </div>
     );
@@ -104,8 +112,8 @@ export function MessageList({
             <span className="px-3 py-1 text-xs font-medium text-muted-foreground bg-muted rounded-full">
               {formatDateDivider(
                 new Date(group.date),
-                t("message_list.today"),
-                t("message_list.yesterday"),
+                copy.todayLabel,
+                copy.yesterdayLabel,
               )}
             </span>
           </div>
@@ -119,6 +127,7 @@ export function MessageList({
               <MessageBubble
                 key={message.id}
                 message={message}
+                copy={messageBubbleCopy}
                 isOwn={isOwn}
                 isAdmin={isAdmin}
                 showAvatar={showAvatar}
@@ -130,7 +139,7 @@ export function MessageList({
           })}
         </div>
       ))}
-      {typingUsers.length > 0 && <TypingIndicator users={typingUsers} />}
+      {typingUsers.length > 0 && <TypingIndicator users={typingUsers} copy={copy} />}
       <div ref={bottomRef} />
     </div>
   );

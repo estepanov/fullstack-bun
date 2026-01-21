@@ -2,16 +2,16 @@
 
 import { MessageSquare } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
 import type { Conversation, Message, User } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
-import { ChatView } from "./chat-view";
-import { ConversationList } from "./conversation-list";
+import { ChatView, type ChatViewCopy } from "./chat-view";
+import { ConversationList, type ConversationListCopy } from "./conversation-list";
 
 interface ChatLayoutProps {
   conversations: Conversation[];
   messages: Record<string, Message[]>;
   currentUserId: string;
+  copy: ChatLayoutCopy;
   typingUsers?: Record<string, User[]>;
   isAdmin?: boolean;
   onSendMessage?: (conversationId: string, message: string) => void;
@@ -23,10 +23,18 @@ interface ChatLayoutProps {
   className?: string;
 }
 
+export interface ChatLayoutCopy {
+  emptyTitle: string;
+  emptySubtitle: string;
+  conversationList: ConversationListCopy;
+  chatView: ChatViewCopy;
+}
+
 export function ChatLayout({
   conversations,
   messages,
   currentUserId,
+  copy,
   typingUsers = {},
   isAdmin = false,
   onSendMessage,
@@ -37,7 +45,6 @@ export function ChatLayout({
   onBanUser,
   className,
 }: ChatLayoutProps) {
-  const { t } = useTranslation("messages");
   const [activeConversationId, setActiveConversationId] = useState<string | undefined>(
     conversations[0]?.id,
   );
@@ -76,7 +83,7 @@ export function ChatLayout({
   return (
     <div
       className={cn(
-        "flex h-8/12 overflow-hidden rounded-xl border border-border",
+        "flex h-8/12 max-h-[calc(80dvh)] overflow-hidden rounded-xl border border-border",
         className,
       )}
     >
@@ -91,6 +98,7 @@ export function ChatLayout({
           conversations={conversations}
           activeConversationId={activeConversationId}
           currentUserId={currentUserId}
+          copy={copy.conversationList}
           isAdmin={isAdmin}
           onSelectConversation={handleSelectConversation}
           onNewConversation={onNewConversation}
@@ -107,6 +115,7 @@ export function ChatLayout({
             conversation={activeConversation}
             messages={activeMessages}
             currentUserId={currentUserId}
+            copy={copy.chatView}
             typingUsers={activeTypingUsers}
             isAdmin={isAdmin}
             onSendMessage={(message) => onSendMessage?.(activeConversation.id, message)}
@@ -119,8 +128,8 @@ export function ChatLayout({
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
             <MessageSquare className="h-16 w-16 mb-4 opacity-50" />
-            <p className="text-lg font-medium">{t("chat_layout.empty_title")}</p>
-            <p className="text-sm">{t("chat_layout.empty_subtitle")}</p>
+            <p className="text-lg font-medium">{copy.emptyTitle}</p>
+            <p className="text-sm">{copy.emptySubtitle}</p>
           </div>
         )}
       </div>

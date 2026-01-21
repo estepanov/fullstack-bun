@@ -2,6 +2,7 @@
   "compilerOptions": {
     "strictNullChecks": true,
     "strict": true,
-    "composite": true
+    "composite": true,
+    "jsx": "react-jsx"
   }
 }

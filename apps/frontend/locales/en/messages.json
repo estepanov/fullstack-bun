@@ -44,18 +44,23 @@
     "online": "Online",
     "offline": "Offline",
     "members": "{{count}} members",
-    "members_online": "{{count}} members, {{online}} online"
+    "members_online": "{{count}} members, {{online}} online",
+    "group_fallback_name": "Chat"
   },
   "chat_layout": {
     "empty_title": "Select a conversation",
     "empty_subtitle": "Choose from your existing conversations or start a new one"
+  },
+  "chat_view": {
+    "login_required": "Log in to send messages"
   },
   "conversation_item": {
     "time_now": "now",
     "minutes": "{{count}}m",
     "hours": "{{count}}h",
     "days": "{{count}}d",
-    "you_prefix": "You: "
+    "you_prefix": "You: ",
+    "unread_overflow": "99+"
   },
   "conversation_list": {
     "title": "Messages",

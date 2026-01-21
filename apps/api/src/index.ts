@@ -11,6 +11,11 @@ import { chatManager } from "./lib/chat-manager";
 import { chatPresenceService } from "./lib/chat-presence";
 import { ChatPubSubManager } from "./lib/chat-pubsub";
 import { instanceHeartbeat } from "./lib/instance-heartbeat";
+import { SSEDeliveryStrategy } from "./lib/notification-delivery-strategy";
+import { EmailDeliveryStrategy } from "./lib/notification-email-delivery";
+import { NotificationPubSubManager } from "./lib/notification-pubsub";
+import { notificationService } from "./lib/notification-service";
+import { notificationSSEManager } from "./lib/notification-sse-manager";
 import {
   getRedisPubSubPublisher,
   getRedisPubSubSubscriber,
@@ -18,18 +23,21 @@ import {
   redis,
 } from "./lib/redis";
 import { loggerMiddleware, requestLogFormat } from "./middlewares/logger";
+import { rateLimitMiddleware } from "./middlewares/rate-limit";
 import { requireMetricsAuth } from "./middlewares/require-metrics-auth";
 import { adminRouter } from "./routers/admin-router";
 import { chatRouter } from "./routers/chat-router";
 import { exampleRouter } from "./routers/example-router";
+import { notificationRouter } from "./routers/notification-router";
 import { userRouter } from "./routers/user-router";
 import { appLogger } from "./utils/logger";
 
 // Global flag for graceful shutdown
 let isShuttingDown = false;
 
-// Module-level reference to pub/sub manager for graceful shutdown
+// Module-level reference to pub/sub managers for graceful shutdown
 let chatPubSubManager: ChatPubSubManager | null = null;
+let notificationPubSubManager: NotificationPubSubManager | null = null;
 
 // Initialize horizontal scaling if enabled
 if (env.ENABLE_DISTRIBUTED_CHAT) {
@@ -55,9 +63,35 @@ if (env.ENABLE_DISTRIBUTED_CHAT) {
       appLogger.error({ error }, "Failed to start instance heartbeat");
       process.exit(1);
     });
+
+  // Initialize notification pub/sub manager
+  notificationPubSubManager = new NotificationPubSubManager(notificationSSEManager);
+  notificationSSEManager.setPubSubManager(notificationPubSubManager);
+
+  // Start notification pub/sub manager
+  notificationPubSubManager.start().catch((error) => {
+    appLogger.error({ error }, "Failed to start NotificationPubSubManager");
+    process.exit(1);
+  });
 } else {
   appLogger.info("Single-instance chat mode (distributed mode disabled)");
 }
+
+// Register notification delivery strategies (works in both single and distributed mode)
+notificationService.registerDeliveryStrategy(
+  new SSEDeliveryStrategy(
+    (userId) => notificationSSEManager.isUserOnline(userId),
+    (notification) => notificationSSEManager.broadcastNewNotification(notification),
+  ),
+);
+notificationService.registerDeliveryStrategy(
+  new EmailDeliveryStrategy((userId) => notificationSSEManager.isUserOnline(userId)),
+);
+
+// Register unread count broadcast callback
+notificationService.setUnreadCountBroadcast((userId, count) =>
+  notificationSSEManager.broadcastUnreadCountChange(userId, count),
+);
 
 const app = new Hono();
 
@@ -102,12 +136,28 @@ const baseApp = app
 const appWithRoutes = isDevelopmentEnv()
   ? baseApp
       .route("example", exampleRouter)
+      .use("/admin/*", rateLimitMiddleware({ preset: "admin", keyPrefix: "admin" }))
       .route("admin", adminRouter)
+      .use("/chat/*", rateLimitMiddleware({ preset: "authenticated", keyPrefix: "chat" }))
       .route("chat", chatRouter)
+      .use(
+        "/notification/*",
+        rateLimitMiddleware({ preset: "notifications", keyPrefix: "notification" }),
+      )
+      .route("notification", notificationRouter)
+      .use("/user/*", rateLimitMiddleware({ preset: "authenticated", keyPrefix: "user" }))
       .route("user", userRouter)
   : baseApp
+      .use("/admin/*", rateLimitMiddleware({ preset: "admin", keyPrefix: "admin" }))
       .route("admin", adminRouter)
+      .use("/chat/*", rateLimitMiddleware({ preset: "authenticated", keyPrefix: "chat" }))
       .route("chat", chatRouter)
+      .use(
+        "/notification/*",
+        rateLimitMiddleware({ preset: "notifications", keyPrefix: "notification" }),
+      )
+      .route("notification", notificationRouter)
+      .use("/user/*", rateLimitMiddleware({ preset: "authenticated", keyPrefix: "user" }))
       .route("user", userRouter);
 
 const routes = appWithRoutes
@@ -165,7 +215,8 @@ const routes = appWithRoutes
   })
   .get("/metrics", requireMetricsAuth(), async (c) => {
     // Return pub/sub metrics if distributed mode is enabled
-    const metrics = chatPubSubManager?.getMetrics();
+    const chatMetrics = chatPubSubManager?.getMetrics();
+    const notificationMetrics = notificationPubSubManager?.getMetrics();
     const activeInstances = env.ENABLE_DISTRIBUTED_CHAT
       ? await instanceHeartbeat.getActiveInstances()
       : [];
@@ -174,9 +225,16 @@ const routes = appWithRoutes
       timestamp: new Date().toISOString(),
       instanceId: env.INSTANCE_ID || "unknown",
       distributedMode: env.ENABLE_DISTRIBUTED_CHAT,
-      pubsub: metrics || null,
+      pubsub: {
+        chat: chatMetrics || null,
+        notifications: notificationMetrics || null,
+      },
       chat: {
         connectedClients: chatManager.getClientCount(),
+      },
+      notifications: {
+        connectedClients: notificationSSEManager.getClientCount(),
+        onlineUsers: notificationSSEManager.getOnlineUserCount(),
       },
       cluster: {
         activeInstances: activeInstances.length,
@@ -184,6 +242,10 @@ const routes = appWithRoutes
       },
     });
   })
+  .use(
+    `${AUTH_CONFIG.basePath}/*`,
+    rateLimitMiddleware({ preset: "betterAuth", keyPrefix: "better-auth" }),
+  )
   .on(["POST", "GET", "OPTIONS"], `${AUTH_CONFIG.basePath}/*`, async (c) => {
     const response = await auth.handler(c.req.raw);
     const { method, url } = c.req;
@@ -224,13 +286,21 @@ async function gracefulShutdown(signal: string) {
     }
 
     // 3. Drain WebSocket connections
-    appLogger.info("Draining WebSocket connections...");
+    appLogger.info("Draining chat WebSocket connections...");
     await chatManager.shutdown();
+
+    appLogger.info("Draining notification SSE connections...");
+    await notificationSSEManager.shutdown();
 
     // 4. Stop pub/sub if enabled
     if (chatPubSubManager) {
-      appLogger.info("Stopping pub/sub manager...");
+      appLogger.info("Stopping chat pub/sub manager...");
       await chatPubSubManager.stop();
+    }
+
+    if (notificationPubSubManager) {
+      appLogger.info("Stopping notification pub/sub manager...");
+      await notificationPubSubManager.stop();
     }
 
     // 5. Close Redis connections
@@ -259,4 +329,8 @@ export default {
   hostname: "0.0.0.0",
   fetch: app.fetch,
   websocket,
+  // Disable idle timeout for long-lived SSE connections
+  // Bun's default is 10 seconds which causes ERR_INCOMPLETE_CHUNKED_ENCODING
+  development: isDevelopmentEnv(),
+  idleTimeout: 0, // Disable idle timeout (SSE connections need to stay open)
 };

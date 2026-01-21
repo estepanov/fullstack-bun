@@ -38,6 +38,7 @@ export default defineConfig({
             { text: "Dependencies", link: "/reference/dependencies.html" },
             { text: "Database", link: "/reference/database.html" },
             { text: "Redis", link: "/reference/redis.html" },
+            { text: "Notifications", link: "/reference/notifications.html" },
             {
               text: "Horizontal Scaling",
               link: "/reference/horizontal-scaling.html",

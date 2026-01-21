@@ -1,11 +1,13 @@
 import { signOut, useSession } from "@frontend/lib/auth-client";
+import { PopoverClose } from "@radix-ui/react-popover";
 import { isAdminSession } from "frontend-common/auth";
-import { Button, Container } from "frontend-common/components/ui";
+import { Button, Container, Separator, StyledLink } from "frontend-common/components/ui";
 import { Popover, PopoverContent, PopoverTrigger } from "frontend-common/components/ui";
 import { cn } from "frontend-common/lib";
 import { MenuIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink, NavLink as RouterNavLink } from "react-router";
+import { NotificationBell } from "./notifications/NotificationBell";
 
 const NavLink = ({
   to,
@@ -45,8 +47,14 @@ const MobileNavigation = () => {
         sideOffset={260}
         className="absolute inset-x-0 top-full mt-4 flex origin-top flex-col rounded-2xl bg-white dark:bg-gray-800 p-4 text-lg tracking-tight text-slate-900 dark:text-gray-100 shadow-xl dark:shadow-gray-900/50 ring-1 ring-slate-900/5 dark:ring-gray-700/50 data-closed:scale-95 data-closed:opacity-0 data-enter:duration-150 data-enter:ease-out data-leave:duration-100 data-leave:ease-in"
       >
-        <NavLink to="/more">{t("nav_links.second_page")}</NavLink>
-        {session && <NavLink to="/dashboard">Dashboard</NavLink>}
+        <PopoverClose asChild>
+          <NavLink to="/more">{t("nav_links.second_page")}</NavLink>
+        </PopoverClose>
+        {session && (
+          <PopoverClose asChild>
+            <NavLink to="/dashboard">Dashboard</NavLink>
+          </PopoverClose>
+        )}
         {isAdmin && (
           <a
             href={import.meta.env.VITE_ADMIN_URL || "http://localhost:5175"}
@@ -55,24 +63,20 @@ const MobileNavigation = () => {
             Admin
           </a>
         )}
-        <hr className="m-2 border-slate-300/40 dark:border-gray-600/40" />
+        <Separator className="my-2" />
         {session ? (
           <div className="flex flex-col gap-2">
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              {session.user.email}
-            </span>
-            <Button
-              type="button"
-              onClick={() => signOut()}
-              variant="link"
-              size="xs"
-              className="cursor-pointer text-left text-red-600 dark:text-red-400 hover:text-red-500 dark:hover:text-red-300 px-0"
-            >
+            <span>{session.user.email}</span>
+            <Button type="button" onClick={() => signOut()} variant="destructive">
               Sign Out
             </Button>
           </div>
         ) : (
-          <NavLink to="/auth/login">{t("nav_links.sign_in")}</NavLink>
+          <PopoverClose asChild>
+            <StyledLink size="md" variant="default-button" to="/auth/login">
+              {t("nav_links.sign_in")}
+            </StyledLink>
+          </PopoverClose>
         )}
       </PopoverContent>
     </Popover>
@@ -109,27 +113,25 @@ export const Header = () => {
               )}
             </div>
           </div>
-          <div className="flex items-center gap-x-5 md:gap-x-8">
-            <div className="hidden md:flex md:items-center md:gap-x-4">
-              {session ? (
-                <div>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {session.user.email}
-                  </span>
-                  <Button
-                    type="button"
-                    onClick={() => signOut()}
-                    variant="link"
-                    size="xs"
-                    className="text-destructive"
-                  >
-                    Sign Out
-                  </Button>
-                </div>
-              ) : (
-                <NavLink to="/auth/login">{t("nav_links.sign_in")}</NavLink>
-              )}
-            </div>
+          <div className="flex items-center gap-x-2">
+            {session ? (
+              <div className="hidden md:flex md:items-center md:gap-x-4">
+                <span>{session.user.email}</span>
+                <Button
+                  type="button"
+                  onClick={() => signOut()}
+                  variant="link"
+                  className="text-destructive"
+                >
+                  Sign Out
+                </Button>
+              </div>
+            ) : (
+              <StyledLink variant="default-button" to="/auth/login">
+                {t("nav_links.sign_in")}
+              </StyledLink>
+            )}
+            {session && <NotificationBell />}
             <div className="-mr-1 md:hidden">
               <MobileNavigation />
             </div>

@@ -4,6 +4,7 @@ import { isAdminSession } from "frontend-common/auth";
 import { ConversationList } from "frontend-common/components/chat/conversation-list";
 import { MessageSquare } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { EnhancedChatView } from "./EnhancedChatView";
 
 interface MultiConversationChatContainerProps {
@@ -15,6 +16,7 @@ export const MultiConversationChatContainer = ({
   roomId = "global",
   className,
 }: MultiConversationChatContainerProps) => {
+  const { t } = useTranslation("messages");
   const {
     conversations,
     messagesByConversation,
@@ -36,6 +38,26 @@ export const MultiConversationChatContainer = ({
   const { data: session } = useSession();
   const isAdmin = isAdminSession(session);
   const currentUserId = session?.user?.id;
+  const conversationItemCopy = {
+    timeNowLabel: t("conversation_item.time_now"),
+    minutesLabel: (count: number) => t("conversation_item.minutes", { count }),
+    hoursLabel: (count: number) => t("conversation_item.hours", { count }),
+    daysLabel: (count: number) => t("conversation_item.days", { count }),
+    youPrefix: t("conversation_item.you_prefix"),
+    menuLabel: t("actions.menu_label"),
+    editLabel: t("actions.edit"),
+    deleteLabel: t("actions.delete"),
+    banUserLabel: t("actions.ban_user"),
+    formatUnreadCount: (count: number) =>
+      count > 99 ? t("conversation_item.unread_overflow") : String(count),
+  };
+  const conversationListCopy = {
+    title: t("conversation_list.title"),
+    newButtonLabel: t("conversation_list.new_button_label"),
+    searchPlaceholder: t("conversation_list.search_placeholder"),
+    emptyLabel: t("conversation_list.empty"),
+    itemCopy: conversationItemCopy,
+  };
 
   const [showMobileChat, setShowMobileChat] = useState(false);
 
@@ -78,6 +100,7 @@ export const MultiConversationChatContainer = ({
           conversations={conversations}
           activeConversationId={activeConversationId}
           currentUserId={currentUserId || ""}
+          copy={conversationListCopy}
           onSelectConversation={handleSelectConversation}
           onNewConversation={handleNewConversation}
         />
@@ -107,10 +130,8 @@ export const MultiConversationChatContainer = ({
         ) : (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
             <MessageSquare className="h-16 w-16 mb-4 opacity-50" />
-            <p className="text-lg font-medium">Select a conversation</p>
-            <p className="text-sm">
-              Choose from your existing conversations or start a new one
-            </p>
+            <p className="text-lg font-medium">{t("chat_layout.empty_title")}</p>
+            <p className="text-sm">{t("chat_layout.empty_subtitle")}</p>
           </div>
         )}
       </div>

@@ -4,6 +4,7 @@ const config: RouteConfig = [
   index("./pages/dashboard.tsx"),
   route("/users", "./pages/users/list.tsx"),
   route("/users/banned", "./pages/users/banned.tsx"),
+  route("/notifications", "./pages/notifications/send.tsx"),
   route("*?", "catchall.tsx"),
 ];
 

@@ -1,13 +1,23 @@
 import { ChevronLeft, MoreVertical } from "lucide-react";
-import { useTranslation } from "react-i18next";
 import type { Conversation } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
 import { Button } from "../ui";
 import { UserAvatar } from "../ui/user-avatar";
 
+export interface ChatHeaderCopy {
+  backButtonLabel: string;
+  moreOptionsLabel: string;
+  onlineLabel: string;
+  offlineLabel: string;
+  membersLabel: (count: number) => string;
+  membersOnlineLabel: (count: number, online: number) => string;
+  groupFallbackName: string;
+}
+
 interface ChatHeaderProps {
   conversation: Conversation;
   currentUserId: string;
+  copy: ChatHeaderCopy;
   onBack?: () => void;
   onMore?: () => void;
   className?: string;
@@ -16,11 +26,11 @@ interface ChatHeaderProps {
 export function ChatHeader({
   conversation,
   currentUserId,
+  copy,
   onBack,
   onMore,
   className,
 }: ChatHeaderProps) {
-  const { t } = useTranslation("messages");
   const hasCurrentUser = Boolean(currentUserId);
   const otherParticipants = conversation.participants.filter(
     (p) => p.id !== currentUserId,
@@ -39,14 +49,11 @@ export function ChatHeader({
       : otherParticipants.filter((p) => p.status === "online").length;
   const statusText = conversation.isGroup
     ? onlineCount > 0
-      ? t("chat_header.members_online", {
-          count: memberCount,
-          online: onlineCount,
-        })
-      : t("chat_header.members", { count: memberCount })
+      ? copy.membersOnlineLabel(memberCount, onlineCount)
+      : copy.membersLabel(memberCount)
     : displayUser?.status === "online"
-      ? t("chat_header.online")
-      : t("chat_header.offline");
+      ? copy.onlineLabel
+      : copy.offlineLabel;
 
   return (
     <header
@@ -63,7 +70,7 @@ export function ChatHeader({
           className="md:hidden shrink-0 -ml-2"
         >
           <ChevronLeft className="h-5 w-5" />
-          <span className="sr-only">{t("chat_header.back_button")}</span>
+          <span className="sr-only">{copy.backButtonLabel}</span>
         </Button>
       )}
       {conversation.isGroup ? (
@@ -87,7 +94,7 @@ export function ChatHeader({
             <UserAvatar
               user={{
                 id: "group",
-                name: conversation.name || "Chat",
+                name: conversation.name || copy.groupFallbackName,
               }}
               size="md"
             />
@@ -108,7 +115,7 @@ export function ChatHeader({
           className="text-muted-foreground hover:text-foreground"
         >
           <MoreVertical className="h-5 w-5" />
-          <span className="sr-only">{t("chat_header.more_options")}</span>
+          <span className="sr-only">{copy.moreOptionsLabel}</span>
         </Button>
       </div>
     </header>

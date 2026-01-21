@@ -38,6 +38,18 @@ export const EnhancedMessageInput = ({
   const throttleSeconds = throttle ? Math.ceil(throttle.remainingMs / 1000) : 0;
   const throttleWindowSeconds = throttle ? Math.ceil(throttle.windowMs / 1000) : 0;
   const isThrottled = Boolean(throttle);
+  const messageInputCopy = {
+    placeholder: t("form.placeholder"),
+    addEmojiLabel: t("message_input.add_emoji"),
+    sendMessageLabel: t("message_input.send_message"),
+    characterCountLabel: ({
+      count,
+      max,
+    }: {
+      count: number;
+      max: number;
+    }) => t("form.character_count", { count, max }),
+  };
 
   // Show login prompt if not authenticated
   if (!isAuthenticated) {
@@ -113,7 +125,8 @@ export const EnhancedMessageInput = ({
         onSend={onSend}
         onTypingStatus={onTypingStatus}
         disabled={isInputDisabled}
-        placeholder={placeholder || t("form.placeholder")}
+        placeholder={placeholder}
+        copy={messageInputCopy}
         className={className}
       />
     </div>

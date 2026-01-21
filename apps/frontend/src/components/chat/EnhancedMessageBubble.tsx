@@ -49,6 +49,12 @@ export const EnhancedMessageBubble = ({
   className,
 }: EnhancedMessageBubbleProps) => {
   const { t } = useTranslation("messages");
+  const messageBubbleCopy = {
+    menuLabel: t("actions.menu_label"),
+    editLabel: t("actions.edit"),
+    deleteLabel: t("actions.delete"),
+    banUserLabel: t("actions.ban_user"),
+  };
   const [selectedMessage, setSelectedMessage] = useState<ChatMessage | null>(null);
   const [editingMessage, setEditingMessage] = useState<ChatMessage | null>(null);
   const [editValue, setEditValue] = useState("");
@@ -140,6 +146,7 @@ export const EnhancedMessageBubble = ({
         <div className={isEmojiOnly ? "text-3xl" : ""}>
           <MessageBubble
             message={message}
+            copy={messageBubbleCopy}
             isOwn={isOwn}
             showAvatar={showAvatar}
             showTimestamp={showTimestamp}

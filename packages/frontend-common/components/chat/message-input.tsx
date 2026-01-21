@@ -2,13 +2,20 @@ import type React from "react";
 
 import { Send, Smile } from "lucide-react";
 import { useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
 import { MESSAGE_CONFIG } from "shared/config/chat";
 import { cn } from "../../lib/utils";
 import { Button, Field, FieldContent, FieldDescription, Textarea } from "../ui";
 import { EmojiPickerPopover } from "../ui/emoji-picker-popover";
 
+export interface MessageInputCopy {
+  placeholder: string;
+  addEmojiLabel: string;
+  sendMessageLabel: string;
+  characterCountLabel: (args: { count: number; max: number }) => string;
+}
+
 interface MessageInputProps {
+  copy: MessageInputCopy;
   onSend?: (message: string) => void;
   onTypingStatus?: (isTyping: boolean) => void;
   placeholder?: string;
@@ -19,19 +26,19 @@ interface MessageInputProps {
 const TYPING_REFRESH_MS = 3000;
 
 export function MessageInput({
+  copy,
   onSend,
   onTypingStatus,
   placeholder,
   disabled = false,
   className,
 }: MessageInputProps) {
-  const { t } = useTranslation("messages");
   const [value, setValue] = useState("");
   const isTypingRef = useRef(false);
   const lastTypingSentRef = useRef(0);
-  const resolvedPlaceholder = placeholder ?? t("message_input.placeholder");
+  const resolvedPlaceholder = placeholder ?? copy.placeholder;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (value.trim() && onSend) {
       onSend(value.trim());
@@ -115,13 +122,13 @@ export function MessageInput({
                 disabled={disabled}
               >
                 <Smile className="h-5 w-5" />
-                <span className="sr-only">{t("message_input.add_emoji")}</span>
+                <span className="sr-only">{copy.addEmojiLabel}</span>
               </Button>
             </div>
           </EmojiPickerPopover>
         </FieldContent>
         <FieldDescription>
-          {t("form.character_count", {
+          {copy.characterCountLabel({
             count: value.length,
             max: MESSAGE_CONFIG.MAX_LENGTH,
           })}
@@ -132,9 +139,10 @@ export function MessageInput({
         size="icon"
         className="shrink-0 h-11 w-11 rounded-full mb-8"
         disabled={disabled || !value.trim()}
+        onClick={handleSubmit}
       >
         <Send className="h-5 w-5" />
-        <span className="sr-only">{t("message_input.send_message")}</span>
+        <span className="sr-only">{copy.sendMessageLabel}</span>
       </Button>
     </form>
   );

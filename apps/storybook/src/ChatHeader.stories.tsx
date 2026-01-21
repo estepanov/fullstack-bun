@@ -67,10 +67,22 @@ const oneOnOneOfflineConversation: Conversation = {
   isGroup: false,
 };
 
+const chatHeaderCopy = {
+  backButtonLabel: "Back to conversations",
+  moreOptionsLabel: "More options",
+  onlineLabel: "Online",
+  offlineLabel: "Offline",
+  membersLabel: (count: number) => `${count} members`,
+  membersOnlineLabel: (count: number, online: number) =>
+    `${count} members, ${online} online`,
+  groupFallbackName: "Chat",
+};
+
 export const OneOnOneOnline: Story = {
   args: {
     conversation: oneOnOneConversation,
     currentUserId: "me",
+    copy: chatHeaderCopy,
     onBack: () => console.log("Back clicked"),
     onMore: () => console.log("More clicked"),
   },
@@ -80,6 +92,7 @@ export const OneOnOneOffline: Story = {
   args: {
     conversation: oneOnOneOfflineConversation,
     currentUserId: "me",
+    copy: chatHeaderCopy,
     onBack: () => console.log("Back clicked"),
     onMore: () => console.log("More clicked"),
   },
@@ -89,6 +102,7 @@ export const GroupChat: Story = {
   args: {
     conversation: groupConversation,
     currentUserId: "me",
+    copy: chatHeaderCopy,
     onBack: () => console.log("Back clicked"),
     onMore: () => console.log("More clicked"),
   },
@@ -98,6 +112,7 @@ export const WithoutBackButton: Story = {
   args: {
     conversation: oneOnOneConversation,
     currentUserId: "me",
+    copy: chatHeaderCopy,
     onMore: () => console.log("More clicked"),
   },
 };
@@ -106,6 +121,7 @@ export const InChatContext: Story = {
   args: {
     conversation: oneOnOneConversation,
     currentUserId: "me",
+    copy: chatHeaderCopy,
     onBack: () => console.log("Back clicked"),
     onMore: () => console.log("More clicked"),
   },
@@ -114,6 +130,7 @@ export const InChatContext: Story = {
       <ChatHeader
         conversation={args.conversation}
         currentUserId={args.currentUserId}
+        copy={chatHeaderCopy}
         onBack={args.onBack}
         onMore={args.onMore}
       />
@@ -133,6 +150,7 @@ export const GroupChatInContext: Story = {
   args: {
     conversation: groupConversation,
     currentUserId: "me",
+    copy: chatHeaderCopy,
     onBack: () => console.log("Back clicked"),
     onMore: () => console.log("More clicked"),
   },
@@ -141,6 +159,7 @@ export const GroupChatInContext: Story = {
       <ChatHeader
         conversation={args.conversation}
         currentUserId={args.currentUserId}
+        copy={chatHeaderCopy}
         onBack={args.onBack}
         onMore={args.onMore}
       />

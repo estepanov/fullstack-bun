@@ -1,14 +1,25 @@
+import type React from "react";
 import type { Conversation, Message, User } from "../../lib/chat-types";
 import { cn } from "../../lib/utils";
 import { Alert } from "../ui";
-import { ChatHeader } from "./chat-header";
-import { MessageInput } from "./message-input";
-import { MessageList } from "./message-list";
+import { ChatHeader, type ChatHeaderCopy } from "./chat-header";
+import type { MessageBubbleCopy } from "./message-bubble";
+import { MessageInput, type MessageInputCopy } from "./message-input";
+import { MessageList, type MessageListCopy } from "./message-list";
+
+export interface ChatViewCopy {
+  header: ChatHeaderCopy;
+  messageList: MessageListCopy;
+  messageBubble: MessageBubbleCopy;
+  messageInput: MessageInputCopy;
+  unauthenticatedContent: React.ReactNode;
+}
 
 interface ChatViewProps {
   conversation: Conversation;
   messages: Message[];
   currentUserId: string;
+  copy: ChatViewCopy;
   typingUsers?: User[];
   isAdmin?: boolean;
   onSendMessage?: (message: string) => void;
@@ -24,6 +35,7 @@ export function ChatView({
   conversation,
   messages,
   currentUserId,
+  copy,
   typingUsers = [],
   isAdmin = false,
   onSendMessage,
@@ -39,11 +51,14 @@ export function ChatView({
       <ChatHeader
         conversation={conversation}
         currentUserId={currentUserId}
+        copy={copy.header}
         onBack={onBack}
       />
       <MessageList
         messages={messages}
         currentUserId={currentUserId}
+        copy={copy.messageList}
+        messageBubbleCopy={copy.messageBubble}
         typingUsers={typingUsers}
         isAdmin={isAdmin}
         onEditMessage={(message) => onEditMessage?.(message, conversation)}
@@ -53,12 +68,13 @@ export function ChatView({
       {currentUserId ? (
         <MessageInput
           disabled={!currentUserId}
+          copy={copy.messageInput}
           onSend={onSendMessage}
           onTypingStatus={onTypingStatus}
         />
       ) : (
         <Alert variant="info" className="m-4">
-          You need to be logged in to send messages
+          {copy.unauthenticatedContent}
         </Alert>
       )}
     </div>
