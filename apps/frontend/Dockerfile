@@ -73,7 +73,8 @@ COPY --from=deps --chown=bunapp:bunapp /app/apps/api ./apps/api
 COPY --chown=bunapp:bunapp apps/frontend ./apps/frontend
 # Build the app
 WORKDIR /app/apps/frontend
-RUN bun run build
+# Reinstall to recreate workspace symlinks (uses cached node_modules)
+RUN bun install --frozen-lockfile
 
 # Production stage
 FROM oven/bun:1-slim AS production

@@ -69,6 +69,8 @@ COPY --from=deps --chown=bunapp:bunapp /app/packages ./packages
 COPY --from=deps --chown=bunapp:bunapp /app/apps/api ./apps/api
 # Copy all admin files including config
 COPY --chown=bunapp:bunapp apps/admin ./apps/admin
+# Reinstall to recreate workspace symlinks (uses cached node_modules)
+RUN bun install --frozen-lockfile
 # Build the app
 WORKDIR /app/apps/admin
 RUN bun run build
