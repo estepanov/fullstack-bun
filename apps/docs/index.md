@@ -11,16 +11,13 @@ hero:
       text: Get Started
       link: /get-started
     - theme: alt
-      text: Reference
-      link: /reference
-    - theme: alt
-      text: Demo Frontend App
+      text: Demo Frontend
       link: https://frontend.demo.fullstackbun.dev
     - theme: alt
-      text: Demo Admin App
+      text: Demo Mocked Admin
       link: https://admin-mock.demo.fullstackbun.dev
     - theme: alt
-      text: Demo Storybook App
+      text: Demo Storybook
       link: https://storybook.demo.fullstackbun.dev
 
 features:
@@ -88,17 +85,22 @@ The project leverages **Bun** as much as possible throughout the development pro
 - **Docker:** Full containerization for development and production environments
 - **Developer Experience:** Biome for linting/formatting, Pino for logging, UUID-based request tracing
 
+## Features
+
+- **Notifications:** 
+  - Live notifications. Users on the website see live toasts and notification counts. 
+  - If a user is offline, depending on the users preferences, they can receieve emails about notifications.
+  - Tracks read/unread notifications.
+  - User notification preference honored
+
 ## Roadmap
 
 Future enhancements we're considering:
 
 - **E2E Testing:** Playwright test suite for end-to-end testing
 - **Advanced Auth Features:**
-  - Email OTP support (passwordless login)
   - SMS OTP support for two-factor authentication
-  - Additional OAuth providers (Google, Discord, etc.)
 - **CI/CD Pipeline:**
-  - GitHub Actions for automated testing on PRs
   - Automated deployments
 - **Performance Monitoring:** Integration with performance monitoring tools
 - **Rate Limiting:** API rate limiting middleware
