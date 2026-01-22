@@ -1,6 +1,6 @@
-import { z } from "zod";
+import { displayUsernameField, nameField } from "shared/auth/user-profile-fields";
 import { AUTH_CONFIG } from "shared/config/auth";
-import { nameField, displayUsernameField } from "shared/auth/user-profile-fields";
+import { z } from "zod";
 
 // Name editor schema
 export const nameSchema = z.object({

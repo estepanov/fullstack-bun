@@ -1,5 +1,4 @@
-import { useSession } from "@frontend/lib/auth-client";
-import { authClient } from "@frontend/lib/auth-client";
+import { authClient, useSession } from "@frontend/lib/auth-client";
 import { formatDateTime, parseErrorMessage } from "@frontend/lib/dashboard/utils";
 import type { SessionRecord } from "@frontend/types/dashboard";
 import { Alert, Badge, Button } from "frontend-common/components/ui";
@@ -55,6 +54,7 @@ export function SessionsSection() {
       }
       toast.success(t("dashboard.sessions_revoke_success"), { id: toastId });
     } catch (error) {
+      console.error(error);
       toast.error(t("dashboard.sessions_revoke_error"), { id: toastId });
     } finally {
       setRevoking(false);

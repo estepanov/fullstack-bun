@@ -47,7 +47,8 @@
     "docker:prod:down": "docker-compose -f docker-compose.prod.yml down",
     "docker:prod:clean": "docker-compose -f docker-compose.prod.yml down -v",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "clean": "bun run --filter=* clean && rm -rf node_modules"
   },
   "trustedDependencies": [
     "@biomejs/biome",

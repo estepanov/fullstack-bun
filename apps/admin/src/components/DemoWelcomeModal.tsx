@@ -30,12 +30,11 @@ export const DemoWelcomeModal = () => {
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-        <div
+        <button
+          type="button"
           className="fixed inset-0 bg-black/60 transition-opacity"
           onClick={handleClose}
           onKeyDown={(event) => event.key === "Escape" && handleClose()}
-          role="button"
-          tabIndex={0}
           aria-label="Close demo notice"
         />
         <div className="relative transform overflow-hidden rounded-3xl border border-border/70 bg-card/95 text-left shadow-xl backdrop-blur transition-all sm:my-8 sm:w-full sm:max-w-lg">
@@ -69,7 +68,8 @@ export const DemoWelcomeModal = () => {
                 </h3>
                 <div className="mt-2 space-y-2">
                   <p className="text-sm text-muted-foreground">
-                    This is a public demo. It does not use a backend or real authentication.
+                    This is a public demo. It does not use a backend or real
+                    authentication.
                   </p>
                   <p className="text-sm text-muted-foreground">
                     All data and requests are mocked locally via MSW, so nothing touches

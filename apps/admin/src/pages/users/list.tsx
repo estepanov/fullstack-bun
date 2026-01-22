@@ -524,12 +524,11 @@ export default function AdminUsersPage() {
       {banDialogOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div
+            <button
               className="fixed inset-0 bg-black/60 transition-opacity"
               onClick={() => setBanDialogOpen(false)}
               onKeyDown={(e) => e.key === "Escape" && setBanDialogOpen(false)}
-              role="button"
-              tabIndex={0}
+              type="button"
               aria-label={t("users.ban_dialog.close_label")}
             />
             <div className="relative transform overflow-hidden rounded-3xl border border-border/70 bg-card/95 text-left shadow-xl backdrop-blur transition-all sm:my-8 sm:w-full sm:max-w-lg">

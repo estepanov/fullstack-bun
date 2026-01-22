@@ -8,14 +8,16 @@
     "build": "storybook build",
     "preview": "bunx http-server storybook-static",
     "format": "bun run biome format --write ./src ./.storybook",
-    "lint": "bun run biome lint ./src ./.storybook"
+    "lint": "bun run biome lint ./src ./.storybook",
+    "clean": "rm -rf node_modules storybook-static"
   },
   "dependencies": {
     "frontend-common": "workspace:*",
     "lucide-react": "^0.483.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-router": "^7.10.1"
+    "react-router": "^7.10.1",
+    "sonner": "^2.0.7"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.11",
