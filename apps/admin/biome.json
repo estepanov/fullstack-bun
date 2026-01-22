@@ -2,8 +2,7 @@
   "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
   "extends": ["../../biome.json"],
   "files": {
-    "include": ["**/*.ts", "**/*.tsx"],
-    "ignore": ["public/**", "mocks/**"]
+    "include": ["**/*.ts", "**/*.tsx","!public/**", "!mocks/**"]
   },
   "linter": {
     "rules": {
