@@ -10,7 +10,9 @@
   "scripts": {
     "dev": "bun build ./index.ts ./interfaces/example.ts ./interfaces/chat.ts --outdir ./dist --splitting --packages external --watch",
     "build": "bun build ./index.ts ./interfaces/example.ts ./interfaces/chat.ts --outdir ./dist --splitting --packages external --minify",
-    "clean": "rm -rf node_modules dist"
+    "clean": "rm -rf node_modules dist",
+    "lint": "bun run biome lint ./index.ts ./interfaces ./config ./auth",
+    "format": "bun run biome format --write ./index.ts ./interfaces ./config ./auth"
   },
   "dependencies": {
     "zod": "^4.3.5"

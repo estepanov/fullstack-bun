@@ -54,11 +54,18 @@
     "@types/bun": "^1.3.6",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "typescript": "~5.7.2"
   },
   "scripts": {
-    "clean": "rm -rf node_modules"
+    "clean": "rm -rf node_modules",
+    "test": "bun test --preload ../../apps/frontend/happydom.ts --preload ../../apps/frontend/testing-library.ts",
+    "test:coverage": "bun test --coverage --preload ../../apps/frontend/happydom.ts --preload ../../apps/frontend/testing-library.ts",
+    "lint": "bun run biome lint ./index.ts ./interfaces ./config ./auth",
+    "format": "bun run biome format --write ./index.ts ./interfaces ./config ./auth"
   }
 }
