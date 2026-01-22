@@ -30,6 +30,8 @@ COPY --from=deps --chown=bunapp:bunapp /app/node_modules ./node_modules
 COPY --from=deps --chown=bunapp:bunapp /app/packages ./packages
 # Copy source code
 COPY --chown=bunapp:bunapp apps/api ./apps/api
+# Copy api's node_modules from deps stage (contains workspace symlinks)
+COPY --from=deps --chown=bunapp:bunapp /app/apps/api/node_modules ./apps/api/node_modules
 # Expose API port
 EXPOSE 3001
 CMD ["bun", "--filter=api", "dev"]
@@ -45,6 +47,8 @@ COPY --from=deps --chown=bunapp:bunapp /app/node_modules ./node_modules
 COPY --from=deps --chown=bunapp:bunapp /app/packages ./packages
 # Copy source code
 COPY --chown=bunapp:bunapp apps/api ./apps/api
+# Copy api's node_modules from deps stage (contains workspace symlinks)
+COPY --from=deps --chown=bunapp:bunapp /app/apps/api/node_modules ./apps/api/node_modules
 # Drop privileges for runtime
 USER bunapp
 # Expose API port

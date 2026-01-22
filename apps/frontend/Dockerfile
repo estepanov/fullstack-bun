@@ -67,14 +67,15 @@ COPY --chown=bunapp:bunapp package.json bun.lock ./
 # Copy dependencies and source (Bun hoists all dependencies to root node_modules)
 COPY --from=deps --chown=bunapp:bunapp /app/node_modules ./node_modules
 COPY --from=deps --chown=bunapp:bunapp /app/packages ./packages
-# Copy API directory for TypeScript config resolution
+# Copy API directory for TypeScript config resolution (including its node_modules)
 COPY --from=deps --chown=bunapp:bunapp /app/apps/api ./apps/api
 # Copy all frontend files including config
 COPY --chown=bunapp:bunapp apps/frontend ./apps/frontend
+# Copy frontend's node_modules from deps stage (contains workspace symlinks)
+COPY --from=deps --chown=bunapp:bunapp /app/apps/frontend/node_modules ./apps/frontend/node_modules
 # Build the app
 WORKDIR /app/apps/frontend
-# Reinstall to recreate workspace symlinks (uses cached node_modules)
-RUN bun install --frozen-lockfile
+RUN bun run build
 
 # Production stage
 FROM oven/bun:1-slim AS production
