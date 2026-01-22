@@ -187,46 +187,42 @@ export function PasswordSection({ hasPassword, email }: PasswordSectionProps) {
                     {email && (
                       <FieldDescription>
                         {sentPasswordResetEmail ? (
-                          <>
-                            <Trans
-                              i18nKey="dashboard.password_current_forgot_email_sent"
-                              ns="auth"
-                              values={{ email }}
-                              components={{
-                                address: <span className="font-semibold" />,
-                              }}
-                            />
-                          </>
+                          <Trans
+                            i18nKey="dashboard.password_current_forgot_email_sent"
+                            ns="auth"
+                            values={{ email }}
+                            components={{
+                              address: <span className="font-semibold" />,
+                            }}
+                          />
                         ) : (
-                          <>
-                            <Trans
-                              i18nKey="dashboard.password_current_forgot"
-                              ns="auth"
-                              components={{
-                                forgotLink: (
-                                  <Button
-                                    type="button"
-                                    onClick={async () => {
-                                      try {
-                                        if (!resetRedirectTo) {
-                                          return;
-                                        }
-                                        await authClient.requestPasswordReset({
-                                          email,
-                                          redirectTo: resetRedirectTo,
-                                        });
-                                        setSentPasswordResetEmail(true);
-                                      } catch (error) {
-                                        console.error(error);
+                          <Trans
+                            i18nKey="dashboard.password_current_forgot"
+                            ns="auth"
+                            components={{
+                              forgotLink: (
+                                <Button
+                                  type="button"
+                                  onClick={async () => {
+                                    try {
+                                      if (!resetRedirectTo) {
+                                        return;
                                       }
-                                    }}
-                                    variant="link"
-                                    className="font-semibold p-0"
-                                  />
-                                ),
-                              }}
-                            />
-                          </>
+                                      await authClient.requestPasswordReset({
+                                        email,
+                                        redirectTo: resetRedirectTo,
+                                      });
+                                      setSentPasswordResetEmail(true);
+                                    } catch (error) {
+                                      console.error(error);
+                                    }
+                                  }}
+                                  variant="link"
+                                  className="font-semibold p-0"
+                                />
+                              ),
+                            }}
+                          />
                         )}
                       </FieldDescription>
                     )}

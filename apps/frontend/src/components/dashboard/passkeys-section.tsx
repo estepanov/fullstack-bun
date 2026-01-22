@@ -81,6 +81,7 @@ export function PasskeysSection() {
       setDeletingId(null);
       toast.success(t("dashboard.passkeys_delete_success"), { id: toastId });
     } catch (error) {
+      console.error(error);
       toast.error(t("dashboard.passkeys_delete_error"), { id: toastId });
     } finally {
       setDeletingId(null);

@@ -14,7 +14,6 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["bun-types"],
     "baseUrl": ".",
     "paths": {
       "@frontend-common/*": ["./*"]

@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/correctness/useHookAtTopLevel: function is static AUTH_CONFIG.accountLinking.enabled */
 import { authClient } from "@frontend/lib/auth-client";
 import {
   formatDateTime,

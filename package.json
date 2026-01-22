@@ -10,9 +10,12 @@
   },
   "private": true,
   "type": "module",
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "devDependencies": {
-    "@biomejs/biome": "1.9.4",
+    "@biomejs/biome": "2.3.11",
     "@types/bun": "latest",
     "@vitest/browser-playwright": "^4.0.16",
     "@vitest/coverage-v8": "^4.0.16",
@@ -44,7 +47,17 @@
     "docker:prod:down": "docker-compose -f docker-compose.prod.yml down",
     "docker:prod:clean": "docker-compose -f docker-compose.prod.yml down -v",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "clean": "bun run --filter=* clean && rm -rf node_modules"
   },
-  "trustedDependencies": ["@biomejs/biome", "esbuild", "msw"]
+  "trustedDependencies": [
+    "@biomejs/biome",
+    "esbuild",
+    "msw"
+  ],
+  "msw": {
+    "workerDirectory": [
+      "apps/admin/public"
+    ]
+  }
 }

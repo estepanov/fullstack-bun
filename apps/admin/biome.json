@@ -1,11 +1,13 @@
 {
   "$schema": "https://biomejs.dev/schemas/2.3.11/schema.json",
   "extends": ["../../biome.json"],
+  "css": {
+    "parser": {
+      "tailwindDirectives": true
+    }
+  },
   "linter": {
     "rules": {
-      "a11y": {
-        "useSemanticElements": "off"
-      },
       "style": {
         "noParameterAssign": "error",
         "useAsConstAssertion": "error",
@@ -18,11 +20,6 @@
         "noInferrableTypes": "error",
         "noUselessElse": "error"
       }
-    }
-  },
-  "css": {
-    "parser": {
-      "tailwindDirectives": true
     }
   }
 }
