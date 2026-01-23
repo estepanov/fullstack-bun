@@ -91,6 +91,7 @@ COPY --from=build --chown=bunapp:bunapp /app/bun.lock ./bun.lock
 COPY --from=build --chown=bunapp:bunapp /app/apps/frontend/package.json ./apps/frontend/package.json
 # Copy necessary runtime dependencies and build output (Bun hoists all dependencies to root node_modules)
 COPY --from=build --chown=bunapp:bunapp /app/node_modules ./node_modules
+COPY --from=build --chown=bunapp:bunapp /app/apps/frontend/node_modules ./apps/frontend/node_modules
 COPY --from=build --chown=bunapp:bunapp /app/apps/frontend/build ./apps/frontend/build
 COPY --from=build --chown=bunapp:bunapp /app/apps/frontend/server.ts ./apps/frontend/server.ts
 # Drop privileges for runtime
