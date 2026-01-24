@@ -101,4 +101,4 @@ EXPOSE 5173
 # Set working directory to frontend app
 WORKDIR /app/apps/frontend
 # Serve the built app
-CMD ["bun", "run", "--bun", "server.ts"]
+CMD ["bun", "--smol", "run", "--bun", "server.ts"]

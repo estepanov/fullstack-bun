@@ -99,4 +99,4 @@ EXPOSE 5175
 # Set working directory to admin app
 WORKDIR /app/apps/admin
 # Serve the built app
-CMD ["bun", "run", "--bun", "server.ts"]
+CMD ["bun", "--smol", "run", "--bun", "server.ts"]
