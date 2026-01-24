@@ -36,9 +36,12 @@ COPY --from=deps --chown=bunapp:bunapp /app/apps/api/node_modules ./apps/api/nod
 EXPOSE 3001
 CMD ["bun", "--filter=api", "dev"]
 
-# Production stage
-FROM base AS production
+# Production stage - use slim base for smaller image
+FROM oven/bun:1-slim AS production
 WORKDIR /app
+RUN set -eux; \
+  if ! getent group bunapp >/dev/null; then groupadd -r bunapp; fi; \
+  if ! id bunapp >/dev/null 2>&1; then useradd -r -g bunapp bunapp; fi
 ENV NODE_ENV=production
 # Copy root package files for workspace resolution
 COPY --chown=bunapp:bunapp package.json bun.lock ./
@@ -53,4 +56,5 @@ COPY --from=deps --chown=bunapp:bunapp /app/apps/api/node_modules ./apps/api/nod
 USER bunapp
 # Expose API port
 EXPOSE 3001
-CMD ["bun", "--filter=api", "start"]
+# Run with Bun's --smol flag for reduced memory usage
+CMD ["bun", "--smol", "--filter=api", "start"]
