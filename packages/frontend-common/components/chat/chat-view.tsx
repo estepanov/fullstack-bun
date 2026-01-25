@@ -13,6 +13,8 @@ export interface ChatViewCopy {
   messageBubble: MessageBubbleCopy;
   messageInput: MessageInputCopy;
   unauthenticatedContent: React.ReactNode;
+  profileIncompleteContent?: React.ReactNode;
+  emailUnverifiedContent?: React.ReactNode;
 }
 
 interface ChatViewProps {
@@ -22,6 +24,14 @@ interface ChatViewProps {
   copy: ChatViewCopy;
   typingUsers?: User[];
   isAdmin?: boolean;
+  profileIncomplete?: boolean;
+  emailVerified?: boolean;
+  throttle?: {
+    remainingMs: number;
+    limit: number;
+    windowMs: number;
+    restoreMessage?: string;
+  } | null;
   onSendMessage?: (message: string) => void;
   onTypingStatus?: (isTyping: boolean) => void;
   onBack?: () => void;
@@ -38,6 +48,9 @@ export function ChatView({
   copy,
   typingUsers = [],
   isAdmin = false,
+  profileIncomplete = false,
+  emailVerified = true,
+  throttle = null,
   onSendMessage,
   onTypingStatus,
   onBack,
@@ -46,6 +59,42 @@ export function ChatView({
   onBanUser,
   className,
 }: ChatViewProps) {
+  // Determine what to show in the input area
+  let inputContent: React.ReactNode;
+
+  if (!currentUserId) {
+    // Not authenticated
+    inputContent = (
+      <Alert variant="info" className="m-4">
+        {copy.unauthenticatedContent}
+      </Alert>
+    );
+  } else if (profileIncomplete) {
+    // Authenticated but profile incomplete
+    inputContent = (
+      <Alert variant="warning" className="m-4">
+        {copy.profileIncompleteContent}
+      </Alert>
+    );
+  } else if (!emailVerified) {
+    // Authenticated, profile complete, but email not verified
+    inputContent = (
+      <Alert variant="warning" className="m-4">
+        {copy.emailUnverifiedContent}
+      </Alert>
+    );
+  } else {
+    // All good, show input (throttle is handled inside MessageInput)
+    inputContent = (
+      <MessageInput
+        copy={copy.messageInput}
+        onSend={onSendMessage}
+        onTypingStatus={onTypingStatus}
+        throttle={throttle}
+      />
+    );
+  }
+
   return (
     <div className={cn("flex flex-col h-full bg-background", className)}>
       <ChatHeader
@@ -65,18 +114,7 @@ export function ChatView({
         onDeleteMessage={(message) => onDeleteMessage?.(message, conversation)}
         onBanUser={(user) => onBanUser?.(user, conversation)}
       />
-      {currentUserId ? (
-        <MessageInput
-          disabled={!currentUserId}
-          copy={copy.messageInput}
-          onSend={onSendMessage}
-          onTypingStatus={onTypingStatus}
-        />
-      ) : (
-        <Alert variant="info" className="m-4">
-          {copy.unauthenticatedContent}
-        </Alert>
-      )}
+      {inputContent}
     </div>
   );
 }

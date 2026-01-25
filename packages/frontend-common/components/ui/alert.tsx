@@ -1,7 +1,7 @@
 import type { VariantProps } from "class-variance-authority";
-import type * as React from "react";
 import { cn } from "frontend-common/lib";
-import { alertVariants, type AlertVariants } from "./alert.variants";
+import type * as React from "react";
+import { type AlertVariants, alertVariants } from "./alert.variants";
 
 export const Alert = ({
   className,
@@ -19,10 +19,7 @@ export const Alert = ({
   );
 };
 
-export const AlertTitle = ({
-  className,
-  ...props
-}: React.ComponentProps<"h5">) => {
+export const AlertTitle = ({ className, ...props }: React.ComponentProps<"h5">) => {
   return (
     <h5
       data-slot="alert-title"

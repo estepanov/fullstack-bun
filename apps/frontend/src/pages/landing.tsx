@@ -19,12 +19,14 @@ import {
   FieldLabel,
   Input,
   InputError,
+  StyledLink,
   Textarea,
 } from "frontend-common/components/ui";
 import type { Message, User } from "frontend-common/lib/chat-types";
 import { useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { MESSAGE_CONFIG, getMessageSchema } from "shared";
+import { getMessageSchema, MESSAGE_CONFIG } from "shared";
+import { REQUIRED_USER_FIELDS } from "shared/config/user-profile";
 
 const LandingPage = () => {
   const { t: tLanding } = useTranslation("landing_page");
@@ -38,9 +40,19 @@ const LandingPage = () => {
     sendMessage,
     sendTypingStatus,
     connectedUserId,
+    throttle,
     typingUsersByConversation,
   } = useChat();
   const currentUserId = session?.user?.id ?? connectedUserId ?? "";
+  const emailVerified = session?.user?.emailVerified ?? false;
+
+  // Compute profileIncomplete from session data (more reliable than WebSocket state)
+  const profileIncomplete = session?.user
+    ? REQUIRED_USER_FIELDS.some((field) => {
+        const value = session.user[field as keyof typeof session.user];
+        return value === null || value === undefined || value === "";
+      })
+    : false;
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
   const [editingMessage, setEditingMessage] = useState<Message | null>(null);
   const [editValue, setEditValue] = useState("");
@@ -95,13 +107,11 @@ const LandingPage = () => {
     placeholder: tMessages("message_input.placeholder"),
     addEmojiLabel: tMessages("message_input.add_emoji"),
     sendMessageLabel: tMessages("message_input.send_message"),
-    characterCountLabel: ({
-      count,
-      max,
-    }: {
-      count: number;
-      max: number;
-    }) => tMessages("form.character_count", { count, max }),
+    characterCountLabel: ({ count, max }: { count: number; max: number }) =>
+      tMessages("form.character_count", { count, max }),
+    throttleNotice: (seconds: number) => tMessages("form.throttle_notice", { seconds }),
+    throttleHint: ({ limit, windowSeconds }: { limit: number; windowSeconds: number }) =>
+      tMessages("form.throttle_hint", { limit, windowSeconds }),
   };
   const chatHeaderCopy = {
     backButtonLabel: tMessages("chat_header.back_button"),
@@ -142,6 +152,38 @@ const LandingPage = () => {
       messageBubble: messageBubbleCopy,
       messageInput: messageInputCopy,
       unauthenticatedContent: tMessages("chat_view.login_required"),
+      profileIncompleteContent: (
+        <p>
+          <Trans
+            i18nKey="form.complete_profile_prompt"
+            ns="messages"
+            components={{
+              profileLink: (
+                <StyledLink
+                  to="/profile/complete"
+                  className="font-semibold underline hover:no-underline"
+                />
+              ),
+            }}
+          />
+        </p>
+      ),
+      emailUnverifiedContent: (
+        <p>
+          <Trans
+            i18nKey="form.verify_email_prompt"
+            ns="messages"
+            components={{
+              verifyLink: (
+                <StyledLink
+                  to="/auth/verify-email-notice"
+                  className="font-semibold underline hover:no-underline"
+                />
+              ),
+            }}
+          />
+        </p>
+      ),
     },
   };
 
@@ -188,6 +230,9 @@ const LandingPage = () => {
           copy={chatLayoutCopy}
           typingUsers={typingUsersByConversation}
           isAdmin={isAdmin}
+          profileIncomplete={profileIncomplete}
+          emailVerified={emailVerified}
+          throttle={throttle}
           onSendMessage={(_conversationId, message) => {
             sendMessage(message);
           }}

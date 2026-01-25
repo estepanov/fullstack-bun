@@ -3,7 +3,7 @@ import { Alert, Button, Textarea } from "frontend-common/components/ui";
 import { useEffect, useState } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
-import { ChatWSMessageType, MESSAGE_CONFIG, getSendMessageSchema } from "shared";
+import { ChatWSMessageType, getSendMessageSchema, MESSAGE_CONFIG } from "shared";
 
 interface MessageFormProps {
   sendMessage: (message: string) => boolean;

@@ -237,6 +237,8 @@ This will start:
 - **SMTP Server** on `localhost:1025` (for your app to send emails).
 - **Web UI** on http://localhost:8025 (to view captured emails)
 
+For more options/details see https://mailpit.axllent.org/docs/configuration/runtime-options/
+
 ### Integration with Docker Compose
 
 For better integration with your development environment, add Mailpit to `docker-compose.yml`:

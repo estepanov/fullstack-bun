@@ -33,7 +33,7 @@ export default function CompleteProfilePage() {
   // Determine which fields are missing
   const user = session?.user ? getExtendedUser(session.user) : null;
   const needsName = !user?.name || user.name.trim() === "";
-  const needsUsername = !user?.username || user.username.trim() === "";
+  const needsUsername = !user?.displayUsername || user.displayUsername.trim() === "";
 
   // Debounced username availability check
   useEffect(() => {

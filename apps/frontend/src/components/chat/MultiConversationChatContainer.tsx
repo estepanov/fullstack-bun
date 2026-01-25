@@ -5,6 +5,7 @@ import { ConversationList } from "frontend-common/components/chat/conversation-l
 import { MessageSquare } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { REQUIRED_USER_FIELDS } from "shared/config/user-profile";
 import { EnhancedChatView } from "./EnhancedChatView";
 
 interface MultiConversationChatContainerProps {
@@ -28,7 +29,6 @@ export const MultiConversationChatContainer = ({
     connectionStatus,
     error,
     isAuthenticated,
-    profileIncomplete,
     throttle,
     onlineCounts,
     typingUsersByConversation,
@@ -38,6 +38,14 @@ export const MultiConversationChatContainer = ({
   const { data: session } = useSession();
   const isAdmin = isAdminSession(session);
   const currentUserId = session?.user?.id;
+
+  // Compute profileIncomplete from session data (more reliable than WebSocket state)
+  const profileIncomplete = session?.user
+    ? REQUIRED_USER_FIELDS.some((field) => {
+        const value = session.user[field as keyof typeof session.user];
+        return value === null || value === undefined || value === "";
+      })
+    : false;
   const conversationItemCopy = {
     timeNowLabel: t("conversation_item.time_now"),
     minutesLabel: (count: number) => t("conversation_item.minutes", { count }),

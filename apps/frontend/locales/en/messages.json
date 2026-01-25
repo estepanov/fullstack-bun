@@ -29,7 +29,7 @@
     },
     "login_prompt": "Please <loginLink>log in</loginLink> to send messages",
     "complete_profile_prompt": "Please <profileLink>complete your profile</profileLink> to send messages",
-    "verify_email_prompt": "Please verify your email to send messages"
+    "verify_email_prompt": "Please <verifyLink>verify your email</verifyLink> to send messages"
   },
   "actions": {
     "refresh_button": "Refresh",
@@ -44,8 +44,7 @@
     "online": "Online",
     "offline": "Offline",
     "members": "{{count}} members",
-    "members_online": "{{count}} members, {{online}} online",
-    "group_fallback_name": "Chat"
+    "members_online": "{{count}} members, {{online}} online"
   },
   "chat_layout": {
     "empty_title": "Select a conversation",

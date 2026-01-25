@@ -14,6 +14,14 @@ interface ChatLayoutProps {
   copy: ChatLayoutCopy;
   typingUsers?: Record<string, User[]>;
   isAdmin?: boolean;
+  profileIncomplete?: boolean;
+  emailVerified?: boolean;
+  throttle?: {
+    remainingMs: number;
+    limit: number;
+    windowMs: number;
+    restoreMessage?: string;
+  } | null;
   onSendMessage?: (conversationId: string, message: string) => void;
   onTypingStatus?: (isTyping: boolean) => void;
   onNewConversation?: () => void;
@@ -37,6 +45,9 @@ export function ChatLayout({
   copy,
   typingUsers = {},
   isAdmin = false,
+  profileIncomplete = false,
+  emailVerified = true,
+  throttle = null,
   onSendMessage,
   onTypingStatus,
   onNewConversation,
@@ -118,6 +129,9 @@ export function ChatLayout({
             copy={copy.chatView}
             typingUsers={activeTypingUsers}
             isAdmin={isAdmin}
+            profileIncomplete={profileIncomplete}
+            emailVerified={emailVerified}
+            throttle={throttle}
             onSendMessage={(message) => onSendMessage?.(activeConversation.id, message)}
             onTypingStatus={onTypingStatus}
             onBack={() => setShowMobileChat(false)}
