@@ -26,8 +26,3 @@ services:
       VITE_ADMIN_URL: http://localhost:5175
       VITE_FRONTEND_URL: http://localhost:5173
       FE_BASE_URL: http://localhost:5173
-
-networks:
-  default:
-    name: fullstack-bun_default
-    external: true
