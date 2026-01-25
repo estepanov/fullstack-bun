@@ -41,7 +41,7 @@ export const NotificationPanel = ({ onClose }: NotificationPanelProps) => {
 
   return (
     <>
-      <div className="flex flex-col">
+      <div className="flex flex-col w-full">
         {/* Header */}
         <div className="flex items-center justify-between border-b p-2 md:p-4">
           <h3 className="text-base font-semibold">{t("panel.title")}</h3>
