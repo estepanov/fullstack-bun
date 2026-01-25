@@ -120,7 +120,7 @@
   "scripts": {
     "clean": "rm -rf node_modules",
     "dev": "bun build ./index.ts ./auth/index.ts ./api/index.ts ./chat/index.ts ./notification/index.ts ./hooks/index.ts ./providers/index.ts ./providers/theme/index.ts ./components/ui/index.ts ./components/ui/*.tsx ./components/chat/*.tsx ./lib/index.ts ./lib/chat-types.ts ./lib/emoji.ts --outdir ./dist --splitting --packages external --watch",
-    "build": "bun build ./index.ts ./auth/index.ts ./api/index.ts ./chat/index.ts ./notification/index.ts ./hooks/index.ts ./providers/index.ts ./providers/theme/index.ts ./components/ui/index.ts ./components/ui/*.tsx ./components/chat/*.tsx ./lib/index.ts ./lib/chat-types.ts ./lib/emoji.ts --outdir ./dist --splitting --packages external --minify",
+    "build": "bun build ./index.ts ./auth/index.ts ./api/index.ts ./chat/index.ts ./notification/index.ts ./hooks/index.ts ./providers/index.ts ./providers/theme/index.ts ./components/ui/index.ts ./components/ui/*.tsx ./components/chat/*.tsx ./lib/index.ts ./lib/chat-types.ts ./lib/emoji.ts --outdir ./dist --splitting --packages external --production",
     "test": "bun test --preload ../../apps/frontend/happydom.ts --preload ../../apps/frontend/testing-library.ts",
     "test:coverage": "bun test --coverage --preload ../../apps/frontend/happydom.ts --preload ../../apps/frontend/testing-library.ts",
     "lint": "bun run biome lint ./index.ts ./interfaces ./config ./auth",
