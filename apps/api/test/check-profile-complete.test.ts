@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { Hono } from "hono";
-import { checkProfileComplete } from "../src/middlewares/check-profile-complete";
 import type { ProfileCompleteMiddlewareEnv } from "../src/middlewares/check-profile-complete";
+import { checkProfileComplete } from "../src/middlewares/check-profile-complete";
 import type { LoggerMiddlewareEnv } from "../src/middlewares/logger";
 import { baseSession, baseUser } from "./mocks/auth-context";
 import { testLogger } from "./mocks/logger";
@@ -33,7 +33,7 @@ describe("checkProfileComplete", () => {
       c.set("logger", testLogger);
       c.set("requestId", "req-1");
       c.set("sessionId", "sess-1");
-      c.set("user", { ...baseUser, banned: false, username: "" });
+      c.set("user", { ...baseUser, banned: false, displayUsername: "" });
       c.set("session", baseSession);
       return next();
     });
@@ -45,6 +45,6 @@ describe("checkProfileComplete", () => {
     expect(res.status).toBe(403);
     const data = await res.json();
     expect(data.error).toBe("Profile incomplete");
-    expect(data.missingFields).toContain("username");
+    expect(data.missingFields).toContain("displayUsername");
   });
 });

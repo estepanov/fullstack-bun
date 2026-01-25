@@ -18,10 +18,7 @@ const mockNotificationSSEManager = {
   isUserOnline: mock(() => false),
 };
 
-const notificationSSEManagerPath = import.meta.resolve(
-  "../src/lib/notification-sse-manager.ts",
-);
-mock.module(notificationSSEManagerPath, () => ({
+mock.module("../src/lib/notification-sse-manager", () => ({
   notificationSSEManager: mockNotificationSSEManager,
 }));
 
