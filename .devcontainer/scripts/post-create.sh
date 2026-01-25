@@ -7,7 +7,9 @@ echo "===================================="
 
 # Install dependencies
 echo "📦 Installing dependencies with bun..."
-bun install
+# Use a workspace-local cache + copyfile backend to avoid hardlink issues on some Coder filesystems.
+mkdir -p "$HOME/.bun/install/cache"
+bun install --backend copyfile --cache-dir "$HOME/.bun/install/cache"
 
 # Run database migrations if API has migration scripts
 if [ -d "apps/api" ]; then
