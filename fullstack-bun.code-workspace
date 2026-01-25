@@ -1,0 +1,43 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": "."
+    },
+    {
+      "name": "api",
+      "path": "apps/api"
+    },
+    {
+      "name": "frontend",
+      "path": "apps/frontend"
+    },
+    {
+      "name": "admin",
+      "path": "apps/admin"
+    },
+    {
+      "name": "frontend-common",
+      "path": "packages/frontend-common"
+    },
+    {
+      "name": "shared",
+      "path": "packages/shared"
+    },
+    {
+      "name": "auth-email-security",
+      "path": "packages/auth-email-security"
+    },
+    {
+      "name": "docs",
+      "path": "apps/docs"
+    },
+    {
+      "name": "storybook",
+      "path": "apps/storybook"
+    }
+  ],
+  "settings": {
+    "bun.test.customScript": "./scripts/bun-wrapper.sh test"
+  }
+}

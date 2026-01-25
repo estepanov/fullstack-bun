@@ -1,0 +1,240 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start All Services",
+      "type": "shell",
+      "command": "bun run dev",
+      "problemMatcher": [],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "icon": {
+        "id": "rocket",
+        "color": "terminal.ansiGreen"
+      }
+    },
+    {
+      "label": "Start API",
+      "type": "shell",
+      "command": "bun --filter=api dev",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "icon": {
+        "id": "server",
+        "color": "terminal.ansiBlue"
+      }
+    },
+    {
+      "label": "Start Frontend",
+      "type": "shell",
+      "command": "bun --filter=frontend dev",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "icon": {
+        "id": "browser",
+        "color": "terminal.ansiCyan"
+      }
+    },
+    {
+      "label": "Start Admin",
+      "type": "shell",
+      "command": "bun --filter=admin dev",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "icon": {
+        "id": "shield",
+        "color": "terminal.ansiMagenta"
+      }
+    },
+    {
+      "label": "Start Storybook",
+      "type": "shell",
+      "command": "bun run storybook:dev",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "icon": {
+        "id": "book",
+        "color": "terminal.ansiYellow"
+      }
+    },
+    {
+      "label": "Run Database Migrations",
+      "type": "shell",
+      "command": "cd apps/api && bun run db:migrate",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": false
+      },
+      "icon": {
+        "id": "database",
+        "color": "terminal.ansiGreen"
+      }
+    },
+    {
+      "label": "Open Database Studio",
+      "type": "shell",
+      "command": "cd apps/api && bun run db:studio",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "icon": {
+        "id": "database",
+        "color": "terminal.ansiBlue"
+      }
+    },
+    {
+      "label": "Run Tests",
+      "type": "shell",
+      "command": "bun run test",
+      "problemMatcher": [],
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": false
+      },
+      "icon": {
+        "id": "beaker",
+        "color": "terminal.ansiYellow"
+      }
+    },
+    {
+      "label": "Run Tests with Coverage",
+      "type": "shell",
+      "command": "bun run test:coverage",
+      "problemMatcher": [],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": false
+      },
+      "icon": {
+        "id": "graph",
+        "color": "terminal.ansiYellow"
+      }
+    },
+    {
+      "label": "Lint All",
+      "type": "shell",
+      "command": "bun run lint",
+      "problemMatcher": ["$eslint-compact"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": false
+      },
+      "icon": {
+        "id": "checklist",
+        "color": "terminal.ansiRed"
+      }
+    },
+    {
+      "label": "Format All",
+      "type": "shell",
+      "command": "bun run format",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": false
+      },
+      "icon": {
+        "id": "wand",
+        "color": "terminal.ansiMagenta"
+      }
+    },
+    {
+      "label": "Build All",
+      "type": "shell",
+      "command": "bun run build",
+      "problemMatcher": [],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": false
+      },
+      "icon": {
+        "id": "package",
+        "color": "terminal.ansiGreen"
+      }
+    },
+    {
+      "label": "Clean Install",
+      "type": "shell",
+      "command": "bun run clean && bun install",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": false
+      },
+      "icon": {
+        "id": "trash",
+        "color": "terminal.ansiRed"
+      }
+    },
+    {
+      "label": "Docker: Start Services",
+      "type": "shell",
+      "command": "bun run docker:dev",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "clear": true
+      },
+      "icon": {
+        "id": "vm",
+        "color": "terminal.ansiBlue"
+      }
+    },
+    {
+      "label": "Docker: Stop Services",
+      "type": "shell",
+      "command": "bun run docker:dev:down",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "clear": false
+      },
+      "icon": {
+        "id": "vm",
+        "color": "terminal.ansiRed"
+      }
+    }
+  ]
+}

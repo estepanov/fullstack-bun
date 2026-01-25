@@ -6,6 +6,7 @@ import userEvent from "@testing-library/user-event";
 import i18next, { type i18n } from "i18next";
 import type { JSX, ReactNode } from "react";
 import { I18nextProvider, initReactI18next } from "react-i18next";
+import type { AdminSendNotificationRequest } from "shared/interfaces/notification";
 
 const createResponse = (data: unknown, ok = true) => ({
   ok,
@@ -119,7 +120,12 @@ describe("AdminSendNotificationsPage", () => {
       expect(mockApiClient.admin.notifications.send.$post).toHaveBeenCalled(),
     );
 
-    const payload = mockApiClient.admin.notifications.send.$post.mock.calls[0][0];
+    // biome-ignore lint/style/noNonNullAssertion: test mock
+    const payload = (
+      mockApiClient.admin.notifications.send.$post.mock.calls as unknown as Array<
+        [{ json: AdminSendNotificationRequest }]
+      >
+    )[0]![0]!;
     expect(payload.json.target).toEqual({ scope: "user", identifier: "user-1" });
     expect(payload.json.notification.title).toBe("Hello");
     expect(payload.json.notification.content).toBe("Welcome");

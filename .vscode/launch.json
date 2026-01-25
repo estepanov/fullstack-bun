@@ -1,0 +1,74 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug API",
+      "type": "bun",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/apps/api",
+      "program": "${workspaceFolder}/apps/api/src/index.ts",
+      "args": [],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "stopOnEntry": false,
+      "watchMode": true,
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "Debug Frontend",
+      "type": "bun",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/apps/frontend/node_modules/.bin/react-router",
+      "args": ["dev", "--force", "apps/frontend"],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "Debug Admin",
+      "type": "bun",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "program": "${workspaceFolder}/apps/admin/node_modules/.bin/react-router",
+      "args": ["dev", "--force", "apps/admin"],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "Test Current File",
+      "type": "bun",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "program": "${file}",
+      "args": [],
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "internalConsoleOptions": "openOnSessionStart"
+    },
+    {
+      "name": "Test All",
+      "type": "bun",
+      "request": "launch",
+      "cwd": "${workspaceFolder}",
+      "program": "bun",
+      "runtimeArgs": ["test"],
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "internalConsoleOptions": "openOnSessionStart"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug All",
+      "configurations": ["Debug API", "Debug Frontend", "Debug Admin"],
+      "stopAll": true
+    }
+  ]
+}

@@ -44,7 +44,8 @@
     "online": "Online",
     "offline": "Offline",
     "members": "{{count}} members",
-    "members_online": "{{count}} members, {{online}} online"
+    "members_online": "{{count}} members, {{online}} online",
+    "group_fallback_name": "Chat"
   },
   "chat_layout": {
     "empty_title": "Select a conversation",

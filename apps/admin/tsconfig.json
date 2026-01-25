@@ -7,6 +7,7 @@
   "exclude": ["node_modules", "../api"],
   "compilerOptions": {
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "baseUrl": ".",
     "paths": {
       "@admin/*": ["./src/*"],

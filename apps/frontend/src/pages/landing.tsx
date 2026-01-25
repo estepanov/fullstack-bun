@@ -47,10 +47,15 @@ const LandingPage = () => {
   const emailVerified = session?.user?.emailVerified ?? false;
 
   // Compute profileIncomplete from session data (more reliable than WebSocket state)
+  // Matches backend logic: trims whitespace to catch whitespace-only values
   const profileIncomplete = session?.user
     ? REQUIRED_USER_FIELDS.some((field) => {
         const value = session.user[field as keyof typeof session.user];
-        return value === null || value === undefined || value === "";
+        return (
+          value === null ||
+          value === undefined ||
+          (typeof value === "string" && value.trim() === "")
+        );
       })
     : false;
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
