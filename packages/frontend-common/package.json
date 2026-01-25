@@ -4,20 +4,76 @@
   "private": true,
   "type": "module",
   "exports": {
-    ".": "./index.ts",
-    "./auth": "./auth/index.ts",
-    "./api": "./api/index.ts",
-    "./chat": "./chat/index.ts",
-    "./notification": "./notification/index.ts",
-    "./hooks": "./hooks/index.ts",
-    "./providers": "./providers/index.ts",
-    "./providers/theme": "./providers/theme/index.ts",
-    "./components/ui": "./components/ui/index.ts",
-    "./components/ui/*": "./components/ui/*.tsx",
-    "./components/chat/*": "./components/chat/*.tsx",
-    "./lib": "./lib/index.ts",
-    "./lib/chat-types": "./lib/chat-types.ts",
-    "./lib/emoji": "./lib/emoji.ts",
+    ".": {
+      "types": "./index.ts",
+      "development": "./index.ts",
+      "default": "./dist/index.js"
+    },
+    "./auth": {
+      "types": "./auth/index.ts",
+      "development": "./auth/index.ts",
+      "default": "./dist/auth/index.js"
+    },
+    "./api": {
+      "types": "./api/index.ts",
+      "development": "./api/index.ts",
+      "default": "./dist/api/index.js"
+    },
+    "./chat": {
+      "types": "./chat/index.ts",
+      "development": "./chat/index.ts",
+      "default": "./dist/chat/index.js"
+    },
+    "./notification": {
+      "types": "./notification/index.ts",
+      "development": "./notification/index.ts",
+      "default": "./dist/notification/index.js"
+    },
+    "./hooks": {
+      "types": "./hooks/index.ts",
+      "development": "./hooks/index.ts",
+      "default": "./dist/hooks/index.js"
+    },
+    "./providers": {
+      "types": "./providers/index.ts",
+      "development": "./providers/index.ts",
+      "default": "./dist/providers/index.js"
+    },
+    "./providers/theme": {
+      "types": "./providers/theme/index.ts",
+      "development": "./providers/theme/index.ts",
+      "default": "./dist/providers/theme/index.js"
+    },
+    "./components/ui": {
+      "types": "./components/ui/index.ts",
+      "development": "./components/ui/index.ts",
+      "default": "./dist/components/ui/index.js"
+    },
+    "./components/ui/*": {
+      "types": "./components/ui/*.tsx",
+      "development": "./components/ui/*.tsx",
+      "default": "./dist/components/ui/*.js"
+    },
+    "./components/chat/*": {
+      "types": "./components/chat/*.tsx",
+      "development": "./components/chat/*.tsx",
+      "default": "./dist/components/chat/*.js"
+    },
+    "./lib": {
+      "types": "./lib/index.ts",
+      "development": "./lib/index.ts",
+      "default": "./dist/lib/index.js"
+    },
+    "./lib/chat-types": {
+      "types": "./lib/chat-types.ts",
+      "development": "./lib/chat-types.ts",
+      "default": "./dist/lib/chat-types.js"
+    },
+    "./lib/emoji": {
+      "types": "./lib/emoji.ts",
+      "development": "./lib/emoji.ts",
+      "default": "./dist/lib/emoji.js"
+    },
     "./styles/theme.css": "./styles/theme.css"
   },
   "dependencies": {
@@ -63,6 +119,8 @@
   },
   "scripts": {
     "clean": "rm -rf node_modules",
+    "dev": "bun build ./index.ts ./auth/index.ts ./api/index.ts ./chat/index.ts ./notification/index.ts ./hooks/index.ts ./providers/index.ts ./providers/theme/index.ts ./components/ui/index.ts ./components/ui/*.tsx ./components/chat/*.tsx ./lib/index.ts ./lib/chat-types.ts ./lib/emoji.ts --outdir ./dist --splitting --packages external --watch",
+    "build": "bun build ./index.ts ./auth/index.ts ./api/index.ts ./chat/index.ts ./notification/index.ts ./hooks/index.ts ./providers/index.ts ./providers/theme/index.ts ./components/ui/index.ts ./components/ui/*.tsx ./components/chat/*.tsx ./lib/index.ts ./lib/chat-types.ts ./lib/emoji.ts --outdir ./dist --splitting --packages external --minify",
     "test": "bun test --preload ../../apps/frontend/happydom.ts --preload ../../apps/frontend/testing-library.ts",
     "test:coverage": "bun test --coverage --preload ../../apps/frontend/happydom.ts --preload ../../apps/frontend/testing-library.ts",
     "lint": "bun run biome lint ./index.ts ./interfaces ./config ./auth",

@@ -34,7 +34,9 @@ COPY --chown=bunapp:bunapp apps/api ./apps/api
 COPY --from=deps --chown=bunapp:bunapp /app/apps/api/node_modules ./apps/api/node_modules
 # Expose API port
 EXPOSE 3001
-CMD ["bun", "--filter=api", "dev"]
+# Run from app workspace
+WORKDIR /app/apps/api
+CMD ["bun", "dev"]
 
 # Production stage - use slim base for smaller image
 FROM oven/bun:1-slim AS production
@@ -57,4 +59,5 @@ USER bunapp
 # Expose API port
 EXPOSE 3001
 # Run with Bun's --smol flag for reduced memory usage
-CMD ["bun", "--smol", "--filter=api", "start"]
+WORKDIR /app/apps/api
+CMD ["bun", "--smol", "start"]
