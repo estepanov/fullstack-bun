@@ -46,7 +46,9 @@ RUN bun install
 RUN rm -rf /app/apps/admin/node_modules/.vite /app/node_modules/.vite
 # Expose Vite dev server port
 EXPOSE 5175
-CMD ["bun", "--filter=admin", "dev"]
+# Run from app workspace
+WORKDIR /app/apps/admin
+CMD ["bun", "dev"]
 
 # Build stage
 FROM base AS build
@@ -71,6 +73,8 @@ COPY --from=deps --chown=bunapp:bunapp /app/apps/api ./apps/api
 COPY --chown=bunapp:bunapp apps/admin ./apps/admin
 # Copy admin's node_modules from deps stage (contains workspace symlinks)
 COPY --from=deps --chown=bunapp:bunapp /app/apps/admin/node_modules ./apps/admin/node_modules
+# Build frontend-common first so production builds use compiled outputs
+RUN bun --filter=frontend-common run build
 # Build the app
 WORKDIR /app/apps/admin
 RUN bun run build

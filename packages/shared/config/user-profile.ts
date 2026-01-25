@@ -23,8 +23,12 @@ export const USERNAME_CONFIG = {
  * 1. Add the field name to this array
  * 2. Update the database schema if needed
  * 3. Update the frontend profile completion form
+ *
+ * Note: We check for displayUsername (not username) because:
+ * - displayUsername is what users explicitly set and what's shown in chat
+ * - better-auth's username plugin auto-manages the normalized username field
  */
-export const REQUIRED_USER_FIELDS = ["name", "username"] as const;
+export const REQUIRED_USER_FIELDS = ["name", "displayUsername"] as const;
 
 export type RequiredUserField = (typeof REQUIRED_USER_FIELDS)[number];
 

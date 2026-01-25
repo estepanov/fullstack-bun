@@ -10,6 +10,7 @@
     /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
     "isolatedModules": true,
     "moduleDetection": "force",
     "noEmit": true,
@@ -28,6 +29,6 @@
       "@admin-locales/*": ["./locales/*"]
     }
   },
-  "include": ["src", "react-router.config.ts"],
-  "exclude": ["**/*.test.ts", "**/*.test.tsx", "**/*.spec.ts", "**/*.spec.tsx"]
+  "include": ["src", "react-router.config.ts", "src/**/*.test.ts", "src/**/*.test.tsx"],
+  "exclude": []
 }

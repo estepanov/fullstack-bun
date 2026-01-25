@@ -1,0 +1,62 @@
+# Fly.io configuration for fullstack-bun Frontend
+# Deploy with: fly deploy --config apps/frontend/fly.toml
+app = 'fullstack-bun-frontend'
+primary_region = 'iad'
+
+# Use existing Dockerfile with production target
+[build]
+  dockerfile = 'apps/frontend/Dockerfile'
+  # Build from monorepo root to include workspace packages
+  build-target = 'production'
+
+  # Build arguments - Vite env vars compiled into bundle at build time
+  [build.args]
+    VITE_API_BASE_URL = 'https://api.yourdomain.com'
+    VITE_ADMIN_URL = 'https://admin.yourdomain.com'
+
+# Environment variables (public, non-sensitive)
+[env]
+  PORT = '5173'
+  NODE_ENV = 'production'
+
+# HTTP service configuration
+[[services]]
+  internal_port = 5173
+  protocol = 'tcp'
+  # Can suspend when idle to save costs
+  auto_stop_machines = 'suspend'
+  auto_start_machines = true
+  min_machines_running = 1
+
+  # Health check configuration
+  [[services.http_checks]]
+    interval = '15s'
+    timeout = '5s'
+    grace_period = '5s'
+    method = 'GET'
+    path = '/'
+    protocol = 'http'
+    # React Router handles all routes, root should return HTML
+    [services.http_checks.headers]
+
+  # HTTP port configuration
+  [[services.ports]]
+    port = 80
+    handlers = ['http']
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ['http', 'tls']
+
+  # Concurrency limits
+  [services.concurrency]
+    type = 'connections'
+    hard_limit = 500
+    soft_limit = 400
+
+# VM resources (lightweight static server)
+[[vm]]
+  memory = '256mb'
+  cpu_kind = 'shared'
+  cpus = 1

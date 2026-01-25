@@ -21,6 +21,7 @@ export default defineConfig({
       { text: "Get Started", link: "/get-started" },
       { text: "Reference", link: "/reference" },
       { text: "Docker", link: "/docker" },
+      // { text: "Fly.io", link: "/flyio" },
     ],
 
     sidebar: {
@@ -66,6 +67,7 @@ export default defineConfig({
               ],
             },
             { text: "Docker", link: "/docker.html" },
+            // { text: "Fly.io Deployment", link: "/flyio.html" },
           ],
         },
       ],

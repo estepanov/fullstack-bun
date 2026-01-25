@@ -32,6 +32,13 @@ export default function MagicLinkPage() {
   const showOrDivider = passwordsEnabled || socialEnabled || passkeyEnabled;
 
   const errorParam = searchParams.get("error");
+  const { data: session } = authClient.useSession();
+
+  useEffect(() => {
+    if (session) {
+      navigate("/dashboard");
+    }
+  }, [session, navigate]);
 
   useEffect(() => {
     const method = authClient.getLastUsedLoginMethod();

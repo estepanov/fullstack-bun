@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { upgradeWebSocket } from "hono/bun";
 import type { WSContext } from "hono/ws";
-import { type UserRole, isAdmin } from "shared/auth/user-role";
+import { isAdmin, type UserRole } from "shared/auth/user-role";
 import {
   ChatWSMessageType,
   getSendMessageSchema,
@@ -99,8 +99,8 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
                   return;
                 }
 
-                // Check if profile is complete
-                const missingFields = getMissingFields(session.user);
+                // Check if profile is complete (using fresh DB data)
+                const missingFields = getMissingFields(userData as never);
                 if (missingFields.length > 0) {
                   hasIncompleteProfile = true;
                   logger.info(
@@ -239,9 +239,10 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
                 return;
               }
 
-              // Fetch fresh user data (in case name/avatar changed)
+              // Fetch fresh user data (in case name/avatar/profile changed)
               const userData = await db
                 .select({
+                  name: userTable.name,
                   displayUsername: userTable.displayUsername,
                   image: userTable.image,
                 })
@@ -294,11 +295,12 @@ export const chatRouter = new Hono<LoggerMiddlewareEnv & AuthMiddlewareEnv>()
                 return;
               }
 
-              if (!userData.displayUsername) {
-                hasIncompleteProfile = true;
-              }
-
-              if (hasIncompleteProfile) {
+              // Check if profile is complete (using fresh data from DB)
+              const missingFields = getMissingFields({
+                ...userData,
+                id: userId,
+              } as never);
+              if (missingFields.length > 0) {
                 ws.send(
                   JSON.stringify({
                     type: ChatWSMessageType.ERROR,

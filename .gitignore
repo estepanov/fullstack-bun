@@ -176,3 +176,10 @@ dist
 
 *storybook.log
 storybook-static
+
+# DevContainer - keep configuration but ignore temp files
+# .devcontainer/ folder is tracked
+# Only .zsh_history content changes should be ignored (file itself is tracked as empty)
+.devcontainer/**/.bash_history
+
+.claude/settings.local.json

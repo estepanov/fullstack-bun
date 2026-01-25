@@ -7,14 +7,14 @@ Always use Context7 MCP when I need library/API documentation, code generation, 
 
 ## Project Structure & Module Organization
 - Monorepo managed by Bun workspaces; app code lives in `apps/`, shared libraries in `packages/`.
-- `apps/frontend`: React 19 + Vite + Tailwind 4; routes in `src/routes`, UI primitives in `src/components`, tests in `test`, static assets in `public`.
+- `apps/frontend`: React 19 + Vite + Tailwind 4; routes in `src/routes`, UI primitives in `src/components`, tests in `test`, static assets in `public`. Always integrate i18n here, never use language strings/copy directly here.
 - `apps/api`: Hono API with Drizzle; handlers and schemas in `src`, database config in `drizzle/`, type build output in `dist/`.
 - `apps/docs`: documentation site; Markdown in `apps/docs/reference` and `apps/docs/get-started`.
 - `packages/shared`: cross-app interfaces and types consumed via workspace dependency `shared`.
-- `packages/frontend-common`: react components for frontend and admin apps. `shadcn` related commands should only be run within `packages/frontend-common` where we store shared components. use `shadcn` mcp.
+- `packages/frontend-common`: react components for frontend and admin apps. `shadcn` related commands should only be run within `packages/frontend-common` where we store shared components. use `shadcn` mcp. This components should take in i18n objects describing all the text and labels for teh component.
 
 ## Build, Test, and Development Commands
-- Always use `bun` and `bunx` instead of `npm` or `yarn` or `pnpm`
+- Always use `bun` and `bunx` instead of `npm` or `yarn` or `pnpm`.
 - Install deps once from the repo root: `bun install`.
 - Set up env files: `bun run setup` (copies `.env.example` for API and frontend).
 - Run both apps during development: `bun run dev` (concurrently runs API and frontend).

@@ -13,6 +13,20 @@
 
 PLEASE SEE https://fullstackbun.dev/get-started/
 
+### VS Code DevContainer (Recommended)
+
+The fastest way to get started is with VS Code DevContainers:
+
+1. Install [VS Code](https://code.visualstudio.com/), [Docker Desktop](https://www.docker.com/products/docker-desktop/), and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+2. Open this project in VS Code
+3. Click "Reopen in Container" when prompted
+4. Wait for setup to complete (5-10 minutes first time)
+5. Run `bun run dev` to start all services
+
+See [.devcontainer/README.md](.devcontainer/README.md) for detailed documentation.
+
+### Local Development
+
 A highly abbreviated version of the instructions is below:
 
  - from the root directory `bun install`

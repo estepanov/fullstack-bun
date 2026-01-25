@@ -210,6 +210,125 @@ Multi-stage build:
 2. **dev**: Development server with Bun watch mode
 3. **production**: Production server
 
+## Email Testing with Mailpit
+
+[Mailpit](https://github.com/axllent/mailpit) is a lightweight email testing tool that captures all outgoing emails and provides a web UI to view them. Perfect for local development without sending real emails.
+
+### Quick Start with Docker
+
+Run Mailpit as a standalone container:
+
+```bash
+docker run -d \
+  --name=mailpit \
+  --restart unless-stopped \
+  -v /path/to/your/data:/data \
+  -e MP_DATABASE=/data/mailpit.db \
+  -e MP_SMTP_AUTH_ACCEPT_ANY=1 \
+  -e MP_SMTP_AUTH_ALLOW_INSECURE=1 \
+  -p 8025:8025 \
+  -p 1025:1025 \
+  axllent/mailpit
+```
+
+Replace `/path/to/your/data` with an actual path on your machine where you want to store email data (e.g., `~/mailpit-data`).
+
+This will start:
+- **SMTP Server** on `localhost:1025` (for your app to send emails).
+- **Web UI** on http://localhost:8025 (to view captured emails)
+
+For more options/details see https://mailpit.axllent.org/docs/configuration/runtime-options/
+
+### Integration with Docker Compose
+
+For better integration with your development environment, add Mailpit to `docker-compose.yml`:
+
+```yaml
+services:
+  # ... existing services ...
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    restart: unless-stopped
+    ports:
+      - "8025:8025"  # Web UI
+      - "1025:1025"  # SMTP
+    environment:
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    volumes:
+      - mailpit_data:/data
+
+volumes:
+  # ... existing volumes ...
+  mailpit_data:
+```
+
+Then start it with your other services:
+
+```bash
+# Start with all services
+bun run docker:dev
+
+# Or start just Mailpit
+docker-compose up mailpit
+```
+
+### Configure Your Application
+
+Update your API's email configuration to use Mailpit:
+
+```env
+# .env or .env.local
+SMTP_HOST=localhost # should be host.docker.internal when running on macos in docker container
+SMTP_PORT=1025
+SMTP_USER=any_user          # Accepts any credentials
+SMTP_PASSWORD=any_password  # Accepts any credentials
+SMTP_FROM=noreply@yourapp.local
+```
+
+If using Docker Compose, the API should reference the service name:
+
+```env
+SMTP_HOST=mailpit  # Service name instead of localhost
+SMTP_PORT=1025
+```
+
+### Using Mailpit
+
+1. **Send emails from your app** - All emails will be captured instead of actually being sent
+2. **View emails** - Open http://localhost:8025 in your browser
+3. **Test email flows** - View HTML/text versions, check links, verify content
+4. **Search and filter** - Search by recipient, subject, or content
+
+### Managing Mailpit
+
+```bash
+# View logs
+docker logs mailpit
+
+# Stop Mailpit
+docker stop mailpit
+
+# Start Mailpit
+docker start mailpit
+
+# Remove Mailpit and data
+docker stop mailpit
+docker rm mailpit
+docker volume rm <project>_mailpit_data  # If using Docker Compose
+```
+
+### Benefits for Development
+
+- No real emails sent during development/testing
+- Inspect email content and formatting
+- Test email workflows without external services
+- No configuration needed (accepts all authentication)
+- Lightweight and fast
+
 ## Troubleshooting
 
 ### Port conflicts

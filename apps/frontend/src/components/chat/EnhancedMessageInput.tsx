@@ -1,6 +1,5 @@
 import type { FESession } from "@frontend/lib/auth-client";
 import { MessageInput } from "frontend-common/components/chat/message-input";
-import { Alert } from "frontend-common/components/ui";
 import { Trans, useTranslation } from "react-i18next";
 import { Link } from "react-router";
 
@@ -35,20 +34,15 @@ export const EnhancedMessageInput = ({
   onTypingStatus,
 }: EnhancedMessageInputProps) => {
   const { t } = useTranslation("messages");
-  const throttleSeconds = throttle ? Math.ceil(throttle.remainingMs / 1000) : 0;
-  const throttleWindowSeconds = throttle ? Math.ceil(throttle.windowMs / 1000) : 0;
-  const isThrottled = Boolean(throttle);
   const messageInputCopy = {
     placeholder: t("form.placeholder"),
     addEmojiLabel: t("message_input.add_emoji"),
     sendMessageLabel: t("message_input.send_message"),
-    characterCountLabel: ({
-      count,
-      max,
-    }: {
-      count: number;
-      max: number;
-    }) => t("form.character_count", { count, max }),
+    characterCountLabel: ({ count, max }: { count: number; max: number }) =>
+      t("form.character_count", { count, max }),
+    throttleNotice: (seconds: number) => t("form.throttle_notice", { seconds }),
+    throttleHint: ({ limit, windowSeconds }: { limit: number; windowSeconds: number }) =>
+      t("form.throttle_hint", { limit, windowSeconds }),
   };
 
   // Show login prompt if not authenticated
@@ -100,35 +94,34 @@ export const EnhancedMessageInput = ({
     return (
       <div className="rounded-xl border border-yellow-500/20 bg-linear-to-br from-yellow-50 to-yellow-100/50 p-4 text-center shadow-sm dark:border-yellow-500/30 dark:from-yellow-950/40 dark:to-yellow-900/20">
         <p className="text-sm text-yellow-900 dark:text-yellow-100">
-          {t("form.verify_email_prompt")}
+          <Trans
+            i18nKey="form.verify_email_prompt"
+            ns="messages"
+            components={{
+              verifyLink: (
+                <Link
+                  to="/auth/verify-email-notice"
+                  className="font-semibold text-yellow-700 hover:underline dark:text-yellow-300"
+                />
+              ),
+            }}
+          />
         </p>
       </div>
     );
   }
 
-  const isInputDisabled = connectionStatus !== "connected" || disabled || isThrottled;
+  const isInputDisabled = connectionStatus !== "connected" || disabled;
 
   return (
-    <div className="flex flex-col space-y-2">
-      {isThrottled && (
-        <Alert variant="info">
-          {t("form.throttle_notice", { seconds: throttleSeconds })}
-          <span className="ml-1">
-            {t("form.throttle_hint", {
-              limit: throttle?.limit ?? 0,
-              windowSeconds: throttleWindowSeconds,
-            })}
-          </span>
-        </Alert>
-      )}
-      <MessageInput
-        onSend={onSend}
-        onTypingStatus={onTypingStatus}
-        disabled={isInputDisabled}
-        placeholder={placeholder}
-        copy={messageInputCopy}
-        className={className}
-      />
-    </div>
+    <MessageInput
+      onSend={onSend}
+      onTypingStatus={onTypingStatus}
+      disabled={isInputDisabled}
+      placeholder={placeholder}
+      copy={messageInputCopy}
+      throttle={throttle}
+      className={className}
+    />
   );
 };

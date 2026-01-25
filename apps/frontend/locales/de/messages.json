@@ -29,7 +29,7 @@
     },
     "login_prompt": "Bitte <loginLink>melden Sie sich an</loginLink>, um Nachrichten zu senden",
     "complete_profile_prompt": "Bitte <profileLink>vervollständigen Sie Ihr Profil</profileLink>, um Nachrichten zu senden",
-    "verify_email_prompt": "Bitte verifizieren Sie Ihre E-Mail, um Nachrichten zu senden"
+    "verify_email_prompt": "Bitte <verifyLink>verifizieren Sie Ihre E-Mail</verifyLink>, um Nachrichten zu senden"
   },
   "actions": {
     "refresh_button": "Aktualisieren",

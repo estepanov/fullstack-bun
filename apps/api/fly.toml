@@ -1,0 +1,81 @@
+# Fly.io configuration for fullstack-bun API
+# Deploy with: fly deploy --config apps/api/fly.toml
+app = 'fullstack-bun-api'
+primary_region = 'iad'
+
+# Use existing Dockerfile with production target
+[build]
+  dockerfile = 'apps/api/Dockerfile'
+  # Build from monorepo root to include workspace packages
+  build-target = 'production'
+
+# Release command - runs once per deployment before new machines start
+[deploy]
+  release_command = 'bun --filter=api run db:migrate'
+
+# Environment variables (public, non-sensitive)
+[env]
+  PORT = '3001'
+  NODE_ENV = 'production'
+  # Enable horizontal scaling with Redis pub/sub
+  ENABLE_DISTRIBUTED_CHAT = 'true'
+
+# Secrets to set manually (sensitive values):
+# fly secrets set DATABASE_URL="postgresql://..." --app fullstack-bun-api
+# fly secrets set REDIS_URL="redis://..." --app fullstack-bun-api
+# fly secrets set BETTER_AUTH_SECRET="..." --app fullstack-bun-api
+# fly secrets set API_BASE_URL="https://api.yourdomain.com" --app fullstack-bun-api
+# fly secrets set FE_BASE_URL="https://yourdomain.com" --app fullstack-bun-api
+# fly secrets set CORS_ALLOWLISTED_ORIGINS="https://yourdomain.com,https://admin.yourdomain.com" --app fullstack-bun-api
+# fly secrets set SMTP_HOST="smtp.gmail.com" --app fullstack-bun-api
+# fly secrets set SMTP_PORT="587" --app fullstack-bun-api
+# fly secrets set SMTP_USER="your-email@gmail.com" --app fullstack-bun-api
+# fly secrets set SMTP_PASSWORD="..." --app fullstack-bun-api
+# fly secrets set SMTP_FROM="Fullstack Bun <noreply@example.com>" --app fullstack-bun-api
+# fly secrets set METRICS_API_KEY="..." --app fullstack-bun-api
+# Optional OAuth:
+# fly secrets set GITHUB_CLIENT_ID="..." --app fullstack-bun-api
+# fly secrets set GITHUB_CLIENT_SECRET="..." --app fullstack-bun-api
+
+# HTTP service configuration
+[[services]]
+  internal_port = 3001
+  protocol = 'tcp'
+  # Disable auto-stop to keep WebSocket/SSE connections alive
+  auto_stop_machines = 'off'
+  auto_start_machines = true
+  # Run at least 2 instances for high availability
+  min_machines_running = 1
+
+  # Health check configuration
+  [[services.http_checks]]
+    interval = '15s'
+    timeout = '5s'
+    grace_period = '10s'
+    method = 'GET'
+    path = '/health'
+    protocol = 'http'
+    # Health endpoint returns 200 for OK, 503 for degraded/shutting down
+    [services.http_checks.headers]
+
+  # HTTP port configuration
+  [[services.ports]]
+    port = 80
+    handlers = ['http']
+    force_https = true
+
+  [[services.ports]]
+    port = 443
+    handlers = ['http', 'tls']
+
+  # Concurrency limits
+  [services.concurrency]
+    type = 'connections'
+    hard_limit = 1000
+    soft_limit = 800
+
+# VM resources
+[[vm]]
+  memory = '512mb'
+  cpu_kind = 'shared'
+  cpus = 1

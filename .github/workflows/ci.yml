@@ -35,14 +35,14 @@ jobs:
       - name: Lint
         run: |
           workspaces=(
+            "packages/shared"
+            "packages/frontend-common"
+            "packages/auth-email-security"
             "apps/admin"
             "apps/api"
             "apps/docs"
             "apps/frontend"
             "apps/storybook"
-            "packages/auth-email-security"
-            "packages/frontend-common"
-            "packages/shared"
           )
           for workspace in "${workspaces[@]}"; do
             pkg="$workspace/package.json"
@@ -57,14 +57,14 @@ jobs:
       - name: Build
         run: |
           workspaces=(
+            "packages/shared"
+            "packages/frontend-common"
+            "packages/auth-email-security"
             "apps/admin"
             "apps/api"
             "apps/docs"
             "apps/frontend"
             "apps/storybook"
-            "packages/auth-email-security"
-            "packages/frontend-common"
-            "packages/shared"
           )
           for workspace in "${workspaces[@]}"; do
             pkg="$workspace/package.json"
@@ -79,14 +79,14 @@ jobs:
       - name: Test
         run: |
           workspaces=(
+            "packages/shared"
+            "packages/frontend-common"
+            "packages/auth-email-security"
             "apps/admin"
             "apps/api"
             "apps/docs"
             "apps/frontend"
             "apps/storybook"
-            "packages/auth-email-security"
-            "packages/frontend-common"
-            "packages/shared"
           )
           for workspace in "${workspaces[@]}"; do
             pkg="$workspace/package.json"

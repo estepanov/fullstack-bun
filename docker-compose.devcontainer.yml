@@ -1,0 +1,33 @@
+services:
+  # This devcontainer service definition ensures the workspace
+  # is on the same network as postgres and redis
+  devcontainer:
+    image: oven/bun:1
+    volumes:
+      - .:/workspace/fullstack-bun:cached
+    working_dir: /workspace/fullstack-bun
+    command: sleep infinity
+    networks:
+      - default
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/mydatabase
+      REDIS_URL: redis://:redispassword@redis:6379
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: "5432"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: mydatabase
+      REDIS_PASSWORD: redispassword
+      NODE_ENV: development
+      API_PORT: "3001"
+      FRONTEND_PORT: "5173"
+      ADMIN_PORT: "5175"
+      VITE_API_BASE_URL: http://localhost:3001
+      VITE_ADMIN_URL: http://localhost:5175
+      VITE_FRONTEND_URL: http://localhost:5173
+      FE_BASE_URL: http://localhost:5173
+
+networks:
+  default:
+    name: fullstack-bun_default
+    external: true

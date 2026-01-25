@@ -1,0 +1,108 @@
+{
+  "name": "Fullstack Bun Workspace",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "../docker-compose.devcontainer.yml"
+  ],
+  "service": "devcontainer",
+  "workspaceFolder": "/workspace/fullstack-bun",
+  "overrideCommand": true,
+  "remoteEnv": {
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+  },
+  "runServices": [
+    "postgres",
+    "redis"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {
+      "installZsh": false,
+      "installOhMyZsh": false,
+      "upgradePackages": false,
+      "username": "bunapp",
+      "userUid": "automatic",
+      "userGid": "automatic"
+    }
+  },
+  "containerEnv": {
+    "DATABASE_URL": "postgresql://postgres:postgres@postgres:5432/mydatabase",
+    "POSTGRES_HOST": "postgres",
+    "POSTGRES_PORT": "5432",
+    "POSTGRES_USER": "postgres",
+    "POSTGRES_PASSWORD": "postgres",
+    "POSTGRES_DB": "mydatabase",
+    "REDIS_URL": "redis://:redispassword@redis:6379",
+    "REDIS_PASSWORD": "redispassword",
+    "NODE_ENV": "development",
+    "PORT": "3001",
+    "API_PORT": "3001",
+    "FRONTEND_PORT": "5173",
+    "ADMIN_PORT": "5175",
+    "VITE_API_BASE_URL": "http://localhost:3001",
+    "VITE_ADMIN_URL": "http://localhost:5175",
+    "VITE_FRONTEND_URL": "http://localhost:5173",
+    "FE_BASE_URL": "http://localhost:5173"
+  },
+  "forwardPorts": [
+    3001,
+    5173,
+    5174,
+    5175,
+    5176,
+    5432,
+    6379,
+    4173
+  ],
+  "portsAttributes": {
+    "3001": {
+      "label": "API",
+      "onAutoForward": "notify"
+    },
+    "5173": {
+      "label": "Frontend",
+      "onAutoForward": "openBrowserOnce"
+    },
+    "5174": {
+      "label": "Frontend HMR",
+      "onAutoForward": "ignore"
+    },
+    "5175": {
+      "label": "Admin",
+      "onAutoForward": "notify"
+    },
+    "5176": {
+      "label": "Admin HMR",
+      "onAutoForward": "ignore"
+    },
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "ignore"
+    },
+    "6379": {
+      "label": "Redis",
+      "onAutoForward": "ignore"
+    },
+    "4173": {
+      "label": "Storybook",
+      "onAutoForward": "notify"
+    }
+  },
+  "mounts": [],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "biomejs.biome",
+        "oven.bun-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-azuretools.vscode-docker",
+        "usernamehw.errorlens",
+        "visualstudioexptteam.vscodeintellicode",
+        "pkief.material-icon-theme"
+      ]
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/scripts/post-create.sh",
+  "postStartCommand": "bash .devcontainer/scripts/post-start.sh",
+  "remoteUser": "bunapp",
+  "updateRemoteUserUID": true
+}
