@@ -87,9 +87,7 @@
       "onAutoForward": "notify"
     }
   },
-  "mounts": [
-    "source=fullstack-bun-node_modules,target=/workspace/fullstack-bun/node_modules,type=volume"
-  ],
+  "mounts": [],
   "customizations": {
     "vscode": {
       "extensions": [
