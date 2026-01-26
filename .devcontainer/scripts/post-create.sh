@@ -5,6 +5,14 @@ echo "===================================="
 echo "Running DevContainer post-create setup..."
 echo "===================================="
 
+# Ensure node_modules is writable for the devcontainer user.
+WORKDIR="/workspace/fullstack-bun"
+if [ -d "$WORKDIR" ]; then
+  echo "🔐 Ensuring node_modules ownership..."
+  mkdir -p "$WORKDIR/node_modules"
+  sudo chown -R bunapp:bunapp "$WORKDIR/node_modules"
+fi
+
 # Install dependencies
 echo "📦 Installing dependencies with bun..."
 # Use a workspace-local cache + copyfile backend to avoid hardlink issues on some Coder filesystems.
