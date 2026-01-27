@@ -7,9 +7,8 @@ echo "===================================="
 
 # Install dependencies
 echo "📦 Installing dependencies with bun..."
-# Use hardlink backend (faster and more reliable than copyfile for most cases)
-# Falls back to copyfile automatically if hardlinks aren't supported
-bun install --backend=hardlink
+# Configuration is managed via bunfig.toml (hoisted linker + hardlink backend)
+bun install
 
 # Run database migrations if API has migration scripts
 if [ -d "apps/api" ]; then
