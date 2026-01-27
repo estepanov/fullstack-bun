@@ -1,0 +1,8 @@
+[install]
+# Use hoisted linker instead of isolated (default in Bun 1.3+)
+# This prevents workspace symlink issues in Docker/Coder environments
+# See: https://bun.com/docs/pm/isolated-installs
+linker = "hoisted"
+
+# Use hardlink backend for faster installs (falls back to copyfile if needed)
+backend = "hardlink"
