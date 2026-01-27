@@ -5,6 +5,16 @@ echo "===================================="
 echo "Running DevContainer post-create setup..."
 echo "===================================="
 
+# Fix workspace ownership for the devcontainer user
+WORKDIR="/workspace/fullstack-bun"
+CURRENT_USER=$(whoami)
+echo "🔐 Fixing workspace permissions for user: $CURRENT_USER..."
+
+# Only fix ownership if we're not root and the directory isn't already owned by us
+if [ "$CURRENT_USER" != "root" ] && [ "$(stat -c '%U' "$WORKDIR" 2>/dev/null || stat -f '%Su' "$WORKDIR")" != "$CURRENT_USER" ]; then
+  sudo chown -R "$CURRENT_USER:$(id -gn)" "$WORKDIR"
+fi
+
 # Install dependencies
 echo "📦 Installing dependencies with bun..."
 # Configuration is managed via bunfig.toml (hoisted linker + hardlink backend)
