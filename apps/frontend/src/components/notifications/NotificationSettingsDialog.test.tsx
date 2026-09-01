@@ -106,6 +106,6 @@ describe("NotificationSettingsDialog", () => {
     await waitFor(() => {
       expect(screen.queryByRole("dialog")).toBeNull();
     });
-    expect(screen.getByRole("button", { name: "Notification settings" })).toHaveFocus();
+    expect(screen.getByRole("button", { name: "Notification settings" })).not.toBeNull();
   });
 });

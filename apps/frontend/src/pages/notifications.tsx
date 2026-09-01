@@ -158,9 +158,7 @@ export const NotificationsPageContent = () => {
                 {isFetching ? t("notifications:page.updating") : resultsSummary}
               </div>
             )}
-            <NotificationSettingsDialog
-              trigger={<NotificationSettingsTriggerButton />}
-            />
+            <NotificationSettingsDialog trigger={<NotificationSettingsTriggerButton />} />
           </div>
         </div>
 
