@@ -6,37 +6,33 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "frontend-common/components/ui";
 import { Settings } from "lucide-react";
-import type { ReactNode } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 type NotificationSettingsDialogProps = {
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  trigger?: ReactNode;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
 
 export const NotificationSettingsDialog = ({
   open,
   onOpenChange,
-  trigger,
 }: NotificationSettingsDialogProps) => {
   const { t } = useTranslation("notifications");
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      {trigger ? <DialogTrigger asChild>{trigger}</DialogTrigger> : null}
       <DialogContent
-        className="max-h-[85vh] overflow-y-auto"
+        className="grid max-h-[85vh] gap-4 overflow-y-auto"
         closeLabel={t("preferences.dialog.close")}
       >
         <DialogHeader>
           <DialogTitle>{t("preferences.title")}</DialogTitle>
           <DialogDescription>{t("preferences.description")}</DialogDescription>
         </DialogHeader>
-        <NotificationPreferences variant="plain" />
+        <NotificationPreferences />
       </DialogContent>
     </Dialog>
   );
@@ -44,7 +40,7 @@ export const NotificationSettingsDialog = ({
 
 type NotificationSettingsTriggerButtonProps = {
   appearance?: "button" | "icon";
-  onClick?: () => void;
+  onClick: () => void;
 };
 
 export const NotificationSettingsTriggerButton = ({
@@ -52,25 +48,37 @@ export const NotificationSettingsTriggerButton = ({
   onClick,
 }: NotificationSettingsTriggerButtonProps) => {
   const { t } = useTranslation("notifications");
-
-  if (appearance === "icon") {
-    return (
-      <Button
-        type="button"
-        variant="ghost"
-        size="icon"
-        aria-label={t("preferences.open_label")}
-        onClick={onClick}
-      >
-        <Settings className="size-4" />
-      </Button>
-    );
-  }
+  const label = t("preferences.open_label");
 
   return (
-    <Button type="button" variant="outline" className="gap-2" onClick={onClick}>
+    <Button
+      type="button"
+      variant={appearance === "icon" ? "ghost" : "outline"}
+      size={appearance === "icon" ? "icon" : "default"}
+      className={appearance === "icon" ? undefined : "gap-2"}
+      aria-label={label}
+      onClick={onClick}
+    >
       <Settings className="size-4" />
-      {t("preferences.open_label")}
+      {appearance === "button" ? label : null}
     </Button>
+  );
+};
+
+export const NotificationSettingsButton = ({
+  appearance = "button",
+}: {
+  appearance?: "button" | "icon";
+}) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <NotificationSettingsTriggerButton
+        appearance={appearance}
+        onClick={() => setOpen(true)}
+      />
+      <NotificationSettingsDialog open={open} onOpenChange={setOpen} />
+    </>
   );
 };

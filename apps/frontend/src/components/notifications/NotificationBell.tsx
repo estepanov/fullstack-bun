@@ -7,10 +7,12 @@ import {
 } from "frontend-common/components/ui";
 import { Bell } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { NotificationPanel } from "./NotificationPanel";
 import { NotificationSettingsDialog } from "./NotificationSettingsDialog";
 
 export const NotificationBell = () => {
+  const { t } = useTranslation("notifications");
   const { unreadCount } = useNotifications();
   const [open, setOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -23,7 +25,7 @@ export const NotificationBell = () => {
             variant={unreadCount > 0 ? "outline" : "ghost"}
             size="icon"
             className="relative"
-            aria-label="Notifications"
+            aria-label={t("bell.open_label")}
           >
             <Bell className="h-5 w-5" />
             {unreadCount > 0 && (

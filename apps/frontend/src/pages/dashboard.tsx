@@ -5,10 +5,7 @@ import { PasskeysSection } from "@frontend/components/dashboard/passkeys-section
 import { PasswordSection } from "@frontend/components/dashboard/password-section";
 import { SessionsSection } from "@frontend/components/dashboard/sessions-section";
 import { UserInfoSection } from "@frontend/components/dashboard/user-info-section";
-import {
-  NotificationSettingsDialog,
-  NotificationSettingsTriggerButton,
-} from "@frontend/components/notifications/NotificationSettingsDialog";
+import { NotificationSettingsButton } from "@frontend/components/notifications/NotificationSettingsDialog";
 import { useGetUserProfileQuery } from "@frontend/hooks/api/useGetUserProfileQuery";
 import { signOut, useSession } from "@frontend/lib/auth-client";
 import { getExtendedUser } from "@frontend/types/user";
@@ -42,9 +39,7 @@ function DashboardContent() {
                 </h1>
                 <p className="mt-2 text-muted-foreground">{t("dashboard.welcome")}</p>
               </div>
-              <NotificationSettingsDialog
-                trigger={<NotificationSettingsTriggerButton />}
-              />
+              <NotificationSettingsButton />
             </div>
           </DashboardCard>
 

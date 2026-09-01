@@ -1,9 +1,6 @@
 import { ProtectedRoute } from "@frontend/components/ProtectedRoute";
 import { NotificationItem } from "@frontend/components/notifications/NotificationItem";
-import {
-  NotificationSettingsDialog,
-  NotificationSettingsTriggerButton,
-} from "@frontend/components/notifications/NotificationSettingsDialog";
+import { NotificationSettingsButton } from "@frontend/components/notifications/NotificationSettingsDialog";
 import { useDeleteAllNotificationsMutation } from "@frontend/hooks/api/useDeleteAllNotificationsMutation";
 import { useGetNotificationCountsQuery } from "@frontend/hooks/api/useGetNotificationCountsQuery";
 import { useGetNotificationsQuery } from "@frontend/hooks/api/useGetNotificationsQuery";
@@ -158,7 +155,7 @@ export const NotificationsPageContent = () => {
                 {isFetching ? t("notifications:page.updating") : resultsSummary}
               </div>
             )}
-            <NotificationSettingsDialog trigger={<NotificationSettingsTriggerButton />} />
+            <NotificationSettingsButton />
           </div>
         </div>
 

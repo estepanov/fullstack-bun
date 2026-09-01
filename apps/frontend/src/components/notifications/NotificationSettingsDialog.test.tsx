@@ -40,10 +40,7 @@ const preferencesResponse = {
 };
 
 const renderDialog = async () => {
-  const [
-    { RootAppProvider },
-    { NotificationSettingsDialog, NotificationSettingsTriggerButton },
-  ] = await Promise.all([
+  const [{ RootAppProvider }, { NotificationSettingsButton }] = await Promise.all([
     import("../../providers/RootAppProvider"),
     import("./NotificationSettingsDialog"),
   ]);
@@ -51,7 +48,7 @@ const renderDialog = async () => {
   return render(
     <MemoryRouter>
       <RootAppProvider>
-        <NotificationSettingsDialog trigger={<NotificationSettingsTriggerButton />} />
+        <NotificationSettingsButton />
       </RootAppProvider>
     </MemoryRouter>,
   );

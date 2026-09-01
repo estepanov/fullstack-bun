@@ -1,17 +1,6 @@
 import { useGetNotificationPreferencesQuery } from "@frontend/hooks/api/useGetNotificationPreferencesQuery";
 import { useUpdateNotificationPreferencesMutation } from "@frontend/hooks/api/useUpdateNotificationPreferencesMutation";
-import {
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  Field,
-  FieldLabel,
-  Input,
-  Label,
-} from "frontend-common/components/ui";
+import { Button, Field, FieldLabel, Input, Label } from "frontend-common/components/ui";
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -44,15 +33,8 @@ const normalizeTypes = (types: NotificationType[]) => [...types].sort();
 const areTypeSetsEqual = (a: NotificationType[], b: NotificationType[]) =>
   JSON.stringify(normalizeTypes(a)) === JSON.stringify(normalizeTypes(b));
 
-type NotificationPreferencesProps = {
-  variant?: "card" | "plain";
-};
-
-export const NotificationPreferences = ({
-  variant = "card",
-}: NotificationPreferencesProps) => {
+export const NotificationPreferences = () => {
   const { t } = useTranslation("notifications");
-  const isPlain = variant === "plain";
   const { data, isLoading } = useGetNotificationPreferencesQuery();
   const updateMutation = useUpdateNotificationPreferencesMutation();
   const [emailEnabled, setEmailEnabled] = useState(true);
@@ -130,9 +112,17 @@ export const NotificationPreferences = ({
 
   const getTypeLabel = (type: NotificationType) => t(`preferences.types.${type}`);
 
-  const form = (
+  if (isLoading) {
+    return (
+      <p className="py-4 text-center text-sm text-muted-foreground">
+        {t("preferences.loading")}
+      </p>
+    );
+  }
+
+  return (
     <>
-      <div className={isPlain ? "space-y-6" : "space-y-6 px-6"}>
+      <div className="space-y-6">
         <section className="space-y-4 rounded-2xl border border-border/60 bg-background/40 px-5 py-4 shadow-sm shadow-black/5">
           <div className="flex items-center justify-between">
             <div className="space-y-0.5">
@@ -228,13 +218,7 @@ export const NotificationPreferences = ({
       </div>
 
       {hasChanges && (
-        <div
-          className={
-            isPlain
-              ? "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end"
-              : "flex flex-col gap-3 px-6 sm:flex-row sm:items-center sm:justify-between"
-          }
-        >
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
           <Button
             onClick={handleSave}
             disabled={updateMutation.isPending}
@@ -247,37 +231,5 @@ export const NotificationPreferences = ({
         </div>
       )}
     </>
-  );
-
-  if (isLoading) {
-    if (isPlain) {
-      return (
-        <p className="py-4 text-center text-sm text-muted-foreground">
-          {t("preferences.loading")}
-        </p>
-      );
-    }
-
-    return (
-      <Card>
-        <CardContent className="py-8 text-center text-sm text-muted-foreground">
-          {t("preferences.loading")}
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (isPlain) {
-    return form;
-  }
-
-  return (
-    <Card className="space-y-2 bg-card text-card-foreground">
-      <CardHeader className="gap-1.5">
-        <CardTitle className="text-lg font-semibold">{t("preferences.title")}</CardTitle>
-        <CardDescription>{t("preferences.description")}</CardDescription>
-      </CardHeader>
-      {form}
-    </Card>
   );
 };

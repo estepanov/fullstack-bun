@@ -36,6 +36,9 @@
       "info": "Information"
     }
   },
+  "bell": {
+    "open_label": "Notificaciones"
+  },
   "page": {
     "title": "Notifications",
     "description": "Review, search, and manage everything that needs your attention.",
