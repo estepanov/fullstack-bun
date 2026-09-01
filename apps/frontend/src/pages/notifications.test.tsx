@@ -1,6 +1,7 @@
 import { describe, expect, mock, test } from "bun:test";
 
 import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { http, HttpResponse } from "msw";
 import type { ReactNode } from "react";
 import { MemoryRouter } from "react-router";
@@ -152,5 +153,54 @@ describe("NotificationsPage", () => {
         true,
       );
     });
+  });
+
+  test("opens notification settings in a modal", async () => {
+    const { NotificationsPageContent } = await loadNotificationsPage();
+    const user = userEvent.setup();
+
+    server.use(
+      http.get(/.*\/notification\/list/, () => {
+        return HttpResponse.json({
+          success: true,
+          notifications: [],
+          pagination: {
+            page: 1,
+            limit: 20,
+            totalCount: 0,
+            totalPages: 0,
+            hasNextPage: false,
+            hasPreviousPage: false,
+          },
+        });
+      }),
+      http.get(/.*\/notification\/preferences/, () => {
+        return HttpResponse.json({
+          success: true,
+          preferences: {
+            id: "pref-1",
+            userId: "user-1",
+            emailEnabled: true,
+            pushEnabled: false,
+            emailTypes: [],
+            pushTypes: [],
+            createdAt: "2024-06-01T10:00:00.000Z",
+            updatedAt: "2024-06-01T10:00:00.000Z",
+          },
+        });
+      }),
+    );
+
+    await renderWithProviders(<NotificationsPageContent />);
+
+    expect(screen.queryByRole("dialog")).toBeNull();
+
+    await user.click(
+      await screen.findByRole("button", { name: "Notification settings" }),
+    );
+
+    expect(
+      await screen.findByRole("dialog", { name: "Notification Preferences" }),
+    ).not.toBeNull();
   });
 });

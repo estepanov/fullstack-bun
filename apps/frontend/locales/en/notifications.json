@@ -2,6 +2,10 @@
   "preferences": {
     "title": "Notification Preferences",
     "description": "Configure how you want to receive notifications.",
+    "open_label": "Notification settings",
+    "dialog": {
+      "close": "Close settings"
+    },
     "loading": "Loading preferences...",
     "email": {
       "label": "Email Notifications",

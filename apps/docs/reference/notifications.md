@@ -57,7 +57,7 @@ Real-time, multi-channel notifications for both frontend and admin apps. Feature
 - **SSE client**: `packages/frontend-common/notification/notification-sse-client.ts` wraps `EventSource` with `withCredentials` and per-event listeners.
 - **React hook**: `apps/frontend/src/hooks/api/useNotificationSSE.ts` manages connection, local store (bounded by `NOTIFICATION_CONFIG.maxInMemoryNotifications`), and unread sync.
 - **Provider**: `apps/frontend/src/providers/NotificationProvider.tsx` wires SSE state into context, shows Sonner toasts for new items, and opens a modal for multi-action notifications. Mounted in `RootAppProvider`.
-- **UI primitives**: `NotificationBell`, `NotificationPanel`, `NotificationItem`, `NotificationPreferences` (in `apps/frontend/src/components/notifications/`). These use query/mutation hooks for list, counts, mark read/delete, preference updates, and SSE live updates.
+- **UI primitives**: `NotificationBell`, `NotificationPanel`, `NotificationItem`, `NotificationPreferences`, and `NotificationSettingsDialog` (in `apps/frontend/src/components/notifications/`). Preferences open in an accessible dialog from the dashboard, notifications page, and bell panel instead of rendering inline at the bottom of the page. These use query/mutation hooks for list, counts, mark read/delete, preference updates, and SSE live updates.
 - **Allowed action domains**: `NOTIFICATION_ACTION_ALLOWED_DOMAINS` in `packages/shared/config/notification.ts` guards button/link actions; update when adding new frontend domains.
 
 ### `useNotifications` hook

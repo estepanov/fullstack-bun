@@ -16,12 +16,17 @@ import { CheckCheck, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { NotificationItem } from "./NotificationItem";
+import { NotificationSettingsTriggerButton } from "./NotificationSettingsDialog";
 
 interface NotificationPanelProps {
   onClose?: () => void;
+  onOpenSettings?: () => void;
 }
 
-export const NotificationPanel = ({ onClose }: NotificationPanelProps) => {
+export const NotificationPanel = ({
+  onClose,
+  onOpenSettings,
+}: NotificationPanelProps) => {
   const { t } = useTranslation("notifications");
   const { notifications, unreadCount } = useNotifications();
   const markAllReadMutation = useMarkAllReadMutation();
@@ -45,19 +50,25 @@ export const NotificationPanel = ({ onClose }: NotificationPanelProps) => {
         {/* Header */}
         <div className="flex items-center justify-between border-b p-2 md:p-4">
           <h3 className="text-base font-semibold">{t("panel.title")}</h3>
-          {hasNotifications && (
-            <ButtonGroup>
-              {unreadCount > 0 && (
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  onClick={handleMarkAllRead}
-                  disabled={markAllReadMutation.isPending}
-                  title={t("panel.actions.markAllRead")}
-                >
-                  <CheckCheck className="size-4" />
-                </Button>
-              )}
+          <ButtonGroup>
+            {onOpenSettings ? (
+              <NotificationSettingsTriggerButton
+                appearance="icon"
+                onClick={onOpenSettings}
+              />
+            ) : null}
+            {hasNotifications && unreadCount > 0 && (
+              <Button
+                variant="ghost"
+                size="xs"
+                onClick={handleMarkAllRead}
+                disabled={markAllReadMutation.isPending}
+                title={t("panel.actions.markAllRead")}
+              >
+                <CheckCheck className="size-4" />
+              </Button>
+            )}
+            {hasNotifications && (
               <Button
                 variant="ghost"
                 size="xs"
@@ -67,8 +78,8 @@ export const NotificationPanel = ({ onClose }: NotificationPanelProps) => {
               >
                 <Trash2 className="size-4" />
               </Button>
-            </ButtonGroup>
-          )}
+            )}
+          </ButtonGroup>
         </div>
 
         {/* Notification List */}

@@ -1,8 +1,12 @@
 {
   "preferences": {
-    "title": "Notification Preferences",
-    "description": "Configure how you want to receive notifications.",
-    "loading": "Loading preferences...",
+    "title": "Benachrichtigungseinstellungen",
+    "description": "Legen Sie fest, wie Sie Benachrichtigungen erhalten möchten.",
+    "open_label": "Benachrichtigungseinstellungen",
+    "dialog": {
+      "close": "Einstellungen schließen"
+    },
+    "loading": "Einstellungen werden geladen...",
     "email": {
       "label": "Email Notifications",
       "description": "Receive notifications via email when you're offline.",

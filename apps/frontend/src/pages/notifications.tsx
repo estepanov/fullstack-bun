@@ -1,5 +1,9 @@
 import { ProtectedRoute } from "@frontend/components/ProtectedRoute";
 import { NotificationItem } from "@frontend/components/notifications/NotificationItem";
+import {
+  NotificationSettingsDialog,
+  NotificationSettingsTriggerButton,
+} from "@frontend/components/notifications/NotificationSettingsDialog";
 import { useDeleteAllNotificationsMutation } from "@frontend/hooks/api/useDeleteAllNotificationsMutation";
 import { useGetNotificationCountsQuery } from "@frontend/hooks/api/useGetNotificationCountsQuery";
 import { useGetNotificationsQuery } from "@frontend/hooks/api/useGetNotificationsQuery";
@@ -148,11 +152,16 @@ export const NotificationsPageContent = () => {
               {t("notifications:page.description")}
             </p>
           </div>
-          {resultsSummary && (
-            <div className="text-sm text-muted-foreground">
-              {isFetching ? t("notifications:page.updating") : resultsSummary}
-            </div>
-          )}
+          <div className="flex flex-wrap items-center gap-3">
+            {resultsSummary && (
+              <div className="text-sm text-muted-foreground">
+                {isFetching ? t("notifications:page.updating") : resultsSummary}
+              </div>
+            )}
+            <NotificationSettingsDialog
+              trigger={<NotificationSettingsTriggerButton />}
+            />
+          </div>
         </div>
 
         <div className="flex flex-col gap-4 rounded-lg border bg-card p-4 shadow-sm">
