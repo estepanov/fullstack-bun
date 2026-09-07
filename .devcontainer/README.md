@@ -223,7 +223,7 @@ This devcontainer configuration is compatible with GitHub Codespaces. To use:
 - [VS Code DevContainers Documentation](https://code.visualstudio.com/docs/devcontainers/containers)
 - [Docker Compose Documentation](https://docs.docker.com/compose/)
 - [Bun Documentation](https://bun.sh/docs)
-- [Project Documentation](https://fullstackbun.dev)
+- [Project Documentation](https://fullstackbun.estepanov.com)
 
 ## Support
 

@@ -3,7 +3,7 @@ import { create } from "storybook/theming";
 export const storybookTheme = create({
   base: "dark",
   brandTitle: "Fullstack Bun Storybook",
-  brandUrl: "https://fullstackbun.dev",
-  // brandImage: "https://fullstackbun.dev/es-logo-light.svg",
+  brandUrl: "https://fullstackbun.estepanov.com",
+  // brandImage: "https://fullstackbun.estepanov.com/es-logo-light.svg",
   brandTarget: "_self",
 });

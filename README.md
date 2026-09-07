@@ -11,7 +11,7 @@
 
 ## Get Started
 
-PLEASE SEE https://fullstackbun.dev/get-started/
+PLEASE SEE https://fullstackbun.estepanov.com/get-started/
 
 ### VS Code DevContainer (Recommended)
 

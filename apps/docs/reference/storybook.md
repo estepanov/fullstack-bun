@@ -52,4 +52,4 @@ The preview command serves the static output from `storybook-static`.
 
 A hosted demo is available at:
 
-- https://storybook.demo.fullstackbun.dev
+- https://demo-storybook-fullstackbun.estepanov.com
