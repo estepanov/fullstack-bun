@@ -121,17 +121,19 @@ export const injectPublicAppConfig = (
 
 const HEAD_SEARCH_LIMIT = 32_768;
 
-const createPublicAppConfigTransform = (
+const injectPublicAppConfigIntoStream = (
+  body: ReadableStream<Uint8Array>,
   config: PublicAppConfig,
-): TransformStream<Uint8Array, Uint8Array> => {
+): ReadableStream<Uint8Array> => {
   const decoder = new TextDecoder();
   const encoder = new TextEncoder();
   const marker = `window.${PUBLIC_APP_CONFIG_GLOBAL}=`;
+  const reader = body.getReader();
   let buffer = "";
   let injected = false;
 
   const enqueueText = (
-    controller: TransformStreamDefaultController<Uint8Array>,
+    controller: ReadableStreamDefaultController<Uint8Array>,
     value: string,
   ) => {
     if (value.length === 0) {
@@ -140,9 +142,7 @@ const createPublicAppConfigTransform = (
     controller.enqueue(encoder.encode(value));
   };
 
-  const flushBufferedHtml = (
-    controller: TransformStreamDefaultController<Uint8Array>,
-  ) => {
+  const flushBufferedHtml = (controller: ReadableStreamDefaultController<Uint8Array>) => {
     if (injected) {
       enqueueText(controller, buffer);
       buffer = "";
@@ -153,25 +153,34 @@ const createPublicAppConfigTransform = (
     buffer = "";
   };
 
-  return new TransformStream<Uint8Array, Uint8Array>({
-    transform(chunk, controller) {
-      buffer += decoder.decode(chunk, { stream: true });
-      if (injected) {
-        enqueueText(controller, buffer);
-        buffer = "";
-        return;
-      }
-      if (
-        buffer.includes(marker) ||
-        /<head[^>]*>/i.test(buffer) ||
-        buffer.length >= HEAD_SEARCH_LIMIT
-      ) {
-        flushBufferedHtml(controller);
+  return new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) {
+          buffer += decoder.decode();
+          flushBufferedHtml(controller);
+          controller.close();
+          return;
+        }
+        buffer += decoder.decode(value, { stream: true });
+        if (injected) {
+          enqueueText(controller, buffer);
+          buffer = "";
+          return;
+        }
+        if (
+          buffer.includes(marker) ||
+          /<head[^>]*>/i.test(buffer) ||
+          buffer.length >= HEAD_SEARCH_LIMIT
+        ) {
+          flushBufferedHtml(controller);
+          return;
+        }
       }
     },
-    flush(controller) {
-      buffer += decoder.decode();
-      flushBufferedHtml(controller);
+    cancel(reason) {
+      return reader.cancel(reason);
     },
   });
 };
@@ -186,7 +195,7 @@ export const injectPublicAppConfigIntoResponse = (
   }
   const headers = new Headers(response.headers);
   headers.delete("content-length");
-  return new Response(response.body.pipeThrough(createPublicAppConfigTransform(config)), {
+  return new Response(injectPublicAppConfigIntoStream(response.body, config), {
     status: response.status,
     statusText: response.statusText,
     headers,
