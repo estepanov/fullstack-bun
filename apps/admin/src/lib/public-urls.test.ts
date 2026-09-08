@@ -25,11 +25,8 @@ describe("admin public URLs", () => {
   });
 
   test("does not build undefined/auth/login when the frontend origin is missing", () => {
-    window.__APP_CONFIG__ = {
-      FRONTEND_URL: "",
-      ADMIN_URL: "",
-      API_BASE_URL: "",
-    };
+    delete process.env.VITE_FRONTEND_URL;
+    window.__APP_CONFIG__ = undefined;
 
     expect(getFrontendUrl()).toBe("");
     expect(getFrontendLoginUrl()).toBe("");

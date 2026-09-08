@@ -74,7 +74,7 @@ describe("publicAppConfigFromEnv", () => {
 });
 
 describe("resolvePublicAppConfig", () => {
-  test("runtime window config is authoritative when injected", () => {
+  test("runtime window config is preferred when it has a real origin", () => {
     window.__APP_CONFIG__ = {
       FRONTEND_URL: "https://runtime-app.example.com/",
       ADMIN_URL: "https://runtime-admin.example.com",
@@ -98,7 +98,7 @@ describe("resolvePublicAppConfig", () => {
     });
   });
 
-  test("injected empty runtime values do not fall back to env or build-time", () => {
+  test("empty runtime values fall back to env then build-time", () => {
     window.__APP_CONFIG__ = {
       FRONTEND_URL: "",
       ADMIN_URL: "",
@@ -111,8 +111,24 @@ describe("resolvePublicAppConfig", () => {
         { VITE_FRONTEND_URL: "https://env-app.example.com" },
       ),
     ).toEqual({
+      FRONTEND_URL: "https://env-app.example.com",
+      ADMIN_URL: "",
+      API_BASE_URL: "",
+    });
+  });
+
+  test("empty runtime injection keeps customized build-time Fly link args", () => {
+    window.__APP_CONFIG__ = {
       FRONTEND_URL: "",
       ADMIN_URL: "",
+      API_BASE_URL: "",
+    };
+
+    expect(
+      resolvePublicAppConfig({ ADMIN_URL: "https://fullstack-bun-admin.fly.dev" }, {}),
+    ).toEqual({
+      FRONTEND_URL: "",
+      ADMIN_URL: "https://fullstack-bun-admin.fly.dev",
       API_BASE_URL: "",
     });
   });
@@ -174,25 +190,70 @@ describe("injectPublicAppConfig", () => {
 });
 
 describe("injectPublicAppConfigIntoResponse", () => {
+  const injectedConfig = {
+    FRONTEND_URL: "https://app.example.com",
+    ADMIN_URL: "",
+    API_BASE_URL: "",
+  };
+
   test("rewrites HTML responses and leaves other content types alone", async () => {
     const htmlResponse = new Response("<head></head>", {
-      headers: { "content-type": "text/html; charset=utf-8" },
+      headers: { "content-type": "text/html; charset=utf-8", "content-length": "13" },
     });
-    const rewritten = await injectPublicAppConfigIntoResponse(htmlResponse, {
-      FRONTEND_URL: "https://app.example.com",
-      ADMIN_URL: "",
-      API_BASE_URL: "",
-    });
+    const rewritten = injectPublicAppConfigIntoResponse(htmlResponse, injectedConfig);
+    expect(rewritten.headers.get("content-length")).toBeNull();
     expect(await rewritten.text()).toContain("window.__APP_CONFIG__=");
 
     const jsonResponse = new Response("{}", {
       headers: { "content-type": "application/json" },
     });
-    const untouched = await injectPublicAppConfigIntoResponse(jsonResponse, {
-      FRONTEND_URL: "https://app.example.com",
-      ADMIN_URL: "",
-      API_BASE_URL: "",
-    });
+    const untouched = injectPublicAppConfigIntoResponse(jsonResponse, injectedConfig);
     expect(await untouched.text()).toBe("{}");
+  });
+
+  test("injects after <head> without buffering the rest of a chunked HTML stream", async () => {
+    const encoder = new TextEncoder();
+    let releaseTail: (() => void) | undefined;
+    const tailReleased = new Promise<void>((resolve) => {
+      releaseTail = resolve;
+    });
+
+    const stream = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        controller.enqueue(encoder.encode("<html><he"));
+        controller.enqueue(encoder.encode("ad><title>App</title></head><body>"));
+        await tailReleased;
+        controller.enqueue(encoder.encode("tail</body></html>"));
+        controller.close();
+      },
+    });
+
+    const rewritten = injectPublicAppConfigIntoResponse(
+      new Response(stream, { headers: { "content-type": "text/html" } }),
+      injectedConfig,
+    );
+    const reader = rewritten.body?.getReader();
+    expect(reader).toBeDefined();
+    if (!reader) {
+      throw new Error("expected a readable body");
+    }
+
+    const first = await reader.read();
+    const firstText = new TextDecoder().decode(first.value);
+    expect(first.done).toBe(false);
+    expect(firstText).toContain("<head><script>window.__APP_CONFIG__=");
+    expect(firstText).toContain("<title>App</title>");
+    expect(firstText).not.toContain("tail");
+
+    releaseTail?.();
+    const remainingChunks: string[] = [];
+    while (true) {
+      const next = await reader.read();
+      if (next.done) {
+        break;
+      }
+      remainingChunks.push(new TextDecoder().decode(next.value));
+    }
+    expect(remainingChunks.join("")).toContain("tail</body></html>");
   });
 });

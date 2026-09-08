@@ -14,12 +14,13 @@ primary_region = 'iad'
     VITE_API_BASE_URL = 'https://api.yourdomain.com'
     VITE_FRONTEND_URL = 'https://yourdomain.com'
 
-# Environment variables (public, non-sensitive)
+# Environment variables (public, non-sensitive).
+# Keep VITE_* out of [env] — placeholder values would override per-deploy
+# [build.args] / --build-arg URLs via window.__APP_CONFIG__. Set runtime
+# VITE_FRONTEND_URL only when you intentionally want to override the baked origin.
 [env]
   PORT = '5175'
   NODE_ENV = 'production'
-  VITE_API_BASE_URL = 'https://api.yourdomain.com'
-  VITE_FRONTEND_URL = 'https://yourdomain.com'
 
 # HTTP service configuration
 [[services]]

@@ -102,11 +102,8 @@ describe("AdminAuthGuard", () => {
 
   test("does not redirect onto the admin app when the frontend URL is missing", () => {
     sessionState = { data: null, isPending: false };
-    window.__APP_CONFIG__ = {
-      FRONTEND_URL: "",
-      ADMIN_URL: "",
-      API_BASE_URL: "",
-    };
+    delete process.env.VITE_FRONTEND_URL;
+    window.__APP_CONFIG__ = undefined;
     const hrefBefore = window.location.href;
 
     const { getByText } = render(

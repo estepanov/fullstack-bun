@@ -5,6 +5,8 @@
  * Hostinger, Docker, and similar platforms often set the same keys only at
  * runtime. The Node servers inject `window.__APP_CONFIG__` from `process.env`
  * so cross-app links (e.g. admin "Back to App") follow the deployed origins.
+ * Empty injected values fall through to env and then to the Vite build-time
+ * origins, so Fly `[build.args]` still apply when `[env]` omits the URLs.
  */
 
 export const PUBLIC_APP_CONFIG_GLOBAL = "__APP_CONFIG__";
@@ -78,22 +80,20 @@ export const resolvePublicAppConfig = (
   buildTime: Partial<PublicAppConfig> = {},
   env: Record<string, string | undefined> = processEnv(),
 ): PublicAppConfig => {
-  const hasRuntime =
-    typeof window !== "undefined" && window[PUBLIC_APP_CONFIG_GLOBAL] !== undefined;
-  if (hasRuntime) {
-    const runtime = readRuntimePublicAppConfig();
-    return {
-      FRONTEND_URL: normalizePublicUrl(runtime.FRONTEND_URL),
-      ADMIN_URL: normalizePublicUrl(runtime.ADMIN_URL),
-      API_BASE_URL: normalizePublicUrl(runtime.API_BASE_URL),
-    };
-  }
-
+  const runtime = readRuntimePublicAppConfig();
   const fromEnv = publicAppConfigFromEnv(env);
   return {
-    FRONTEND_URL: firstPublicUrl(fromEnv.FRONTEND_URL, buildTime.FRONTEND_URL),
-    ADMIN_URL: firstPublicUrl(fromEnv.ADMIN_URL, buildTime.ADMIN_URL),
-    API_BASE_URL: firstPublicUrl(fromEnv.API_BASE_URL, buildTime.API_BASE_URL),
+    FRONTEND_URL: firstPublicUrl(
+      runtime.FRONTEND_URL,
+      fromEnv.FRONTEND_URL,
+      buildTime.FRONTEND_URL,
+    ),
+    ADMIN_URL: firstPublicUrl(runtime.ADMIN_URL, fromEnv.ADMIN_URL, buildTime.ADMIN_URL),
+    API_BASE_URL: firstPublicUrl(
+      runtime.API_BASE_URL,
+      fromEnv.API_BASE_URL,
+      buildTime.API_BASE_URL,
+    ),
   };
 };
 
@@ -119,19 +119,74 @@ export const injectPublicAppConfig = (
   return `${html.slice(0, insertAt)}${script}${html.slice(insertAt)}`;
 };
 
-export const injectPublicAppConfigIntoResponse = async (
+const HEAD_SEARCH_LIMIT = 32_768;
+
+const createPublicAppConfigTransform = (
+  config: PublicAppConfig,
+): TransformStream<Uint8Array, Uint8Array> => {
+  const decoder = new TextDecoder();
+  const encoder = new TextEncoder();
+  const marker = `window.${PUBLIC_APP_CONFIG_GLOBAL}=`;
+  let buffer = "";
+  let injected = false;
+
+  const enqueueText = (
+    controller: TransformStreamDefaultController<Uint8Array>,
+    value: string,
+  ) => {
+    if (value.length === 0) {
+      return;
+    }
+    controller.enqueue(encoder.encode(value));
+  };
+
+  const flushBufferedHtml = (
+    controller: TransformStreamDefaultController<Uint8Array>,
+  ) => {
+    if (injected) {
+      enqueueText(controller, buffer);
+      buffer = "";
+      return;
+    }
+    injected = true;
+    enqueueText(controller, injectPublicAppConfig(buffer, config));
+    buffer = "";
+  };
+
+  return new TransformStream<Uint8Array, Uint8Array>({
+    transform(chunk, controller) {
+      buffer += decoder.decode(chunk, { stream: true });
+      if (injected) {
+        enqueueText(controller, buffer);
+        buffer = "";
+        return;
+      }
+      if (
+        buffer.includes(marker) ||
+        /<head[^>]*>/i.test(buffer) ||
+        buffer.length >= HEAD_SEARCH_LIMIT
+      ) {
+        flushBufferedHtml(controller);
+      }
+    },
+    flush(controller) {
+      buffer += decoder.decode();
+      flushBufferedHtml(controller);
+    },
+  });
+};
+
+export const injectPublicAppConfigIntoResponse = (
   response: Response,
   config: PublicAppConfig = publicAppConfigFromEnv(),
-): Promise<Response> => {
+): Response => {
   const contentType = response.headers.get("content-type") ?? "";
-  if (!contentType.includes("text/html")) {
+  if (!contentType.includes("text/html") || !response.body) {
     return response;
   }
-  const html = await response.text();
-  const injected = injectPublicAppConfig(html, config);
   const headers = new Headers(response.headers);
   headers.delete("content-length");
-  return new Response(injected, {
+  return new Response(response.body.pipeThrough(createPublicAppConfigTransform(config)), {
     status: response.status,
     statusText: response.statusText,
     headers,

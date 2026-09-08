@@ -364,7 +364,7 @@ fly deploy --app fullstack-bun-frontend --config apps/frontend/fly.toml \
 ::: warning Build Args vs Runtime
 `VITE_*` variables are compiled into the JavaScript bundle at build time. `VITE_API_BASE_URL` still requires a rebuild if you change the API origin.
 
-`VITE_ADMIN_URL` (frontend) and `VITE_FRONTEND_URL` (admin) are also read at runtime by the production servers and injected as `window.__APP_CONFIG__`. Set them in `[env]` or as Fly secrets if you need to correct cross-app links without rebuilding.
+Cross-app links (`VITE_ADMIN_URL` on frontend, `VITE_FRONTEND_URL` on admin) can also be set as runtime `[env]` or Fly secrets to override the baked origin without rebuilding. Do **not** leave template `yourdomain.com` placeholders in `[env]` — they override per-deploy `--build-arg` values. The shipped `fly.toml` files keep those keys in `[build.args]` only; empty runtime values fall through to the build-time URLs.
 :::
 
 #### 3. Deploy
@@ -1080,7 +1080,7 @@ bun --filter=api run db:rollback
 - Environment variables unchanged after redeploy
 
 **Cause:**
-`VITE_API_BASE_URL` is compiled at build time. Cross-app links (`VITE_ADMIN_URL`, `VITE_FRONTEND_URL`) can also be set as runtime `[env]` values without a rebuild.
+`VITE_API_BASE_URL` is compiled at build time. Cross-app links (`VITE_ADMIN_URL`, `VITE_FRONTEND_URL`) can optionally be set as runtime `[env]` values without a rebuild. Only set those `[env]` keys to real origins — template placeholders override `--build-arg` URLs.
 
 **Solution:**
 For API URL changes, force rebuild with updated args:

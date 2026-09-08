@@ -287,7 +287,7 @@ VITE_API_BASE_URL="http://localhost:3001"
 
 **Required in production.** Origin of the admin app. Used for the header "Admin" link.
 
-Vite compiles `VITE_*` values into the client bundle at **build** time. The production frontend server also reads this variable at **runtime** and injects it as `window.__APP_CONFIG__`, so Hostinger / Docker / Fly env vars work without a rebuild.
+Vite compiles `VITE_*` values into the client bundle at **build** time. The production frontend server also reads this variable at **runtime** and injects it as `window.__APP_CONFIG__`, so Hostinger / Docker / Fly env vars work without a rebuild. Empty or unset runtime values fall through to the origin baked into the bundle — do not ship placeholder URLs such as `https://admin.yourdomain.com` as runtime env.
 
 ```txt
 VITE_ADMIN_URL="http://localhost:5175"
@@ -317,7 +317,7 @@ VITE_API_BASE_URL="http://localhost:3001"
 
 **Required.** Origin of the customer-facing frontend (not the admin app). Used for the sidebar "Back to App" link and unauthenticated redirects to `/auth/login`.
 
-Like `VITE_ADMIN_URL`, this is compiled at build time **and** read at runtime by the admin server (`window.__APP_CONFIG__`). Set it to the **frontend** origin in deployed environments — if it is missing, "Back to App" used to resolve as a relative URL on the admin app itself.
+Like `VITE_ADMIN_URL`, this is compiled at build time **and** read at runtime by the admin server (`window.__APP_CONFIG__`). Set it to the **frontend** origin in deployed environments. If the runtime value is missing, the client keeps the build-time origin instead of building `undefined/auth/login`. Do not ship placeholder URLs such as `https://yourdomain.com` as runtime env when you already customized `[build.args]`.
 
 Demo/mock builds (`VITE_ADMIN_DEMO=true`) always apply `apps/admin/.env.demo`, including on Cloudflare Pages, so stale dashboard `VITE_*` values cannot point **Back to App** at the wrong host.
 
