@@ -17,6 +17,7 @@ let i18nInstance: i18n;
 
 mock.module("@admin/lib/auth-client", () => ({
   useSession: () => sessionState,
+  signOut: () => undefined,
 }));
 
 let AdminAuthGuard: (props: { children: ReactNode }) => JSX.Element;

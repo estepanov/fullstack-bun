@@ -319,6 +319,8 @@ VITE_API_BASE_URL="http://localhost:3001"
 
 Like `VITE_ADMIN_URL`, this is compiled at build time **and** read at runtime by the admin server (`window.__APP_CONFIG__`). Set it to the **frontend** origin in deployed environments — if it is missing, "Back to App" used to resolve as a relative URL on the admin app itself.
 
+Demo/mock builds (`VITE_ADMIN_DEMO=true`) always apply `apps/admin/.env.demo`, including on Cloudflare Pages, so stale dashboard `VITE_*` values cannot point **Back to App** at the wrong host.
+
 ```txt
 VITE_FRONTEND_URL="http://localhost:5173"
 ```
