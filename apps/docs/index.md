@@ -12,13 +12,13 @@ hero:
       link: /get-started
     - theme: alt
       text: Demo Frontend
-      link: https://frontend.demo.fullstackbun.dev
+      link: https://demo-fullstackbun.estepanov.com
     - theme: alt
       text: Demo Mocked Admin
-      link: https://admin-mock.demo.fullstackbun.dev
+      link: https://demo-admin-mock-fullstackbun.estepanov.com
     - theme: alt
       text: Demo Storybook
-      link: https://storybook.demo.fullstackbun.dev
+      link: https://demo-storybook-fullstackbun.estepanov.com
 
 features:
   - title: React 19 + Vite

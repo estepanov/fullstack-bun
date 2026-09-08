@@ -108,7 +108,7 @@ const getFrontendHostFromEnv = () => {
  */
 export const NOTIFICATION_ACTION_ALLOWED_DOMAINS = [
   getFrontendHostFromEnv(),
-  "fullstackbun.dev",
-  "frontend.demo.fullstackbun.dev",
-  "admin.demo.fullstackbun.dev",
+  "fullstackbun.estepanov.com",
+  "demo-fullstackbun.estepanov.com",
+  "demo-admin-fullstackbun.estepanov.com",
 ].filter((value): value is string => Boolean(value));
