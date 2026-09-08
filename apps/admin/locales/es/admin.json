@@ -1,5 +1,7 @@
 {
   "loading": "Cargando...",
+  "redirecting": "Redirigiendo al inicio de sesión...",
+  "login_url_missing": "La URL de la aplicación de clientes no está configurada.",
   "access_denied": "Acceso denegado",
   "admin_only": "Esta área está restringida solo a administradores.",
   "portal": "Portal de administración",

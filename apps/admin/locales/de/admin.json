@@ -1,5 +1,7 @@
 {
   "loading": "Wird geladen...",
+  "redirecting": "Weiterleitung zur Anmeldung...",
+  "login_url_missing": "Die URL der Kunden-App ist nicht konfiguriert.",
   "access_denied": "Zugriff verweigert",
   "admin_only": "Dieser Bereich ist nur für Administratoren.",
   "portal": "Admin-Portal",

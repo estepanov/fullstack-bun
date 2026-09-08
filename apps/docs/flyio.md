@@ -361,8 +361,10 @@ fly deploy --app fullstack-bun-frontend --config apps/frontend/fly.toml \
   --build-arg VITE_ADMIN_URL=https://admin.yourdomain.com
 ```
 
-::: warning Build Args vs Secrets
-`VITE_*` variables are **build arguments**, not runtime secrets. They're compiled into the JavaScript bundle at build time. If you change them, you must rebuild and redeploy.
+::: warning Build Args vs Runtime
+`VITE_*` variables are compiled into the JavaScript bundle at build time. `VITE_API_BASE_URL` still requires a rebuild if you change the API origin.
+
+Cross-app links (`VITE_ADMIN_URL` on frontend, `VITE_FRONTEND_URL` on admin) can also be set as runtime `[env]` or Fly secrets to override the baked origin without rebuilding. Do **not** leave template `yourdomain.com` placeholders in `[env]` — they override per-deploy `--build-arg` values. The shipped `fly.toml` files keep those keys in `[build.args]` only; empty runtime values fall through to the build-time URLs.
 :::
 
 #### 3. Deploy
@@ -441,8 +443,8 @@ The admin app is configured with `min_machines_running = 0` to scale down when i
 | `GITHUB_CLIENT_ID` | API | Secret | GitHub OAuth ID (optional) |
 | `GITHUB_CLIENT_SECRET` | API | Secret | GitHub OAuth secret (optional) |
 | `VITE_API_BASE_URL` | Frontend, Admin | Build Arg | API URL (compiled at build time) |
-| `VITE_ADMIN_URL` | Frontend | Build Arg | Admin URL (compiled at build time) |
-| `VITE_FRONTEND_URL` | Admin | Build Arg | Frontend URL (compiled at build time) |
+| `VITE_ADMIN_URL` | Frontend | Build Arg + runtime env | Admin origin for header links |
+| `VITE_FRONTEND_URL` | Admin | Build Arg + runtime env | Frontend origin for "Back to App" |
 
 ### Setting Secrets
 
@@ -1078,10 +1080,10 @@ bun --filter=api run db:rollback
 - Environment variables unchanged after redeploy
 
 **Cause:**
-Build args are compiled at build time, not runtime.
+`VITE_API_BASE_URL` is compiled at build time. Cross-app links (`VITE_ADMIN_URL`, `VITE_FRONTEND_URL`) can optionally be set as runtime `[env]` values without a rebuild. Only set those `[env]` keys to real origins — template placeholders override `--build-arg` URLs.
 
 **Solution:**
-Force rebuild with updated args:
+For API URL changes, force rebuild with updated args:
 
 ```bash
 fly deploy --app fullstack-bun-frontend --config apps/frontend/fly.toml \

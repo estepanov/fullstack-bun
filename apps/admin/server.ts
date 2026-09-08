@@ -1,6 +1,7 @@
 import { join, resolve } from "node:path";
 import { serve } from "bun";
 import { createRequestHandler } from "react-router";
+import { injectPublicAppConfigIntoResponse } from "shared/config/public-app-urls";
 
 const port = Number(process.env.PORT) || 5175;
 const host = process.env.HOST || "0.0.0.0";
@@ -46,7 +47,8 @@ serve({
       }
 
       // Handle all other requests with React Router
-      return await handleRequest(request);
+      const response = await handleRequest(request);
+      return await injectPublicAppConfigIntoResponse(response);
     } catch (error) {
       console.error("Error handling request:", error);
       return new Response("Internal Server Error", { status: 500 });
