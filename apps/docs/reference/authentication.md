@@ -283,6 +283,17 @@ http://localhost:5173/auth/verify-email?token=abc123...
    await signIn.social({ provider: "github" });
    ```
 
+### Unlinking a linked account
+
+better-auth 1.7 unlinks by the local account row `id` from `listAccounts()`, not by `providerId` / provider-side `accountId`:
+
+```typescript
+const { data: accounts } = await authClient.listAccounts();
+await authClient.unlinkAccount({
+  accountId: accounts[0].id,
+});
+```
+
 ## Security Best Practices
 
 ### Production Checklist

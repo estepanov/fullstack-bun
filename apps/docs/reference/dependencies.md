@@ -59,4 +59,4 @@ Versions below are the majors currently used in this repo. Patch and minor versi
 - **Drizzle ORM** uses the latest stable `0.45` line with matching `drizzle-kit` `0.31`. Drizzle 1.0 is still a release candidate and is not used here.
 - **Lucide 1** removed brand icons (GitHub, Figma, and similar). Use a generic Lucide icon or a dedicated brand-icon set if a logo is required.
 - **ioredis 6** defaults to RESP3. This repo sets `protocol: 2` on the Redis client so sorted-set members stay strings, matching the previous ioredis 5 behavior.
-- **rate-limit-redis 6** declares an `express-rate-limit` peer because the store is shared with Express. The API uses it through `hono-rate-limiter`; that peer warning is expected and unused at runtime.
+- **better-auth 1.7** `unlinkAccount` takes the local account row `id` from `listAccounts()` as `accountId`. Do not pass `providerId` or the provider-side account identifier.
