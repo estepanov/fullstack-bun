@@ -18,6 +18,8 @@ primary_region = 'iad'
 [env]
   PORT = '5173'
   NODE_ENV = 'production'
+  VITE_API_BASE_URL = 'https://api.yourdomain.com'
+  VITE_ADMIN_URL = 'https://admin.yourdomain.com'
 
 # HTTP service configuration
 [[services]]

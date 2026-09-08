@@ -14,9 +14,15 @@ type SessionState =
 
 let sessionState: SessionState = { data: null, isPending: false };
 let i18nInstance: i18n;
+let loginUrl = "http://frontend.example.com/auth/login";
 
 mock.module("@admin/lib/auth-client", () => ({
   useSession: () => sessionState,
+}));
+
+mock.module("@admin/lib/public-urls", () => ({
+  getFrontendLoginUrl: () => loginUrl,
+  getFrontendUrl: () => loginUrl.replace(/\/auth\/login$/, ""),
 }));
 
 let AdminAuthGuard: (props: { children: ReactNode }) => JSX.Element;
@@ -32,6 +38,7 @@ beforeAll(async () => {
         admin: {
           loading: "Loading...",
           redirecting: "Redirecting to login...",
+          login_url_missing: "Customer app URL is not configured.",
           access_denied: "Access Denied",
           admin_only: "This area is restricted to administrators only.",
         },
@@ -44,6 +51,7 @@ beforeAll(async () => {
 
 beforeEach(() => {
   sessionState = { data: null, isPending: false };
+  loginUrl = "http://frontend.example.com/auth/login";
   window.location.href = originalHref;
 });
 
@@ -80,7 +88,25 @@ describe("AdminAuthGuard", () => {
     );
 
     expect(getByText("Redirecting to login...")).toBeInTheDocument();
-    await waitFor(() => expect(window.location.href).toContain("/auth/login"));
+    await waitFor(() =>
+      expect(window.location.href).toBe("http://frontend.example.com/auth/login"),
+    );
+  });
+
+  test("does not redirect onto the admin app when the frontend URL is missing", () => {
+    sessionState = { data: null, isPending: false };
+    loginUrl = "";
+    const hrefBefore = window.location.href;
+
+    const { getByText } = render(
+      <I18nextProvider i18n={i18nInstance}>
+        <AdminAuthGuard>Child</AdminAuthGuard>
+      </I18nextProvider>,
+    );
+
+    expect(getByText("Customer app URL is not configured.")).toBeInTheDocument();
+    expect(window.location.href).toBe(hrefBefore);
+    expect(window.location.href).not.toContain("undefined");
   });
 
   test("renders children when the session belongs to an admin", () => {

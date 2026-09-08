@@ -1,5 +1,7 @@
 {
   "loading": "Loading...",
+  "redirecting": "Redirecting to login...",
+  "login_url_missing": "Customer app URL is not configured.",
   "access_denied": "Access Denied",
   "admin_only": "This area is restricted to administrators only.",
   "portal": "Admin Portal",
