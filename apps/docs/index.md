@@ -21,9 +21,9 @@ hero:
       link: https://demo-storybook-fullstackbun.estepanov.com
 
 features:
-  - title: React 19 + Vite
+  - title: React 19 + Vite 8
     details: The latest React version powered by Vite
-  - title: React Router 7
+  - title: React Router 8
     details: Type safe routing with framework mode ready to-go
   - title: TanStack Form
     details: Type safe form handling with TanStack Form
@@ -76,14 +76,14 @@ The project leverages **Bun** as much as possible throughout the development pro
 
 ## What's Included
 
-- **Frontend:** React 19 with Vite, React Router 7, TailwindCSS 4, and Shadcn UI components
+- **Frontend:** React 19 with Vite 8, React Router 8, TailwindCSS 4, i18next 26, and Shadcn UI components
 - **Backend:** Hono API with type-safe client integration and React Query
 - **Database:** PostgreSQL 15 with Drizzle ORM for type-safe database access
 - **Authentication:** Complete auth system using better-auth with email verification and session management
-- **Internationalization:** Multi-language support with i18next (English, German, Spanish, French)
-- **Testing:** Bun test runner with React Testing Library and MSW for API mocking
+- **Internationalization:** Multi-language support with i18next 26 and react-i18next 17 (English, German, Spanish, French)
+- **Testing:** Bun test runner with React Testing Library, Happy DOM 20, and MSW 2.15 for API mocking
 - **Docker:** Full containerization for development and production environments
-- **Developer Experience:** Biome for linting/formatting, Pino for logging, UUID-based request tracing
+- **Developer Experience:** Biome 2 for linting/formatting, Pino 10 for logging, UUID-based request tracing
 
 ## Features
 
