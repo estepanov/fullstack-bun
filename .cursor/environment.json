@@ -1,0 +1,17 @@
+{
+  "name": "Fullstack Bun",
+  "install": "bash .cursor/install.sh",
+  "start": "bash .cursor/start.sh",
+  "terminals": [
+    {
+      "name": "dev",
+      "command": "export PATH=\"$HOME/.bun/bin:$PATH\" && bun run dev",
+      "description": "Runs the frontend (5173), admin (5175), and API (3001) dev servers concurrently."
+    }
+  ],
+  "ports": [
+    { "name": "api", "port": 3001 },
+    { "name": "frontend", "port": 5173 },
+    { "name": "admin", "port": 5175 }
+  ]
+}
