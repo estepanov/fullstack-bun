@@ -5,8 +5,8 @@
   "terminals": [
     {
       "name": "dev",
-      "command": "export PATH=\"$HOME/.bun/bin:$PATH\" && bun run dev",
-      "description": "Runs the frontend (5173), admin (5175), and API (3001) dev servers concurrently."
+      "command": "export PATH=\"$HOME/.bun/bin:$PATH\" && bash .cursor/start.sh && bun run dev",
+      "description": "Ensures PostgreSQL + Redis are up (idempotent), then runs the frontend (5173), admin (5175), and API (3001) dev servers concurrently."
     }
   ],
   "ports": [
