@@ -136,9 +136,9 @@ export const NotificationItem = ({
                 variant={actionGroupVariant}
                 className={cn(isCompact ? "mt-1.5" : "mt-2")}
               >
-                {notification.metadata.actions.map((action, index) => (
+                {notification.metadata.actions.map((action) => (
                   <Button
-                    key={`${notification.id}-${action.actionId}-${index}`}
+                    key={`${notification.id}-${action.actionId}`}
                     variant={action.variant ?? actionGroupVariant ?? "outline"}
                     size={isCompact ? "xs" : "sm"}
                     onClick={(e) => handleActionClick(e, action)}
@@ -149,9 +149,9 @@ export const NotificationItem = ({
               </ButtonGroup>
             ) : (
               <div className={cn("flex flex-wrap gap-2", isCompact ? "mt-1.5" : "mt-2")}>
-                {notification.metadata.actions.map((action, index) => (
+                {notification.metadata.actions.map((action) => (
                   <Button
-                    key={`${notification.id}-${action.actionId}-${index}`}
+                    key={`${notification.id}-${action.actionId}`}
                     variant={action.variant ?? "outline"}
                     size={isCompact ? "xs" : "sm"}
                     onClick={(e) => handleActionClick(e, action)}

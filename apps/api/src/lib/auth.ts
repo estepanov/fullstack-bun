@@ -7,7 +7,6 @@ import {
 import { betterAuth } from "better-auth";
 import { emailHarmony } from "better-auth-harmony";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import { createFieldAttribute } from "better-auth/db";
 import {
   admin,
   emailOTP,
@@ -62,82 +61,8 @@ export const roles = {
   }),
 };
 
-const plugins = [
-  admin({
-    ac,
-    roles,
-    defaultRole: "user",
-    adminRoles: ["admin"],
-    impersonationSessionDuration: 3600 / 2, // 30 minutes
-    allowImpersonatingAdmins: true,
-  }),
-  username({
-    minUsernameLength: USERNAME_CONFIG.minLength,
-    maxUsernameLength: USERNAME_CONFIG.maxLength,
-    usernameValidator: (username) => {
-      return usernameSchema.safeParse(username).success;
-    },
-  }),
-  emailHarmony(),
-  emailOTP({
-    sendVerificationOTP: async ({ email, otp, type }, ctx) => {
-      const ip = getRequestIp(ctx) ?? "Unknown";
-      const location = getCloudflareLocation(ctx);
-      const securityFooter = formatEmailSecurityFooter({
-        ip,
-        location,
-        timestampUtc: new Date().toISOString(),
-      });
-
-      await sendOtpEmail(email, otp, type, securityFooter);
-    },
-  }),
-  lastLoginMethod({
-    storeInDatabase: true,
-    customResolveMethod: (ctx) => {
-      if (ctx.path === "/magic-link/verify") {
-        return LoginMethod.MAGIC_LINK;
-      }
-      // Return null to use default resolution
-      return null;
-    },
-  }),
-  validator([
-    {
-      path: "/update-user",
-      schema: completeProfileSchema,
-      before: (ctx) => {
-        if (ctx.body?.username) {
-          // so that a normalized version is always username
-          throw new Error("set displayUsername instead");
-        }
-      },
-    },
-  ]),
-];
-
 const passkeyOrigin = env.FE_BASE_URL;
 const passkeyRpID = new URL(passkeyOrigin).hostname;
-
-if (AUTH_CONFIG.magicLink.enabled) {
-  plugins.push(
-    magicLink({
-      sendMagicLink: async ({ email, url }) => {
-        await sendMagicLinkEmail(email, url);
-      },
-    }),
-  );
-}
-
-if (AUTH_CONFIG.passkey.enabled) {
-  plugins.push(
-    passkeyPlugin({
-      rpID: passkeyRpID,
-      rpName: APP_NAME,
-      origin: passkeyOrigin,
-    }),
-  );
-}
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -152,15 +77,87 @@ export const auth = betterAuth({
   }),
   user: {
     additionalFields: {
-      role: createFieldAttribute("string", {
+      role: {
+        type: "string",
         required: true,
         defaultValue: "user",
         input: false,
         returned: true,
-      }),
+      },
     },
   },
-  plugins,
+  // Keep plugins inline so better-auth can infer username / passkey session fields.
+  plugins: [
+    admin({
+      ac,
+      roles,
+      defaultRole: "user",
+      adminRoles: ["admin"],
+      impersonationSessionDuration: 3600 / 2, // 30 minutes
+      allowImpersonatingAdmins: true,
+    }),
+    username({
+      minUsernameLength: USERNAME_CONFIG.minLength,
+      maxUsernameLength: USERNAME_CONFIG.maxLength,
+      usernameValidator: (username) => {
+        return usernameSchema.safeParse(username).success;
+      },
+    }),
+    emailHarmony(),
+    emailOTP({
+      sendVerificationOTP: async ({ email, otp, type }, ctx) => {
+        const ip = getRequestIp(ctx) ?? "Unknown";
+        const location = getCloudflareLocation(ctx);
+        const securityFooter = formatEmailSecurityFooter({
+          ip,
+          location,
+          timestampUtc: new Date().toISOString(),
+        });
+
+        await sendOtpEmail(email, otp, type, securityFooter);
+      },
+    }),
+    lastLoginMethod({
+      storeInDatabase: true,
+      customResolveMethod: (ctx) => {
+        if (ctx.path === "/magic-link/verify") {
+          return LoginMethod.MAGIC_LINK;
+        }
+        // Return null to use default resolution
+        return null;
+      },
+    }),
+    validator([
+      {
+        path: "/update-user",
+        schema: completeProfileSchema,
+        before: (ctx) => {
+          if (ctx.body?.username) {
+            // so that a normalized version is always username
+            throw new Error("set displayUsername instead");
+          }
+        },
+      },
+    ]),
+    ...(AUTH_CONFIG.magicLink.enabled
+      ? [
+          magicLink({
+            sendMagicLink: async ({ email, url }) => {
+              await sendMagicLinkEmail(email, url);
+            },
+          }),
+        ]
+      : []),
+    ...(AUTH_CONFIG.passkey.enabled
+      ? [
+          passkeyPlugin({
+            rpID: passkeyRpID,
+            rpName: APP_NAME,
+            origin: passkeyOrigin,
+          }),
+        ]
+      : []),
+  ],
   baseURL: env.API_BASE_URL,
   basePath: AUTH_CONFIG.basePath,
   trustedOrigins: env.CORS_ALLOWLISTED_ORIGINS,

@@ -1,12 +1,13 @@
 # Fullstack Bun
 
-- Vite
-- TypeScript
+- Vite 8
+- TypeScript 5
 - React 19
+- React Router 8
 - TailwindCSS 4
 - Shadcn
 - Biome
-- Pino
+- Pino 10
 - Hono
 
 ## Get Started

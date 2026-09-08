@@ -3,7 +3,10 @@ import { cn } from "frontend-common/lib";
 export const PageContainer = ({
   children,
   className,
-}: { children: React.ReactNode; className?: string }) => {
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) => {
   return (
     <div
       className={cn(

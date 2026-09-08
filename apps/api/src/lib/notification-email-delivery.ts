@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import escapeHtml from "escape-html";
-import * as nodemailer from "nodemailer";
+import { createTransport } from "nodemailer";
 import { NotificationType } from "shared/interfaces/notification";
 import type { Notification } from "shared/interfaces/notification";
 import { APP_NAME } from "../app.config";
@@ -225,7 +225,7 @@ export class EmailDeliveryStrategy implements NotificationDeliveryStrategy {
       return null;
     }
 
-    return nodemailer.createTransport({
+    return createTransport({
       host: smtpHost,
       port: smtpPort,
       secure: false, // Use TLS

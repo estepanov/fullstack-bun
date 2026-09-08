@@ -44,9 +44,11 @@ export default defineConfig(({ command }) => {
       },
       optimizeDeps: {
         include: ["react", "react-dom"],
-        esbuildOptions: {
-          mainFields: ["module", "main"],
-          conditions: ["import", "module"],
+        rolldownOptions: {
+          resolve: {
+            mainFields: ["module", "main"],
+            conditionNames: ["import", "module"],
+          },
         },
       },
       ssr: {
