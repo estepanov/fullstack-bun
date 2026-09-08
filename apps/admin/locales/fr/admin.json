@@ -1,5 +1,7 @@
 {
   "loading": "Chargement...",
+  "redirecting": "Redirection vers la connexion...",
+  "login_url_missing": "L'URL de l'application client n'est pas configurée.",
   "access_denied": "Accès refusé",
   "admin_only": "Cette zone est réservée aux administrateurs.",
   "portal": "Portail d'administration",

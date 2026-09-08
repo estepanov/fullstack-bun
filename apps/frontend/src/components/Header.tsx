@@ -1,5 +1,6 @@
 import { signOut, useSession } from "@frontend/lib/auth-client";
 import { getInitials } from "@frontend/lib/getInitials";
+import { getAdminUrl } from "@frontend/lib/public-urls";
 import { PopoverClose } from "@radix-ui/react-popover";
 import { isAdminSession } from "frontend-common/auth";
 import {
@@ -39,7 +40,7 @@ const NavLink = ({
     </RouterNavLink>
   );
 };
-const MobileNavigation = () => {
+const MobileNavigation = ({ adminUrl }: { adminUrl: string }) => {
   const { t } = useTranslation("header");
   const { data: session } = useSession();
   const isAdmin = isAdminSession(session);
@@ -66,14 +67,11 @@ const MobileNavigation = () => {
             <NavLink to="/dashboard">{t("nav_links.dashboard")}</NavLink>
           </PopoverClose>
         )}
-        {isAdmin && (
-          <a
-            href={import.meta.env.VITE_ADMIN_URL || "http://localhost:5175"}
-            className="hover:underline"
-          >
+        {isAdmin && adminUrl ? (
+          <a href={adminUrl} className="hover:underline">
             {t("nav_links.admin")}
           </a>
-        )}
+        ) : null}
         <Separator className="my-2" />
         {session ? (
           <div className="flex flex-col gap-2">
@@ -98,6 +96,7 @@ export const Header = () => {
   const { t } = useTranslation("header");
   const { data: session } = useSession();
   const isAdmin = isAdminSession(session);
+  const adminUrl = getAdminUrl();
   const userName = session?.user.name?.trim() || session?.user.email || "";
   const avatarAltName = userName || session?.user.email || t("user_menu.fallback_name");
   const avatarAlt = t("user_menu.avatar_alt", { name: avatarAltName });
@@ -119,14 +118,11 @@ export const Header = () => {
             <div className="hidden md:flex md:gap-x-6">
               <NavLink to="/more">{t("nav_links.second_page")}</NavLink>
               {session && <NavLink to="/dashboard">{t("nav_links.dashboard")}</NavLink>}
-              {isAdmin && (
-                <a
-                  href={import.meta.env.VITE_ADMIN_URL || "http://localhost:5175"}
-                  className="hover:underline"
-                >
+              {isAdmin && adminUrl ? (
+                <a href={adminUrl} className="hover:underline">
                   {t("nav_links.admin")}
                 </a>
-              )}
+              ) : null}
             </div>
           </div>
           <div className="flex items-center gap-x-2">
@@ -191,7 +187,7 @@ export const Header = () => {
               </StyledLink>
             )}
             <div className="-mr-1 md:hidden">
-              <MobileNavigation />
+              <MobileNavigation adminUrl={adminUrl} />
             </div>
           </div>
         </nav>
