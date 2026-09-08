@@ -27,12 +27,15 @@ const getSet = (key: string) => {
   return next;
 };
 
-const resolveRange = (size: number, start: number, stop: number) => {
+const resolveRange = (size: number, start: number | string, stop: number | string) => {
   if (size === 0) {
     return [1, 0] as const;
   }
 
-  const normalize = (value: number) => (value < 0 ? size + value : value);
+  const normalize = (value: number | string) => {
+    const numeric = Number(value);
+    return numeric < 0 ? size + numeric : numeric;
+  };
   let resolvedStart = normalize(start);
   let resolvedStop = normalize(stop);
 
@@ -61,18 +64,18 @@ export const redisMock = {
     set.sort((a, b) => a.score - b.score);
     return 1;
   },
-  zrange: async (key: string, start: number, stop: number) => {
+  zrange: async (key: string, start: number | string, stop: number | string) => {
     const set = getSet(key);
     const [from, to] = resolveRange(set.length, start, stop);
     return set.slice(from, to + 1).map((entry) => entry.value);
   },
-  zrevrange: async (key: string, start: number, stop: number) => {
+  zrevrange: async (key: string, start: number | string, stop: number | string) => {
     const set = getSet(key);
     const reversed = [...set].sort((a, b) => b.score - a.score);
     const [from, to] = resolveRange(reversed.length, start, stop);
     return reversed.slice(from, to + 1).map((entry) => entry.value);
   },
-  zremrangebyrank: async (key: string, start: number, stop: number) => {
+  zremrangebyrank: async (key: string, start: number | string, stop: number | string) => {
     const set = getSet(key);
     const [from, to] = resolveRange(set.length, start, stop);
     const removed = set.splice(from, to - from + 1);
