@@ -14,19 +14,15 @@ type SessionState =
 
 let sessionState: SessionState = { data: null, isPending: false };
 let i18nInstance: i18n;
-let loginUrl = "http://frontend.example.com/auth/login";
 
 mock.module("@admin/lib/auth-client", () => ({
   useSession: () => sessionState,
 }));
 
-mock.module("@admin/lib/public-urls", () => ({
-  getFrontendLoginUrl: () => loginUrl,
-  getFrontendUrl: () => loginUrl.replace(/\/auth\/login$/, ""),
-}));
-
 let AdminAuthGuard: (props: { children: ReactNode }) => JSX.Element;
 const originalHref = window.location.href;
+const originalFrontendUrl = process.env.VITE_FRONTEND_URL;
+const originalRuntimeConfig = window.__APP_CONFIG__;
 
 beforeAll(async () => {
   i18nInstance = i18next.createInstance();
@@ -51,12 +47,19 @@ beforeAll(async () => {
 
 beforeEach(() => {
   sessionState = { data: null, isPending: false };
-  loginUrl = "http://frontend.example.com/auth/login";
+  process.env.VITE_FRONTEND_URL = originalFrontendUrl ?? "http://frontend.example.com";
+  window.__APP_CONFIG__ = undefined;
   window.location.href = originalHref;
 });
 
 afterEach(() => {
   window.location.href = originalHref;
+  window.__APP_CONFIG__ = originalRuntimeConfig;
+  if (originalFrontendUrl === undefined) {
+    delete process.env.VITE_FRONTEND_URL;
+  } else {
+    process.env.VITE_FRONTEND_URL = originalFrontendUrl;
+  }
 });
 
 describe("AdminAuthGuard", () => {
@@ -80,6 +83,9 @@ describe("AdminAuthGuard", () => {
 
   test("redirects to login when unauthenticated", async () => {
     sessionState = { data: null, isPending: false };
+    window.__APP_CONFIG__ = {
+      FRONTEND_URL: "http://frontend.example.com",
+    };
 
     const { getByText } = render(
       <I18nextProvider i18n={i18nInstance}>
@@ -95,7 +101,11 @@ describe("AdminAuthGuard", () => {
 
   test("does not redirect onto the admin app when the frontend URL is missing", () => {
     sessionState = { data: null, isPending: false };
-    loginUrl = "";
+    window.__APP_CONFIG__ = {
+      FRONTEND_URL: "",
+      ADMIN_URL: "",
+      API_BASE_URL: "",
+    };
     const hrefBefore = window.location.href;
 
     const { getByText } = render(

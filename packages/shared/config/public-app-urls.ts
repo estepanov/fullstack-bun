@@ -78,20 +78,22 @@ export const resolvePublicAppConfig = (
   buildTime: Partial<PublicAppConfig> = {},
   env: Record<string, string | undefined> = processEnv(),
 ): PublicAppConfig => {
-  const runtime = readRuntimePublicAppConfig();
+  const hasRuntime =
+    typeof window !== "undefined" && window[PUBLIC_APP_CONFIG_GLOBAL] !== undefined;
+  if (hasRuntime) {
+    const runtime = readRuntimePublicAppConfig();
+    return {
+      FRONTEND_URL: normalizePublicUrl(runtime.FRONTEND_URL),
+      ADMIN_URL: normalizePublicUrl(runtime.ADMIN_URL),
+      API_BASE_URL: normalizePublicUrl(runtime.API_BASE_URL),
+    };
+  }
+
   const fromEnv = publicAppConfigFromEnv(env);
   return {
-    FRONTEND_URL: firstPublicUrl(
-      runtime.FRONTEND_URL,
-      fromEnv.FRONTEND_URL,
-      buildTime.FRONTEND_URL,
-    ),
-    ADMIN_URL: firstPublicUrl(runtime.ADMIN_URL, fromEnv.ADMIN_URL, buildTime.ADMIN_URL),
-    API_BASE_URL: firstPublicUrl(
-      runtime.API_BASE_URL,
-      fromEnv.API_BASE_URL,
-      buildTime.API_BASE_URL,
-    ),
+    FRONTEND_URL: firstPublicUrl(fromEnv.FRONTEND_URL, buildTime.FRONTEND_URL),
+    ADMIN_URL: firstPublicUrl(fromEnv.ADMIN_URL, buildTime.ADMIN_URL),
+    API_BASE_URL: firstPublicUrl(fromEnv.API_BASE_URL, buildTime.API_BASE_URL),
   };
 };
 

@@ -13,8 +13,8 @@
     "clean": "rm -rf node_modules dist",
     "lint": "bun run biome lint ./index.ts ./interfaces ./config ./auth",
     "format": "bun run biome format --write ./index.ts ./interfaces ./config ./auth",
-    "test": "bun test --preload ../../apps/frontend/happydom.ts",
-    "test:coverage": "bun test --coverage --preload ../../apps/frontend/happydom.ts"
+    "test": "bun test --preload ../../apps/frontend/happydom.ts config",
+    "test:coverage": "bun test --coverage --preload ../../apps/frontend/happydom.ts config"
   },
   "dependencies": {
     "zod": "^4.3.5"

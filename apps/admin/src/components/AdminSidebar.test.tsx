@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, mock, test } from "bun:test";
+import { afterEach, beforeAll, describe, expect, mock, test } from "bun:test";
 import { render } from "@testing-library/react";
 import "@testing-library/jest-dom/matchers";
 import "@testing-library/jest-dom/vitest";
@@ -14,16 +14,14 @@ mock.module("@admin/lib/auth-client", () => ({
   signOut: () => undefined,
 }));
 
-mock.module("@admin/lib/public-urls", () => ({
-  getFrontendUrl: () => "https://demo-fullstackbun.estepanov.com",
-}));
-
 mock.module("./LanguageSelector", () => ({
   LanguageSelector: () => null,
 }));
 
 let AdminSidebar: (props: Record<string, never>) => JSX.Element;
 let i18nInstance: i18n;
+const originalFrontendUrl = process.env.VITE_FRONTEND_URL;
+const originalRuntimeConfig = window.__APP_CONFIG__;
 
 beforeAll(async () => {
   i18nInstance = i18next.createInstance();
@@ -59,8 +57,22 @@ beforeAll(async () => {
   ({ AdminSidebar } = await import("./AdminSidebar"));
 });
 
+afterEach(() => {
+  window.__APP_CONFIG__ = originalRuntimeConfig;
+  if (originalFrontendUrl === undefined) {
+    delete process.env.VITE_FRONTEND_URL;
+  } else {
+    process.env.VITE_FRONTEND_URL = originalFrontendUrl;
+  }
+});
+
 describe("AdminSidebar", () => {
   test("Back to App points at the customer frontend origin", () => {
+    process.env.VITE_FRONTEND_URL = "https://demo-fullstackbun.estepanov.com";
+    window.__APP_CONFIG__ = {
+      FRONTEND_URL: "https://demo-fullstackbun.estepanov.com",
+    };
+
     const { getByRole } = render(
       <I18nextProvider i18n={i18nInstance}>
         <MemoryRouter>

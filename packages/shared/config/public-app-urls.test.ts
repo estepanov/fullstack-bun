@@ -10,10 +10,13 @@ import {
   serializePublicAppConfigScript,
 } from "./public-app-urls";
 
-const originalRuntimeConfig = window.__APP_CONFIG__;
+const originalRuntimeConfig =
+  typeof window === "undefined" ? undefined : window.__APP_CONFIG__;
 
 afterEach(() => {
-  window.__APP_CONFIG__ = originalRuntimeConfig;
+  if (typeof window !== "undefined") {
+    window.__APP_CONFIG__ = originalRuntimeConfig;
+  }
 });
 
 describe("normalizePublicUrl", () => {
@@ -71,7 +74,7 @@ describe("publicAppConfigFromEnv", () => {
 });
 
 describe("resolvePublicAppConfig", () => {
-  test("runtime window config wins over env and build-time values", () => {
+  test("runtime window config is authoritative when injected", () => {
     window.__APP_CONFIG__ = {
       FRONTEND_URL: "https://runtime-app.example.com/",
       ADMIN_URL: "https://runtime-admin.example.com",
@@ -91,6 +94,25 @@ describe("resolvePublicAppConfig", () => {
     ).toEqual({
       FRONTEND_URL: "https://runtime-app.example.com",
       ADMIN_URL: "https://runtime-admin.example.com",
+      API_BASE_URL: "",
+    });
+  });
+
+  test("injected empty runtime values do not fall back to env or build-time", () => {
+    window.__APP_CONFIG__ = {
+      FRONTEND_URL: "",
+      ADMIN_URL: "",
+      API_BASE_URL: "",
+    };
+
+    expect(
+      resolvePublicAppConfig(
+        { FRONTEND_URL: "https://build-app.example.com" },
+        { VITE_FRONTEND_URL: "https://env-app.example.com" },
+      ),
+    ).toEqual({
+      FRONTEND_URL: "",
+      ADMIN_URL: "",
       API_BASE_URL: "",
     });
   });
@@ -146,8 +168,8 @@ describe("injectPublicAppConfig", () => {
       ADMIN_URL: "",
       API_BASE_URL: "",
     });
-    expect(script).not.toContain("</script>");
     expect(script).toContain("\\u003c/script>");
+    expect(script.match(/<\/script>/g)?.length).toBe(1);
   });
 });
 
