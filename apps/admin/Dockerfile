@@ -96,6 +96,7 @@ COPY --from=build --chown=bunapp:bunapp /app/node_modules ./node_modules
 COPY --from=build --chown=bunapp:bunapp /app/apps/admin/node_modules ./apps/admin/node_modules
 COPY --from=build --chown=bunapp:bunapp /app/apps/admin/build ./apps/admin/build
 COPY --from=build --chown=bunapp:bunapp /app/apps/admin/server.ts ./apps/admin/server.ts
+COPY --from=build --chown=bunapp:bunapp /app/packages ./packages
 # Drop privileges for runtime
 USER bunapp
 # Expose production port

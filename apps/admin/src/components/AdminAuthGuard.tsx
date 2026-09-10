@@ -1,20 +1,20 @@
 import { useSession } from "@admin/lib/auth-client";
+import { getFrontendLoginUrl } from "@admin/lib/public-urls";
 import { isAdminSession } from "frontend-common/auth";
 import type { ReactNode } from "react";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
-const loginUrl = `${import.meta.env.VITE_FRONTEND_URL}/auth/login`;
-
 export const AdminAuthGuard = ({ children }: { children: ReactNode }) => {
   const { data: session, isPending } = useSession();
   const { t } = useTranslation("admin");
+  const loginUrl = getFrontendLoginUrl();
 
   useEffect(() => {
-    if (!isPending && !session && typeof window !== "undefined") {
+    if (!isPending && !session && loginUrl && typeof window !== "undefined") {
       window.location.href = loginUrl;
     }
-  }, [isPending, session]);
+  }, [isPending, session, loginUrl]);
 
   if (isPending) {
     return (
@@ -31,7 +31,7 @@ export const AdminAuthGuard = ({ children }: { children: ReactNode }) => {
       <div className="flex min-h-screen items-center justify-center bg-background">
         <div className="text-center">
           <div className="text-lg text-foreground">
-            {t("redirecting", "Redirecting to login...")}
+            {loginUrl ? t("redirecting") : t("login_url_missing")}
           </div>
         </div>
       </div>

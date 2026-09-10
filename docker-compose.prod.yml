@@ -81,6 +81,26 @@ services:
         condition: service_healthy
     restart: always
 
+  admin:
+    build:
+      context: .
+      dockerfile: apps/admin/Dockerfile
+      target: production
+      args:
+        - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:3001}
+        - VITE_FRONTEND_URL=${VITE_FRONTEND_URL:-http://localhost:5173}
+    container_name: myapp-admin-prod
+    ports:
+      - "${ADMIN_PORT:-5175}:5175"
+    environment:
+      - NODE_ENV=production
+      - VITE_API_BASE_URL=${VITE_API_BASE_URL:-http://localhost:3001}
+      - VITE_FRONTEND_URL=${VITE_FRONTEND_URL:-http://localhost:5173}
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: always
+
 volumes:
   postgres-data:
   redis-data:

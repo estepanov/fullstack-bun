@@ -1,5 +1,6 @@
 import { APP_NAME } from "@admin/app.config";
 import { signOut, useSession } from "@admin/lib/auth-client";
+import { getFrontendUrl } from "@admin/lib/public-urls";
 import { Button, ModeToggle, type ModeToggleCopy } from "frontend-common/components/ui";
 import {
   ArrowLeftFromLine,
@@ -47,7 +48,7 @@ export const AdminSidebar = ({
   const { t } = useTranslation("admin");
   const { t: tColorMode } = useTranslation("color_mode_toggle");
   const { data: session } = useSession();
-  const frontendUrl = import.meta.env.VITE_FRONTEND_URL;
+  const frontendUrl = getFrontendUrl();
   const modeToggleCopy: ModeToggleCopy = {
     label: tColorMode("label"),
     currentModeLabel: tColorMode("current_mode"),
@@ -131,16 +132,18 @@ export const AdminSidebar = ({
             <ModeToggle copy={modeToggleCopy} />
           </div>
         </div>
-        <Button asChild variant="outline" size="sm" className="w-full">
-          <a
-            href={frontendUrl}
-            onClick={() => onNavigate?.()}
-            className="flex items-center gap-2"
-          >
-            <ArrowLeftFromLine className="h-4 w-4" />
-            {t("navigation.frontend_app")}
-          </a>
-        </Button>
+        {frontendUrl ? (
+          <Button asChild variant="outline" size="sm" className="w-full">
+            <a
+              href={frontendUrl}
+              onClick={() => onNavigate?.()}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeftFromLine className="h-4 w-4" />
+              {t("navigation.frontend_app")}
+            </a>
+          </Button>
+        ) : null}
         <Button
           variant="outline"
           size="sm"

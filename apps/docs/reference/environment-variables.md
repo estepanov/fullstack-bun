@@ -283,6 +283,20 @@ The `.env` for `/apps/frontend`
 VITE_API_BASE_URL="http://localhost:3001"
 ```
 
+### `VITE_ADMIN_URL`
+
+**Required in production.** Origin of the admin app. Used for the header "Admin" link.
+
+Vite compiles `VITE_*` values into the client bundle at **build** time. The production frontend server also reads this variable at **runtime** and injects it as `window.__APP_CONFIG__`, so Hostinger / Docker / Fly env vars work without a rebuild. Empty or unset runtime values fall through to the origin baked into the bundle — do not ship placeholder URLs such as `https://admin.yourdomain.com` as runtime env.
+
+```txt
+VITE_ADMIN_URL="http://localhost:5175"
+```
+
+```txt
+VITE_ADMIN_URL="https://admin.yourdomain.com"
+```
+
 ### `NODE_ENV`
 
 In local development `development` and for all static builds it should be `production`
@@ -301,10 +315,18 @@ VITE_API_BASE_URL="http://localhost:3001"
 
 ### `VITE_FRONTEND_URL`
 
-**Required.** Base URL for the main frontend app (used for linking back).
+**Required.** Origin of the customer-facing frontend (not the admin app). Used for the sidebar "Back to App" link and unauthenticated redirects to `/auth/login`.
+
+Like `VITE_ADMIN_URL`, this is compiled at build time **and** read at runtime by the admin server (`window.__APP_CONFIG__`). Set it to the **frontend** origin in deployed environments. If the runtime value is missing, the client keeps the build-time origin instead of building `undefined/auth/login`. Do not ship placeholder URLs such as `https://yourdomain.com` as runtime env when you already customized `[build.args]`.
+
+Demo/mock builds (`VITE_ADMIN_DEMO=true`) always apply `apps/admin/.env.demo`, including on Cloudflare Pages, so stale dashboard `VITE_*` values cannot point **Back to App** at the wrong host.
 
 ```txt
 VITE_FRONTEND_URL="http://localhost:5173"
+```
+
+```txt
+VITE_FRONTEND_URL="https://yourdomain.com"
 ```
 
 ### `VITE_ADMIN_DEMO`
@@ -322,4 +344,5 @@ In local development `development` and for all static builds it should be `produ
 ## Notes on Docker vs Local
 
 - Docker Compose loads env from the repo root `.env` plus `apps/api/.env` and `apps/frontend/.env`.
+- Production Compose (`docker-compose.prod.yml`) also builds and runs the admin app. Set `VITE_ADMIN_URL` and `VITE_FRONTEND_URL` in the root `.env` so the apps link to each other instead of localhost.
 - For local (non-Docker) development, only the app-specific `.env` files matter.

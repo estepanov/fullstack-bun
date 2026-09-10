@@ -6,6 +6,7 @@ This guide explains how to use Docker to run the fullstack-bun monorepo in both 
 
 This monorepo contains:
 - **Frontend**: React 19 app with Vite 8 and React Router 8
+- **Admin**: Internal administration panel
 - **API**: Hono server running on Bun
 - **PostgreSQL**: Database service
 - **Redis**: Cache/session store
@@ -45,6 +46,7 @@ docker-compose up --build
 
 This will start:
 - Frontend on http://localhost:5173 (HMR on :5174)
+- Admin on http://localhost:5175 (HMR on :5176)
 - API on http://localhost:3001
 - PostgreSQL on localhost:5432
 - Redis on localhost:6379
@@ -115,6 +117,7 @@ docker-compose -f docker-compose.prod.yml down
 This will:
 - Build optimized production images
 - Run frontend on http://localhost:5173
+- Run admin on http://localhost:5175
 - Run API on http://localhost:3001
 - Keep PostgreSQL and Redis isolated on the internal Docker network (access via `docker-compose exec`)
 
@@ -143,10 +146,13 @@ REDIS_PASSWORD=your_secure_redis_password_here
 # Application Ports
 API_PORT=3001
 FRONTEND_PORT=5173
+ADMIN_PORT=5175
 
 # Production Configuration
-CORS_ALLOWLISTED_ORIGINS=https://yourdomain.com,https://www.yourdomain.com
+CORS_ALLOWLISTED_ORIGINS=https://yourdomain.com,https://admin.yourdomain.com
 VITE_API_BASE_URL=https://api.yourdomain.com
+VITE_ADMIN_URL=https://admin.yourdomain.com
+VITE_FRONTEND_URL=https://yourdomain.com
 ```
 
 **Important**: Always use strong passwords and secure values in production!
