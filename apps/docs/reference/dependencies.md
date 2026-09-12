@@ -60,3 +60,4 @@ Versions below are the majors currently used in this repo. Patch and minor versi
 - **Lucide 1** removed brand icons (GitHub, Figma, and similar). Use a generic Lucide icon or a dedicated brand-icon set if a logo is required.
 - **ioredis 6** defaults to RESP3. This repo sets `protocol: 2` on the Redis client so sorted-set members stay strings, matching the previous ioredis 5 behavior.
 - **better-auth 1.7** `unlinkAccount` takes the local account row `id` from `listAccounts()` as `accountId`. Do not pass `providerId` or the provider-side account identifier.
+- **better-auth 1.7.3** does not write an `account.issuer` column. Do not add a required `issuer` field or `(issuer, accountId)` unique index from the public 1.7 upgrade guide — 1.7.0–1.7.2 needed that column, but 1.7.3 inserts fail if the schema requires a field Better Auth never populates.

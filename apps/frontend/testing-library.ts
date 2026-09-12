@@ -41,10 +41,6 @@ mock.module("better-auth/adapters/drizzle", () => ({
   drizzleAdapter: () => ({}),
 }));
 
-mock.module("better-auth/db", () => ({
-  createFieldAttribute: () => ({}),
-}));
-
 mock.module("better-auth/react", () => ({
   createAuthClient: () => ({
     useSession: () => ({ data: null, isLoading: false }),

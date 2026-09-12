@@ -77,7 +77,7 @@ export class ChatService {
     const parsed = messages
       .map((msg) => {
         try {
-          return JSON.parse(msg) as ChatMessage;
+          return JSON.parse(String(msg)) as ChatMessage;
         } catch (error) {
           console.error("Failed to parse message:", error);
           return null;
