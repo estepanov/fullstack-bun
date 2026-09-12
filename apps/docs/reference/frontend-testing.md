@@ -45,9 +45,9 @@ The project uses the following testing stack:
 
 ## API Mocking
 
-We use [Mock Service Worker (MSW)](https://mswjs.io) for API request interception in unit tests. 
+The project uses [Mock Service Worker (MSW)](https://mswjs.io) for API request interception in unit tests. The frontend and admin apps currently use MSW 2.15.
 
-> **Note**: MSW is pinned to version `2.3.1` due to [compatibility issues with Bun](https://github.com/oven-sh/bun/issues/13072).
+Frontend tests run under Happy DOM. Happy DOM 20 implements `WebSocket`, so `apps/frontend/happydom.ts` stubs `WebSocket` (and `EventSource` when missing) to keep chat/SSE connections from emitting unhandled network errors during unit tests.
 
 ### Best Practices
 

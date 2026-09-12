@@ -19,7 +19,7 @@ import {
 import {
   Cloud,
   CreditCard,
-  Github,
+  GitBranch,
   Keyboard,
   LifeBuoy,
   LogOut,
@@ -200,7 +200,7 @@ export const WithSubmenu: Story = {
         </DropdownMenuSub>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <Github />
+          <GitBranch />
           GitHub
         </DropdownMenuItem>
         <DropdownMenuItem>
@@ -292,7 +292,7 @@ export const ComplexMenu: Story = {
           </DropdownMenuRadioGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <Github />
+            <GitBranch />
             GitHub
           </DropdownMenuItem>
           <DropdownMenuItem>

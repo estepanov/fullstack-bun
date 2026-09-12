@@ -69,3 +69,45 @@ if (typeof globalThis.EventSource === "undefined") {
   // @ts-expect-error
   globalThis.EventSource = TestEventSource;
 }
+
+class TestWebSocket {
+  static CONNECTING = 0;
+  static OPEN = 1;
+  static CLOSING = 2;
+  static CLOSED = 3;
+
+  readyState = TestWebSocket.OPEN;
+  url: string;
+  protocol = "";
+  extensions = "";
+  binaryType: BinaryType = "blob";
+  bufferedAmount = 0;
+  onopen: ((event: Event) => void) | null = null;
+  onclose: ((event: CloseEvent) => void) | null = null;
+  onerror: ((event: Event) => void) | null = null;
+  onmessage: ((event: MessageEvent) => void) | null = null;
+
+  constructor(url: string | URL) {
+    this.url = String(url);
+    queueMicrotask(() => {
+      this.onopen?.(new Event("open"));
+    });
+  }
+
+  send(_data?: unknown) {}
+
+  close() {
+    this.readyState = TestWebSocket.CLOSED;
+    this.onclose?.(new CloseEvent("close"));
+  }
+
+  addEventListener() {}
+
+  removeEventListener() {}
+
+  dispatchEvent() {
+    return true;
+  }
+}
+
+globalThis.WebSocket = TestWebSocket as unknown as typeof WebSocket;

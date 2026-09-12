@@ -33,7 +33,9 @@ const TYPING_TIMEOUT_MS = 5000;
 
 export const useChatWebSocket = ({
   roomId = "global",
-}: { roomId?: string } = {}): UseChatWebSocketReturn => {
+}: {
+  roomId?: string;
+} = {}): UseChatWebSocketReturn => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [connectionStatus, setConnectionStatus] = useState<
     "connecting" | "connected" | "disconnected" | "error"
@@ -407,7 +409,7 @@ export const useChatWebSocket = ({
   const sendMessage = useCallback(
     (message: string) => {
       const client = clientRef.current;
-      if (!client || !client.isConnected()) {
+      if (!client?.isConnected()) {
         setError("Not connected");
         return false;
       }
@@ -449,7 +451,7 @@ export const useChatWebSocket = ({
   const sendTypingStatus = useCallback(
     (isTyping: boolean) => {
       const client = clientRef.current;
-      if (!client || !client.isConnected()) {
+      if (!client?.isConnected()) {
         return;
       }
 

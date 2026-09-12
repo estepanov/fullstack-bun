@@ -4,7 +4,7 @@ layout: doc
 
 # Internationalization
 
-The frontend uses an enterprise-grade [i18next](https://i18next.com) setup via [react-i18next](https://react.i18next.com) with optimized translation loading and CDN support.
+The frontend uses an enterprise-grade [i18next 26](https://i18next.com) setup via [react-i18next 17](https://react.i18next.com) with optimized translation loading and CDN support.
 
 ## Architecture Overview
 

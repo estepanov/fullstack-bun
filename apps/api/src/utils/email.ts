@@ -1,4 +1,4 @@
-import * as nodemailer from "nodemailer";
+import { createTransport } from "nodemailer";
 import { APP_NAME } from "../app.config";
 import { env, isDevelopmentEnv } from "../env";
 
@@ -170,7 +170,7 @@ const createTransporter = () => {
     return null;
   }
 
-  return nodemailer.createTransport({
+  return createTransport({
     host: smtpHost,
     port: smtpPort,
     secure: false, // Use TLS
@@ -363,7 +363,7 @@ export async function sendResetPasswordEmail(
   }
 }
 
-type OtpEmailType = "sign-in" | "email-verification" | "forget-password";
+type OtpEmailType = "sign-in" | "email-verification" | "forget-password" | "change-email";
 
 type OtpCopyItem = {
   subject: string;
@@ -394,6 +394,13 @@ const OTP_COPY: Record<OtpEmailType, OtpCopyItem> = {
     intro: "Use the code below to reset your password.",
     footer: "If you didn't request a password reset, you can safely ignore this email.",
     accentColor: "#dc2626",
+  },
+  "change-email": {
+    subject: "Confirm your new email",
+    title: "Confirm Email Change",
+    intro: "Use the code below to confirm your new email address.",
+    footer: "If you didn't request this change, you can safely ignore this email.",
+    accentColor: "#007bff",
   },
 };
 

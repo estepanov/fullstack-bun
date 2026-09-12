@@ -7,6 +7,8 @@ import { appLogger } from "../utils/logger";
  */
 export const createRedisClient = (name = "Redis"): Redis => {
   const client = new Redis(env.REDIS_URL, {
+    // Keep RESP2 so sorted-set members stay strings (ioredis 6 defaults to RESP3).
+    protocol: 2,
     maxRetriesPerRequest: 3,
     enableReadyCheck: true,
     lazyConnect: false,

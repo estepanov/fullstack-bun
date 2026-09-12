@@ -17,7 +17,9 @@ export interface UseMultiConversationChatReturn extends UseChatWebSocketReturn {
  */
 export const useMultiConversationChat = ({
   roomId = "global",
-}: { roomId?: string } = {}): UseMultiConversationChatReturn => {
+}: {
+  roomId?: string;
+} = {}): UseMultiConversationChatReturn => {
   const wsData = useChatWebSocket({ roomId });
   const [activeConversationId, setActiveConversationId] = useState("global");
 

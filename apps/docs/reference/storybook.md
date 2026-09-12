@@ -5,8 +5,8 @@ layout: doc
 # Storybook
 
 The Storybook app lives in `apps/storybook` and showcases the shared UI primitives from
-`packages/frontend-common`. It uses the Vite-powered Storybook runtime and mirrors the
-frontend theme setup so components render exactly as they do in the app.
+`packages/frontend-common`. It uses Storybook 10 with the Vite 8-powered React renderer
+and mirrors the frontend theme setup so components render exactly as they do in the app.
 
 ## Run Storybook
 

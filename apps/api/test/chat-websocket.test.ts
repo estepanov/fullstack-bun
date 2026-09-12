@@ -45,10 +45,6 @@ mock.module("better-auth/adapters/drizzle", () => ({
   drizzleAdapter: () => ({}),
 }));
 
-mock.module("better-auth/db", () => ({
-  createFieldAttribute: () => ({}),
-}));
-
 mock.module("better-auth-harmony", () => ({
   emailHarmony: () => ({}),
 }));

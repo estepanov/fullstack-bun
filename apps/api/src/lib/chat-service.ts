@@ -10,13 +10,14 @@ export class ChatService {
     message: ChatMessage;
     raw: string;
   } | null> {
-    const messages = await redis.zrange(CHAT_KEY, 0, -1);
+    const messages = await redis.zrange(CHAT_KEY, 0, "-1");
 
     for (const msgStr of messages) {
       try {
-        const msg = JSON.parse(msgStr) as ChatMessage;
+        const raw = String(msgStr);
+        const msg = JSON.parse(raw) as ChatMessage;
         if (msg.id === messageId) {
-          return { message: msg, raw: msgStr };
+          return { message: msg, raw };
         }
       } catch (error) {
         console.error("Failed to parse message:", error);
@@ -76,7 +77,7 @@ export class ChatService {
     const parsed = messages
       .map((msg) => {
         try {
-          return JSON.parse(msg) as ChatMessage;
+          return JSON.parse(String(msg)) as ChatMessage;
         } catch (error) {
           console.error("Failed to parse message:", error);
           return null;
@@ -146,15 +147,16 @@ export class ChatService {
   async deleteMessagesByUserId(userId: string): Promise<number> {
     try {
       // Get all messages
-      const messages = await redis.zrange(CHAT_KEY, 0, -1);
+      const messages = await redis.zrange(CHAT_KEY, 0, "-1");
       let deletedCount = 0;
 
       // Find and delete all messages from this user
       for (const msgStr of messages) {
         try {
-          const msg = JSON.parse(msgStr) as ChatMessage;
+          const raw = String(msgStr);
+          const msg = JSON.parse(raw) as ChatMessage;
           if (msg.userId === userId) {
-            const removed = await redis.zrem(CHAT_KEY, msgStr);
+            const removed = await redis.zrem(CHAT_KEY, raw);
             if (removed > 0) {
               deletedCount++;
             }

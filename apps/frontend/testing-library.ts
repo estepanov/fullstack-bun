@@ -41,10 +41,6 @@ mock.module("better-auth/adapters/drizzle", () => ({
   drizzleAdapter: () => ({}),
 }));
 
-mock.module("better-auth/db", () => ({
-  createFieldAttribute: () => ({}),
-}));
-
 mock.module("better-auth/react", () => ({
   createAuthClient: () => ({
     useSession: () => ({ data: null, isLoading: false }),
@@ -90,6 +86,10 @@ const loadEnvFromFile = () => {
 
 if (!process.env.VITE_API_BASE_URL) {
   loadEnvFromFile();
+}
+
+if (!process.env.VITE_API_BASE_URL) {
+  process.env.VITE_API_BASE_URL = "http://localhost:3001";
 }
 
 expect.extend(matchers);

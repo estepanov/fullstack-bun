@@ -283,6 +283,19 @@ http://localhost:5173/auth/verify-email?token=abc123...
    await signIn.social({ provider: "github" });
    ```
 
+### Unlinking a linked account
+
+This repo pins **better-auth 1.7.3**. Do not add a required `account.issuer` column from the public 1.7 upgrade guide: 1.7.0–1.7.2 wrote that field, but 1.7.3 does not, so a NOT NULL `issuer` column breaks sign-up and account linking.
+
+better-auth 1.7 unlinks by the local account row `id` from `listAccounts()`, not by `providerId` / provider-side `accountId`:
+
+```typescript
+const { data: accounts } = await authClient.listAccounts();
+await authClient.unlinkAccount({
+  accountId: accounts[0].id,
+});
+```
+
 ## Security Best Practices
 
 ### Production Checklist

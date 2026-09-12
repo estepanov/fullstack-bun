@@ -5,7 +5,7 @@ This guide explains how to use Docker to run the fullstack-bun monorepo in both 
 ## Architecture
 
 This monorepo contains:
-- **Frontend**: React app with Vite and React Router
+- **Frontend**: React 19 app with Vite 8 and React Router 8
 - **Admin**: Internal administration panel
 - **API**: Hono server running on Bun
 - **PostgreSQL**: Database service

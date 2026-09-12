@@ -312,7 +312,7 @@ DATABASE_URL="postgresql://postgres:postgres@localhost:5432/mydatabase"
 
 2. **Run push command**:
    ```bash
-   bunx drizzle-kit push:pg
+   bunx drizzle-kit push
    ```
 
 3. **Check for errors** in the output

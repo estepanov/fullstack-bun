@@ -19,5 +19,7 @@ Holds reference information on various features and infrastructure.
 
 ## Frontend Tooling
 
+- [Dependencies](/reference/dependencies.md)
+- [Frontend Testing](/reference/frontend-testing.md)
 - [shadcn/ui](/reference/shadcn.md)
 - [Storybook](/reference/storybook.md)

@@ -49,8 +49,8 @@ export function AccountsSection() {
     setUnlinkingId(account.id);
     setError("");
     const response = await authClient.unlinkAccount({
-      providerId: account.providerId,
-      accountId: account.accountId,
+      // better-auth 1.7 selects the local account row by `id`.
+      accountId: account.id,
     });
     if (response.error) {
       setError(parseErrorMessage(response.error, t("dashboard.accounts_unlink_error")));

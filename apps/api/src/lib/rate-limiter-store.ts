@@ -1,6 +1,6 @@
-import { RedisStore } from "rate-limit-redis";
 import type { Store } from "hono-rate-limiter";
 import type Redis from "ioredis";
+import { RedisStore, type RedisReply } from "rate-limit-redis";
 
 /**
  * Creates a Redis store adapter for hono-rate-limiter
@@ -25,11 +25,8 @@ export const createRedisRateLimitStore = (
   prefix = "rate-limit:",
 ): Store => {
   const store = new RedisStore({
-    // @ts-expect-error - adapter pattern for ioredis
-    // RedisStore expects Upstash Redis sendCommand, but we're adapting ioredis
-    // The sendCommand method is mapped to ioredis client.call()
-    sendCommand: async (...args: [string, ...string[]]) => {
-      return client.call(...args);
+    sendCommand: async (command: string, ...args: string[]): Promise<RedisReply> => {
+      return (await client.call(command, ...args)) as RedisReply;
     },
     prefix,
   });

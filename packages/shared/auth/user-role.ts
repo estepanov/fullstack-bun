@@ -17,4 +17,3 @@ export const updateUserRoleSchema = z.object({
 export type UpdateUserRoleInput = z.infer<typeof updateUserRoleSchema>;
 
 export const isAdmin = (role: UserRole) => role === UserRole.ADMIN;
-

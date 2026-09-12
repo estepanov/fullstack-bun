@@ -8,9 +8,10 @@ This repo provisions a Redis service alongside PostgreSQL for cache / session-st
 
 ## Overview
 
-- **Service:** Redis 7
+- **Service:** Redis 7 (client: [ioredis](https://github.com/redis/ioredis) 6)
 - **Default port:** `6379` (configurable via `REDIS_PORT`)
 - **Auth:** enabled via `REDIS_PASSWORD` (Docker Compose config)
+- **Wire protocol:** the API Redis client uses RESP2 (`protocol: 2`) so command replies stay strings. ioredis 6 would otherwise default to RESP3.
 
 ## Local Development (Docker Compose)
 
